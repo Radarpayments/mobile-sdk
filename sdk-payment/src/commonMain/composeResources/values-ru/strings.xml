@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Payment sheet -->
+    <string name="sheet_order_number">Заказ №%1$s</string>
+    <string name="sheet_or_pay_by_card">или картой</string>
+    <string name="sheet_saved_cards">Сохранённые карты</string>
+    <string name="sheet_all_cards">Все карты</string>
+    <string name="sheet_new_card_hint">Дебетовая или кредитная</string>
+    <string name="sheet_pay_by_card">Оплатить картой</string>
+    <string name="sheet_pay_with_card">Оплатить картой %1$s</string>
+    <string name="pay_amount">Оплатить %1$s</string>
+
+    <!-- CardFormScreen -->
+    <string name="checkout_title">Оплата</string>
+    <string name="card_form_title">Новая карта</string>
+    <string name="card_form_pan_label">Номер карты</string>
+    <string name="card_form_expiry_label">Срок действия</string>
+    <string name="card_form_expiry_placeholder">ММ/ГГ</string>
+    <string name="card_form_cvv_label">CVC/CVV</string>
+    <string name="cvv_hint_open">Где найти CVV</string>
+    <string name="cvv_hint_back">3 цифры на обратной стороне карты</string>
+    <string name="cvv_hint_front">4 цифры на лицевой стороне карты</string>
+    <string name="card_form_holder_label">Держатель карты</string>
+    <string name="card_form_card_details_label">Данные карты</string>
+    <string name="card_form_holder_placeholder">Имя на карте</string>
+    <string name="card_form_save_card">Сохранить карту для будущих оплат</string>
+    <string name="card_form_save_card_hint">Данные карты надёжно зашифрованы</string>
+    <string name="card_form_pay">Оплатить</string>
+    <string name="card_form_scan">Сканировать</string>
+    <string name="card_form_email_label">Email</string>
+    <string name="card_form_phone_label">Телефон</string>
+    <string name="payer_optional">%1$s (необязательно)</string>
+    <string name="payer_remove_address_line">Убрать строку адреса</string>
+    <string name="payer_optional_note">необязательно</string>
+    <string name="payer_summary_title">Ваши данные</string>
+    <string name="payer_summary_collapse">Свернуть</string>
+    <string name="payer_billing_title">Платёжные данные</string>
+    <string name="payer_billing_add">Добавить платёжные данные</string>
+    <string name="payer_billing_help">Заполняйте латинскими буквами</string>
+    <string name="payer_country_label">Страна</string>
+    <string name="payer_country_search">Поиск страны</string>
+    <string name="payer_country_not_found">Страна не найдена</string>
+    <string name="phone_code_title">Код страны</string>
+    <string name="phone_code_search">Страна или код</string>
+    <string name="phone_code_choose">Код</string>
+    <string name="phone_code_cd">Код страны %1$s</string>
+    <string name="picker_suggested">Предложенные</string>
+    <string name="picker_all">Все страны</string>
+    <string name="payer_address_line1_label">Адрес</string>
+    <string name="payer_address_line2_label">Адрес, строка 2</string>
+    <string name="payer_address_line3_label">Адрес, строка 3</string>
+    <string name="payer_add_address_line">Квартира, офис…</string>
+    <string name="payer_city_label">Город</string>
+    <string name="payer_state_label">Регион / штат</string>
+    <string name="payer_postal_code_label">Индекс</string>
+
+    <!-- Field messages -->
+    <string name="error_pan_empty">Введите номер карты</string>
+    <string name="error_pan_short">Номер карты слишком короткий</string>
+    <string name="error_pan_invalid">Проверьте номер карты, возможно, ошибка в цифре</string>
+    <string name="error_expiry_format">Введите дату в формате ММ/&#8288;ГГ</string>
+    <string name="error_expiry_month">Месяц должен быть от 01 до 12</string>
+    <string name="error_expiry_past">Срок действия карты истёк</string>
+    <string name="error_cvv_3">Введите 3 цифры с оборота карты</string>
+    <string name="error_cvv_4">Введите 4 цифры с лицевой стороны</string>
+    <string name="error_holder_empty">Введите имя, как на карте</string>
+    <string name="error_holder_format">Только латинские буквы, как на карте</string>
+    <string name="error_holder_short">Слишком короткое имя</string>
+    <string name="error_email_empty">Введите email</string>
+    <string name="error_email_invalid">Проверьте email, он должен выглядеть как name@example.com</string>
+    <string name="error_phone_empty">Введите номер телефона</string>
+    <string name="error_phone_short">Номер телефона слишком короткий</string>
+    <string name="error_phone_long">Номер телефона слишком длинный</string>
+    <string name="error_phone_no_code">Выберите код страны</string>
+    <string name="error_field_required">Заполните поле</string>
+    <string name="error_country_empty">Выберите страну</string>
+    <string name="error_latin_only">Латинскими буквами, как в английском</string>
+    <string name="error_postal_code_invalid">Только латинские буквы и цифры</string>
+
+    <!-- Card scan -->
+    <string name="scan_title">Сканировать карту</string>
+    <string name="scan_body">Камера считает номер и срок действия. Снимки не сохраняются и никуда не отправляются.</string>
+    <string name="scan_continue">Продолжить</string>
+    <string name="scan_turn_on">Включить камеру</string>
+    <string name="scan_manual">Ввести вручную</string>
+
+    <!-- Saved card -->
+    <string name="saved_card_title">Оплата картой</string>
+
+    <!-- CardListScreen -->
+    <string name="card_list_title">Мои карты</string>
+    <string name="card_list_edit_title">Изменить карты</string>
+    <string name="card_list_add_new">Новая карта</string>
+    <string name="card_list_delete">Удалить карту</string>
+    <string name="card_list_empty">Нет сохранённых карт</string>
+    <string name="card_list_remove_title">Удалить %1$s?</string>
+    <string name="card_list_remove_body">Чтобы снова оплатить этой картой, придётся ввести её данные.</string>
+    <string name="card_list_keep">Оставить</string>
+
+    <!-- Pay buttons -->
+    <string name="pay_with_google_pay">Оплатить через Google Pay</string>
+    <string name="pay_with_apple_pay">Оплатить через Apple Pay</string>
+
+    <!-- ThreeDsChallenge -->
+    <string name="threeds_title">Проверка банком</string>
+    <string name="threeds_hint">Завершите проверку в окне банка. Вы вернётесь сюда автоматически.</string>
+    <string name="threeds_cancel">Отменить оплату</string>
+
+    <!-- Processing -->
+    <string name="processing_title">Проводим оплату</string>
+    <string name="processing_hint">Обычно это занимает несколько секунд. Не закрывайте приложение.</string>
+    <string name="processing_loading_session">Загрузка сессии…</string>
+    <string name="processing_loading_public_key">Подготовка шифрования…</string>
+    <string name="a11y_loading">Загрузка…</string>
+    <string name="processing_tokenizing_card">Шифрование карты…</string>
+    <string name="processing_submitting_payment">Отправка платежа…</string>
+    <string name="processing_finalizing">Завершение…</string>
+
+    <!-- Result -->
+    <string name="result_success_title">Оплата прошла</string>
+    <string name="result_card_saved_title">Карта сохранена</string>
+    <string name="result_failure_title">Оплата отклонена</string>
+    <string name="result_failure_hint">Попробуйте другую карту или обратитесь в банк.</string>
+    <string name="result_session_expired">Время на оплату истекло. Деньги не списаны. Вернитесь и оформите заказ заново.</string>
+    <string name="result_try_again">Оплатить другой картой</string>
+    <string name="result_close">Закрыть</string>
+    <string name="result_done">Готово</string>
+    <string name="receipt_order">Заказ</string>
+    <string name="receipt_card">Карта</string>
+    <string name="receipt_date">Дата</string>
+    <string name="receipt_order_number">№ %1$s</string>
+
+    <!-- Common -->
+    <string name="action_cancel">Отмена</string>
+    <string name="action_close">Закрыть</string>
+    <string name="action_back">Назад</string>
+    <string name="action_edit">Изменить</string>
+    <string name="action_done">Готово</string>
+    <string name="error_network">Ошибка сети. Проверьте подключение.</string>
+    <string name="error_generic">Что-то пошло не так. Попробуйте ещё раз.</string>
+    <string name="error_invalid_card">Некорректные данные карты</string>
+    <string name="error_3ds_failed">Не удалось пройти 3-D Secure</string>
+    <string name="error_3ds_timeout">Истекло время ожидания 3-D Secure</string>
+    <string name="error_cancelled">Оплата отменена</string>
+    <!-- Transfers (AFT) -->
+    <string name="transfer_amount">Перевести %1$s</string>
+    <string name="card_form_transfer">Перевести</string>
+    <string name="card_form_save_card_only">Сохранить карту</string>
+    <string name="transfer_sender_title">Отправитель</string>
+    <string name="transfer_recipient_title">Получатель</string>
+    <string name="transfer_first_name">Имя</string>
+    <string name="transfer_middle_name">Второе имя</string>
+    <string name="transfer_last_name">Фамилия</string>
+    <string name="transfer_birthday">Дата рождения</string>
+    <string name="transfer_date_hint">ДД.ММ.ГГГГ</string>
+    <string name="transfer_account">Номер счёта</string>
+    <string name="transfer_account_type">Тип счёта</string>
+    <string name="transfer_id_type">Документ</string>
+    <string name="transfer_id_number">Номер документа</string>
+    <string name="transfer_address">Адрес</string>
+    <string name="error_date_invalid">Введите дату в формате ДД.ММ.ГГГГ</string>
+    <string name="transfer_account_type_1">RTN + банковский счёт</string>
+    <string name="transfer_account_type_2">IBAN</string>
+    <string name="transfer_account_type_3">Карточный счёт</string>
+    <string name="transfer_account_type_4">Электронная почта</string>
+    <string name="transfer_account_type_5">Номер телефона</string>
+    <string name="transfer_account_type_6">BIC + BAN</string>
+    <string name="transfer_account_type_7">ID кошелька</string>
+    <string name="transfer_account_type_8">ID в соцсети</string>
+    <string name="transfer_account_type_100">Другое</string>
+    <string name="transfer_id_type_1">Паспорт</string>
+    <string name="transfer_id_type_2">Водительское удостоверение</string>
+    <string name="transfer_id_type_3">Социальная карта</string>
+    <string name="transfer_id_type_4">ID-карта гражданина</string>
+    <string name="transfer_id_type_5">Свидетельство о регистрации бизнеса (НДС)</string>
+    <string name="transfer_id_type_6">Удостоверение беженца</string>
+    <string name="transfer_id_type_7">Вид на жительство</string>
+    <string name="transfer_id_type_8">Заграничный паспорт</string>
+    <string name="transfer_id_type_9">Служебный паспорт</string>
+    <string name="transfer_id_type_10">Временный паспорт</string>
+    <string name="transfer_id_type_11">Паспорт моряка</string>
+</resources>
