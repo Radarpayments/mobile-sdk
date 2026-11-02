@@ -1,0 +1,84 @@
+import com.android.build.gradle.LibraryExtension
+import org.gradle.api.JavaVersion
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+import org.gradle.kotlin.dsl.configure
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
+
+/**
+ * Applies the standard KMP library setup: Kotlin Multiplatform plugin, Android library plugin,
+ * three iOS targets + Android target, source-set hierarchy, and default JVM toolchain.
+ *
+ * Consuming module only needs to add its own dependencies and declare itself via:
+ *   plugins { id("payrdr.kmp.library") }
+ */
+class KmpLibraryConventionPlugin : Plugin<Project> {
+
+    override fun apply(target: Project) = with(target) {
+        pluginManager.apply("org.jetbrains.kotlin.multiplatform")
+        pluginManager.apply("com.android.library")
+
+        extensions.configure<KotlinMultiplatformExtension> {
+            jvmToolchain(libs.intVersion("jvm-target"))
+
+            androidTarget {
+                // What maven-publish publishes for Android (Flutter and React Native plugins consume it; see the root build).
+                publishLibraryVariants("release")
+                compilations.all {
+                    compileTaskProvider.configure {
+                        compilerOptions {
+                            jvmTarget.set(JvmTarget.fromTarget(libs.version("jvm-target")))
+                        }
+                    }
+                }
+                // Instrumented tests are only androidInstrumentedTest: commonTest already runs on the JVM and iOS, and its
+                // names with spaces cannot be dexed for the device below DEX 040 (API 30), and minSdk is lower.
+                @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
+                unitTestVariant.sourceSetTree.set(KotlinSourceSetTree.test)
+            }
+
+            iosX64()
+            iosArm64()
+            iosSimulatorArm64()
+
+            sourceSets.apply {
+                commonMain.get().dependencies {
+                    implementation(libs.findLibrary("kotlin.stdlib").get())
+                }
+                commonTest.get().dependencies {
+                    implementation(libs.findLibrary("kotest.assertions.core").get())
+                    implementation(kotlin("test"))
+                }
+            }
+
+            // kotlinx-datetime 0.7 (Compose Multiplatform 1.9) moved Instant and Clock to kotlin.time, which stays
+            // experimental until Kotlin 2.3.
+            sourceSets.all { languageSettings.optIn("kotlin.time.ExperimentalTime") }
+
+            applyDefaultHierarchyTemplate()
+        }
+
+        extensions.configure<LibraryExtension> {
+            compileSdk = libs.intVersion("android-compile-sdk")
+            namespace = "net.payrdr.mobile.payment.sdk.${project.name.replace("-", ".")}"
+
+            defaultConfig {
+                minSdk = libs.intVersion("android-min-sdk")
+            }
+
+            // The instrumented-test APK otherwise targets minSdk, and recent Android puts its permission review for
+            // apps that old over the test activity: Compose UI tests then find no hierarchy to test.
+            testOptions {
+                targetSdk = libs.intVersion("android-compile-sdk")
+            }
+
+            compileOptions {
+                sourceCompatibility = JavaVersion.toVersion(libs.intVersion("jvm-target"))
+                targetCompatibility = JavaVersion.toVersion(libs.intVersion("jvm-target"))
+            }
+        }
+    }
+
+}
