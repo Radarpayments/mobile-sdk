@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Start screen sections -->
+    <string name="start_section_payment">SDK Payment</string>
+    <string name="start_section_payment_sub">Έτοιμο παράθυρο πληρωμής στην εφαρμογή σας — κάθε κατάστημα περιλαμβάνει όλα τα σενάρια</string>
+    <string name="start_section_core">SDK Core</string>
+    <string name="start_section_core_sub">Κρυπτογράφηση κάρτας για τη δική σας φόρμα (PCI DSS)</string>
+    <string name="core_tile_title">Η δική σας φόρμα κάρτας</string>
+    <string name="core_tile_sub">Η κάρτα γίνεται token για τον διακομιστή σας</string>
+
+    <!-- SDK Core screen -->
+    <string name="core_title">SDK Core</string>
+    <string name="core_done_subtitle">Το token είναι έτοιμο</string>
+    <string name="core_variant_new">Νέα κάρτα</string>
+    <string name="core_variant_instant">Χωρίς παραγγελία</string>
+    <string name="core_variant_stored">Αποθηκευμένη κάρτα</string>
+    <string name="core_hint_new">Πληρώνει μια παραγγελία που καταχωρίσατε: στοιχεία κάρτας και το mdOrder της.</string>
+    <string name="core_hint_instant">Δεν υπάρχει ακόμη παραγγελία: ο διακομιστής σας τη δημιουργεί και την πληρώνει με μία κλήση.</string>
+    <string name="core_hint_stored">Πληρώνει μια παραγγελία με αποθηκευμένη κάρτα: το bindingId της αντί για τα στοιχεία κάρτας.</string>
+    <string name="core_card_group">Στοιχεία κάρτας</string>
+    <string name="core_pan">Αριθμός κάρτας</string>
+    <string name="core_expiry_placeholder">ΜΜ/ΕΕ</string>
+    <string name="core_expiry">Λήξη</string>
+    <string name="core_cvc">CVC/CVV</string>
+    <string name="core_cvc_optional">CVC/CVV (προαιρετικό)</string>
+    <string name="core_holder">Όνομα στην κάρτα (προαιρετικό)</string>
+    <string name="core_binding">bindingId</string>
+    <string name="core_md_order">mdOrder</string>
+    <string name="core_md_order_hint">Από το backend σας</string>
+    <string name="core_pub_key">Δημόσιο κλειδί (PEM)</string>
+    <string name="core_paste">Επικόλληση</string>
+    <string name="core_generate">Λήψη token</string>
+    <string name="core_error_required">Υποχρεωτικό πεδίο</string>
+    <string name="core_error_invalid">Μη έγκυρη τιμή</string>
+    <string name="core_error_format">Λάθος μορφή</string>
+    <string name="core_token_ok">Το token ελήφθη</string>
+    <string name="core_copy">Αντιγραφή</string>
+    <string name="core_copied">Αντιγράφηκε</string>
+    <string name="core_step_send">Στείλτε το token στον διακομιστή σας</string>
+    <string name="core_step_gateway">Ο διακομιστής σας το διαβιβάζει στην πύλη πληρωμών ως seToken</string>
+    <string name="core_step_pay">Η πύλη πληρωμών επεξεργάζεται την πληρωμή</string>
+    <string name="core_again">Ξανά</string>
+</resources>

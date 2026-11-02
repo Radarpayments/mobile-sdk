@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Northwind Invest: the AFT demo (an account top-up), shown instead of the stores in AFT mode -->
+    <string name="invest_name" translatable="false">Northwind Invest</string>
+    <string name="start_section_payment_aft_sub">AFT: top up an account from a card</string>
+    <string name="invest_tile_sub">Top up your investment account from a card and watch the balance grow</string>
+    <string name="invest_account">Investment account •• %1$s</string>
+    <string name="invest_portfolio_value">Portfolio value</string>
+    <string name="invest_change_month">this month</string>
+    <string name="invest_period_1w">1W</string>
+    <string name="invest_period_1m">1M</string>
+    <string name="invest_period_3m">3M</string>
+    <string name="invest_period_1y">1Y</string>
+    <string name="invest_period_all">All</string>
+    <string name="invest_top_up">Top up</string>
+    <string name="invest_invest">Invest</string>
+    <string name="invest_free_cash">Free cash</string>
+    <string name="invest_free_cash_sub">Ready to invest</string>
+    <string name="invest_free_cash_just_now">+%1$s just now</string>
+    <string name="invest_my_assets">My assets</string>
+    <string name="invest_units">%1$s units · %2$s</string>
+    <string name="invest_recent">Recent operations</string>
+    <string name="invest_op_top_up">Deposit</string>
+    <string name="invest_op_buy">Buy %1$s</string>
+    <string name="invest_asset_glb">Global ETF</string>
+    <string name="invest_asset_tch">Tech Leaders</string>
+    <string name="invest_notifications">Notifications</string>
+    <string name="topup_title">Top up</string>
+    <string name="topup_to">To</string>
+    <string name="topup_available">Available</string>
+    <string name="topup_amount">Amount</string>
+    <string name="topup_limits">from %1$s to %2$s</string>
+    <string name="topup_continue">Continue · %1$s</string>
+    <string name="topup_creating">Creating transfer…</string>
+    <string name="topup_failed_title">Transfer failed</string>
+    <string name="topup_failed_body">The card\'s bank declined the operation. No money was taken; try another card.</string>
+    <string name="topup_failed_detail">Gateway: %1$s</string>
+    <string name="topup_unknown_title">Status unknown</string>
+    <string name="topup_unknown_body">Check the order in the merchant portal before trying again.</string>
+    <string name="topup_try_again">Try again</string>
+    <string name="done_credited">credited to investment account •• %1$s</string>
+    <string name="done_operation">Operation</string>
+    <string name="done_operation_value">AFT · to own account</string>
+    <string name="done_free_cash">Free cash</string>
+    <string name="done_order">Order</string>
+    <string name="done_time">Time</string>
+    <string name="done_invest">Invest %1$s</string>
+    <string name="done_to_portfolio">To portfolio</string>
+    <string name="dev_invest_reset">Reset Northwind demo account</string>
+    <string name="dev_invest_reset_done">Demo account reset</string>
+</resources>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Start screen sections -->
+    <string name="start_section_payment">SDK Payment</string>
+    <string name="start_section_payment_sub">O fereastră de plată gata de folosit în aplicația dvs. — fiecare magazin include toate scenariile</string>
+    <string name="start_section_core">SDK Core</string>
+    <string name="start_section_core_sub">Criptarea cardului pentru propriul formular (PCI DSS)</string>
+    <string name="core_tile_title">Propriul formular de card</string>
+    <string name="core_tile_sub">Datele cardului devin un token pentru serverul dvs.</string>
+
+    <!-- SDK Core screen -->
+    <string name="core_title">SDK Core</string>
+    <string name="core_done_subtitle">Tokenul este gata</string>
+    <string name="core_variant_new">Card nou</string>
+    <string name="core_variant_instant">Fără comandă</string>
+    <string name="core_variant_stored">Card salvat</string>
+    <string name="core_hint_new">Plata unei comenzi înregistrate de dvs.: datele cardului și mdOrder-ul comenzii.</string>
+    <string name="core_hint_instant">Încă nu există o comandă: serverul dvs. o creează și o plătește printr-un singur apel.</string>
+    <string name="core_hint_stored">Plata unei comenzi cu un card salvat: bindingId-ul cardului în locul datelor acestuia.</string>
+    <string name="core_card_group">Datele cardului</string>
+    <string name="core_pan">Numărul cardului</string>
+    <string name="core_expiry_placeholder">LL/AA</string>
+    <string name="core_expiry">Data expirării</string>
+    <string name="core_cvc">CVC/CVV</string>
+    <string name="core_cvc_optional">CVC/CVV (opțional)</string>
+    <string name="core_holder">Numele de pe card (opțional)</string>
+    <string name="core_binding">bindingId</string>
+    <string name="core_md_order">mdOrder</string>
+    <string name="core_md_order_hint">De la backendul dvs.</string>
+    <string name="core_pub_key">Cheie publică (PEM)</string>
+    <string name="core_paste">Lipiți</string>
+    <string name="core_generate">Obțineți tokenul</string>
+    <string name="core_error_required">Câmp obligatoriu</string>
+    <string name="core_error_invalid">Valoare nevalidă</string>
+    <string name="core_error_format">Format greșit</string>
+    <string name="core_token_ok">Token primit</string>
+    <string name="core_copy">Copiați</string>
+    <string name="core_copied">Copiat</string>
+    <string name="core_step_send">Trimiteți tokenul la serverul dvs.</string>
+    <string name="core_step_gateway">Serverul dvs. îl transmite gateway-ului ca seToken</string>
+    <string name="core_step_pay">Gateway-ul procesează plata</string>
+    <string name="core_again">Din nou</string>
+</resources>

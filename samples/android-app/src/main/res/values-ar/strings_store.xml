@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Start -->
+    <string name="start_title">عرض توضيحي للدفع</string>
+    <string name="start_settings">إعدادات المطوّر</string>
+    <string name="cover_furniture_tagline">أثاث · الكتالوج والسلة</string>
+    <string name="cover_coffee_tagline">مقهى · اطلب مسبقًا</string>
+    <string name="cover_tickets_tagline">تذاكر · حفلات وعروض</string>
+
+    <!-- Shared store -->
+    <string name="store_back">رجوع</string>
+    <string name="store_cart">السلة</string>
+    <string name="store_cart_count">السلة · %1$d</string>
+    <string name="store_items">المنتجات</string>
+    <string name="store_total">الإجمالي</string>
+    <string name="store_pay">ادفع %1$s</string>
+    <string name="store_increase">زيادة</string>
+    <string name="store_decrease">إنقاص</string>
+    <string name="store_add_to_cart">أضف إلى السلة · %1$s</string>
+    <string name="store_add">إضافة</string>
+    <string name="store_registering">جارٍ إنشاء الطلب…</string>
+    <string name="store_error_credentials">لم يتم تعيين اسم مستخدم التاجر وكلمة المرور.</string>
+    <string name="store_error_api_key">لم يتم تعيين مفتاح API.</string>
+    <string name="store_error_failed">لم يتم إنشاء الطلب: %1$s</string>
+    <string name="store_open_settings">فتح الإعدادات</string>
+
+    <!-- Scenario panel -->
+    <string name="scenario_row">السيناريو: %1$s</string>
+    <string name="scenario_title">سيناريو الدفع</string>
+    <string name="scenario_buyer">المشتري</string>
+    <string name="scenario_guest">ضيف</string>
+    <string name="scenario_with_cards">مع بطاقات</string>
+    <string name="scenario_with_cards_hint">تظهر البطاقات بعد الدفع مع تفعيل «حفظ البطاقة»</string>
+    <string name="scenario_reset">إعادة تعيين</string>
+    <string name="scenario_payment">الدفع</string>
+    <string name="scenario_wallet">Google Pay</string>
+    <string name="scenario_scanner">ماسح البطاقة</string>
+    <string name="scenario_sdk_result">شاشة نتيجة SDK</string>
+
+    <!-- Results -->
+    <string name="result_paid_amount">تم دفع %1$s</string>
+    <string name="result_payment_id">الدفعة</string>
+    <string name="result_amount">المبلغ</string>
+    <string name="result_declined_title">تم رفض الدفع</string>
+    <string name="result_declined_body">لم يؤكد البنك عملية الدفع.</string>
+    <string name="result_unconfirmed_title">نتحقق من الدفع</string>
+    <string name="result_unconfirmed_body">لم يردّ البنك بعد. لا تدفع مرة أخرى، وسنبلغك فور تأكيد الدفع.</string>
+    <string name="result_try_again">حاول مرة أخرى</string>
+    <string name="result_back_to_store">العودة إلى المتجر</string>
+    <string name="result_done">تم</string>
+
+    <!-- Developer -->
+    <string name="dev_title">إعدادات المطوّر</string>
+    <string name="dev_gateway">بوابة الدفع</string>
+    <string name="dev_base_url">Base URL</string>
+    <string name="dev_login">اسم مستخدم التاجر</string>
+    <string name="dev_password">كلمة المرور</string>
+    <string name="dev_api_version">واجهة API للتاجر</string>
+    <string name="dev_api_v1_hint">تُسجَّل الطلبات عبر register.do باستخدام اسم مستخدم التاجر وكلمة المرور.</string>
+    <string name="dev_api_v2_hint">تُنشأ الجلسات عبر POST /api2/sessions باستخدام مفتاح API.</string>
+    <string name="dev_api_key">مفتاح API</string>
+    <string name="dev_order_type">الطلب</string>
+    <string name="dev_order_purchase">دفع</string>
+    <string name="dev_order_aft">تحويل AFT</string>
+    <string name="dev_order_aft_hint">تُسجَّل التحويلات عبر registerP2P.do (AFT باتجاه واحد): تطلب النافذة بيانات المرسل والمستلم.</string>
+    <string name="dev_credentials_note">تُحفظ على هذا الجهاز فقط. في تطبيقك، يسجّل الخادم الخلفي لديك الطلب.</string>
+    <string name="dev_sdk_look">مظهر SDK</string>
+    <string name="dev_sheet_theme">سمة واجهة الدفع</string>
+    <string name="dev_theme_cover">مثل المتجر</string>
+    <string name="dev_theme_light">فاتح</string>
+    <string name="dev_theme_dark">داكن</string>
+    <string name="dev_theme_system">حسب النظام</string>
+    <string name="dev_language">اللغة</string>
+    <string name="dev_language_system">حسب النظام</string>
+    <string name="dev_wallets">Google Pay</string>
+    <string name="dev_gpay_gateway">Gateway</string>
+    <string name="dev_gpay_merchant">Merchant ID</string>
+    <string name="dev_gpay_from_gateway">من بوابة الدفع</string>
+    <string name="dev_more">المزيد</string>
+    <string name="dev_advanced">Advanced</string>
+    <string name="dev_advanced_sub">تدفق الحالات، SSL pinning</string>
+    <string name="dev_last_order">آخر طلب</string>
+    <string name="dev_copy">نسخ</string>
+    <string name="dev_none">—</string>
+    <string name="result_success_furniture">شكرًا لطلبك</string>
+    <string name="result_success_furniture_body">سنتواصل معك لترتيب التوصيل.</string>
+    <string name="result_success_coffee">جارٍ تحضير طلبك</string>
+    <string name="result_success_coffee_body">اعرض هذا الرقم على الباريستا.</string>
+    <string name="result_success_tickets">حجزت مكانك!</string>
+    <string name="result_success_tickets_body">التذاكر موجودة في حسابك.</string>
+    <string name="furniture_collection">تشكيلة\nالخريف</string>
+    <string name="furniture_all">الكل</string>
+    <string name="furniture_chairs">الكراسي</string>
+    <string name="furniture_sofas">الأرائك</string>
+    <string name="furniture_light">الإضاءة</string>
+    <string name="furniture_delivery">توصيل مجاني خلال 3–5 أيام. إرجاع خلال 30 يومًا.</string>
+    <string name="furniture_delivery_label">التوصيل</string>
+    <string name="furniture_delivery_free">مجاني</string>
+    <string name="furniture_colours">اللون</string>
+    <string name="coffee_again">مثل المرة السابقة</string>
+    <string name="coffee_repeat">اطلب مجددًا</string>
+    <string name="coffee_tab_coffee">القهوة</string>
+    <string name="coffee_tab_cold">مشروبات باردة</string>
+    <string name="coffee_tab_bakery">المخبوزات</string>
+    <string name="coffee_order_title">طلبك</string>
+    <string name="coffee_pickup">الاستلام</string>
+    <string name="coffee_pickup_value">King St.‎ · خلال 10 دقائق</string>
+    <string name="coffee_add_item">أضف %1$s</string>
+    <string name="coffee_order_number_hint">سيكون جاهزًا خلال 6 دقائق تقريبًا.</string>
+    <string name="tickets_date">السبت، 14 نوفمبر · 20:00 · Hall A</string>
+    <string name="tickets_section">التذاكر</string>
+    <string name="tickets_to_payment">المتابعة للدفع · %1$s</string>
+    <string name="tickets_checkout">إتمام الشراء</string>
+    <string name="tickets_event_line">14 نوفمبر · %1$s</string>
+    <string name="tickets_hold">المقاعد محجوزة لمدة %1$s</string>
+    <string name="tickets_hold_expired">انتهت مدة الحجز. اختر مقاعدك مرة أخرى.</string>
+    <string name="tickets_seats">التذاكر</string>
+</resources>

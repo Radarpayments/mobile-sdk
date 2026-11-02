@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Start -->
+    <string name="start_title">Демо на плащане</string>
+    <string name="start_settings">Настройки за разработчици</string>
+    <string name="cover_furniture_tagline">Мебели · каталог и количка</string>
+    <string name="cover_coffee_tagline">Кафене · поръчка предварително</string>
+    <string name="cover_tickets_tagline">Билети · концерти и спектакли</string>
+
+    <!-- Shared store -->
+    <string name="store_back">Назад</string>
+    <string name="store_cart">Количка</string>
+    <string name="store_cart_count">Количка · %1$d</string>
+    <string name="store_items">Артикули</string>
+    <string name="store_total">Общо</string>
+    <string name="store_pay">Плати %1$s</string>
+    <string name="store_increase">Повече</string>
+    <string name="store_decrease">По-малко</string>
+    <string name="store_add_to_cart">Добави в количката · %1$s</string>
+    <string name="store_add">Добави</string>
+    <string name="store_registering">Създаване на поръчката…</string>
+    <string name="store_error_credentials">Не са зададени потребителско име и парола на търговеца.</string>
+    <string name="store_error_api_key">Не е зададен API ключ.</string>
+    <string name="store_error_failed">Поръчката не беше създадена: %1$s</string>
+    <string name="store_open_settings">Отвори настройките</string>
+
+    <!-- Scenario panel -->
+    <string name="scenario_row">Сценарий: %1$s</string>
+    <string name="scenario_title">Сценарий на плащане</string>
+    <string name="scenario_buyer">Купувач</string>
+    <string name="scenario_guest">Гост</string>
+    <string name="scenario_with_cards">С карти</string>
+    <string name="scenario_with_cards_hint">Картите се появяват след плащане с „Запази картата“</string>
+    <string name="scenario_reset">Нулирай</string>
+    <string name="scenario_payment">Плащане</string>
+    <string name="scenario_wallet">Google Pay</string>
+    <string name="scenario_scanner">Скенер на карти</string>
+    <string name="scenario_sdk_result">Екран с резултата от SDK</string>
+
+    <!-- Results -->
+    <string name="result_paid_amount">Платено %1$s</string>
+    <string name="result_payment_id">Плащане</string>
+    <string name="result_amount">Сума</string>
+    <string name="result_declined_title">Плащането е отхвърлено</string>
+    <string name="result_declined_body">Банката не потвърди плащането.</string>
+    <string name="result_unconfirmed_title">Проверяваме плащането</string>
+    <string name="result_unconfirmed_body">Банката все още не е отговорила. Не плащайте отново — ще ви уведомим веднага щом плащането бъде потвърдено.</string>
+    <string name="result_try_again">Опитай отново</string>
+    <string name="result_back_to_store">Обратно към магазина</string>
+    <string name="result_done">Готово</string>
+
+    <!-- Developer -->
+    <string name="dev_title">Настройки за разработчици</string>
+    <string name="dev_gateway">Шлюз</string>
+    <string name="dev_base_url">Base URL</string>
+    <string name="dev_login">Потребителско име на търговеца</string>
+    <string name="dev_password">Парола</string>
+    <string name="dev_api_version">API на търговеца</string>
+    <string name="dev_api_v1_hint">Поръчките се регистрират чрез register.do с потребителското име и паролата на търговеца.</string>
+    <string name="dev_api_v2_hint">Сесиите се създават чрез POST /api2/sessions с API ключа.</string>
+    <string name="dev_api_key">API ключ</string>
+    <string name="dev_order_type">Поръчка</string>
+    <string name="dev_order_purchase">Плащане</string>
+    <string name="dev_order_aft">AFT превод</string>
+    <string name="dev_order_aft_hint">Преводите се регистрират чрез registerP2P.do (еднопосочен AFT): прозорецът иска данните на изпращача и получателя.</string>
+    <string name="dev_credentials_note">Съхраняват се само на това устройство. Във вашето приложение поръчката се регистрира от вашия бекенд.</string>
+    <string name="dev_sdk_look">Външен вид на SDK</string>
+    <string name="dev_sheet_theme">Тема на панела</string>
+    <string name="dev_theme_cover">Като на магазина</string>
+    <string name="dev_theme_light">Светла</string>
+    <string name="dev_theme_dark">Тъмна</string>
+    <string name="dev_theme_system">Системна</string>
+    <string name="dev_language">Език</string>
+    <string name="dev_language_system">Системен</string>
+    <string name="dev_wallets">Google Pay</string>
+    <string name="dev_gpay_gateway">Gateway</string>
+    <string name="dev_gpay_merchant">Merchant ID</string>
+    <string name="dev_gpay_from_gateway">От платежния шлюз</string>
+    <string name="dev_more">Още</string>
+    <string name="dev_advanced">Advanced</string>
+    <string name="dev_advanced_sub">Поток от състояния, SSL pinning</string>
+    <string name="dev_last_order">Последна поръчка</string>
+    <string name="dev_copy">Копирай</string>
+    <string name="dev_none">—</string>
+    <string name="result_success_furniture">Благодарим ви за поръчката</string>
+    <string name="result_success_furniture_body">Ще се свържем с вас, за да уговорим доставката.</string>
+    <string name="result_success_coffee">Поръчката ви се приготвя</string>
+    <string name="result_success_coffee_body">Покажете този номер на баристата.</string>
+    <string name="result_success_tickets">Ще бъдете там!</string>
+    <string name="result_success_tickets_body">Билетите са във вашия профил.</string>
+    <string name="furniture_collection">Есенна\nколекция</string>
+    <string name="furniture_all">Всички</string>
+    <string name="furniture_chairs">Столове</string>
+    <string name="furniture_sofas">Дивани</string>
+    <string name="furniture_light">Осветление</string>
+    <string name="furniture_delivery">Безплатна доставка за 3–5 дни. 30 дни за връщане.</string>
+    <string name="furniture_delivery_label">Доставка</string>
+    <string name="furniture_delivery_free">Безплатно</string>
+    <string name="furniture_colours">Цвят</string>
+    <string name="coffee_again">Като миналия път</string>
+    <string name="coffee_repeat">Поръчай отново</string>
+    <string name="coffee_tab_coffee">Кафе</string>
+    <string name="coffee_tab_cold">Студени</string>
+    <string name="coffee_tab_bakery">Печива</string>
+    <string name="coffee_order_title">Вашата поръчка</string>
+    <string name="coffee_pickup">Вземане</string>
+    <string name="coffee_pickup_value">King St. · след 10 мин</string>
+    <string name="coffee_add_item">Добави %1$s</string>
+    <string name="coffee_order_number_hint">Готова след около 6 минути.</string>
+    <string name="tickets_date">Сб, 14 ноември · 20:00 · Hall A</string>
+    <string name="tickets_section">Билети</string>
+    <string name="tickets_to_payment">Към плащане · %1$s</string>
+    <string name="tickets_checkout">Плащане</string>
+    <string name="tickets_event_line">14 ноем. · %1$s</string>
+    <string name="tickets_hold">Пазим местата още %1$s</string>
+    <string name="tickets_hold_expired">Резервацията изтече. Изберете местата отново.</string>
+    <string name="tickets_seats">Билети</string>
+</resources>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Start -->
+    <string name="start_title">Επίδειξη πληρωμής</string>
+    <string name="start_settings">Ρυθμίσεις προγραμματιστή</string>
+    <string name="cover_furniture_tagline">Έπιπλα · κατάλογος και καλάθι</string>
+    <string name="cover_coffee_tagline">Καφετέρια · παραγγελία από πριν</string>
+    <string name="cover_tickets_tagline">Εισιτήρια · συναυλίες και παραστάσεις</string>
+
+    <!-- Shared store -->
+    <string name="store_back">Πίσω</string>
+    <string name="store_cart">Καλάθι</string>
+    <string name="store_cart_count">Καλάθι · %1$d</string>
+    <string name="store_items">Προϊόντα</string>
+    <string name="store_total">Σύνολο</string>
+    <string name="store_pay">Πληρωμή %1$s</string>
+    <string name="store_increase">Περισσότερα</string>
+    <string name="store_decrease">Λιγότερα</string>
+    <string name="store_add_to_cart">Στο καλάθι · %1$s</string>
+    <string name="store_add">Προσθήκη</string>
+    <string name="store_registering">Δημιουργία παραγγελίας…</string>
+    <string name="store_error_credentials">Δεν έχουν οριστεί το όνομα χρήστη και ο κωδικός πρόσβασης του εμπόρου.</string>
+    <string name="store_error_api_key">Δεν έχει οριστεί το κλειδί API.</string>
+    <string name="store_error_failed">Η παραγγελία δεν δημιουργήθηκε: %1$s</string>
+    <string name="store_open_settings">Άνοιγμα ρυθμίσεων</string>
+
+    <!-- Scenario panel -->
+    <string name="scenario_row">Σενάριο: %1$s</string>
+    <string name="scenario_title">Σενάριο πληρωμής</string>
+    <string name="scenario_buyer">Αγοραστής</string>
+    <string name="scenario_guest">Επισκέπτης</string>
+    <string name="scenario_with_cards">Με κάρτες</string>
+    <string name="scenario_with_cards_hint">Οι κάρτες εμφανίζονται μετά από πληρωμή με «Αποθήκευση κάρτας»</string>
+    <string name="scenario_reset">Επαναφορά</string>
+    <string name="scenario_payment">Πληρωμή</string>
+    <string name="scenario_wallet">Google Pay</string>
+    <string name="scenario_scanner">Σαρωτής κάρτας</string>
+    <string name="scenario_sdk_result">Οθόνη αποτελέσματος SDK</string>
+
+    <!-- Results -->
+    <string name="result_paid_amount">Πληρώθηκε %1$s</string>
+    <string name="result_payment_id">Πληρωμή</string>
+    <string name="result_amount">Ποσό</string>
+    <string name="result_declined_title">Η πληρωμή απορρίφθηκε</string>
+    <string name="result_declined_body">Η τράπεζα δεν επιβεβαίωσε την πληρωμή.</string>
+    <string name="result_unconfirmed_title">Ελέγχουμε την πληρωμή</string>
+    <string name="result_unconfirmed_body">Η τράπεζα δεν έχει απαντήσει ακόμη. Μην πληρώσετε ξανά — θα σας ενημερώσουμε μόλις επιβεβαιωθεί η πληρωμή.</string>
+    <string name="result_try_again">Δοκιμάστε ξανά</string>
+    <string name="result_back_to_store">Επιστροφή στο κατάστημα</string>
+    <string name="result_done">Τέλος</string>
+
+    <!-- Developer -->
+    <string name="dev_title">Ρυθμίσεις προγραμματιστή</string>
+    <string name="dev_gateway">Πύλη πληρωμών</string>
+    <string name="dev_base_url">Base URL</string>
+    <string name="dev_login">Όνομα χρήστη εμπόρου</string>
+    <string name="dev_password">Κωδικός πρόσβασης</string>
+    <string name="dev_api_version">API εμπόρου</string>
+    <string name="dev_api_v1_hint">Οι παραγγελίες καταχωρίζονται μέσω register.do με το όνομα χρήστη και τον κωδικό του εμπόρου.</string>
+    <string name="dev_api_v2_hint">Οι συνεδρίες δημιουργούνται μέσω POST /api2/sessions με το κλειδί API.</string>
+    <string name="dev_api_key">Κλειδί API</string>
+    <string name="dev_order_type">Παραγγελία</string>
+    <string name="dev_order_purchase">Πληρωμή</string>
+    <string name="dev_order_aft">Μεταφορά AFT</string>
+    <string name="dev_order_aft_hint">Οι μεταφορές καταχωρίζονται μέσω registerP2P.do (AFT μίας κατεύθυνσης): το παράθυρο ζητά τα στοιχεία αποστολέα και παραλήπτη.</string>
+    <string name="dev_credentials_note">Αποθηκεύονται μόνο σε αυτήν τη συσκευή. Στη δική σας εφαρμογή, την παραγγελία την καταχωρίζει το backend σας.</string>
+    <string name="dev_sdk_look">Εμφάνιση SDK</string>
+    <string name="dev_sheet_theme">Θέμα παραθύρου πληρωμής</string>
+    <string name="dev_theme_cover">Όπως το κατάστημα</string>
+    <string name="dev_theme_light">Ανοιχτό</string>
+    <string name="dev_theme_dark">Σκούρο</string>
+    <string name="dev_theme_system">Συστήματος</string>
+    <string name="dev_language">Γλώσσα</string>
+    <string name="dev_language_system">Συστήματος</string>
+    <string name="dev_wallets">Google Pay</string>
+    <string name="dev_gpay_gateway">Gateway</string>
+    <string name="dev_gpay_merchant">Merchant ID</string>
+    <string name="dev_gpay_from_gateway">Από την πύλη πληρωμών</string>
+    <string name="dev_more">Περισσότερα</string>
+    <string name="dev_advanced">Advanced</string>
+    <string name="dev_advanced_sub">Ροή καταστάσεων, SSL pinning</string>
+    <string name="dev_last_order">Τελευταία παραγγελία</string>
+    <string name="dev_copy">Αντιγραφή</string>
+    <string name="dev_none">—</string>
+    <string name="result_success_furniture">Ευχαριστούμε για την παραγγελία σας</string>
+    <string name="result_success_furniture_body">Θα επικοινωνήσουμε μαζί σας για να κανονίσουμε την παράδοση.</string>
+    <string name="result_success_coffee">Η παραγγελία σας ετοιμάζεται</string>
+    <string name="result_success_coffee_body">Δείξτε αυτόν τον αριθμό στον μπαρίστα.</string>
+    <string name="result_success_tickets">Θα είστε εκεί!</string>
+    <string name="result_success_tickets_body">Τα εισιτήρια βρίσκονται στον λογαριασμό σας.</string>
+    <string name="furniture_collection">Φθινοπωρινή\nσυλλογή</string>
+    <string name="furniture_all">Όλα</string>
+    <string name="furniture_chairs">Καρέκλες</string>
+    <string name="furniture_sofas">Καναπέδες</string>
+    <string name="furniture_light">Φωτισμός</string>
+    <string name="furniture_delivery">Δωρεάν παράδοση σε 3–5 ημέρες. 30 ημέρες για επιστροφή.</string>
+    <string name="furniture_delivery_label">Παράδοση</string>
+    <string name="furniture_delivery_free">Δωρεάν</string>
+    <string name="furniture_colours">Χρώμα</string>
+    <string name="coffee_again">Όπως την τελευταία φορά</string>
+    <string name="coffee_repeat">Επανάληψη παραγγελίας</string>
+    <string name="coffee_tab_coffee">Καφές</string>
+    <string name="coffee_tab_cold">Κρύα</string>
+    <string name="coffee_tab_bakery">Αρτοσκευάσματα</string>
+    <string name="coffee_order_title">Η παραγγελία σας</string>
+    <string name="coffee_pickup">Παραλαβή</string>
+    <string name="coffee_pickup_value">King St. · σε 10 λεπτά</string>
+    <string name="coffee_add_item">Προσθήκη %1$s</string>
+    <string name="coffee_order_number_hint">Έτοιμη σε περίπου 6 λεπτά.</string>
+    <string name="tickets_date">Σάβ, 14 Νοε · 20:00 · Hall A</string>
+    <string name="tickets_section">Εισιτήρια</string>
+    <string name="tickets_to_payment">Ταμείο · %1$s</string>
+    <string name="tickets_checkout">Ταμείο</string>
+    <string name="tickets_event_line">14 Νοε · %1$s</string>
+    <string name="tickets_hold">Οι θέσεις κρατούνται για %1$s</string>
+    <string name="tickets_hold_expired">Η κράτηση έληξε. Επιλέξτε ξανά θέσεις.</string>
+    <string name="tickets_seats">Εισιτήρια</string>
+</resources>
