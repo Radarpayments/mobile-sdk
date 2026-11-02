@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "skipLibCheck": true,
+    "jsx": "react-jsx",
+    "types": [
+      "jest"
+    ],
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "react-native": [
+        "src/__tests__/react-native.mock.ts"
+      ]
+    },
+    "resolveJsonModule": true
+  },
+  "include": [
+    "src"
+  ]
+}
