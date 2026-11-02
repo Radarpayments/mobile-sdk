@@ -18,7 +18,6 @@ export class StoreModel extends Listenable {
   private receipt: Receipt | undefined;
   private orderNumber = FIRST_ORDER_NUMBER - 1;
 
-  /** Cart of `cover` right now. */
   cart(cover: CoverId): Cart {
     return this.carts[cover];
   }

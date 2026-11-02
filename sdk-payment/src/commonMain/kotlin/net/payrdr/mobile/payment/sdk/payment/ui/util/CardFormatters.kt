@@ -75,8 +75,8 @@ public object CardFormatters {
     }
 
     /**
-     * Produces a `•••• •••• •••• NNNN`-style mask from a cleartext PAN. Used by [CardListScreen]
-     * when rendering saved bindings. For PANs shorter than 4 digits the whole thing is bulleted.
+     * Produces a `•••• •••• •••• NNNN`-style mask from a cleartext PAN. For PANs shorter than 4 digits
+     * the whole thing is bulleted.
      */
     public fun maskPan(pan: String): String {
         val digits = digitsOnly(pan)

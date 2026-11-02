@@ -196,7 +196,6 @@ function Label({ text }: { text: string }) {
   return <Text style={[styles.label, font('Inter', 14, { color: StartColors.text })]}>{text}</Text>;
 }
 
-/** A muted line of explanation; `hint` sets it off from the chips above it. */
 /** Puts the Northwind Invest demo account back as a fresh install has it. */
 function InvestReset({ onReset }: { onReset: () => void }) {
   const { strings } = useL10n();
@@ -218,6 +217,7 @@ function InvestReset({ onReset }: { onReset: () => void }) {
   );
 }
 
+/** A muted line of explanation; `hint` sets it off from the chips above it. */
 function Note({ text, hint = false }: { text: string; hint?: boolean }) {
   return (
     <Text style={[hint && styles.hint, font('Inter', 13, { lineHeight: 18, color: StartColors.muted })]}>{text}</Text>

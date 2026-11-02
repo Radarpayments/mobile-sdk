@@ -43,7 +43,6 @@ struct SampleAppApp: App {
         }
         signal(SIGABRT) { sig in
             NSLog("[SigAbrt] received SIGABRT")
-            // re-raise default handler
             signal(SIGABRT, SIG_DFL)
             raise(SIGABRT)
         }

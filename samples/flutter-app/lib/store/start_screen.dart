@@ -140,7 +140,6 @@ class _StartScreenState extends State<StartScreen> {
   }
 }
 
-/// Brand name of [cover].
 LocalText coverName(CoverId cover) => switch (cover) {
   CoverId.furniture => (l) => l.coverFurnitureName,
   CoverId.coffee => (l) => l.coverCoffeeName,

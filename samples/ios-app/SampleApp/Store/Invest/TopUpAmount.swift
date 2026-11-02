@@ -65,7 +65,6 @@ struct TopUpAmount: Equatable {
 
 /// Where the top-up screen is in the transfer.
 enum TopUpStatus: Equatable {
-    /// Typing the amount.
     case editing
     /// The bank or the gateway refused; `message` is the SDK's text, when it has one.
     case declined(message: String?)

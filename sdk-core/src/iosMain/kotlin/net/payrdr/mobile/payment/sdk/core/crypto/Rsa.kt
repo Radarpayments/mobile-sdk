@@ -99,7 +99,6 @@ public actual class Rsa actual constructor() {
                 throw IllegalStateException("Algorithm rsaEncryptionPKCS1 not supported")
             }
 
-            // Create CFData for the plaintext bytes.
             val plainTextCf: CFDataRef =
                 data.usePinned { pinned ->
                     CFDataCreate(

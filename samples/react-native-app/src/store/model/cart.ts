@@ -22,12 +22,10 @@ export class Cart {
     return this.lines.reduce((sum, line) => sum + line.quantity, 0);
   }
 
-  /** True when there is nothing to pay for. */
   get isEmpty(): boolean {
     return this.lines.length === 0;
   }
 
-  /** Adds one `product`. */
   add(product: Product): Cart {
     const current = this.lines.find(line => line.product.id === product.id)?.quantity ?? 0;
     return current === 0

@@ -82,7 +82,6 @@ sealed class CheckoutState {
   const CheckoutState();
 }
 
-/// Nothing in progress.
 final class CheckoutIdle extends CheckoutState {
   const CheckoutIdle();
 }
@@ -195,7 +194,6 @@ class StoreCheckout extends ChangeNotifier {
   CheckoutState _state = const CheckoutIdle();
   bool _disposed = false;
 
-  /// Current step.
   CheckoutState get state => _state;
 
   bool get busy => _state is CheckoutRegistering || _state is CheckoutInSheet;

@@ -113,8 +113,6 @@ describe('parseRegisterResponse', () => {
   });
 });
 
-// ── AFT transfers (registerP2P) ──────────────────────────────────────────
-
 describe('GatewayOrderRegistrar, AFT transfer', () => {
   const transferReply = '{"errorCode":0,"errorMessage":"Successful","orderId":"md-aft","formUrl":"https://x"}';
 
@@ -169,8 +167,6 @@ describe('GatewayOrderRegistrar, AFT transfer', () => {
     expect(fetch.mock.calls[0][0]).toBe('https://gateway.test/payment/rest/register.do');
   });
 });
-
-// ── API V2 ───────────────────────────────────────────────────────────────
 
 // A session the dev gateway created, and the mdOrder of its paymentUrl.
 const sessionId = 'ps_2GRSigK2sUQKFSAZWbg2z7UuQxxjz7wqCjZqYyWRiq22aF8xxCDPua';

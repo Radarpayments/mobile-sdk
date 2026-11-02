@@ -25,7 +25,7 @@ import kotlin.time.Clock
  *  - the `SharedFlow<CardScannerResult>` the screen collects to invoke the caller's `onResult`
  *  - the timeout timer (started on `Scanning`, cancelled on any terminal state)
  *  - a 3-frame anti-flicker gate on incoming parse results.
- *  - structured [Logger] events per spec §11 (tag="CardScanner", no PAN digits ever logged).
+ *  - structured [Logger] events (tag="CardScanner", no PAN digits ever logged).
  *
  * Call `onPermissionResult` before any other event.
  */

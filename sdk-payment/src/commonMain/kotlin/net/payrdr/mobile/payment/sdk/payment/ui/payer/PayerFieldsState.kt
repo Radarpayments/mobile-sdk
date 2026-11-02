@@ -36,7 +36,7 @@ internal class PayerFieldsState(
 ) {
     private val prefill: Map<PayerField, String> = request.prefill + prefillOverride.filterValues { it.isNotBlank() }
 
-    // Dates are kept as typed (DD/MM/YYYY) and turned back into the gateway's YYYYMMDD in submitValues.
+    // Dates are kept as typed (DD.MM.YYYY) and turned back into the gateway's YYYYMMDD in submitValues.
     private val values =
         mutableStateMapOf<PayerField, String>().apply {
             putAll(prefill.mapValues { (field, value) -> if (field.isDate) TransferFields.dateForInput(value) else value })

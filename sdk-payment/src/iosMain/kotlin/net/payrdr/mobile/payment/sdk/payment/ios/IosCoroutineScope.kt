@@ -8,8 +8,7 @@ import kotlinx.coroutines.MainScope
  *
  * Kotlin/Native does not re-export `kotlinx.coroutines.MainScope()` in the generated
  * Obj-C header, so Swift consumers that need to pass a `scope` argument into
- * [SdkPayment.paymentFlow], [SdkPayment.completePayment], or
- * [SdkPaymentViewControllerFactory.make] would have no idiomatic way to obtain one.
+ * [SdkPayment.paymentFlow] or [SdkPayment.completePayment] would have no idiomatic way to obtain one.
  *
  * Usage from Swift: `IosCoroutineScopeKt.iosMainScope()`.
  */

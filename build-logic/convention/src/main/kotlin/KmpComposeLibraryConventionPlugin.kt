@@ -27,7 +27,6 @@ class KmpComposeLibraryConventionPlugin : Plugin<Project> {
 
         extensions.configure<ComposeExtension> {
             extensions.configure<ResourcesExtension> {
-                // package where the generated `Res` accessor and string table go
                 packageOfResClass = "net.payrdr.mobile.payment.sdk.${project.name.replace("-", ".")}.generated.resources"
                 publicResClass = false
                 generateResClass = ResourcesExtension.ResourceClassGeneration.Auto

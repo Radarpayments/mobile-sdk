@@ -189,8 +189,7 @@ public class AndroidGooglePayTokenProvider(
 
     private fun formatMajor(minor: Long): String {
         // NOTE: hardcoded 2-decimal formatting. Currencies with non-2 fractional digits
-        // (JPY=0, KWD/BHD/IQD/JOD/OMR/TND=3) will produce wrong totalPrice. Fix deferred
-        // to a later plan — see I2 in Batch 2a code review.
+        // (JPY=0, KWD/BHD/IQD/JOD/OMR/TND=3) will produce wrong totalPrice.
         val whole = minor / 100
         val fraction = (minor % 100).let { if (it < 0) -it else it }
         val frac = fraction.toString().padStart(2, '0')

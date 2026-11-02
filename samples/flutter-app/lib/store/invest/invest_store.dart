@@ -290,8 +290,6 @@ class _ChartPainter extends CustomPainter {
   bool shouldRepaint(_ChartPainter old) => old.points != points;
 }
 
-// ── Shared pieces ────────────────────────────────────────────────────────────────────────────────────────
-
 class _Card extends StatelessWidget {
   const _Card({required this.child, this.highlight = false});
 
@@ -489,8 +487,6 @@ class _ListRow extends StatelessWidget {
     child: Row(children: children),
   );
 }
-
-// ── Portfolio ────────────────────────────────────────────────────────────────────────────────────────────
 
 /// Northwind's home: the portfolio, its free cash and the latest operations. After a top-up the amounts count up
 /// to the new values and the free-cash card is outlined while the credit is fresh.
@@ -778,8 +774,6 @@ class _SectionTitle extends StatelessWidget {
     ),
   );
 }
-
-// ── Top-up ───────────────────────────────────────────────────────────────────────────────────────────────
 
 /// The amount to top up the account with, typed on the system keyboard. "Continue" registers the transfer and the
 /// SDK sheet takes it from there.
@@ -1083,8 +1077,6 @@ class _Banner extends StatelessWidget {
     );
   }
 }
-
-// ── Done ─────────────────────────────────────────────────────────────────────────────────────────────────
 
 /// The transfer went through: what was credited, to where, and the order to find it by at the gateway.
 class _Done extends StatelessWidget {

@@ -202,8 +202,6 @@ public class PaymentApiImpl(
             )
         }
 
-    // ── helpers ───────────────────────────────────────────────────────────────
-
     private suspend inline fun <reified T> HttpResponse.asBody(): T {
         assertSuccess(this)
         return body()

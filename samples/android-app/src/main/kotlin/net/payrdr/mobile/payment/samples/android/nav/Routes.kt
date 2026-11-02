@@ -16,6 +16,5 @@ object Routes {
     /** Home screen of [cover]. */
     fun cover(cover: CoverId) = "store/${cover.name}"
 
-    /** Result screen of [cover]. */
     fun result(cover: CoverId) = "store/${cover.name}/result"
 }

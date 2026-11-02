@@ -280,7 +280,6 @@ fun RegistrationError(
     }
 }
 
-/** Brand name of [cover]. */
 fun coverName(cover: CoverId): Int =
     when (cover) {
         CoverId.FURNITURE -> R.string.cover_furniture_name

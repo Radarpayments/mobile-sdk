@@ -20,10 +20,8 @@ data class Cart(
     /** Number of items, counting quantities. */
     val count: Int get() = lines.sumOf { it.quantity }
 
-    /** True when there is nothing to pay for. */
     val isEmpty: Boolean get() = lines.isEmpty()
 
-    /** Adds one [product]. */
     fun add(product: Product): Cart {
         val current = lines.find { it.product.id == product.id }?.quantity ?: 0
         return if (current == 0) copy(lines = lines + CartLine(product, 1)) else setQuantity(product.id, current + 1)
@@ -43,7 +41,6 @@ data class Cart(
                 },
         )
 
-    /** Empties the cart. */
     fun clear(): Cart = Cart()
 }
 

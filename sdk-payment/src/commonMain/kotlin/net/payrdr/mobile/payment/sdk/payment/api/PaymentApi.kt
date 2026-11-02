@@ -12,7 +12,8 @@ import net.payrdr.mobile.payment.sdk.payment.api.dto.response.ProcessFormRespons
 import net.payrdr.mobile.payment.sdk.payment.api.dto.response.SessionStatusResponse
 import net.payrdr.mobile.payment.sdk.payment.api.dto.response.UnbindCardResponse
 
-/** Payment gateway API. All methods throw [net.payrdr.mobile.payment.sdk.payment.exception.SdkPaymentApiException] on failure. *
+/** Payment gateway API. All methods throw [net.payrdr.mobile.payment.sdk.payment.exception.SdkPaymentApiException] on failure.
+ *
  * Implemented in Swift: SKIE names a `suspend` function of a Kotlin interface with a `__` prefix and a completion
  * handler there (e.g. `__performChallenge(challenge:completionHandler:)`).
  */

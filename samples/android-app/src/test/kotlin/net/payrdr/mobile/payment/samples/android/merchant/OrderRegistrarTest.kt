@@ -126,8 +126,6 @@ class OrderRegistrarTest {
             assertIs<OrderRegistration.Failed>(result)
         }
 
-    // ── API V2 ───────────────────────────────────────────────────────────────
-
     // A session the dev gateway created, and the mdOrder of its paymentUrl.
     private val sessionId = "ps_2GRSigK2sUQKFSAZWbg2z7UuQxxjz7wqCjZqYyWRiq22aF8xxCDPua"
     private val sessionMdOrder = "0180a01a-a8cb-75b8-8f9d-1a5f00ab8a11"
@@ -196,8 +194,6 @@ class OrderRegistrarTest {
     @Test fun `api key is not in toString`() {
         assertFalse(ApiV2SessionRegistrar(baseUrl, "key-1", http()).toString().contains("key-1"))
     }
-
-    // ── AFT transfers (registerP2P) ──────────────────────────────────────────
 
     @Test fun `an AFT order is registered as a one-leg transfer that returns to the sdk`() =
         runTest {

@@ -23,10 +23,8 @@ class Cart {
   /// Number of items, counting quantities.
   int get count => lines.fold(0, (sum, line) => sum + line.quantity);
 
-  /// True when there is nothing to pay for.
   bool get isEmpty => lines.isEmpty;
 
-  /// Adds one [product].
   Cart add(Product product) {
     final current = lines.where((line) => line.product.id == product.id).firstOrNull?.quantity ?? 0;
     return current == 0 ? Cart([...lines, CartLine(product, 1)]) : setQuantity(product.id, current + 1);

@@ -37,7 +37,6 @@ struct CoverStyle {
     func heading(_ size: CGFloat, _ weight: Font.Weight = .bold) -> Font { .custom(headingFont, size: size).weight(weight) }
     /// Body text in the brand font.
     func body(_ size: CGFloat, _ weight: Font.Weight = .regular) -> Font { .custom(bodyFont, size: size).weight(weight) }
-    /// Shape of buttons.
     var buttonShape: AnyShape { pillButtons ? AnyShape(Capsule()) : AnyShape(RoundedRectangle(cornerRadius: radius)) }
 }
 

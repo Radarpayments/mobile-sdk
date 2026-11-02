@@ -8,8 +8,6 @@ public open class SdkException(
     cause: Throwable? = null,
 ) : Exception(message, cause)
 
-// ── Network / API ──────────────────────────────────────────────────────────────
-
 /**
  * Payment backend returned an API-level error.
  *
@@ -30,8 +28,6 @@ public class SdkNetworkException(
     message: String? = null,
     cause: Throwable? = null,
 ) : SdkException(message, cause)
-
-// ── Transactional ──────────────────────────────────────────────────────────────
 
 /**
  * Payment was declined by the issuer or the gateway.
@@ -56,8 +52,6 @@ public class SdkTransactionException(
 public class SdkAlreadyPaidException(
     public val paymentId: String,
 ) : SdkException("Payment $paymentId already completed")
-
-// ── Session / order ────────────────────────────────────────────────────────────
 
 /**
  * Session lookup failed — session id does not exist on the server.
@@ -88,8 +82,6 @@ public class SdkInvalidSessionIdException(
     public val sessionId: String,
 ) : SdkException("Session id malformed: $sessionId")
 
-// ── Crypto ─────────────────────────────────────────────────────────────────────
-
 /**
  * Cryptogram generation failure.
  */
@@ -106,8 +98,6 @@ public class SdkInvalidPublicKeyException(
     cause: Throwable? = null,
 ) : SdkException(message, cause)
 
-// ── Config / state ─────────────────────────────────────────────────────────────
-
 /**
  * Merchant is missing required configuration — most notably the deprecated 3DS2 native SDK,
  * for which this SDK has no fallback. The caller should surface this as a hard failure.
@@ -121,8 +111,6 @@ public class SdkNotConfiguredException(
  */
 public class SdkCancelledByUserException : SdkException("Payment cancelled by user")
 
-// ── 3DS ────────────────────────────────────────────────────────────────────────
-
 /**
  * The 3DS v1 web-challenge flow failed — ACS returned error, redirect contained non-success
  * params, or SSL error occurred inside the WebView.
@@ -135,8 +123,6 @@ public class SdkThreeDsChallengeFailedException(
  * The 3DS v1 web-challenge took longer than the allowed window (default 5 min).
  */
 public class SdkThreeDsTimeoutException : SdkException("3DS challenge timed out")
-
-// ── Wallet (Google Pay / Apple Pay) ────────────────────────────────────────────
 
 /** Google Pay sheet / tokenization failure. */
 public class SdkGooglePayException(

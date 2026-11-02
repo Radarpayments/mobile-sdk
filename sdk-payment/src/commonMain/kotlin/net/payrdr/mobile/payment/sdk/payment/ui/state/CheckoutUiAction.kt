@@ -6,11 +6,10 @@ import net.payrdr.mobile.payment.sdk.payment.result.ProcessingStep
 import net.payrdr.mobile.payment.sdk.payment.result.SavedCardInfo
 
 /**
- * UI-layer view of the current [PaymentState]. Produced by [reduceUiAction] and consumed by
- * [net.payrdr.mobile.payment.sdk.payment.ui.PaymentCheckout] to decide which sub-screen to render.
+ * UI-layer view of the current [PaymentState]. Produced by [reduceUiAction].
  *
  * Note that `CardFormShown` can render two different sub-screens depending on whether saved cards
- * exist — the reducer picks [ShowCardList] vs [ShowCardForm] here rather than inside the composable.
+ * exist — the reducer picks [ShowCardList] vs [ShowCardForm].
  */
 public sealed interface CheckoutUiAction {
     /** Any transient "doing stuff" state. [step] = null means the very first Initializing state. */

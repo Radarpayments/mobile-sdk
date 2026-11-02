@@ -3,7 +3,6 @@ import { product, ticketFeeId } from '../model/catalog';
 
 /** Seats picked for the concert: a category, how many (1–`maxTickets`), plus one service fee per order. */
 export class TicketOrder {
-  /** Most seats one order can hold. */
   static readonly maxTickets = 6;
 
   constructor(readonly categoryId: string = 'balcony', readonly quantity: number = 2) {}

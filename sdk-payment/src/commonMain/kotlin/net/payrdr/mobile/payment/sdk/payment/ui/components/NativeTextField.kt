@@ -8,7 +8,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 
 /**
- * Platform-hinted content type for [NativeTextField]. Maps to `AutofillType` on Android and
+ * Platform-hinted content type for [NativeTextField]. Maps to the autofill `ContentType` on Android and
  * `UITextContentType` on iOS so that Keychain / Google Autofill / card scanners can populate
  * the field automatically. It also picks the keyboard, tabular digits and CVV masking.
  */
@@ -57,11 +57,9 @@ internal val TextFieldContentType.isNumeric: Boolean
  * by the caller (see `FieldBox`), which learns about focus through [onFocusChange].
  * [TextFieldContentType.CREDIT_CARD_SECURITY_CODE] input is masked.
  *
- * @param value current text
- * @param onValueChange callback when the user edits
  * @param placeholder placeholder text shown when [value] is empty
  * @param keyboardOptions keyboard type / IME action hints
- * @param contentType autofill hint — maps to AutofillType (Android) / UITextContentType (iOS)
+ * @param contentType autofill hint — maps to the autofill ContentType (Android) / UITextContentType (iOS)
  * @param isError the field currently shows an error (the frame draws it)
  * @param enabled when false, the field is read-only and greyed out
  * @param modifier size / padding of the underlying control

@@ -136,7 +136,6 @@ export function products(cover: CoverId): readonly Product[] {
   return catalog[cover];
 }
 
-/** The product `id` of `cover`. */
 export function product(cover: CoverId, id: string): Product {
   const found = catalog[cover].find(item => item.id === id);
   if (!found) throw new Error(`No product ${id} in ${cover}`);
