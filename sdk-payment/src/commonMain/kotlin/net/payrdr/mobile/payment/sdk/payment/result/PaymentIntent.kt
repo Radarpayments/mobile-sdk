@@ -66,7 +66,7 @@ public sealed interface PaymentIntent {
      */
     public data object BackToPaymentMethods : PaymentIntent
 
-    /** User cancelled; flow should move to a failed Completed state. */
+    /** User cancelled; flow should move to a Completed state. */
     public data object Cancel : PaymentIntent
 }
 

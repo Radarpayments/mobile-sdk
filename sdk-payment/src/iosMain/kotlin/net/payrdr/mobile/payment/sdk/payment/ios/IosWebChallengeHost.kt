@@ -50,21 +50,11 @@ import kotlin.coroutines.resume
  * The 5-min timeout is enforced by `withTimeout(challenge.timeoutMs)`. When the timeout fires, the
  * presented VC is dismissed and [ThreeDsResult.TimedOut] is returned.
  *
+ * The form body is built by [AcsForm]: Foundation's query character set leaves `+` unescaped, which the bank reads
+ * as a space in base64 PaReq.
+ *
  * @param presentingViewControllerProvider lazily resolves the presenting VC at challenge time; lets
  *        the host survive owner-VC recreation.
- *
- * Deviations from plan (K/N 2.1 corrections):
- * - ObjC category methods on Foundation types (`setHTTPMethod`, `setHTTPBody`, `addValue`) and UIKit
- *   extension properties (`navigationItem`) are NOT in scope just from the class import in K/N 2.1;
- *   each must be explicitly imported (e.g. `import platform.Foundation.setHTTPMethod`).
- * - `UIBarButtonSystemItemCancel` accessed as `UIBarButtonSystemItem.UIBarButtonSystemItemCancel`
- *   (CEnum member access, not a top-level constant).
- * - The WebView field is named `wkWebView` (not `webView`) to avoid a name clash with the
- *   `WKNavigationDelegateProtocol.webView(…)` override method.
- * - `request.setValue(…, forHTTPHeaderField:)` replaced with `request.addValue(…)` to avoid the
- *   Kotlin `MutableMap.setValue` property-delegate extension ambiguity.
- * - The form body is built by [AcsForm]: Foundation's query character set leaves `+` unescaped, which the bank reads
- *   as a space in base64 PaReq.
  */
 @OptIn(ExperimentalForeignApi::class)
 public class IosWebChallengeHost(

@@ -67,12 +67,10 @@ class ApplePayRequestBuilderTest {
                 countryCode = "US",
                 merchantDisplayName = "Test Merchant",
             )
-        // raw value = bitmask of all three flags
         val expectedMask = PKMerchantCapability3DS or PKMerchantCapabilityCredit or PKMerchantCapabilityDebit
         request.merchantCapabilities shouldBe expectedMask
 
         request.paymentSummaryItems.size shouldBe 1
-        // summary item label = merchantDisplayName
         @Suppress("UNCHECKED_CAST")
         val firstItem = request.paymentSummaryItems[0] as PKPaymentSummaryItem
         firstItem.label shouldBe "Test Merchant"

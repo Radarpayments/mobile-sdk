@@ -15,7 +15,7 @@ import net.payrdr.mobile.payment.sdk.payment.config.SdkPaymentConfig
  * supply their own engine override.
  *
  * Installs:
- *  - `ContentNegotiation` with a lenient JSON codec (matches Plan 2 defaults).
+ *  - `ContentNegotiation` with a lenient JSON codec.
  *  - `HttpTimeout` — connect 15s, request 60s, socket 60s.
  *  - `defaultRequest { Accept: application/json }`.
  */

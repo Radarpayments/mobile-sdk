@@ -162,7 +162,6 @@ export class StoreCheckout extends Listenable {
     super();
   }
 
-  /** Current step. */
   get state(): CheckoutState {
     return this.current;
   }

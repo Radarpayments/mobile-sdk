@@ -1,10 +1,3 @@
-//
-//  ContentView.swift
-//  SampleApp
-//
-//  Created by Роман Унт on 23. 4. 2026..
-//
-
 import SwiftUI
 
 struct ContentView: View {

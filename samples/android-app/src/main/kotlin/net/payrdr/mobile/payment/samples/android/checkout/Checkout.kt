@@ -57,7 +57,6 @@ sealed interface CheckoutOutcome {
 
 /** Where the store's "Pay" button is in the payment path. */
 sealed interface CheckoutState {
-    /** Nothing in progress. */
     data object Idle : CheckoutState
 
     /** Step 2: the order is being registered. */
@@ -122,7 +121,6 @@ class StoreCheckout internal constructor(
 ) {
     private val mutableState = MutableStateFlow<CheckoutState>(CheckoutState.Idle)
 
-    /** Current step. */
     val state: StateFlow<CheckoutState> = mutableState.asStateFlow()
 
     /** Pays [amountMinor] euro cents; [clientId] = the demo buyer with saved cards, null = guest. */

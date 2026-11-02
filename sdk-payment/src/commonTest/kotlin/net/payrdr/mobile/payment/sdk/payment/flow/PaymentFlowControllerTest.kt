@@ -1248,10 +1248,8 @@ class PaymentFlowControllerTest {
             )
             advanceUntilIdle()
 
-            // State should be CardFormShown again, not Completed.
             val stateAfterCancel = controller.state.value
             stateAfterCancel.shouldBeInstanceOf<PaymentState.CardFormShown>()
-            // Backend was not called.
             result.api.googlePayCalls.shouldBeEmpty()
         }
 

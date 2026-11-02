@@ -199,7 +199,6 @@ struct RegistrationErrorView: View {
     }
 }
 
-/// Brand name of `cover`.
 func coverName(_ cover: CoverId) -> String {
     switch cover {
     case .furniture: return "Hearth & Co"

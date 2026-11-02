@@ -13,7 +13,6 @@ import { photos, type CoverId, type LocalText } from './model/catalog';
 import { coverStyle, font, heading, StartColors } from './theme/coverStyle';
 import { photoFill } from '../ui/photoFill';
 
-/** Brand name of `cover`. */
 export const coverName: Record<CoverId, LocalText> = {
   furniture: s => s.coverFurnitureName,
   coffee: s => s.coverCoffeeName,

@@ -149,10 +149,8 @@ ZwIDAQAB
     /** Public key used by the SDK Core demo. */
     suspend fun setPubKeyPem(v: String) = context.dataStore.edit { it[Keys.PUB_KEY_PEM] = v }
 
-    /** SDK Core demo binding id. */
     suspend fun setBindingId(v: String) = context.dataStore.edit { it[Keys.BINDING_ID] = v }
 
-    /** SDK Core demo variant. */
     suspend fun setSdkCoreVariant(v: String) = context.dataStore.edit { it[Keys.SDK_CORE_VARIANT] = v }
 
     /** Google Pay gateway name and/or merchant id; null leaves a value as it is. */
@@ -209,7 +207,6 @@ ZwIDAQAB
     /** Remembers the mdOrder of the last registered order, shown in the developer settings. */
     suspend fun setLastMdOrder(md: String) = context.dataStore.edit { it[Keys.LAST_MD_ORDER] = md }
 
-    /** Chooses the SDK sheet theme. */
     suspend fun setSheetTheme(t: SheetThemeOverride) = context.dataStore.edit { it[Keys.SHEET_THEME] = t.name }
 
     /** Sets the SDK language; null follows the system. */

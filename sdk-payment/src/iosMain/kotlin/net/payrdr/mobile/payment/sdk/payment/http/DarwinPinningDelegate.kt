@@ -54,7 +54,7 @@ internal class DarwinPinningDelegate(
         }
 
         val host = protectionSpace.host.lowercase().trimEnd('.')
-        // I2 fix: if no pins configured for this host, fall through to default validation
+        // If no pins configured for this host, fall through to default validation
         // — aligns with OkHttp's CertificatePinner semantics (only pinned hosts are enforced).
         if (config.entries.none { it.hostname == host }) {
             return NSURLSessionAuthChallengePerformDefaultHandling to null

@@ -3,7 +3,7 @@ package net.payrdr.mobile.payment.sdk.core.crypto
 /**
  * Platform-specific RSA/PKCS1 encryptor.
  *
- * Android actual: `javax.crypto.Cipher.getInstance("RSA/NONE/PKCS1Padding")` (Android Keystore BC provider).
+ * Android actual: `javax.crypto.Cipher.getInstance("RSA/ECB/PKCS1Padding")`.
  * iOS actual: `SecKeyCreateEncryptedData` with algorithm `.rsaEncryptionPKCS1`.
  */
 public expect class Rsa() {

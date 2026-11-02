@@ -26,7 +26,6 @@
             </intent-filter>
         </activity>
 
-        <!-- Google Pay Wallet API enablement -->
         <meta-data
             android:name="com.google.android.gms.wallet.api.enabled"
             android:value="true" />

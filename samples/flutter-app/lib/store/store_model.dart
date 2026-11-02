@@ -21,7 +21,6 @@ class StoreModel extends ChangeNotifier {
 
   static const _firstOrderNumber = 42;
 
-  /// Cart of [cover] right now.
   Cart cart(CoverId cover) => _carts[cover]!;
 
   /// The last paid order of [cover], or null when nothing was paid there yet.

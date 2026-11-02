@@ -9,16 +9,13 @@ public object CardNetworkResolver {
         val digits = cardNumber.filter { it.isDigit() }
         if (digits.isEmpty()) return CardNetwork.UNKNOWN
 
-        // Visa — starts with 4
         if (digits[0] == '4') return CardNetwork.VISA
 
-        // Amex — 34 or 37 (exactly two chars)
         if (digits.length >= 2) {
             val twoPrefix = digits.take(2)
             if (twoPrefix == "34" || twoPrefix == "37") return CardNetwork.AMEX
         }
 
-        // Mastercard — 51–55 (two-digit) OR 2221–2720 (four-digit)
         if (digits.length >= 2) {
             val twoInt = digits.take(2).toIntOrNull()
             if (twoInt != null && twoInt in 51..55) return CardNetwork.MASTERCARD
@@ -28,7 +25,6 @@ public object CardNetworkResolver {
             if (fourInt != null && fourInt in 2221..2720) return CardNetwork.MASTERCARD
         }
 
-        // UnionPay — 62
         if (digits.length >= 2) {
             val twoPrefix = digits.take(2)
             if (twoPrefix == "62") return CardNetwork.UNIONPAY
@@ -43,13 +39,9 @@ public object CardNetworkResolver {
         val three = digits.take(3).toIntOrNull().takeIf { digits.length >= 3 }
         val four = digits.take(4).toIntOrNull().takeIf { digits.length >= 4 }
         return when {
-            // Diners Club — 36, 38–39, 300–305, 3095
             two == 36 || two == 38 || two == 39 || three in 300..305 || four == 3095 -> CardNetwork.DINERS
-            // JCB — 3528–3589
             four in 3528..3589 -> CardNetwork.JCB
-            // Discover — 6011, 644–649, 65
             four == 6011 || three in 644..649 || two == 65 -> CardNetwork.DISCOVER
-            // Maestro — 50, 56–58, 6304, 6759, 6761–6763
             two == 50 || two in 56..58 || four == 6304 || four == 6759 || four in 6761..6763 -> CardNetwork.MAESTRO
             else -> CardNetwork.UNKNOWN
         }

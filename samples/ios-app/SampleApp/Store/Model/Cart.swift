@@ -16,10 +16,8 @@ struct Cart: Equatable {
     var totalMinor: Int64 { lines.reduce(0) { $0 + $1.product.priceMinor * Int64($1.quantity) } }
     /// Number of items, counting quantities.
     var count: Int { lines.reduce(0) { $0 + $1.quantity } }
-    /// True when there is nothing to pay for.
     var isEmpty: Bool { lines.isEmpty }
 
-    /// Adds one `product`.
     mutating func add(_ product: Product) {
         if let i = lines.firstIndex(where: { $0.product.id == product.id }) {
             lines[i].quantity += 1
@@ -37,7 +35,6 @@ struct Cart: Equatable {
         }
     }
 
-    /// Empties the cart.
     mutating func clear() { lines = [] }
 }
 

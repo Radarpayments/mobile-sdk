@@ -141,7 +141,6 @@ class SdkCoreViewModel {
                 )
         }
 
-    /** Invokes `sdk-core.generate(...)` synchronously and returns the result. */
     fun generate(): TokenResult {
         val config = SdkCoreConfig(cardParams = buildParams(), timestamp = System.currentTimeMillis())
         return SdkCore().generate(config)

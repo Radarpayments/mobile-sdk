@@ -5,7 +5,6 @@ import '../model/catalog.dart';
 class TicketOrder {
   const TicketOrder({this.categoryId = 'balcony', this.quantity = 2});
 
-  /// Most seats one order can hold.
   static const maxTickets = 6;
 
   final String categoryId;

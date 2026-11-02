@@ -70,13 +70,10 @@ import net.payrdr.mobile.payment.sdk.core.validation.ValidationCodes
 /** Test tag of the "Get token" button. */
 const val CORE_GENERATE_TAG = "core_generate"
 
-/** Test tag of the generated token. */
 const val CORE_TOKEN_TAG = "core_token"
 
-/** Test tag of the input for [field]. */
 fun coreFieldTag(field: CoreField) = "core_field_${field.name}"
 
-/** Test tag of the error shown under [field]. */
 fun coreErrorTag(field: CoreField) = "core_error_${field.name}"
 
 /**

@@ -44,7 +44,6 @@ class StoreViewModel : ViewModel() {
         edit(cover) { last }
     }
 
-    /** Cart of [cover] right now. */
     fun cart(cover: CoverId): Cart = carts.value.getValue(cover)
 
     /** Adds one [product] to the cart of [cover]. */

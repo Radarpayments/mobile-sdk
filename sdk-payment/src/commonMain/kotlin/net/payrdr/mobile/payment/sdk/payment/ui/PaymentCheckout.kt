@@ -153,8 +153,7 @@ public enum class CheckoutPresentation {
  * FSM only sees the submitted intents.
  *
  * Use this directly when embedding the checkout in your own screen/sheet. For turnkey Activity /
- * ViewController hosting, go through `PayrdrCheckout` (Android) or
- * `SdkPaymentViewControllerFactory` (iOS) instead.
+ * ViewController hosting, go through `PayrdrCheckout` instead.
  *
  * @param config SDK config (drives theme, wallet buttons, scanner and the result screen)
  * @param controller FSM to observe/drive

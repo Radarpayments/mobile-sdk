@@ -178,7 +178,7 @@ internal fun PayerFieldsSection(
 }
 
 /**
- * The sender or the recipient of a transfer as one framed group, a field per row: text, a date typed `DD/MM/YYYY`, a
+ * The sender or the recipient of a transfer as one framed group, a field per row: text, a date typed `DD.MM.YYYY`, a
  * country, or a code picked from a list (account and document types).
  */
 @Composable

@@ -79,7 +79,6 @@ sealed class TopUpStatus {
   bool canContinue(TopUpAmount amount) => amount.valid && (this is TopUpEditing || this is TopUpDeclined);
 }
 
-/// Typing the amount.
 final class TopUpEditing extends TopUpStatus {
   const TopUpEditing();
 

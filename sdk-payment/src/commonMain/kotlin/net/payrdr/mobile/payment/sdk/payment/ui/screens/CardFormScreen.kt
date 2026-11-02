@@ -133,8 +133,6 @@ private const val CARD_HOLDER_FIELD_ENABLED = false
  *
  * @param config top-level SDK config (.googlePay / .applePay / .cardScannerProvider are read here)
  * @param onSubmit fires when the user taps Pay with fully-valid fields
- * @param onGooglePayClick fires when the Google Pay button is tapped
- * @param onApplePayClick fires when the Apple Pay button is tapped
  * @param onBack when non-null, the top bar gets a back (or close, see [backIsClose]) action
  * @param order amount for the Pay button and the top bar; null = plain "Pay"
  * @param canSaveCard show the "Save card" checkbox

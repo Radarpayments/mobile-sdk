@@ -74,7 +74,6 @@ import org.jetbrains.compose.resources.stringResource
  *  - failure: cross, amount, the bank's reason, the technical error as a small code chip, and
  *    "Pay with another card" (if supported) + Close.
  *
- * @param result the terminal result
  * @param onClose invoked when the user taps Done / Close; also the navigation-up handler
  * @param onRetry optional "pay with another card" handler — when null, the button is hidden
  * @param receipt final order details; null hides the receipt

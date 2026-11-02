@@ -26,7 +26,6 @@ internal fun ApplePayNetwork.toPkPaymentNetwork(): String =
         ApplePayNetwork.VISA -> PKPaymentNetworkVisa!!
     }
 
-/** Map capability enum-set to PKMerchantCapability bitmask. */
 internal fun Set<ApplePayMerchantCapability>.toPkMerchantCapabilityMask(): ULong {
     var mask: ULong = 0u
     if (ApplePayMerchantCapability.THREE_D_SECURE in this) mask = mask or PKMerchantCapability3DS

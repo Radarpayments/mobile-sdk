@@ -30,7 +30,6 @@ data class TicketOrder(
 
     /** Limits of an order. */
     companion object {
-        /** Most seats one order can hold. */
         const val MAX_TICKETS = 6
     }
 }

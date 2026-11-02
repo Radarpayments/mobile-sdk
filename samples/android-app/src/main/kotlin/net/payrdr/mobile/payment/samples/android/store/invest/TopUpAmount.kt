@@ -73,13 +73,10 @@ data class TopUpAmount(
 
 /** Where the top-up screen is in the transfer. */
 sealed interface TopUpStatus {
-    /** Typing the amount. */
     data object Editing : TopUpStatus
 
-    /** The order is being registered. */
     data object Registering : TopUpStatus
 
-    /** The SDK sheet is open. */
     data object InSheet : TopUpStatus
 
     /** The bank or the gateway refused; [message] is the SDK's text, when it has one. */

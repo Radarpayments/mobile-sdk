@@ -23,7 +23,6 @@ export function isLanguageCode(code: string | undefined): code is LanguageCode {
 
 const cache = new Map<LanguageCode, Strings>();
 
-/** The demo's texts in `language`. */
 export function stringsFor(language: LanguageCode): Strings {
   const cached = cache.get(language);
   if (cached) return cached;

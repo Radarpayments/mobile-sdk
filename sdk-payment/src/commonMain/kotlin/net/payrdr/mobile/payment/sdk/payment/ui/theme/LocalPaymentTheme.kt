@@ -109,7 +109,6 @@ public fun PaymentThemeProvider(
     }
 }
 
-/** Press indication that draws nothing. */
 private object NoIndication : IndicationNodeFactory {
     override fun create(interactionSource: InteractionSource): DelegatableNode = object : Modifier.Node() {}
 

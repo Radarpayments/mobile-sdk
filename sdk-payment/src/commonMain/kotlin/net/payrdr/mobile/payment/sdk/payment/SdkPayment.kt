@@ -133,7 +133,6 @@ public class SdkPayment internal constructor(
 
     /** SDK metadata + primary factory for [SdkPayment]. */
     public companion object {
-        /** Current SDK version. */
         public const val VERSION: String = "4.0.0-SNAPSHOT"
 
         /** The SDK for [config]; it builds its own network layer from it. */

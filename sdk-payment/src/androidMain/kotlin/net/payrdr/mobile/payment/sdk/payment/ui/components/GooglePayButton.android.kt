@@ -29,11 +29,6 @@ import org.jetbrains.compose.resources.stringResource
 /**
  * Android actual: real Google Pay [PayButton] from play-services-wallet if available;
  * Material fallback otherwise.
- *
- * The `allowedPaymentMethods` JSON used by the button's style engine is a minimal
- * `isReadyToPay` envelope — the full PaymentDataRequest is built just-in-time by
- * [net.payrdr.mobile.payment.sdk.payment.gpay.AndroidGooglePayTokenProvider.requestPaymentToken]
- * when the user taps.
  */
 @Composable
 public actual fun GooglePayButton(

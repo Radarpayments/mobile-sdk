@@ -150,8 +150,7 @@ internal expect fun pixelsToImageBitmap(
 
 /**
  * One shape of the mesh: where the colour points travel and how space is bent before blending.
- * Values match the generator in `.superpowers/mesh-backgrounds`; trajectories are fixed so that every
- * device draws the same picture.
+ * Trajectories are fixed so that every device draws the same picture.
  *
  * @property power weight exponent: 1/d^power — higher gives crisper colour regions
  * @property flow strength of the diagonal "stream" displacement (0 = none)

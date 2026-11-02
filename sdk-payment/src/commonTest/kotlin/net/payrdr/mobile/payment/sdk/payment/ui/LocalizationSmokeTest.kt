@@ -37,7 +37,7 @@ import net.payrdr.mobile.payment.sdk.sdk.payment.generated.resources.threeds_tit
 import kotlin.test.Test
 
 /**
- * Smoke test: every string resource referenced by Plan-3 UI is addressable via the generated
+ * Smoke test: every string resource referenced by the UI is addressable via the generated
  * `Res.string.*` accessor. If a resource is renamed or dropped, Kotlin compilation of this file
  * fails — catching the regression at compile time rather than at first user interaction.
  */

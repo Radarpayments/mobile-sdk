@@ -28,8 +28,6 @@ import kotlin.test.Test
 private const val BASE_URL = "https://example.com"
 
 class PaymentApiImplTest {
-    // ── getSessionStatus ─────────────────────────────────────────────────────
-
     @Test fun `getSessionStatus POSTs to correct path and parses response`() =
         runTest {
             val recorded = mutableListOf<HttpRequestData>()
@@ -77,8 +75,6 @@ class PaymentApiImplTest {
 
             shouldThrow<SdkPaymentApiException> { api.getSessionStatus("ORDER-1") }
         }
-
-    // ── processForm ──────────────────────────────────────────────────────────
 
     @Test fun `processForm sends expected body fields`() =
         runTest {
@@ -140,8 +136,6 @@ class PaymentApiImplTest {
             r.termUrl shouldBe "https://t"
         }
 
-    // ── processBindingForm ───────────────────────────────────────────────────
-
     @Test fun `processBindingForm hits binding endpoint`() =
         runTest {
             val recorded = mutableListOf<HttpRequestData>()
@@ -156,8 +150,6 @@ class PaymentApiImplTest {
 
             recorded.single().url.encodedPath shouldBe "/rest/processBindingForm.do"
         }
-
-    // ── googlePayProcessForm ─────────────────────────────────────────────────
 
     @Test fun `googlePayProcessForm sends JSON body`() =
         runTest {
@@ -181,8 +173,6 @@ class PaymentApiImplTest {
             body shouldContain "\"paymentToken\":\"G-TOK\""
             body shouldContain "\"mdOrder\":\"O-1\""
         }
-
-    // ── p2p perform (AFT) ────────────────────────────────────────────────────
 
     private suspend fun p2pBody(recorded: List<HttpRequestData>): kotlinx.serialization.json.JsonObject =
         kotlinx.serialization.json.Json
@@ -305,8 +295,6 @@ class PaymentApiImplTest {
             response.error shouldBe null
         }
 
-    // ── applePayProcessForm ──────────────────────────────────────────────────
-
     @Test fun `applePayProcessForm sends JSON body`() =
         runTest {
             val recorded = mutableListOf<HttpRequestData>()
@@ -346,8 +334,6 @@ class PaymentApiImplTest {
             response.error?.message shouldBe "Bad [paymentToken]"
         }
 
-    // ── finish3dsVer2PaymentAnonymous ───────────────────────────────────────
-
     @Test fun `finish3dsVer2PaymentAnonymous sends tx id`() =
         runTest {
             val recorded = mutableListOf<HttpRequestData>()
@@ -369,8 +355,6 @@ class PaymentApiImplTest {
             recorded.single().url.encodedPath shouldBe "/rest/finish3dsVer2PaymentAnonymous.do"
             body shouldContain "threeDSServerTransId=TX-1"
         }
-
-    // ── getFinishedPaymentInfo ───────────────────────────────────────────────
 
     @Test fun `getFinishedPaymentInfo parses status`() =
         runTest {
@@ -402,8 +386,6 @@ class PaymentApiImplTest {
             r.status shouldBe null
         }
 
-    // ── getPaymentSettings ───────────────────────────────────────────────────
-
     @Test fun `getPaymentSettings is a GET with login query param and reads every setting`() =
         runTest {
             val recorded = mutableListOf<HttpRequestData>()
@@ -434,8 +416,6 @@ class PaymentApiImplTest {
 
             api.getPaymentSettings(login = "merchant-login").values shouldBe emptyMap()
         }
-
-    // ── unbindCardAnonymous ──────────────────────────────────────────────────
 
     @Test fun `unbindCardAnonymous posts binding id and order`() =
         runTest {

@@ -13,7 +13,7 @@ final class SdkCoreFormModelTests: XCTestCase {
         m.mdOrder = "c400b41a-aa3d-43db-8727-ac4ca9e8f701"
         m.pubKeyPem = "-----BEGIN PUBLIC KEY-----\nabc\n-----END PUBLIC KEY-----"
         let params = m.buildParams()
-        XCTAssertNotNil(params) // factory returns non-null PaymentCardParams
+        XCTAssertNotNil(params)
     }
 
     func test_instantVariant_buildsParams() {

@@ -176,8 +176,6 @@ export function InvestTile({ onPress }: { onPress: () => void }) {
   );
 }
 
-// ── Chart ────────────────────────────────────────────────────────────────────────────────────────────────
-
 /** Periods of the portfolio chart; each shows its own fixed curve (the demo has no price history). */
 const periods = {
   week: [0.55, 0.5, 0.58, 0.52, 0.6, 0.57, 0.66],
@@ -232,8 +230,6 @@ function PortfolioChart({ period, style }: { period: Period; style?: object }) {
     </View>
   );
 }
-
-// ── Shared pieces ────────────────────────────────────────────────────────────────────────────────────────
 
 function Card({ children, highlight = false }: { children: ReactNode; highlight?: boolean }) {
   return <View style={[styles.card, highlight && styles.cardHighlight]}>{children}</View>;
@@ -365,8 +361,6 @@ function CountedEur({ minor, style }: { minor: number; style: TextStyle }) {
 function ListRow({ divider, children }: { divider: boolean; children: ReactNode }) {
   return <View style={[styles.listRow, divider && styles.divider]}>{children}</View>;
 }
-
-// ── Portfolio ────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Northwind's home: the portfolio, its free cash and the latest operations. After a top-up the amounts count up to
@@ -525,8 +519,6 @@ function SectionTitle({ title, trailing }: { title: string; trailing?: string })
   );
 }
 
-// ── Top-up ───────────────────────────────────────────────────────────────────────────────────────────────
-
 /**
  * The amount to top up the account with, typed on the system keyboard. "Continue" registers the transfer and the
  * SDK sheet takes it from there; `children` is the demo panel row and a registration error, if any.
@@ -661,8 +653,6 @@ function Banner({ status }: { status: TopUpStatus }) {
     </View>
   );
 }
-
-// ── Done ─────────────────────────────────────────────────────────────────────────────────────────────────
 
 /** The transfer went through: what was credited, to where, and the order to find it by at the gateway. */
 function Done({

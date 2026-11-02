@@ -6,7 +6,6 @@ package net.payrdr.mobile.payment.sdk.payment.threeds
  *
  * @property mdOrder order id (echoed back in the redirect query)
  * @property acsUrl Access Control Server endpoint
- * @property paReq pareq parameter
  * @property md the MD parameter, same as mdOrder
  * @property termUrl the TermUrl to embed in the form
  * @property returnUrlPrefix prefix the WebView client must recognize as success/failure redirect
