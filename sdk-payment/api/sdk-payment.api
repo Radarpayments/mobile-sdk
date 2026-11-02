@@ -2209,12 +2209,6 @@ public final class net/payrdr/mobile/payment/sdk/payment/ui/components/CardNumbe
 	public static final fun CardNumberField (Ljava/lang/String;Lkotlin/jvm/functions/Function1;ZLjava/lang/String;Lkotlin/jvm/functions/Function3;Landroidx/compose/ui/Modifier;ZLandroidx/compose/runtime/Composer;II)V
 }
 
-public final class net/payrdr/mobile/payment/sdk/payment/ui/components/ComposableSingletons$CheckoutChromeKt {
-	public static final field INSTANCE Lnet/payrdr/mobile/payment/sdk/payment/ui/components/ComposableSingletons$CheckoutChromeKt;
-	public fun <init> ()V
-	public final fun getLambda$-1860110837$sdk_payment_release ()Lkotlin/jvm/functions/Function3;
-}
-
 public final class net/payrdr/mobile/payment/sdk/payment/ui/components/ComposableSingletons$GooglePayButton_androidKt {
 	public static final field INSTANCE Lnet/payrdr/mobile/payment/sdk/payment/ui/components/ComposableSingletons$GooglePayButton_androidKt;
 	public fun <init> ()V

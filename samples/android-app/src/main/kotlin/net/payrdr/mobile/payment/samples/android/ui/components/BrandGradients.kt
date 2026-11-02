@@ -28,7 +28,6 @@ data class Gradient(
 )
 
 object BrandGradients {
-    val CtaPrimary = Gradient(listOf(BrandColors.Indigo, BrandColors.Violet))
     val Indigo = Gradient(listOf(BrandColors.IndigoLight, BrandColors.Indigo))
     val Emerald = Gradient(listOf(BrandColors.EmeraldLight, BrandColors.Emerald))
     val Amber = Gradient(listOf(BrandColors.AmberLight, BrandColors.Amber))

@@ -80,7 +80,6 @@
     <!-- Card scan -->
     <string name="scan_title">Scanați cardul</string>
     <string name="scan_body">Camera citește numărul și data expirării cardului. Fotografiile nu sunt salvate și nu sunt trimise nicăieri.</string>
-    <string name="scan_continue">Continuați</string>
     <string name="scan_turn_on">Porniți camera</string>
     <string name="scan_manual">Introduceți manual</string>
 

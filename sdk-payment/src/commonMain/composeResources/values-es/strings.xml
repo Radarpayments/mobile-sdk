@@ -80,7 +80,6 @@
     <!-- Card scan -->
     <string name="scan_title">Escanea tu tarjeta</string>
     <string name="scan_body">La cámara lee el número y la fecha de caducidad de la tarjeta. Las fotos no se guardan ni se envían a ningún sitio.</string>
-    <string name="scan_continue">Continuar</string>
     <string name="scan_turn_on">Activar la cámara</string>
     <string name="scan_manual">Introducir manualmente</string>
 

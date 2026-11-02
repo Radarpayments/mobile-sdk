@@ -80,7 +80,6 @@
     <!-- Card scan -->
     <string name="scan_title">Сканирайте картата</string>
     <string name="scan_body">Камерата разчита номера и срока на валидност на картата. Снимките не се запазват и не се изпращат никъде.</string>
-    <string name="scan_continue">Продължи</string>
     <string name="scan_turn_on">Включете камерата</string>
     <string name="scan_manual">Въведи ръчно</string>
 
