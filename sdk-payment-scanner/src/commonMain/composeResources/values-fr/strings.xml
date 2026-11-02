@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="scan_hint">Pointez la caméra vers votre carte</string>
+    <string name="scan_detected">Carte détectée, ne bougez plus</string>
+    <string name="scan_close">Fermer le scanner</string>
+    <string name="scan_torch">Allumer/éteindre la lampe</string>
+    <string name="scan_manual_entry">Saisir manuellement</string>
+    <string name="scan_retry">Réessayer</string>
+
+    <string name="scan_permission_required_title">Accès à la caméra requis</string>
+    <string name="scan_permission_required_body">Pour scanner votre carte, autorisez l’accès à la caméra.</string>
+    <string name="scan_permission_denied_open_settings">Ouvrir les paramètres</string>
+
+    <string name="scan_timeout_title">Impossible de lire votre carte</string>
+    <string name="scan_timeout_body">Réessayez avec un meilleur éclairage ou saisissez les informations manuellement.</string>
+
+    <string name="scan_camera_unavailable_title">Caméra indisponible</string>
+    <string name="scan_camera_unavailable_body">Impossible de démarrer la caméra de votre appareil. Saisissez les informations manuellement.</string>
+</resources>

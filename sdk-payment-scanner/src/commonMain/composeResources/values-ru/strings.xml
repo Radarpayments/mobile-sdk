@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="scan_hint">Наведите камеру на карту</string>
+    <string name="scan_detected">Карта найдена, не двигайте её</string>
+    <string name="scan_close">Закрыть сканер</string>
+    <string name="scan_torch">Включить/выключить фонарик</string>
+    <string name="scan_manual_entry">Ввести вручную</string>
+    <string name="scan_retry">Попробовать ещё раз</string>
+
+    <string name="scan_permission_required_title">Нужен доступ к камере</string>
+    <string name="scan_permission_required_body">Чтобы отсканировать карту, разрешите приложению использовать камеру.</string>
+    <string name="scan_permission_denied_open_settings">Открыть настройки</string>
+
+    <string name="scan_timeout_title">Не удалось распознать карту</string>
+    <string name="scan_timeout_body">Попробуйте при лучшем освещении или введите данные вручную.</string>
+
+    <string name="scan_camera_unavailable_title">Камера недоступна</string>
+    <string name="scan_camera_unavailable_body">Не удалось запустить камеру устройства. Введите данные вручную.</string>
+</resources>

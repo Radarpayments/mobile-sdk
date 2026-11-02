@@ -1,0 +1,224 @@
+public final class net/payrdr/mobile/payment/sdk/payment/scanner/camera/CameraPermissionController {
+	public static final field $stable I
+	public fun <init> ()V
+	public final fun openSettings ()V
+	public final fun request (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun status ()Lnet/payrdr/mobile/payment/sdk/payment/scanner/camera/CameraPermissionStatus;
+}
+
+public final class net/payrdr/mobile/payment/sdk/payment/scanner/camera/CameraPermissionStatus : java/lang/Enum {
+	public static final field Denied Lnet/payrdr/mobile/payment/sdk/payment/scanner/camera/CameraPermissionStatus;
+	public static final field Granted Lnet/payrdr/mobile/payment/sdk/payment/scanner/camera/CameraPermissionStatus;
+	public static final field NotDetermined Lnet/payrdr/mobile/payment/sdk/payment/scanner/camera/CameraPermissionStatus;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lnet/payrdr/mobile/payment/sdk/payment/scanner/camera/CameraPermissionStatus;
+	public static fun values ()[Lnet/payrdr/mobile/payment/sdk/payment/scanner/camera/CameraPermissionStatus;
+}
+
+public final class net/payrdr/mobile/payment/sdk/payment/scanner/camera/CameraPreview_androidKt {
+	public static final fun CameraPreview (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lnet/payrdr/mobile/payment/sdk/payment/scanner/camera/TorchState;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
+}
+
+public final class net/payrdr/mobile/payment/sdk/payment/scanner/camera/NormalisedRect {
+	public static final field $stable I
+	public fun <init> (FFFF)V
+	public final fun component1 ()F
+	public final fun component2 ()F
+	public final fun component3 ()F
+	public final fun component4 ()F
+	public final fun copy (FFFF)Lnet/payrdr/mobile/payment/sdk/payment/scanner/camera/NormalisedRect;
+	public static synthetic fun copy$default (Lnet/payrdr/mobile/payment/sdk/payment/scanner/camera/NormalisedRect;FFFFILjava/lang/Object;)Lnet/payrdr/mobile/payment/sdk/payment/scanner/camera/NormalisedRect;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBottom ()F
+	public final fun getLeft ()F
+	public final fun getRight ()F
+	public final fun getTop ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/payrdr/mobile/payment/sdk/payment/scanner/camera/RecognizedLine {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;Lnet/payrdr/mobile/payment/sdk/payment/scanner/camera/NormalisedRect;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lnet/payrdr/mobile/payment/sdk/payment/scanner/camera/NormalisedRect;
+	public final fun copy (Ljava/lang/String;Lnet/payrdr/mobile/payment/sdk/payment/scanner/camera/NormalisedRect;)Lnet/payrdr/mobile/payment/sdk/payment/scanner/camera/RecognizedLine;
+	public static synthetic fun copy$default (Lnet/payrdr/mobile/payment/sdk/payment/scanner/camera/RecognizedLine;Ljava/lang/String;Lnet/payrdr/mobile/payment/sdk/payment/scanner/camera/NormalisedRect;ILjava/lang/Object;)Lnet/payrdr/mobile/payment/sdk/payment/scanner/camera/RecognizedLine;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBoundingBox ()Lnet/payrdr/mobile/payment/sdk/payment/scanner/camera/NormalisedRect;
+	public final fun getText ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/payrdr/mobile/payment/sdk/payment/scanner/camera/TextRecognizer {
+	public static final field $stable I
+	public fun <init> ()V
+	public final fun close ()V
+	public final fun recognize (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class net/payrdr/mobile/payment/sdk/payment/scanner/camera/TorchController {
+	public static final field $stable I
+	public fun <init> ()V
+	public final fun attach (Landroidx/camera/core/Camera;)V
+	public final fun isAvailable ()Z
+	public final fun setEnabled (Z)V
+}
+
+public final class net/payrdr/mobile/payment/sdk/payment/scanner/camera/TorchState {
+	public static final field $stable I
+	public fun <init> (Z)V
+	public final fun component1 ()Z
+	public final fun copy (Z)Lnet/payrdr/mobile/payment/sdk/payment/scanner/camera/TorchState;
+	public static synthetic fun copy$default (Lnet/payrdr/mobile/payment/sdk/payment/scanner/camera/TorchState;ZILjava/lang/Object;)Lnet/payrdr/mobile/payment/sdk/payment/scanner/camera/TorchState;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEnabled ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/payrdr/mobile/payment/sdk/payment/scanner/parser/CardParser {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (Lnet/payrdr/mobile/payment/sdk/payment/scanner/parser/YearMonth;)V
+	public synthetic fun <init> (Lnet/payrdr/mobile/payment/sdk/payment/scanner/parser/YearMonth;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun parse (Ljava/util/List;Z)Lnet/payrdr/mobile/payment/sdk/payment/scanner/ScannedCard;
+}
+
+public final class net/payrdr/mobile/payment/sdk/payment/scanner/parser/YearMonth : java/lang/Comparable {
+	public static final field $stable I
+	public static final field Companion Lnet/payrdr/mobile/payment/sdk/payment/scanner/parser/YearMonth$Companion;
+	public fun <init> (II)V
+	public synthetic fun compareTo (Ljava/lang/Object;)I
+	public fun compareTo (Lnet/payrdr/mobile/payment/sdk/payment/scanner/parser/YearMonth;)I
+	public final fun component1 ()I
+	public final fun component2 ()I
+	public final fun copy (II)Lnet/payrdr/mobile/payment/sdk/payment/scanner/parser/YearMonth;
+	public static synthetic fun copy$default (Lnet/payrdr/mobile/payment/sdk/payment/scanner/parser/YearMonth;IIILjava/lang/Object;)Lnet/payrdr/mobile/payment/sdk/payment/scanner/parser/YearMonth;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMonth ()I
+	public final fun getYear ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/payrdr/mobile/payment/sdk/payment/scanner/parser/YearMonth$Companion {
+	public final fun systemNow ()Lnet/payrdr/mobile/payment/sdk/payment/scanner/parser/YearMonth;
+}
+
+public final class net/payrdr/mobile/payment/sdk/payment/scanner/provider/MlKitVisionCardScannerProvider : net/payrdr/mobile/payment/sdk/payment/scanner/CardScannerProvider {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (Lnet/payrdr/mobile/payment/sdk/payment/logger/Logger;)V
+	public synthetic fun <init> (Lnet/payrdr/mobile/payment/sdk/payment/logger/Logger;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun CardScannerScreen (Lnet/payrdr/mobile/payment/sdk/payment/scanner/CardScannerConfig;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
+}
+
+public abstract interface class net/payrdr/mobile/payment/sdk/payment/scanner/state/ScannerUiState {
+}
+
+public final class net/payrdr/mobile/payment/sdk/payment/scanner/state/ScannerUiState$CameraUnavailable : net/payrdr/mobile/payment/sdk/payment/scanner/state/ScannerUiState {
+	public static final field $stable I
+	public static final field INSTANCE Lnet/payrdr/mobile/payment/sdk/payment/scanner/state/ScannerUiState$CameraUnavailable;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/payrdr/mobile/payment/sdk/payment/scanner/state/ScannerUiState$Cancelled : net/payrdr/mobile/payment/sdk/payment/scanner/state/ScannerUiState {
+	public static final field $stable I
+	public static final field INSTANCE Lnet/payrdr/mobile/payment/sdk/payment/scanner/state/ScannerUiState$Cancelled;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/payrdr/mobile/payment/sdk/payment/scanner/state/ScannerUiState$Detecting : net/payrdr/mobile/payment/sdk/payment/scanner/state/ScannerUiState {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lnet/payrdr/mobile/payment/sdk/payment/scanner/state/ScannerUiState$Detecting;
+	public static synthetic fun copy$default (Lnet/payrdr/mobile/payment/sdk/payment/scanner/state/ScannerUiState$Detecting;Ljava/lang/String;ILjava/lang/Object;)Lnet/payrdr/mobile/payment/sdk/payment/scanner/state/ScannerUiState$Detecting;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCandidatePan ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/payrdr/mobile/payment/sdk/payment/scanner/state/ScannerUiState$Initializing : net/payrdr/mobile/payment/sdk/payment/scanner/state/ScannerUiState {
+	public static final field $stable I
+	public static final field INSTANCE Lnet/payrdr/mobile/payment/sdk/payment/scanner/state/ScannerUiState$Initializing;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/payrdr/mobile/payment/sdk/payment/scanner/state/ScannerUiState$PermissionDenied : net/payrdr/mobile/payment/sdk/payment/scanner/state/ScannerUiState {
+	public static final field $stable I
+	public static final field INSTANCE Lnet/payrdr/mobile/payment/sdk/payment/scanner/state/ScannerUiState$PermissionDenied;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/payrdr/mobile/payment/sdk/payment/scanner/state/ScannerUiState$Scanning : net/payrdr/mobile/payment/sdk/payment/scanner/state/ScannerUiState {
+	public static final field $stable I
+	public static final field INSTANCE Lnet/payrdr/mobile/payment/sdk/payment/scanner/state/ScannerUiState$Scanning;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/payrdr/mobile/payment/sdk/payment/scanner/state/ScannerUiState$Success : net/payrdr/mobile/payment/sdk/payment/scanner/state/ScannerUiState {
+	public static final field $stable I
+	public fun <init> (Lnet/payrdr/mobile/payment/sdk/payment/scanner/ScannedCard;)V
+	public final fun component1 ()Lnet/payrdr/mobile/payment/sdk/payment/scanner/ScannedCard;
+	public final fun copy (Lnet/payrdr/mobile/payment/sdk/payment/scanner/ScannedCard;)Lnet/payrdr/mobile/payment/sdk/payment/scanner/state/ScannerUiState$Success;
+	public static synthetic fun copy$default (Lnet/payrdr/mobile/payment/sdk/payment/scanner/state/ScannerUiState$Success;Lnet/payrdr/mobile/payment/sdk/payment/scanner/ScannedCard;ILjava/lang/Object;)Lnet/payrdr/mobile/payment/sdk/payment/scanner/state/ScannerUiState$Success;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCard ()Lnet/payrdr/mobile/payment/sdk/payment/scanner/ScannedCard;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/payrdr/mobile/payment/sdk/payment/scanner/state/ScannerUiState$Timeout : net/payrdr/mobile/payment/sdk/payment/scanner/state/ScannerUiState {
+	public static final field $stable I
+	public static final field INSTANCE Lnet/payrdr/mobile/payment/sdk/payment/scanner/state/ScannerUiState$Timeout;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/payrdr/mobile/payment/sdk/payment/scanner/state/ScannerViewModel {
+	public static final field $stable I
+	public static final field Companion Lnet/payrdr/mobile/payment/sdk/payment/scanner/state/ScannerViewModel$Companion;
+	public static final field REQUIRED_STREAK I
+	public fun <init> (Lkotlinx/coroutines/CoroutineScope;Lnet/payrdr/mobile/payment/sdk/payment/scanner/CardScannerConfig;Lkotlinx/coroutines/CoroutineDispatcher;Lnet/payrdr/mobile/payment/sdk/payment/logger/Logger;)V
+	public synthetic fun <init> (Lkotlinx/coroutines/CoroutineScope;Lnet/payrdr/mobile/payment/sdk/payment/scanner/CardScannerConfig;Lkotlinx/coroutines/CoroutineDispatcher;Lnet/payrdr/mobile/payment/sdk/payment/logger/Logger;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getResult ()Lkotlinx/coroutines/flow/SharedFlow;
+	public final fun getState ()Lkotlinx/coroutines/flow/StateFlow;
+	public final fun onCameraError ()V
+	public final fun onCancel ()V
+	public final fun onParseResult (Lnet/payrdr/mobile/payment/sdk/payment/scanner/ScannedCard;)V
+	public final fun onPermissionResult (Z)V
+}
+
+public final class net/payrdr/mobile/payment/sdk/payment/scanner/state/ScannerViewModel$Companion {
+}
+
+public final class net/payrdr/mobile/payment/sdk/payment/scanner/util/ContextHolder {
+	public static final field $stable I
+	public static final field INSTANCE Lnet/payrdr/mobile/payment/sdk/payment/scanner/util/ContextHolder;
+	public final fun current ()Landroid/content/Context;
+	public final fun init (Landroid/content/Context;)V
+}
+
+public final class net/payrdr/mobile/payment/sdk/payment/scanner/util/ScannerInitializer : androidx/startup/Initializer {
+	public static final field $stable I
+	public fun <init> ()V
+	public synthetic fun create (Landroid/content/Context;)Ljava/lang/Object;
+	public fun create (Landroid/content/Context;)V
+	public fun dependencies ()Ljava/util/List;
+}
+

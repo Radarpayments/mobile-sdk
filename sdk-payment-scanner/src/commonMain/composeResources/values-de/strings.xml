@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="scan_hint">Richten Sie die Kamera auf Ihre Karte</string>
+    <string name="scan_detected">Karte erkannt, bitte ruhig halten</string>
+    <string name="scan_close">Scanner schließen</string>
+    <string name="scan_torch">Taschenlampe ein/aus</string>
+    <string name="scan_manual_entry">Manuell eingeben</string>
+    <string name="scan_retry">Erneut versuchen</string>
+
+    <string name="scan_permission_required_title">Kamerazugriff erforderlich</string>
+    <string name="scan_permission_required_body">Um Ihre Karte zu scannen, benötigen wir Zugriff auf die Kamera.</string>
+    <string name="scan_permission_denied_open_settings">Einstellungen öffnen</string>
+
+    <string name="scan_timeout_title">Karte konnte nicht gelesen werden</string>
+    <string name="scan_timeout_body">Versuchen Sie es bei besserem Licht erneut oder geben Sie die Daten manuell ein.</string>
+
+    <string name="scan_camera_unavailable_title">Kamera nicht verfügbar</string>
+    <string name="scan_camera_unavailable_body">Die Kamera Ihres Geräts konnte nicht gestartet werden. Bitte geben Sie die Daten manuell ein.</string>
+</resources>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="scan_hint">Îndreptați camera spre card</string>
+    <string name="scan_detected">Card detectat, țineți-l nemișcat</string>
+    <string name="scan_close">Închideți scanerul</string>
+    <string name="scan_torch">Porniți/opriți lanterna</string>
+    <string name="scan_manual_entry">Introduceți manual</string>
+    <string name="scan_retry">Încercați din nou</string>
+
+    <string name="scan_permission_required_title">Este necesar accesul la cameră</string>
+    <string name="scan_permission_required_body">Pentru a scana cardul, permiteți aplicației să folosească camera.</string>
+    <string name="scan_permission_denied_open_settings">Deschideți setările</string>
+
+    <string name="scan_timeout_title">Cardul nu a putut fi citit</string>
+    <string name="scan_timeout_body">Încercați din nou într-un loc mai bine luminat sau introduceți datele manual.</string>
+
+    <string name="scan_camera_unavailable_title">Camera nu este disponibilă</string>
+    <string name="scan_camera_unavailable_body">Camera dispozitivului nu a putut porni. Introduceți datele manual.</string>
+</resources>
