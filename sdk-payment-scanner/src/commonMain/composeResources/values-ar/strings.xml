@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="scan_hint">وجّه الكاميرا نحو بطاقتك</string>
+    <string name="scan_detected">تم العثور على البطاقة، ثبّتها</string>
+    <string name="scan_close">إغلاق الماسح</string>
+    <string name="scan_torch">تشغيل/إيقاف الفلاش</string>
+    <string name="scan_manual_entry">الإدخال يدويًا</string>
+    <string name="scan_retry">حاول مرة أخرى</string>
+
+    <string name="scan_permission_required_title">يلزم الوصول إلى الكاميرا</string>
+    <string name="scan_permission_required_body">لمسح بطاقتك، نحتاج إلى إذن باستخدام الكاميرا.</string>
+    <string name="scan_permission_denied_open_settings">فتح الإعدادات</string>
+
+    <string name="scan_timeout_title">تعذّرت قراءة بطاقتك</string>
+    <string name="scan_timeout_body">يُرجى المحاولة مرة أخرى في إضاءة أفضل، أو إدخال البيانات يدويًا.</string>
+
+    <string name="scan_camera_unavailable_title">الكاميرا غير متاحة</string>
+    <string name="scan_camera_unavailable_body">تعذّر تشغيل كاميرا جهازك. يُرجى إدخال البيانات يدويًا.</string>
+</resources>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="scan_hint">Στρέψτε την κάμερα στην κάρτα σας</string>
+    <string name="scan_detected">Η κάρτα βρέθηκε, κρατήστε τη σταθερή</string>
+    <string name="scan_close">Κλείσιμο σαρωτή</string>
+    <string name="scan_torch">Ενεργοποίηση/απενεργοποίηση φακού</string>
+    <string name="scan_manual_entry">Χειροκίνητη εισαγωγή</string>
+    <string name="scan_retry">Δοκιμάστε ξανά</string>
+
+    <string name="scan_permission_required_title">Απαιτείται πρόσβαση στην κάμερα</string>
+    <string name="scan_permission_required_body">Για να σαρώσετε την κάρτα σας, επιτρέψτε τη χρήση της κάμερας.</string>
+    <string name="scan_permission_denied_open_settings">Άνοιγμα ρυθμίσεων</string>
+
+    <string name="scan_timeout_title">Δεν ήταν δυνατή η ανάγνωση της κάρτας</string>
+    <string name="scan_timeout_body">Δοκιμάστε ξανά με καλύτερο φωτισμό ή εισαγάγετε τα στοιχεία χειροκίνητα.</string>
+
+    <string name="scan_camera_unavailable_title">Η κάμερα δεν είναι διαθέσιμη</string>
+    <string name="scan_camera_unavailable_body">Δεν ήταν δυνατή η εκκίνηση της κάμερας της συσκευής. Εισαγάγετε τα στοιχεία χειροκίνητα.</string>
+</resources>

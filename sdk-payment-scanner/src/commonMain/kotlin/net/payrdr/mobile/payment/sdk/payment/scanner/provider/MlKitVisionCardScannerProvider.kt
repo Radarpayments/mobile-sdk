@@ -1,0 +1,43 @@
+package net.payrdr.mobile.payment.sdk.payment.scanner.provider
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
+import net.payrdr.mobile.payment.sdk.payment.logger.Logger
+import net.payrdr.mobile.payment.sdk.payment.scanner.CardScannerConfig
+import net.payrdr.mobile.payment.sdk.payment.scanner.CardScannerProvider
+import net.payrdr.mobile.payment.sdk.payment.scanner.CardScannerResult
+import net.payrdr.mobile.payment.sdk.payment.scanner.camera.CameraPermissionController
+import net.payrdr.mobile.payment.sdk.payment.scanner.camera.TextRecognizer
+import net.payrdr.mobile.payment.sdk.payment.scanner.ui.CardScannerScreen
+
+/**
+ * Default [CardScannerProvider] shipping ML Kit (Android) + Vision (iOS) camera OCR.
+ * Instantiated by merchants who want camera scanning and passed to `SdkPaymentConfig.cardScannerProvider`.
+ *
+ * @param logger optional transport for scanner events (`event=...`, tag `"CardScanner"`). Merchants
+ *   who already configured `SdkPaymentConfig.logTransport` typically construct a [Logger] with the
+ *   same transport and pass it here so scanner events flow through their sink too.
+ */
+public class MlKitVisionCardScannerProvider(
+    private val logger: Logger? = null,
+) : CardScannerProvider {
+    @Composable
+    public override fun CardScannerScreen(
+        config: CardScannerConfig,
+        onResult: (CardScannerResult) -> Unit,
+    ) {
+        val recognizer = remember { TextRecognizer() }
+        val permissions = remember { CameraPermissionController() }
+        // Close recognizer if the provider's call tree leaves composition before CardScannerScreen's
+        // own DisposableEffect fires (e.g., if the screen throws before mounting).
+        DisposableEffect(recognizer) { onDispose { recognizer.close() } }
+        net.payrdr.mobile.payment.sdk.payment.scanner.ui.CardScannerScreen(
+            config = config,
+            permissions = permissions,
+            recognizer = recognizer,
+            logger = logger,
+            onResult = onResult,
+        )
+    }
+}
