@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Payment sheet -->
-    <string name="sheet_order_number">Поръчка №%1$s</string>
     <string name="sheet_or_pay_by_card">или платете с карта</string>
     <string name="sheet_saved_cards">Запазени карти</string>
     <string name="sheet_all_cards">Всички карти</string>

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Payment sheet -->
-    <string name="sheet_order_number">Commande n° %1$s</string>
     <string name="sheet_or_pay_by_card">ou payer par carte</string>
     <string name="sheet_saved_cards">Cartes enregistrées</string>
     <string name="sheet_all_cards">Toutes les cartes</string>
