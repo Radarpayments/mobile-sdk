@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Payment sheet -->
+    <string name="sheet_order_number">Comanda nr. %1$s</string>
+    <string name="sheet_or_pay_by_card">sau plătiți cu cardul</string>
+    <string name="sheet_saved_cards">Carduri salvate</string>
+    <string name="sheet_all_cards">Toate cardurile</string>
+    <string name="sheet_new_card_hint">Card de debit sau de credit</string>
+    <string name="sheet_pay_by_card">Plătiți cu cardul</string>
+    <string name="sheet_pay_with_card">Plătiți cu cardul %1$s</string>
+    <string name="pay_amount">Plătiți %1$s</string>
+
+    <!-- CardFormScreen -->
+    <string name="checkout_title">Plată</string>
+    <string name="card_form_title">Card nou</string>
+    <string name="card_form_pan_label">Numărul cardului</string>
+    <string name="card_form_expiry_label">Data expirării</string>
+    <string name="card_form_expiry_placeholder">LL/AA</string>
+    <string name="card_form_cvv_label">CVC/CVV</string>
+    <string name="cvv_hint_open">Unde găsiți codul CVV</string>
+    <string name="cvv_hint_back">3 cifre pe spatele cardului</string>
+    <string name="cvv_hint_front">4 cifre pe fața cardului</string>
+    <string name="card_form_holder_label">Titularul cardului</string>
+    <string name="card_form_card_details_label">Datele cardului</string>
+    <string name="card_form_holder_placeholder">Numele de pe card</string>
+    <string name="card_form_save_card">Salvați cardul pentru plăți viitoare</string>
+    <string name="card_form_save_card_hint">Datele cardului sunt criptate în siguranță</string>
+    <string name="card_form_pay">Plătiți</string>
+    <string name="card_form_scan">Scanați cardul</string>
+    <string name="card_form_email_label">Email</string>
+    <string name="card_form_phone_label">Număr de telefon</string>
+    <string name="payer_optional">%1$s (opțional)</string>
+    <string name="payer_remove_address_line">Eliminați rândul de adresă</string>
+    <string name="payer_optional_note">opțional</string>
+    <string name="payer_summary_title">Datele dvs.</string>
+    <string name="payer_summary_collapse">Ascundeți</string>
+    <string name="payer_billing_title">Date de facturare</string>
+    <string name="payer_billing_add">Adăugați date de facturare</string>
+    <string name="payer_billing_help">Completați cu litere latine</string>
+    <string name="payer_country_label">Țara</string>
+    <string name="payer_country_search">Căutați țara</string>
+    <string name="payer_country_not_found">Nu s-a găsit nicio țară</string>
+    <string name="phone_code_title">Prefixul țării</string>
+    <string name="phone_code_search">Țara sau prefixul</string>
+    <string name="phone_code_choose">Prefix</string>
+    <string name="phone_code_cd">Prefixul țării %1$s</string>
+    <string name="picker_suggested">Sugerate</string>
+    <string name="picker_all">Toate țările</string>
+    <string name="payer_address_line1_label">Adresa</string>
+    <string name="payer_address_line2_label">Adresa, rândul 2</string>
+    <string name="payer_address_line3_label">Adresa, rândul 3</string>
+    <string name="payer_add_address_line">Apartament, birou…</string>
+    <string name="payer_city_label">Oraș</string>
+    <string name="payer_state_label">Județ / regiune</string>
+    <string name="payer_postal_code_label">Cod poștal</string>
+
+    <!-- Field messages -->
+    <string name="error_pan_empty">Introduceți numărul cardului</string>
+    <string name="error_pan_short">Numărul cardului este prea scurt</string>
+    <string name="error_pan_invalid">Verificați numărul cardului, este posibil ca o cifră să fie greșită</string>
+    <string name="error_expiry_format">Introduceți data în formatul LL/&#8288;AA</string>
+    <string name="error_expiry_month">Luna trebuie să fie între 01 și 12</string>
+    <string name="error_expiry_past">Cardul a expirat</string>
+    <string name="error_cvv_3">Introduceți codul de 3 cifre de pe spatele cardului</string>
+    <string name="error_cvv_4">Introduceți codul de 4 cifre de pe fața cardului</string>
+    <string name="error_holder_empty">Introduceți numele așa cum apare pe card</string>
+    <string name="error_holder_format">Doar litere latine, ca pe card</string>
+    <string name="error_holder_short">Numele este prea scurt</string>
+    <string name="error_email_empty">Introduceți adresa de email</string>
+    <string name="error_email_invalid">Verificați adresa de email, trebuie să arate ca name@example.com</string>
+    <string name="error_phone_empty">Introduceți numărul de telefon</string>
+    <string name="error_phone_short">Numărul de telefon este prea scurt</string>
+    <string name="error_phone_long">Numărul de telefon este prea lung</string>
+    <string name="error_phone_no_code">Selectați prefixul țării</string>
+    <string name="error_field_required">Completați acest câmp</string>
+    <string name="error_country_empty">Selectați țara</string>
+    <string name="error_latin_only">Folosiți doar litere latine</string>
+    <string name="error_postal_code_invalid">Folosiți doar litere latine și cifre</string>
+
+    <!-- Card scan -->
+    <string name="scan_title">Scanați cardul</string>
+    <string name="scan_body">Camera citește numărul și data expirării cardului. Fotografiile nu sunt salvate și nu sunt trimise nicăieri.</string>
+    <string name="scan_continue">Continuați</string>
+    <string name="scan_turn_on">Porniți camera</string>
+    <string name="scan_manual">Introduceți manual</string>
+
+    <!-- Saved card -->
+    <string name="saved_card_title">Plata cu cardul</string>
+
+    <!-- CardListScreen -->
+    <string name="card_list_title">Cardurile mele</string>
+    <string name="card_list_edit_title">Editați cardurile</string>
+    <string name="card_list_add_new">Card nou</string>
+    <string name="card_list_delete">Eliminați cardul</string>
+    <string name="card_list_empty">Nu aveți carduri salvate</string>
+    <string name="card_list_remove_title">Eliminați %1$s?</string>
+    <string name="card_list_remove_body">Pentru a plăti din nou cu acest card, va trebui să introduceți din nou datele lui.</string>
+    <string name="card_list_keep">Păstrați cardul</string>
+
+    <!-- Pay buttons -->
+    <string name="pay_with_google_pay">Plătiți cu Google Pay</string>
+    <string name="pay_with_apple_pay">Plătiți cu Apple Pay</string>
+
+    <!-- ThreeDsChallenge -->
+    <string name="threeds_title">Verificare la bancă</string>
+    <string name="threeds_hint">Finalizați verificarea în fereastra băncii. Veți reveni aici automat.</string>
+    <string name="threeds_cancel">Anulați plata</string>
+
+    <!-- Processing -->
+    <string name="processing_title">Procesăm plata</string>
+    <string name="processing_hint">De obicei durează câteva secunde. Nu închideți aplicația.</string>
+    <string name="processing_loading_session">Se încarcă sesiunea…</string>
+    <string name="processing_loading_public_key">Se pregătește criptarea…</string>
+    <string name="a11y_loading">Se încarcă…</string>
+    <string name="processing_tokenizing_card">Se criptează cardul…</string>
+    <string name="processing_submitting_payment">Se trimite plata…</string>
+    <string name="processing_finalizing">Se finalizează…</string>
+
+    <!-- Result -->
+    <string name="result_success_title">Plată reușită</string>
+    <string name="result_card_saved_title">Card salvat</string>
+    <string name="result_failure_title">Plată refuzată</string>
+    <string name="result_failure_hint">Încercați alt card sau contactați banca.</string>
+    <string name="result_session_expired">Timpul pentru plată a expirat. Nu s-a debitat nimic. Reveniți și plasați din nou comanda.</string>
+    <string name="result_try_again">Plătiți cu alt card</string>
+    <string name="result_close">Închideți</string>
+    <string name="result_done">Gata</string>
+    <string name="receipt_order">Comandă</string>
+    <string name="receipt_card">Card</string>
+    <string name="receipt_date">Data</string>
+    <string name="receipt_order_number">Nr. %1$s</string>
+
+    <!-- Common -->
+    <string name="action_cancel">Anulați</string>
+    <string name="action_close">Închideți</string>
+    <string name="action_back">Înapoi</string>
+    <string name="action_edit">Editați</string>
+    <string name="action_done">Gata</string>
+    <string name="error_network">Eroare de rețea. Verificați conexiunea.</string>
+    <string name="error_generic">A apărut o eroare. Încercați din nou.</string>
+    <string name="error_invalid_card">Date de card nevalide</string>
+    <string name="error_3ds_failed">Autentificarea 3-D Secure a eșuat</string>
+    <string name="error_3ds_timeout">Timpul pentru autentificarea 3-D Secure a expirat</string>
+    <string name="error_cancelled">Plată anulată</string>
+    <!-- Transfers (AFT) -->
+    <string name="transfer_amount">Transferă %1$s</string>
+    <string name="card_form_transfer">Transferă</string>
+    <string name="card_form_save_card_only">Salvați cardul</string>
+    <string name="transfer_sender_title">Expeditor</string>
+    <string name="transfer_recipient_title">Destinatar</string>
+    <string name="transfer_first_name">Prenume</string>
+    <string name="transfer_middle_name">Al doilea prenume</string>
+    <string name="transfer_last_name">Nume</string>
+    <string name="transfer_birthday">Data nașterii</string>
+    <string name="transfer_date_hint">ZZ.LL.AAAA</string>
+    <string name="transfer_account">Număr de cont</string>
+    <string name="transfer_account_type">Tip de cont</string>
+    <string name="transfer_id_type">Act de identitate</string>
+    <string name="transfer_id_number">Numărul actului</string>
+    <string name="transfer_address">Adresă</string>
+    <string name="error_date_invalid">Introduceți data ca ZZ.LL.AAAA</string>
+    <string name="transfer_account_type_1">RTN + cont bancar</string>
+    <string name="transfer_account_type_2">IBAN</string>
+    <string name="transfer_account_type_3">Cont de card</string>
+    <string name="transfer_account_type_4">E-mail</string>
+    <string name="transfer_account_type_5">Număr de telefon</string>
+    <string name="transfer_account_type_6">BIC + BAN</string>
+    <string name="transfer_account_type_7">ID portofel</string>
+    <string name="transfer_account_type_8">ID rețea socială</string>
+    <string name="transfer_account_type_100">Altul</string>
+    <string name="transfer_id_type_1">Pașaport</string>
+    <string name="transfer_id_type_2">Permis de conducere</string>
+    <string name="transfer_id_type_3">Card social</string>
+    <string name="transfer_id_type_4">Carte de identitate</string>
+    <string name="transfer_id_type_5">Certificat de înregistrare (TVA)</string>
+    <string name="transfer_id_type_6">Certificat de refugiat</string>
+    <string name="transfer_id_type_7">Permis de ședere</string>
+    <string name="transfer_id_type_8">Pașaport pentru străinătate</string>
+    <string name="transfer_id_type_9">Pașaport oficial</string>
+    <string name="transfer_id_type_10">Pașaport temporar</string>
+    <string name="transfer_id_type_11">Pașaport de marinar</string>
+</resources>
