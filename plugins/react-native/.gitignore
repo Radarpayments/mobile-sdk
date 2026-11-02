@@ -1,0 +1,5 @@
+node_modules/
+android/build/
+ios/build/
+# The SDK framework, built by scripts/build-bridge.sh
+ios/Frameworks/
