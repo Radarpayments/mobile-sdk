@@ -1,0 +1,39 @@
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+
+# macOS
+.DS_Store
+
+# Xcode / Kotlin Native / SwiftPM derived
+xcuserdata/
+*.xcworkspace/
+*.xcodeproj/project.xcworkspace/
+DerivedData/
+Package.resolved
+.swiftpm/
+
+# Local config
+local.properties
+
+# Kotlin
+.kotlin/
+
+# Misc
+*.log
+
+# Brainstorming session artifacts
+.superpowers/
+
+# Worktrees
+.worktrees/
