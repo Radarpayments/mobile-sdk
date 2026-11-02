@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="product_velvet_sofa_sub">Изумрудный велюр, дубовые ножки</string>
+    <string name="product_cloud_chair_sub">Молочный букле</string>
+    <string name="product_ono_chair_sub">Литой пластик, ножки из бука</string>
+    <string name="product_birch_stool_sub">Массив берёзы</string>
+    <string name="product_arc_lamp_sub">Матовая графитовая сталь</string>
+    <string name="product_lume_armchair_sub">Горчичная шерсть</string>
+    <string name="product_flat_white_sub">Двойной эспрессо, молоко</string>
+    <string name="product_cappuccino_sub">Классический, с пенкой</string>
+    <string name="product_espresso_sub">Моносорт</string>
+    <string name="product_iced_latte_sub">Холодное молоко, лёд</string>
+    <string name="product_croissant_sub">Испекли сегодня утром</string>
+    <string name="ticket_floor">Танцпол</string>
+    <string name="ticket_floor_sub">Стоячие места</string>
+    <string name="ticket_balcony">Балкон</string>
+    <string name="ticket_balcony_sub">Ряд 2 · сидячие</string>
+    <string name="ticket_fee">Сервисный сбор</string>
+</resources>

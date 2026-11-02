@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="product_velvet_sofa_sub">Smaragdgrüner Samt, Eichenbeine</string>
+    <string name="product_cloud_chair_sub">Milchweißes Bouclé</string>
+    <string name="product_ono_chair_sub">Formschale, Buchenbeine</string>
+    <string name="product_birch_stool_sub">Massive Birke</string>
+    <string name="product_arc_lamp_sub">Matter Stahl in Graphit</string>
+    <string name="product_lume_armchair_sub">Senfgelbe Wolle</string>
+    <string name="product_flat_white_sub">Doppelter Espresso, aufgeschäumte Milch</string>
+    <string name="product_cappuccino_sub">Klassisch, mit Milchschaum</string>
+    <string name="product_espresso_sub">Single Origin</string>
+    <string name="product_iced_latte_sub">Kalte Milch, Eis</string>
+    <string name="product_croissant_sub">Heute früh gebacken</string>
+    <string name="ticket_floor">Innenraum</string>
+    <string name="ticket_floor_sub">Stehplätze</string>
+    <string name="ticket_balcony">Balkon</string>
+    <string name="ticket_balcony_sub">Reihe 2 · Sitzplätze</string>
+    <string name="ticket_fee">Servicegebühr</string>
+</resources>

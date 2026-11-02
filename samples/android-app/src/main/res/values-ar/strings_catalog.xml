@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="product_velvet_sofa_sub">مخمل زمردي، أرجل من خشب البلوط</string>
+    <string name="product_cloud_chair_sub">قماش بوكليه أبيض حليبي</string>
+    <string name="product_ono_chair_sub">هيكل مقولب، أرجل من خشب الزان</string>
+    <string name="product_birch_stool_sub">خشب البتولا الصلب</string>
+    <string name="product_arc_lamp_sub">فولاذ مطفأ بلون الغرافيت</string>
+    <string name="product_lume_armchair_sub">صوف بلون الخردل</string>
+    <string name="product_flat_white_sub">جرعة إسبريسو مزدوجة، حليب مبخّر</string>
+    <string name="product_cappuccino_sub">كلاسيكي، مع رغوة</string>
+    <string name="product_espresso_sub">بنّ أحادي المصدر</string>
+    <string name="product_iced_latte_sub">حليب بارد، ثلج</string>
+    <string name="product_croissant_sub">مخبوز هذا الصباح</string>
+    <string name="ticket_floor">منطقة الوقوف</string>
+    <string name="ticket_floor_sub">دخول عام</string>
+    <string name="ticket_balcony">الشرفة</string>
+    <string name="ticket_balcony_sub">الصف 2 · مقاعد جلوس</string>
+    <string name="ticket_fee">رسوم الخدمة</string>
+</resources>
