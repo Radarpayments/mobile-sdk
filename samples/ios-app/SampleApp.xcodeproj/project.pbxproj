@@ -1,0 +1,646 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		2B7D77D51A1AF99C4427B2EE /* sdk_payment_scanner.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB697B63BC1B25B7BEC4E07A /* sdk_payment_scanner.xcframework */; };
+		B000337D76F41CB41CF58E1C /* sdk_payment_scanner.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CB697B63BC1B25B7BEC4E07A /* sdk_payment_scanner.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		33A25CFD2F9A8AFF000D8AAE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 33A25CE72F9A8AFB000D8AAE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 33A25CEE2F9A8AFB000D8AAE;
+			remoteInfo = SampleApp;
+		};
+		33A25D072F9A8AFF000D8AAE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 33A25CE72F9A8AFB000D8AAE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 33A25CEE2F9A8AFB000D8AAE;
+			remoteInfo = SampleApp;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		BA3245B298688DCC015407F7 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				B000337D76F41CB41CF58E1C /* sdk_payment_scanner.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		33A25CEF2F9A8AFB000D8AAE /* SampleApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SampleApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		33A25CFC2F9A8AFF000D8AAE /* SampleAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SampleAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		33A25D062F9A8AFF000D8AAE /* SampleAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SampleAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		CB697B63BC1B25B7BEC4E07A /* sdk_payment_scanner.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = sdk_payment_scanner.xcframework; path = "../../sdk-payment-scanner/build/XCFrameworks/debug/sdk_payment_scanner.xcframework"; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		33A25CF12F9A8AFB000D8AAE /* SampleApp */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = SampleApp;
+			sourceTree = "<group>";
+		};
+		33A25CFF2F9A8AFF000D8AAE /* SampleAppTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = SampleAppTests;
+			sourceTree = "<group>";
+		};
+		33A25D092F9A8AFF000D8AAE /* SampleAppUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = SampleAppUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		33A25CEC2F9A8AFB000D8AAE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2B7D77D51A1AF99C4427B2EE /* sdk_payment_scanner.xcframework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		33A25CF92F9A8AFF000D8AAE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		33A25D032F9A8AFF000D8AAE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		33A25CE62F9A8AFB000D8AAE = {
+			isa = PBXGroup;
+			children = (
+				33A25CF12F9A8AFB000D8AAE /* SampleApp */,
+				33A25CFF2F9A8AFF000D8AAE /* SampleAppTests */,
+				33A25D092F9A8AFF000D8AAE /* SampleAppUITests */,
+				33A25CF02F9A8AFB000D8AAE /* Products */,
+				CB697B63BC1B25B7BEC4E07A /* sdk_payment_scanner.xcframework */,
+			);
+			sourceTree = "<group>";
+		};
+		33A25CF02F9A8AFB000D8AAE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				33A25CEF2F9A8AFB000D8AAE /* SampleApp.app */,
+				33A25CFC2F9A8AFF000D8AAE /* SampleAppTests.xctest */,
+				33A25D062F9A8AFF000D8AAE /* SampleAppUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		33A25CEE2F9A8AFB000D8AAE /* SampleApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 33A25D102F9A8AFF000D8AAE /* Build configuration list for PBXNativeTarget "SampleApp" */;
+			buildPhases = (
+				657B46D0A5E16111E3AC8A2B /* ShellScript */,
+				33A25CEB2F9A8AFB000D8AAE /* Sources */,
+				33A25CEC2F9A8AFB000D8AAE /* Frameworks */,
+				33A25CED2F9A8AFB000D8AAE /* Resources */,
+				BA3245B298688DCC015407F7 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				33A25CF12F9A8AFB000D8AAE /* SampleApp */,
+			);
+			name = SampleApp;
+			packageProductDependencies = (
+			);
+			productName = SampleApp;
+			productReference = 33A25CEF2F9A8AFB000D8AAE /* SampleApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+		33A25CFB2F9A8AFF000D8AAE /* SampleAppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 33A25D132F9A8AFF000D8AAE /* Build configuration list for PBXNativeTarget "SampleAppTests" */;
+			buildPhases = (
+				33A25CF82F9A8AFF000D8AAE /* Sources */,
+				33A25CF92F9A8AFF000D8AAE /* Frameworks */,
+				33A25CFA2F9A8AFF000D8AAE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				33A25CFE2F9A8AFF000D8AAE /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				33A25CFF2F9A8AFF000D8AAE /* SampleAppTests */,
+			);
+			name = SampleAppTests;
+			packageProductDependencies = (
+			);
+			productName = SampleAppTests;
+			productReference = 33A25CFC2F9A8AFF000D8AAE /* SampleAppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		33A25D052F9A8AFF000D8AAE /* SampleAppUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 33A25D162F9A8AFF000D8AAE /* Build configuration list for PBXNativeTarget "SampleAppUITests" */;
+			buildPhases = (
+				33A25D022F9A8AFF000D8AAE /* Sources */,
+				33A25D032F9A8AFF000D8AAE /* Frameworks */,
+				33A25D042F9A8AFF000D8AAE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				33A25D082F9A8AFF000D8AAE /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				33A25D092F9A8AFF000D8AAE /* SampleAppUITests */,
+			);
+			name = SampleAppUITests;
+			packageProductDependencies = (
+			);
+			productName = SampleAppUITests;
+			productReference = 33A25D062F9A8AFF000D8AAE /* SampleAppUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		33A25CE72F9A8AFB000D8AAE /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2620;
+				LastUpgradeCheck = 2620;
+				TargetAttributes = {
+					33A25CEE2F9A8AFB000D8AAE = {
+						CreatedOnToolsVersion = 26.2;
+					};
+					33A25CFB2F9A8AFF000D8AAE = {
+						CreatedOnToolsVersion = 26.2;
+						TestTargetID = 33A25CEE2F9A8AFB000D8AAE;
+					};
+					33A25D052F9A8AFF000D8AAE = {
+						CreatedOnToolsVersion = 26.2;
+						TestTargetID = 33A25CEE2F9A8AFB000D8AAE;
+					};
+				};
+			};
+			buildConfigurationList = 33A25CEA2F9A8AFB000D8AAE /* Build configuration list for PBXProject "SampleApp" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+				ru,
+				ro,
+				el,
+				bg,
+				de,
+				fr,
+				es,
+				ar,
+			);
+			mainGroup = 33A25CE62F9A8AFB000D8AAE;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 33A25CF02F9A8AFB000D8AAE /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				33A25CEE2F9A8AFB000D8AAE /* SampleApp */,
+				33A25CFB2F9A8AFF000D8AAE /* SampleAppTests */,
+				33A25D052F9A8AFF000D8AAE /* SampleAppUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		33A25CED2F9A8AFB000D8AAE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		33A25CFA2F9A8AFF000D8AAE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		33A25D042F9A8AFF000D8AAE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		657B46D0A5E16111E3AC8A2B /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Stop the build when Gradle fails, or Xcode embeds the previous framework.\nset -e\nexport JAVA_HOME=\"$HOME/.sdkman/candidates/java/21.0.2-tem\"\nREPO=\"$SRCROOT/../..\"\nXCF=\"$REPO/sdk-payment-scanner/build/XCFrameworks/debug/sdk_payment_scanner.xcframework\"\n\n# The app links only sdk_payment_scanner (it exports sdk-payment); sdk-payment itself contributes resources.\n# Link just the architecture being built: the full XCFramework compiles and links three of them (~4 min).\ncase \"$PLATFORM_NAME:$ARCHS\" in\n  iphonesimulator:arm64) TARGET=iosSimulatorArm64; SLICE=ios-arm64_x86_64-simulator ;;\n  iphonesimulator:x86_64) TARGET=iosX64; SLICE=ios-arm64_x86_64-simulator ;;\n  iphoneos:arm64) TARGET=iosArm64; SLICE=ios-arm64 ;;\n  *) TARGET=\"\"; case \"$PLATFORM_NAME\" in iphonesimulator) SLICE=ios-arm64_x86_64-simulator ;; *) SLICE=ios-arm64 ;; esac ;;\nesac\nRESOURCES=\":sdk-payment:prepareComposeResourcesTaskForCommonMain :sdk-payment-scanner:prepareComposeResourcesTaskForCommonMain\"\nif [ -n \"$TARGET\" ] && [ -d \"$XCF/$SLICE\" ]; then\n  LINK_TASK=\":sdk-payment-scanner:linkDebugFramework$(echo \"$TARGET\" | cut -c1 | tr a-z A-Z)$(echo \"$TARGET\" | cut -c2-)\"\n  \"$REPO/gradlew\" -p \"$REPO\" $LINK_TASK $RESOURCES\n  FRESH=\"$REPO/sdk-payment-scanner/build/bin/$TARGET/debugFramework/sdk_payment_scanner.framework\"\n  # Keep the XCFramework slice current too, so Xcode's own copy of it is never stale.\n  rsync -a --delete \"$FRESH/\" \"$XCF/$SLICE/sdk_payment_scanner.framework/\"\nelse\n  # First build (no XCFramework yet) or several architectures at once.\n  \"$REPO/gradlew\" -p \"$REPO\" :sdk-payment-scanner:assembleSdk_payment_scannerDebugXCFramework $RESOURCES\n  FRESH=\"$XCF/$SLICE/sdk_payment_scanner.framework\"\nfi\n\n# Copy Compose Multiplatform resources into the app bundle. Compose MP reads them at\n# runtime from Bundle.main/compose-resources; without them the first Compose screen\n# throws MissingResourceException.\nCOMPOSE_RES_SRC=\"$REPO/sdk-payment/build/generated/compose/resourceGenerator/preparedResources/commonMain/composeResources\"\nCOMPOSE_RES_DST=\"$BUILT_PRODUCTS_DIR/$FULL_PRODUCT_NAME/compose-resources/composeResources/net.payrdr.mobile.payment.sdk.sdk.payment.generated.resources\"\nmkdir -p \"$COMPOSE_RES_DST\"\nrsync -a --delete \"$COMPOSE_RES_SRC/\" \"$COMPOSE_RES_DST/\"\n\nCOMPOSE_RES_SRC_SCANNER=\"$REPO/sdk-payment-scanner/build/generated/compose/resourceGenerator/preparedResources/commonMain/composeResources\"\nCOMPOSE_RES_DST_SCANNER=\"$BUILT_PRODUCTS_DIR/$FULL_PRODUCT_NAME/compose-resources/composeResources/net.payrdr.mobile.payment.sdk.sdk.payment.scanner.generated.resources\"\nmkdir -p \"$COMPOSE_RES_DST_SCANNER\"\nrsync -a --delete \"$COMPOSE_RES_SRC_SCANNER/\" \"$COMPOSE_RES_DST_SCANNER/\"\n\n# Xcode copies the XCFramework slice into BUILT_PRODUCTS_DIR before this phase runs, and its embed step\n# does not notice the framework changing afterwards: the app would link and run the previous build.\n# Put the fresh framework in both places (the embedded copy without headers, signed like the embed step does).\nrsync -a --delete \"$FRESH/\" \"$BUILT_PRODUCTS_DIR/sdk_payment_scanner.framework/\"\nEMBEDDED=\"$TARGET_BUILD_DIR/$FRAMEWORKS_FOLDER_PATH/sdk_payment_scanner.framework\"\nif [ -d \"$EMBEDDED\" ]; then\n  rsync -a --delete --exclude Headers --exclude Modules \"$FRESH/\" \"$EMBEDDED/\"\n  codesign --force --sign \"${EXPANDED_CODE_SIGN_IDENTITY:--}\" \"$EMBEDDED\"\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		33A25CEB2F9A8AFB000D8AAE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		33A25CF82F9A8AFF000D8AAE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		33A25D022F9A8AFF000D8AAE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		33A25CFE2F9A8AFF000D8AAE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 33A25CEE2F9A8AFB000D8AAE /* SampleApp */;
+			targetProxy = 33A25CFD2F9A8AFF000D8AAE /* PBXContainerItemProxy */;
+		};
+		33A25D082F9A8AFF000D8AAE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 33A25CEE2F9A8AFB000D8AAE /* SampleApp */;
+			targetProxy = 33A25D072F9A8AFF000D8AAE /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		33A25D0E2F9A8AFF000D8AAE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		33A25D0F2F9A8AFF000D8AAE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		33A25D112F9A8AFF000D8AAE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = SampleApp/SampleApp.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = L2QQ63GC5C;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../../sdk-payment/build/XCFrameworks/debug",
+					"$(SRCROOT)/../../sdk-payment-scanner/build/XCFrameworks/debug",
+				);
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "SampleApp-Info.plist";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.payrdr.mobile.payment.samples.SampleApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		33A25D122F9A8AFF000D8AAE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = SampleApp/SampleApp.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = L2QQ63GC5C;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../../sdk-payment/build/XCFrameworks/debug",
+					"$(SRCROOT)/../../sdk-payment-scanner/build/XCFrameworks/debug",
+				);
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "SampleApp-Info.plist";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.payrdr.mobile.payment.samples.SampleApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		33A25D142F9A8AFF000D8AAE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.payrdr.mobile.payment.samples.SampleAppTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SampleApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SampleApp";
+			};
+			name = Debug;
+		};
+		33A25D152F9A8AFF000D8AAE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.payrdr.mobile.payment.samples.SampleAppTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SampleApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SampleApp";
+			};
+			name = Release;
+		};
+		33A25D172F9A8AFF000D8AAE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.payrdr.mobile.payment.samples.SampleAppUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = SampleApp;
+			};
+			name = Debug;
+		};
+		33A25D182F9A8AFF000D8AAE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.payrdr.mobile.payment.samples.SampleAppUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = SampleApp;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		33A25CEA2F9A8AFB000D8AAE /* Build configuration list for PBXProject "SampleApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				33A25D0E2F9A8AFF000D8AAE /* Debug */,
+				33A25D0F2F9A8AFF000D8AAE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		33A25D102F9A8AFF000D8AAE /* Build configuration list for PBXNativeTarget "SampleApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				33A25D112F9A8AFF000D8AAE /* Debug */,
+				33A25D122F9A8AFF000D8AAE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		33A25D132F9A8AFF000D8AAE /* Build configuration list for PBXNativeTarget "SampleAppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				33A25D142F9A8AFF000D8AAE /* Debug */,
+				33A25D152F9A8AFF000D8AAE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		33A25D162F9A8AFF000D8AAE /* Build configuration list for PBXNativeTarget "SampleAppUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				33A25D172F9A8AFF000D8AAE /* Debug */,
+				33A25D182F9A8AFF000D8AAE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 33A25CE72F9A8AFB000D8AAE /* Project object */;
+}
