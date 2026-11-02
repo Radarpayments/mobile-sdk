@@ -74,6 +74,12 @@ class KmpLibraryConventionPlugin : Plugin<Project> {
                 targetSdk = libs.intVersion("android-compile-sdk")
             }
 
+            // Lifecycle's LiveData check crashes the lint of AGP 8.7 on Kotlin 2.2 code (IncompatibleClassChangeError),
+            // and the SDK has no LiveData for it to check.
+            lint {
+                disable += "NullSafeMutableLiveData"
+            }
+
             compileOptions {
                 sourceCompatibility = JavaVersion.toVersion(libs.intVersion("jvm-target"))
                 targetCompatibility = JavaVersion.toVersion(libs.intVersion("jvm-target"))
