@@ -55,6 +55,11 @@ android {
         compose = true
     }
 
+    // Lifecycle's LiveData check crashes the lint of AGP 8.7 on Kotlin 2.2 code; the app has no LiveData.
+    lint {
+        disable += "NullSafeMutableLiveData"
+    }
+
     kotlin {
         jvmToolchain(
             libs.versions.jvm.target
