@@ -31,6 +31,8 @@ subprojects {
         config.setFrom(rootProject.files("config/detekt/detekt.yml"))
         buildUponDefaultConfig = true
         allRules = false
+        // Known findings a module has not fixed yet (./gradlew :<module>:detektBaseline); new ones still fail.
+        baseline = file("detekt-baseline.xml")
     }
 }
 

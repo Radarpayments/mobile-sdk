@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues></ManuallySuppressedIssues>
+  <CurrentIssues>
+    <ID>CyclomaticComplexMethod:CardFieldsGroup.kt$@Composable internal fun CardFieldsGroup( vm: SdkCoreViewModel, errors: Map&lt;CoreField, String&gt;, onEdit: (CoreField) -&gt; Unit, colors: CoreColors, )</ID>
+    <ID>LongMethod:CardFieldsGroup.kt$@Composable internal fun CardFieldsGroup( vm: SdkCoreViewModel, errors: Map&lt;CoreField, String&gt;, onEdit: (CoreField) -&gt; Unit, colors: CoreColors, )</ID>
+    <ID>LongMethod:SdkCoreScreen.kt$@Composable private fun CoreInput( field: CoreField, label: String, value: String, onValueChange: (String) -&gt; Unit, error: String?, kind: FieldKind, colors: CoreColors, )</ID>
+    <ID>LongMethod:SdkCoreScreen.kt$@Composable private fun TokenPanel( token: String, onAgain: () -&gt; Unit, colors: CoreColors, )</ID>
+    <ID>LongParameterList:FurnitureCatalogScreen.kt$( cart: Cart, onBack: () -&gt; Unit, onProduct: (Product) -&gt; Unit, onCart: () -&gt; Unit, grid: LazyGridState = rememberLazyGridState(), category: FurnitureCategory = FurnitureCategory.ALL, onCategory: (FurnitureCategory) -&gt; Unit = {}, flight: PhotoFlight = { this }, )</ID>
+    <ID>MaxLineLength:AdvancedScreen.kt$"Checkout запускается с hardcoded-пин, который НЕ соответствует реальному серверу — ожидается сетевая ошибка. Демонстрация fail-fast поведения."</ID>
+  </CurrentIssues>
+</SmellBaseline>
