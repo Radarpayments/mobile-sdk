@@ -1,0 +1,54 @@
+name: payrdr_flutter_sample
+description: "payrdr SDK demo stores in Flutter: the native payment sheet through the payrdr_sdk plugin, and SDK Core card encryption."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  http: ^1.6.0
+  # The version flutter_localizations pins.
+  intl: any
+  payrdr_sdk:
+    path: ../../plugins/flutter
+  shared_preferences: ^2.5.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  assets:
+    - assets/images/
+
+  # Variable Google Fonts (OFL): one file per family, each weight is a variation of it (see StoreFonts).
+  fonts:
+    - family: Cormorant
+      fonts:
+        - asset: assets/fonts/cormorant.ttf
+    - family: Montserrat
+      fonts:
+        - asset: assets/fonts/montserrat.ttf
+    - family: Nunito
+      fonts:
+        - asset: assets/fonts/nunito.ttf
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/inter.ttf
+    - family: IBMPlexSans
+      fonts:
+        - asset: assets/fonts/ibm_plex_sans.ttf
+    - family: PlayfairDisplay
+      fonts:
+        - asset: assets/fonts/playfair_display_italic.ttf
+          style: italic
