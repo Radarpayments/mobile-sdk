@@ -36,13 +36,17 @@ naming:
   FunctionNaming:
     active: true
     functionPattern: '([a-z][a-zA-Z0-9]*)|(`.*`)'
+    # Composables are named like types.
+    ignoreAnnotated: ['Composable']
 
 comments:
   UndocumentedPublicClass:
     active: true
-    excludes: ['**/test/**', '**/commonTest/**', '**/androidTest/**']
+    # Samples are apps, with no API of their own to document.
+    excludes: ['**/test/**', '**/commonTest/**', '**/androidTest/**', '**/samples/**']
   UndocumentedPublicFunction:
     active: true
-    excludes: ['**/test/**', '**/commonTest/**', '**/androidTest/**']
+    # Samples are apps, with no API of their own to document.
+    excludes: ['**/test/**', '**/commonTest/**', '**/androidTest/**', '**/samples/**']
   UndocumentedPublicProperty:
     active: false
