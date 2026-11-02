@@ -1,0 +1,7 @@
+{
+  "token": { "token": "tok" },
+  "fieldErrors": { "errors": { "pan": "required" } },
+  "invalidRequest": {
+    "error": { "code": "invalid_request", "message": "type must be card, cardInstant, binding or bindingInstant, not wallet" }
+  }
+}

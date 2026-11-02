@@ -1,0 +1,20 @@
+{
+  "card": {
+    "type": "card",
+    "pubKey": "PEM",
+    "mdOrder": "md-1",
+    "pan": "4532896701439077",
+    "expiry": "12/28",
+    "cvc": "444",
+    "cardholder": "JOHN DOE"
+  },
+  "cardWithoutOrder": {
+    "type": "cardInstant",
+    "pubKey": "PEM",
+    "pan": "4532896701439077",
+    "expiry": "12/28",
+    "cvc": "444"
+  },
+  "savedCard": { "type": "binding", "pubKey": "PEM", "mdOrder": "md-1", "bindingId": "b-1", "cvc": "444" },
+  "savedCardWithoutOrder": { "type": "bindingInstant", "pubKey": "PEM", "bindingId": "b-1" }
+}
