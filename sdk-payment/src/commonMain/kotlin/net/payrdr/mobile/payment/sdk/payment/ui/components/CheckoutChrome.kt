@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -51,42 +50,6 @@ import net.payrdr.mobile.payment.sdk.sdk.payment.generated.resources.action_back
 import net.payrdr.mobile.payment.sdk.sdk.payment.generated.resources.action_close
 import net.payrdr.mobile.payment.sdk.sdk.payment.generated.resources.sheet_order_number
 import org.jetbrains.compose.resources.stringResource
-
-/**
- * 56dp top bar of full-screen steps: leading back/close action, title and trailing actions.
- * Steps that take a payment use [AmountTopBar] instead.
- */
-@Composable
-internal fun CheckoutAppBar(
-    title: String,
-    navigationIcon: ImageVector?,
-    navigationLabel: String,
-    onNavigate: () -> Unit,
-    modifier: Modifier = Modifier,
-    actions: @Composable RowScope.() -> Unit = {},
-) {
-    val colors = LocalPaymentColors.current
-    val typography = LocalPaymentTypography.current
-    Row(
-        modifier = modifier.fillMaxWidth().height(56.dp).padding(start = 6.dp, end = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-    ) {
-        if (navigationIcon != null) {
-            IconAction(icon = navigationIcon, contentDescription = navigationLabel, onClick = onNavigate)
-        } else {
-            Box(Modifier.width(10.dp))
-        }
-        Text(
-            text = title,
-            style = typography.title.copy(color = colors.onBackground),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.weight(1f),
-        )
-        actions()
-    }
-}
 
 /**
  * Header of every checkout step: a round back button on the left, the step's title in the middle and a round
@@ -285,21 +248,6 @@ internal fun SheetGrabber(modifier: Modifier = Modifier) {
                 .size(width = 38.dp, height = 4.dp)
                 .background(colors.outlineStrong, RoundedCornerShape(2.dp)),
         )
-    }
-}
-
-/** Accent icon on a soft accent plate — heads informational sheets ("Scan your card"). */
-@Composable
-internal fun IconPlate(
-    icon: ImageVector,
-    modifier: Modifier = Modifier,
-) {
-    val colors = LocalPaymentColors.current
-    Box(
-        modifier = modifier.size(56.dp).background(colors.primarySoft, RoundedCornerShape(16.dp)),
-        contentAlignment = Alignment.Center,
-    ) {
-        Icon(icon, contentDescription = null, tint = colors.primary, modifier = Modifier.size(28.dp))
     }
 }
 

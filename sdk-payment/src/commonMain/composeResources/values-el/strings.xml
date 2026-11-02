@@ -80,7 +80,6 @@
     <!-- Card scan -->
     <string name="scan_title">Σάρωση κάρτας</string>
     <string name="scan_body">Η κάμερα διαβάζει τον αριθμό και την ημερομηνία λήξης της κάρτας. Οι φωτογραφίες δεν αποθηκεύονται ούτε αποστέλλονται πουθενά.</string>
-    <string name="scan_continue">Συνέχεια</string>
     <string name="scan_turn_on">Ενεργοποίηση κάμερας</string>
     <string name="scan_manual">Χειροκίνητη εισαγωγή</string>
 

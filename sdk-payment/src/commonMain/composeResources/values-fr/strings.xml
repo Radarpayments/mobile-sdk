@@ -80,7 +80,6 @@
     <!-- Card scan -->
     <string name="scan_title">Scanner votre carte</string>
     <string name="scan_body">La caméra lit le numéro et la date d’expiration de la carte. Les photos ne sont ni enregistrées ni envoyées.</string>
-    <string name="scan_continue">Continuer</string>
     <string name="scan_turn_on">Activer la caméra</string>
     <string name="scan_manual">Saisir manuellement</string>
 

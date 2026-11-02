@@ -80,7 +80,6 @@
     <!-- Card scan -->
     <string name="scan_title">Scan your card</string>
     <string name="scan_body">The camera reads the card number and expiry date. Photos are not saved or sent anywhere.</string>
-    <string name="scan_continue">Continue</string>
     <string name="scan_turn_on">Turn on camera</string>
     <string name="scan_manual">Enter manually</string>
 

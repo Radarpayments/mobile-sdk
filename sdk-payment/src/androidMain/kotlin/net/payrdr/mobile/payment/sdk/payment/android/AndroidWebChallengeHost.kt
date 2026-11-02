@@ -78,8 +78,6 @@ public class AndroidWebChallengeHost(
 }
 
 internal object ThreeDsWebContract : ActivityResultContract<ThreeDsChallenge, ThreeDsResult>() {
-    internal const val EXTRA_CHALLENGE = "challenge"
-    internal const val EXTRA_RESULT = "result"
     internal const val RESULT_KEY_SUCCESS = "success"
     internal const val RESULT_KEY_REASON = "reason"
     internal const val RESULT_KEY_INTERRUPTED = "interrupted"

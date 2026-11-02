@@ -80,7 +80,6 @@
     <!-- Card scan -->
     <string name="scan_title">Karte scannen</string>
     <string name="scan_body">Die Kamera erfasst Kartennummer und Ablaufdatum. Fotos werden weder gespeichert noch übertragen.</string>
-    <string name="scan_continue">Weiter</string>
     <string name="scan_turn_on">Kamera einschalten</string>
     <string name="scan_manual">Manuell eingeben</string>
 

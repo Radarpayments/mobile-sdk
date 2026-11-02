@@ -80,7 +80,6 @@
     <!-- Card scan -->
     <string name="scan_title">امسح بطاقتك</string>
     <string name="scan_body">تقرأ الكاميرا رقم البطاقة وتاريخ الانتهاء. لا يتم حفظ الصور أو إرسالها إلى أي جهة.</string>
-    <string name="scan_continue">متابعة</string>
     <string name="scan_turn_on">تشغيل الكاميرا</string>
     <string name="scan_manual">الإدخال يدويًا</string>
 
