@@ -1,0 +1,6 @@
+# Generated from the Android sample's string resources by tool/android_strings_to_arb.py.
+arb-dir: lib/l10n
+template-arb-file: app_en.arb
+output-localization-file: app_localizations.dart
+nullable-getter: false
+format: true
