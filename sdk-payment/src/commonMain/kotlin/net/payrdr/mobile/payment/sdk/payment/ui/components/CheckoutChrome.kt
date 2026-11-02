@@ -11,9 +11,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -48,7 +46,6 @@ import net.payrdr.mobile.payment.sdk.payment.ui.theme.primarySoft
 import net.payrdr.mobile.payment.sdk.sdk.payment.generated.resources.Res
 import net.payrdr.mobile.payment.sdk.sdk.payment.generated.resources.action_back
 import net.payrdr.mobile.payment.sdk.sdk.payment.generated.resources.action_close
-import net.payrdr.mobile.payment.sdk.sdk.payment.generated.resources.sheet_order_number
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -129,99 +126,6 @@ private val STEP_HEADER_HEIGHT = 44.dp
 private val ROUND_ACTION_SIZE = 32.dp
 private val ROUND_ACTION_INSET = (STEP_HEADER_HEIGHT - ROUND_ACTION_SIZE) / 2
 
-/** Amount and order number at the top of the checkout steps; off for now, the Pay button carries the amount. */
-private const val SHOW_ORDER_HEADER = false
-
-/**
- * Top of the payment sheet and of the steps that take a payment: big amount with the order number
- * under it (read as the screen heading). A close cross sits on the right, in line with the top of the
- * amount; a back arrow gets its own row above the amount, as a large title does. With [SHOW_ORDER_HEADER] off
- * only «‹ Back» and the cross are left, on one row.
- *
- * @param amount formatted amount; null leaves only the navigation action
- * @param onClose shows the close cross
- * @param onBack shows the back arrow (used instead of [onClose] on pushed steps)
- */
-@Composable
-internal fun AmountTopBar(
-    amount: String?,
-    orderNumber: String?,
-    modifier: Modifier = Modifier,
-    onClose: (() -> Unit)? = null,
-    onBack: (() -> Unit)? = null,
-) {
-    val colors = LocalPaymentColors.current
-    if (!SHOW_ORDER_HEADER) {
-        // Only the navigation: back on the left, close on the right, nothing when neither is set.
-        if (onBack == null && onClose == null) return
-        Row(modifier = modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            if (onBack != null) {
-                // Labelled: with no heading on the step, a bare arrow does not say where it leads.
-                TextAction(
-                    text = stringResource(Res.string.action_back),
-                    icon = PaymentIcons.Back,
-                    onClick = onBack,
-                    // The arrow lines up with the content's left edge; the action carries its own padding.
-                    modifier = Modifier.offset(x = (-10).dp),
-                )
-            }
-            Spacer(Modifier.weight(1f))
-            if (onClose != null) {
-                IconAction(
-                    icon = PaymentIcons.Close,
-                    contentDescription = stringResource(Res.string.action_close),
-                    onClick = onClose,
-                    tint = colors.onSurfaceVariant,
-                    modifier = Modifier.offset(x = 8.dp),
-                )
-            }
-        }
-        return
-    }
-    Column(modifier = modifier.fillMaxWidth()) {
-        if (onBack != null) {
-            // Lined up with the content's left edge: the button carries its own padding around the glyph.
-            IconAction(
-                icon = PaymentIcons.Back,
-                contentDescription = stringResource(Res.string.action_back),
-                onClick = onBack,
-                tint = colors.onSurfaceVariant,
-                modifier = Modifier.offset(x = (-10).dp),
-            )
-        }
-        Row(verticalAlignment = Alignment.Top) {
-            AmountTitle(amount, orderNumber, Modifier.weight(1f))
-            if (onClose != null) {
-                IconAction(
-                    icon = PaymentIcons.Close,
-                    contentDescription = stringResource(Res.string.action_close),
-                    onClick = onClose,
-                    tint = colors.onSurfaceVariant,
-                    modifier = Modifier.offset(x = 8.dp, y = ICON_TO_AMOUNT_TOP),
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun AmountTitle(
-    amount: String?,
-    orderNumber: String?,
-    modifier: Modifier,
-) {
-    val colors = LocalPaymentColors.current
-    val typography = LocalPaymentTypography.current
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(1.dp)) {
-        if (amount != null) {
-            Text(amount, style = typography.amount.copy(color = colors.onBackground), modifier = Modifier.semantics { heading() })
-        }
-        orderNumber?.let {
-            Text(stringResource(Res.string.sheet_order_number, it), style = typography.caption.copy(color = colors.onSurfaceVariant))
-        }
-    }
-}
-
 /** Hairline — label — hairline, e.g. "or pay by card". */
 @Composable
 internal fun LabeledDivider(text: String) {
@@ -282,6 +186,3 @@ internal fun ProgressRing(
         Icon(icon, contentDescription = null, tint = colors.primary, modifier = Modifier.size(30.dp))
     }
 }
-
-/** Lifts a 44dp icon button so the glyph's top meets the top of the amount digits. */
-private val ICON_TO_AMOUNT_TOP = (-12).dp
