@@ -11,46 +11,35 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeoutOrNull
 import net.payrdr.mobile.payment.sdk.core.SdkCore
+import net.payrdr.mobile.payment.sdk.core.model.BindingParams
 import net.payrdr.mobile.payment.sdk.core.model.CardParams
 import net.payrdr.mobile.payment.sdk.core.model.MsdkRegisteredFrom
+import net.payrdr.mobile.payment.sdk.core.model.PaymentCardParams
 import net.payrdr.mobile.payment.sdk.core.model.SdkCoreConfig
 import net.payrdr.mobile.payment.sdk.payment.api.PaymentApi
-import net.payrdr.mobile.payment.sdk.payment.api.dto.request.ApplePayProcessFormRequest
-import net.payrdr.mobile.payment.sdk.payment.api.dto.request.GooglePayProcessFormRequest
 import net.payrdr.mobile.payment.sdk.payment.api.dto.request.P2PFromCard
 import net.payrdr.mobile.payment.sdk.payment.api.dto.request.P2PPerformRequest
 import net.payrdr.mobile.payment.sdk.payment.api.dto.request.ProcessFormRequest
 import net.payrdr.mobile.payment.sdk.payment.api.dto.request.WalletVendor
 import net.payrdr.mobile.payment.sdk.payment.api.dto.response.FinishedPaymentInfoResponse
-import net.payrdr.mobile.payment.sdk.payment.api.dto.response.GPayData
-import net.payrdr.mobile.payment.sdk.payment.api.dto.response.PaymentSettings
 import net.payrdr.mobile.payment.sdk.payment.api.dto.response.ProcessFormResponse
 import net.payrdr.mobile.payment.sdk.payment.api.dto.response.SessionStatusResponse
-import net.payrdr.mobile.payment.sdk.payment.api.dto.response.WalletError
 import net.payrdr.mobile.payment.sdk.payment.applepay.ApplePayTokenProvider
-import net.payrdr.mobile.payment.sdk.payment.applepay.ApplePayTokenResult
 import net.payrdr.mobile.payment.sdk.payment.applepay.NoOpApplePayTokenProvider
 import net.payrdr.mobile.payment.sdk.payment.config.ApplePayConfig
 import net.payrdr.mobile.payment.sdk.payment.config.CheckoutConfig
 import net.payrdr.mobile.payment.sdk.payment.config.GooglePayConfig
-import net.payrdr.mobile.payment.sdk.payment.exception.SdkApplePayException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkCryptogramException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkDeclinedException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkException
-import net.payrdr.mobile.payment.sdk.payment.exception.SdkGooglePayException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkNetworkException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkNotConfiguredException
-import net.payrdr.mobile.payment.sdk.payment.exception.SdkOrderNotFoundException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkPaymentApiException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkSessionExpiredException
-import net.payrdr.mobile.payment.sdk.payment.exception.SdkSessionNotFoundException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkThreeDsChallengeFailedException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkThreeDsTimeoutException
-import net.payrdr.mobile.payment.sdk.payment.exception.SdkTransactionException
 import net.payrdr.mobile.payment.sdk.payment.gpay.GooglePayTokenProvider
-import net.payrdr.mobile.payment.sdk.payment.gpay.GooglePayTokenResult
 import net.payrdr.mobile.payment.sdk.payment.gpay.NoOpGooglePayTokenProvider
 import net.payrdr.mobile.payment.sdk.payment.keyprovider.KeyProvider
 import net.payrdr.mobile.payment.sdk.payment.logger.Logger
@@ -61,41 +50,13 @@ import net.payrdr.mobile.payment.sdk.payment.result.PaymentIntent
 import net.payrdr.mobile.payment.sdk.payment.result.PaymentReceipt
 import net.payrdr.mobile.payment.sdk.payment.result.PaymentState
 import net.payrdr.mobile.payment.sdk.payment.result.ProcessingStep
-import net.payrdr.mobile.payment.sdk.payment.result.SavedCardInfo
 import net.payrdr.mobile.payment.sdk.payment.threeds.ThreeDsChallenge
 import net.payrdr.mobile.payment.sdk.payment.threeds.ThreeDsResult
 import net.payrdr.mobile.payment.sdk.payment.threeds.WebChallengeHost
-import net.payrdr.mobile.payment.sdk.payment.ui.util.CardFormatters
-import net.payrdr.mobile.payment.sdk.payment.utils.MoneyFormatter
-import net.payrdr.mobile.payment.sdk.payment.utils.ORDER_STATUS_FAILED
-import net.payrdr.mobile.payment.sdk.payment.utils.ORDER_STATUS_PAID
-import net.payrdr.mobile.payment.sdk.payment.utils.OrderStatus
 import net.payrdr.mobile.payment.sdk.payment.utils.SessionIdConverter
-import net.payrdr.mobile.payment.sdk.payment.utils.containsAnyOfKeywordIgnoreCase
-import kotlin.io.encoding.Base64
-import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlin.time.Clock
 
 private const val TAG = "PaymentFlowController"
-
-/** Paid, then taken back: the payment did not go through for the buyer. */
-private val ORDER_STATUS_UNDONE = listOf(OrderStatus.REVERSED, OrderStatus.REFUNDED)
-
-/** `actionCode` of an order with no payment attempt recorded while its session is alive ("Waiting for payment attempt"). */
-private const val ACTION_CODE_NO_ATTEMPT_YET = -100
-
-/**
- * Publicly documented `actionCode`s for an outcome the gateway does not know yet, so not a decline: -30001 the status
- * inquiry to the bank's processing has started, 90 response status unknown, 998 the request timed out, 151019 the
- * transfer was sent but the bank did not answer.
- */
-private val ACTION_CODES_OUTCOME_UNKNOWN = setOf(-30001, 90, 998, 151019)
-
-/** How long the card form waits for the merchant's payment settings (wallet parameters) before showing without them. */
-private const val SETTINGS_TIMEOUT_MS = 3_000L
-
-/** Order feature of an order that only saves a card: a zero payment the gateway takes back. */
-private const val FEATURE_VERIFY = "VERIFY"
 
 /** Pauses before each order-status recheck after a payment's answer was lost (1 s, 2 s, 4 s). */
 private val RECHECK_DELAYS_MS = listOf(1_000L, 2_000L, 4_000L)
@@ -119,12 +80,14 @@ public class PaymentFlowController internal constructor(
     private val webChallengeHost: WebChallengeHost,
     private val logger: Logger,
     private val scope: CoroutineScope,
-    private val googlePayTokenProvider: GooglePayTokenProvider = NoOpGooglePayTokenProvider,
-    private val applePayTokenProvider: ApplePayTokenProvider = NoOpApplePayTokenProvider,
+    googlePayTokenProvider: GooglePayTokenProvider = NoOpGooglePayTokenProvider,
+    applePayTokenProvider: ApplePayTokenProvider = NoOpApplePayTokenProvider,
     private val language: String? = null,
-    private val googlePay: GooglePayConfig? = null,
-    private val applePay: ApplePayConfig? = null,
+    googlePay: GooglePayConfig? = null,
+    applePay: ApplePayConfig? = null,
 ) {
+    private val wallets = WalletPayments(api, logger, googlePay, applePay, googlePayTokenProvider, applePayTokenProvider)
+
     private val _state: MutableStateFlow<PaymentState> = MutableStateFlow(PaymentState.Initializing)
     public val state: StateFlow<PaymentState> = _state.asStateFlow()
 
@@ -154,6 +117,9 @@ public class PaymentFlowController internal constructor(
     /** The order is a one-leg AFT transfer: paid through `p2p/perform.do`. Null for an e-commerce order. */
     private var transfer: Transfer? = null
     private var latestSession: SessionStatusResponse? = null
+
+    /** How the order status reads for this order; set once the session is loaded, before anything pays. */
+    private lateinit var outcome: OrderOutcome
     private var cardFormSnapshot: PaymentState.CardFormShown? = null
 
     /**
@@ -221,8 +187,8 @@ public class PaymentFlowController internal constructor(
                     is PaymentIntent.SubmitNewCard -> handleSubmitNewCard(intent)
                     is PaymentIntent.SubmitSavedCard -> handleSubmitSavedCard(intent)
                     is PaymentIntent.UnbindSavedCard -> handleUnbindSavedCard(intent)
-                    PaymentIntent.TapGooglePay -> handleTapGooglePay()
-                    PaymentIntent.TapApplePay -> handleTapApplePay()
+                    PaymentIntent.TapGooglePay -> handleTapWallet(WalletVendor.GOOGLE)
+                    PaymentIntent.TapApplePay -> handleTapWallet(WalletVendor.APPLE)
                     PaymentIntent.BackToPaymentMethods -> handleBackToPaymentMethods()
                     PaymentIntent.Cancel -> if (!resolving) complete(CheckoutResult.Canceled(orderId()))
                 }
@@ -263,9 +229,10 @@ public class PaymentFlowController internal constructor(
 
         val session = api.getSessionStatus(mdOrder)
         latestSession = session
+        outcome = OrderOutcome(orderId(), mdOrder, session.orderFeatures)
         // No countdown = no open payment session: the order is paid, declined, expired or unknown.
         if (session.remainingSecs == null) {
-            complete(closedSessionResult(checkout))
+            complete(outcome.ofClosedSession(api.getFinishedPaymentInfo(mdOrder), checkout))
             return
         }
         if (Transfer.isUnsupported(session)) {
@@ -274,107 +241,27 @@ public class PaymentFlowController internal constructor(
         }
         val transfer = Transfer.of(session)
         this.transfer = transfer
-        _order.value =
-            OrderSummary(
-                // An order that only saves a card pays nothing: its zero is not shown anywhere.
-                formattedAmount =
-                    if (transfer?.saveCardOnly ==
-                        true
-                    ) {
-                        null
-                    } else {
-                        MoneyFormatter.format(session.amount, session.currencyAlphaCode, language)
-                    },
-                orderNumber = session.orderNumber,
-            )
+        _order.value = orderSummary(session, transfer, language)
         val payerData = PayerDataMapper.request(session)
         val walletsOffered = transfer == null || transfer.paysByWallet(payerData)
-        val settings = if (walletsOffered) walletSettings(session) else null
-        val cardForm =
-            PaymentState.CardFormShown(
-                savedCards =
-                    (if (transfer != null) Transfer.debitCards(session) else session.bindingItems).map { item ->
-                        val (maskedPan, expiry) = CardFormatters.splitBindingLabel(item.label)
-                        SavedCardInfo(
-                            bindingId = item.id,
-                            maskedPan = maskedPan,
-                            paymentSystem = item.paymentSystem,
-                            cardHolder = item.cardHolder,
-                            canDelete = session.bindingDeactivationEnabled,
-                            expiry = expiry,
-                            payerPrefill = PayerDataMapper.bindingPrefill(item),
-                        )
-                    },
-                allowNewCard = true,
-                cvcRequired = if (transfer != null) !transfer.cvcBindingNotRequired else !session.cvcNotRequired,
-                canSaveCard = if (transfer != null) transfer.saveCard.shown else session.bindingEnabled,
-                payerData = payerData,
-                googlePay = if (walletsOffered) googlePay?.let { WalletResolver.googlePay(it, session, settings) } else null,
-                applePay = if (walletsOffered) applePay?.let { WalletResolver.applePay(it, session, settings) } else null,
-                transfer = transfer != null,
-                saveCardByDefault = transfer == null || transfer.saveCard == Transfer.SaveCard.LOCKED,
-                saveCardLocked = transfer?.saveCard == Transfer.SaveCard.LOCKED,
-                saveCardOnly = transfer?.saveCardOnly == true,
-            )
-        cardFormSnapshot = cardForm
-        _state.value = cardForm
-    }
-
-    /**
-     * The merchant's checkout settings, when a configured wallet the gateway enabled may need them (Google Pay's
-     * merchant id, gateway and environment; hidden payment methods). Without them the wallets fall back to the
-     * merchant's config: a failed request must not keep the buyer from paying by card.
-     */
-    private suspend fun walletSettings(session: SessionStatusResponse): PaymentSettings? {
-        val options = session.merchantOptions
-        val wanted =
-            (googlePay != null && WalletResolver.GOOGLE_PAY_OPTION in options) ||
-                (applePay != null && WalletResolver.APPLE_PAY_OPTION in options)
-        val login = session.merchantInfo.merchantLogin?.takeIf { it.isNotBlank() }
-        if (!wanted || login == null) return null
-        return try {
-            // A slow answer must not hold the card form: without it the wallets use the merchant's config only.
-            withTimeoutOrNull(SETTINGS_TIMEOUT_MS) { api.getPaymentSettings(login) }
-                ?: null.also { logger.warning(TAG, "Payment settings did not arrive in time; wallets use the merchant's config only") }
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: SdkException) {
-            logger.warning(TAG, "Payment settings unavailable; wallets use the merchant's config only", e)
-            null
-        }
+        val (googlePay, applePay) = if (walletsOffered) wallets.offered(session) else null to null
+        val form = cardForm(session, transfer, payerData, googlePay, applePay)
+        cardFormSnapshot = form
+        _state.value = form
     }
 
     private suspend fun handleSubmitNewCard(intent: PaymentIntent.SubmitNewCard) {
-        _state.value = PaymentState.Processing(ProcessingStep.LOADING_PUBLIC_KEY)
-        val key = keyProvider.provideKey()
-
-        _state.value = PaymentState.Processing(ProcessingStep.TOKENIZING_CARD)
-        val tokenResult =
-            core.generate(
-                SdkCoreConfig(
-                    cardParams =
-                        CardParams(
-                            mdOrder = mdOrder,
-                            pan = intent.pan,
-                            cvc = intent.cvc,
-                            expiryMMYY = intent.expiryMMYY,
-                            cardHolder =
-                                if (transfer !=
-                                    null
-                                ) {
-                                    transferCardholder(intent.cardHolder, intent.payerData)
-                                } else {
-                                    intent.cardHolder
-                                },
-                            pubKey = key.value,
-                        ),
-                    timestamp = epochMs(),
-                    registeredFrom = MsdkRegisteredFrom.MSDK_PAYMENT,
-                ),
-            )
         val token =
-            tokenResult.token
-                ?: throw SdkCryptogramException("Tokenization failed: ${tokenResult.errors}")
+            tokenize { pubKey ->
+                CardParams(
+                    mdOrder = mdOrder,
+                    pan = intent.pan,
+                    cvc = intent.cvc,
+                    expiryMMYY = intent.expiryMMYY,
+                    cardHolder = if (transfer != null) transferCardholder(intent.cardHolder, intent.payerData) else intent.cardHolder,
+                    pubKey = pubKey,
+                )
+            }
 
         _state.value = PaymentState.Processing(ProcessingStep.SUBMITTING_PAYMENT)
         paymentSent = true
@@ -414,27 +301,7 @@ public class PaymentFlowController internal constructor(
             resolveProcessFormResponse(api.p2pPerformByBinding(transferFromSavedCard(P2PFromCard.Binding(intent.bindingId), intent)))
             return
         }
-        _state.value = PaymentState.Processing(ProcessingStep.LOADING_PUBLIC_KEY)
-        val key = keyProvider.provideKey()
-
-        _state.value = PaymentState.Processing(ProcessingStep.TOKENIZING_CARD)
-        val tokenResult =
-            core.generate(
-                SdkCoreConfig(
-                    cardParams =
-                        net.payrdr.mobile.payment.sdk.core.model.BindingParams(
-                            mdOrder = mdOrder,
-                            bindingID = intent.bindingId,
-                            cvc = intent.cvc,
-                            pubKey = key.value,
-                        ),
-                    timestamp = epochMs(),
-                    registeredFrom = MsdkRegisteredFrom.MSDK_PAYMENT,
-                ),
-            )
-        val token =
-            tokenResult.token
-                ?: throw SdkCryptogramException("Tokenization failed: ${tokenResult.errors}")
+        val token = tokenize { pubKey -> BindingParams(mdOrder = mdOrder, bindingID = intent.bindingId, cvc = intent.cvc, pubKey = pubKey) }
 
         _state.value = PaymentState.Processing(ProcessingStep.SUBMITTING_PAYMENT)
         paymentSent = true
@@ -454,6 +321,23 @@ public class PaymentFlowController internal constructor(
             )
 
         resolveProcessFormResponse(response)
+    }
+
+    /** The payment token of the card [params] describe, sealed with the gateway's current public key. */
+    private suspend fun tokenize(params: (pubKey: String) -> PaymentCardParams): String {
+        _state.value = PaymentState.Processing(ProcessingStep.LOADING_PUBLIC_KEY)
+        val key = keyProvider.provideKey()
+
+        _state.value = PaymentState.Processing(ProcessingStep.TOKENIZING_CARD)
+        val tokenResult =
+            core.generate(
+                SdkCoreConfig(
+                    cardParams = params(key.value),
+                    timestamp = epochMs(),
+                    registeredFrom = MsdkRegisteredFrom.MSDK_PAYMENT,
+                ),
+            )
+        return tokenResult.token ?: throw SdkCryptogramException("Tokenization failed: ${tokenResult.errors}")
     }
 
     /** A transfer from a saved card: the card is already saved, so the gateway saves nothing. */
@@ -494,131 +378,39 @@ public class PaymentFlowController internal constructor(
         cardFormSnapshot?.let { _state.value = it }
     }
 
-    @OptIn(ExperimentalEncodingApi::class)
-    @Suppress("ThrowsCount") // precondition + token-result error branches are each a distinct contract
-    private suspend fun handleTapGooglePay() {
+    private suspend fun handleTapWallet(vendor: WalletVendor) {
         require(_state.value is PaymentState.CardFormShown) {
-            "TapGooglePay requires state to be CardFormShown, got ${_state.value}"
+            "Tap${vendor.title.replace(" ", "")} requires state to be CardFormShown, got ${_state.value}"
         }
-        val session = latestSession ?: throw SdkNotConfiguredException("Google Pay tapped before session was loaded")
-        val config =
-            cardFormSnapshot?.googlePay ?: run {
-                // A button the order does not offer (e.g. a merchant's own form): nothing to open, the form stays.
-                logger.warning(TAG, "Google Pay tapped but not offered for this order")
-                cardFormSnapshot?.let { _state.value = it }
-                return
+        val session = latestSession ?: throw SdkNotConfiguredException("${vendor.title} tapped before session was loaded")
+        val form = cardFormSnapshot
+        val offered =
+            when (vendor) {
+                WalletVendor.GOOGLE -> form?.googlePay != null
+                WalletVendor.APPLE -> form?.applePay != null
             }
-        // Known: the resolver offers a wallet only when the order's amount can be read.
-        val amountMinor = checkNotNull(WalletResolver.amountMinor(session)) { "Wallet offered for an amount it cannot read" }
+        if (form == null || !offered) {
+            // A button the order does not offer (e.g. a merchant's own form): nothing to open, the form stays.
+            logger.warning(TAG, "${vendor.title} tapped but not offered for this order")
+            form?.let { _state.value = it }
+            return
+        }
 
         _state.value = PaymentState.Processing(ProcessingStep.SUBMITTING_PAYMENT)
-        val tokenResult =
-            googlePayTokenProvider.requestPaymentToken(
-                config = config,
-                amountMinorUnits = amountMinor,
-                // Both known: the resolver offers Google Pay only with the order's currency and a country.
-                currencyCode = session.currencyAlphaCode.orEmpty(),
-                countryCode = config.countryCode.orEmpty(),
-            )
-        when (tokenResult) {
-            is GooglePayTokenResult.Success -> {
-                paymentSent = true
-                // The gateway reads Google's token as base64, as its own payment page sends it.
-                val token = Base64.encode(tokenResult.paymentToken.encodeToByteArray())
-                if (transfer != null) {
-                    resolveProcessFormResponse(api.p2pPerform(transferFromWallet(P2PFromCard.Wallet(WalletVendor.GOOGLE, token))))
-                    return
-                }
-                val response = api.googlePayProcessForm(GooglePayProcessFormRequest(paymentToken = token, mdOrder = mdOrder))
-                // Flatten into a ProcessFormResponse-shape for shared 3DS and refusal handling.
-                resolveProcessFormResponse(walletAnswer(response.success, response.data, response.error))
-            }
-            GooglePayTokenResult.Cancelled -> {
-                // User dismissed the GPay sheet — return to card form, don't terminate checkout.
-                cardFormSnapshot?.let { _state.value = it }
-            }
-            GooglePayTokenResult.NotAvailable ->
-                throw SdkGooglePayException("Google Pay is not available on this device")
-            is GooglePayTokenResult.Failure ->
-                throw SdkGooglePayException(tokenResult.reason, tokenResult.cause)
+        val token = wallets.token(vendor, form, session)
+        if (token == null) {
+            // The buyer dismissed the wallet's sheet: back to the form, the checkout goes on.
+            _state.value = form
+            return
         }
-    }
-
-    @Suppress("ThrowsCount") // precondition + token-result error branches are each a distinct contract
-    private suspend fun handleTapApplePay() {
-        require(_state.value is PaymentState.CardFormShown) {
-            "TapApplePay requires state to be CardFormShown, got ${_state.value}"
-        }
-        val session = latestSession ?: throw SdkNotConfiguredException("Apple Pay tapped before session was loaded")
-        val config =
-            cardFormSnapshot?.applePay ?: run {
-                // A button the order does not offer (e.g. a merchant's own form): nothing to open, the form stays.
-                logger.warning(TAG, "Apple Pay tapped but not offered for this order")
-                cardFormSnapshot?.let { _state.value = it }
-                return
+        paymentSent = true
+        val response =
+            if (transfer != null) {
+                api.p2pPerform(transferFromWallet(P2PFromCard.Wallet(vendor, token)))
+            } else {
+                wallets.pay(vendor, token, mdOrder)
             }
-        // Known: the resolver offers a wallet only when the order's amount can be read.
-        val amountMinor = checkNotNull(WalletResolver.amountMinor(session)) { "Wallet offered for an amount it cannot read" }
-        val merchantName = session.merchantInfo.merchantFullName.orEmpty()
-
-        _state.value = PaymentState.Processing(ProcessingStep.SUBMITTING_PAYMENT)
-        val tokenResult =
-            applePayTokenProvider.requestPaymentToken(
-                config = config,
-                amountMinorUnits = amountMinor,
-                // Both known: the resolver offers Apple Pay only with the order's currency and a country.
-                currencyCode = session.currencyAlphaCode.orEmpty(),
-                countryCode = config.countryCode.orEmpty(),
-                merchantDisplayName = merchantName,
-            )
-        when (tokenResult) {
-            is ApplePayTokenResult.Success -> {
-                paymentSent = true
-                if (transfer != null) {
-                    resolveProcessFormResponse(
-                        api.p2pPerform(transferFromWallet(P2PFromCard.Wallet(WalletVendor.APPLE, tokenResult.paymentToken))),
-                    )
-                    return
-                }
-                val response =
-                    api.applePayProcessForm(
-                        ApplePayProcessFormRequest(
-                            paymentToken = tokenResult.paymentToken,
-                            mdOrder = mdOrder,
-                        ),
-                    )
-                resolveProcessFormResponse(walletAnswer(response.success, response.data, response.error))
-            }
-            ApplePayTokenResult.Cancelled -> {
-                // User dismissed the Apple Pay sheet — return to card form, don't terminate checkout.
-                cardFormSnapshot?.let { _state.value = it }
-            }
-            ApplePayTokenResult.NotAvailable ->
-                throw SdkApplePayException("Apple Pay is not available on this device")
-            is ApplePayTokenResult.Failure ->
-                throw SdkApplePayException(tokenResult.reason, tokenResult.cause)
-        }
-    }
-
-    /**
-     * A wallet payment answer in the card form's shape: a challenge, or — `"success": false` — a refusal with the
-     * gateway's reason (the buyer's wording first), so it ends the checkout as declined instead of being looked up.
-     */
-    private fun walletAnswer(
-        success: Boolean,
-        data: GPayData?,
-        error: WalletError?,
-    ): ProcessFormResponse {
-        val refused = !success
-        return ProcessFormResponse(
-            errorCode = if (refused) error?.code?.toIntOrNull() ?: -1 else 0,
-            acsUrl = data?.acsUrl,
-            paReq = data?.paReq,
-            termUrl = data?.termUrl,
-            error = if (refused) error?.message ?: error?.description ?: "The gateway refused the wallet payment" else null,
-            displayErrorMessage = if (refused) error?.displayErrorMessage else null,
-            errorTypeName = data?.errorTypeName,
-        )
+        resolveProcessFormResponse(response)
     }
 
     private suspend fun resolveProcessFormResponse(response: ProcessFormResponse) {
@@ -671,7 +463,7 @@ public class PaymentFlowController internal constructor(
     private suspend fun finalize() {
         _state.value = PaymentState.Processing(ProcessingStep.FINALIZING)
         val finishedInfo = api.getFinishedPaymentInfo(mdOrder)
-        if (settledResult(finishedInfo) != null) {
+        if (outcome.settled(finishedInfo) != null) {
             completeFrom(finishedInfo)
             return
         }
@@ -683,23 +475,8 @@ public class PaymentFlowController internal constructor(
     /** Ends with the outcome [info] settles, and its receipt. */
     private fun completeFrom(info: FinishedPaymentInfoResponse) {
         complete(
-            result = checkNotNull(settledResult(info)),
-            receipt =
-                PaymentReceipt(
-                    // The gateway's "3.90 EUR", written like the order amount before it; it may leave the code out ("3.90").
-                    formattedAmount =
-                        if (savesCardOnly(info)) {
-                            null
-                        } else {
-                            MoneyFormatter.format(info.formattedAmount, latestSession?.currencyAlphaCode, language)
-                                ?: _order.value?.formattedAmount
-                        },
-                    paymentDate = info.paymentDate,
-                    panMasked = info.panMasked,
-                    approvalCode = info.approvalCode.orNullIfBlank(),
-                    refNum = info.refNum.orNullIfBlank(),
-                    actionCodeDescription = declineReason(info) ?: info.actionCodeDescription,
-                ),
+            result = checkNotNull(outcome.settled(info)),
+            receipt = outcome.receipt(info, latestSession?.currencyAlphaCode, language, orderAmount = _order.value?.formattedAmount),
         )
     }
 
@@ -710,15 +487,18 @@ public class PaymentFlowController internal constructor(
         when {
             info == null -> complete(CheckoutResult.Unknown(orderId(), recheck.lastError ?: error))
             // The buyer confirmed on the bank page, but no attempt is recorded yet: the gateway has not settled it.
-            awaitsAttempt(info) && challengeSucceeded -> complete(CheckoutResult.Unknown(orderId(), error))
+            outcome.awaitsAttempt(info) && challengeSucceeded -> complete(CheckoutResult.Unknown(orderId(), error))
             // The payment never reached the gateway: nothing was charged, the buyer can pay again.
-            awaitsAttempt(info) -> completeWithError(error)
+            outcome.awaitsAttempt(info) -> completeWithError(error)
             else -> completeFrom(info)
         }
     }
 
     /** Once our request or the bank page is lost, "no attempt recorded" is an answer too: the attempt did not happen. */
-    private val settlesOrAwaitsAttempt: (FinishedPaymentInfoResponse) -> Boolean = { settledResult(it) != null || awaitsAttempt(it) }
+    private val settlesOrAwaitsAttempt: (FinishedPaymentInfoResponse) -> Boolean = {
+        outcome.settled(it) != null ||
+            outcome.awaitsAttempt(it)
+    }
 
     /**
      * The bank page ended without telling how (it timed out or lost its connection), but the buyer may have confirmed
@@ -729,61 +509,9 @@ public class PaymentFlowController internal constructor(
         when {
             info == null -> complete(CheckoutResult.Unknown(orderId(), error))
             // Paid, declined with the gateway's own reason, or expired: that is the outcome, with its receipt.
-            isPaid(info) || declineReason(info) != null || info.sessionExpired -> completeFrom(info)
+            outcome.isPaid(info) || outcome.declineReason(info) != null || info.sessionExpired -> completeFrom(info)
             else -> completeWithError(error)
         }
-    }
-
-    /**
-     * The outcome [info] settles, or null while the gateway has not settled the order: still CREATED with no code,
-     * with -100 (no payment attempt recorded yet and the session is alive — not a decline), or with a code saying the
-     * gateway itself does not know the outcome yet ([ACTION_CODES_OUTCOME_UNKNOWN]).
-     */
-    private fun settledResult(info: FinishedPaymentInfoResponse): CheckoutResult? {
-        val status = info.status
-        val declineReason = declineReason(info)
-        return when {
-            // The gateway sends nothing but this flag for an order its session expired on (declined, never paid).
-            info.sessionExpired -> CheckoutResult.Failed(orderId(), SdkSessionExpiredException(mdOrder))
-            isPaid(info) || cardSaved(info) -> CheckoutResult.Completed(orderId())
-            awaitsAttempt(info) || info.actionCode in ACTION_CODES_OUTCOME_UNKNOWN -> null
-            declineReason != null ->
-                CheckoutResult.Failed(
-                    orderId(),
-                    SdkDeclinedException(declineCode = info.errorTypeName ?: info.actionCode.toString(), message = declineReason),
-                )
-            status != null && status.containsAnyOfKeywordIgnoreCase(ORDER_STATUS_FAILED) ->
-                CheckoutResult.Failed(orderId(), SdkDeclinedException(message = "Order is declined"))
-            status != null && status.containsAnyOfKeywordIgnoreCase(ORDER_STATUS_UNDONE) ->
-                CheckoutResult.Failed(orderId(), SdkTransactionException("Payment finished with status $status"))
-            else -> null
-        }
-    }
-
-    private fun isPaid(info: FinishedPaymentInfoResponse): Boolean = info.status?.containsAnyOfKeywordIgnoreCase(ORDER_STATUS_PAID) == true
-
-    /**
-     * An order that only saves a card ended with the card saved: the gateway makes a zero payment and takes it back, so
-     * `REVERSED` with action code 0 is its success, as on the gateway's own page.
-     */
-    private fun cardSaved(info: FinishedPaymentInfoResponse): Boolean =
-        savesCardOnly(info) && info.actionCode == 0 && info.status?.containsAnyOfKeywordIgnoreCase(listOf(OrderStatus.REVERSED)) == true
-
-    /** The order only saves a card (`VERIFY`): as the order status or the payment session tells. */
-    private fun savesCardOnly(info: FinishedPaymentInfoResponse): Boolean =
-        FEATURE_VERIFY in info.orderFeatures || latestSession?.orderFeatures?.contains(FEATURE_VERIFY) == true
-
-    /** No payment attempt is recorded and the session is alive (-100): nothing was charged, the order can still be paid. */
-    private fun awaitsAttempt(info: FinishedPaymentInfoResponse): Boolean = !isPaid(info) && info.actionCode == ACTION_CODE_NO_ATTEMPT_YET
-
-    /**
-     * The gateway's explanation of a decline for the payer; set only when an action code reports one (not -100 or a
-     * code for an outcome the gateway does not know yet, whose texts read like "pending" but decline nothing).
-     */
-    private fun declineReason(info: FinishedPaymentInfoResponse): String? {
-        val code = info.actionCode ?: 0
-        val declines = !isPaid(info) && code != 0 && code != ACTION_CODE_NO_ATTEMPT_YET && code !in ACTION_CODES_OUTCOME_UNKNOWN
-        return (info.displayErrorMessage.orNullIfBlank() ?: info.actionCodeDescription.orNullIfBlank()).takeIf { declines }
     }
 
     /** What [recheck] learned: the first settled order status, or the last error seen while asking. */
@@ -797,7 +525,7 @@ public class PaymentFlowController internal constructor(
      * wins. Used once a payment was sent but its outcome did not arrive, so the buyer is not told "failed" for a
      * payment that went through.
      */
-    private suspend fun recheck(settles: (FinishedPaymentInfoResponse) -> Boolean = { settledResult(it) != null }): Recheck {
+    private suspend fun recheck(settles: (FinishedPaymentInfoResponse) -> Boolean = { outcome.settled(it) != null }): Recheck {
         _state.value = PaymentState.Processing(ProcessingStep.FINALIZING)
         resolving = true
         try {
@@ -815,37 +543,6 @@ public class PaymentFlowController internal constructor(
         } finally {
             resolving = false
         }
-    }
-
-    /** The gateway writes absent values as blank or as the string `null`. */
-    private fun String?.orNullIfBlank(): String? = this?.takeUnless { it.isBlank() || it.equals("null", ignoreCase = true) }
-
-    /**
-     * The outcome for a session without `remainingSecs`, from the order's final status: an order paid earlier is
-     * [CheckoutResult.Completed], anything else cannot be paid any more.
-     */
-    private suspend fun closedSessionResult(checkout: CheckoutConfig): CheckoutResult {
-        val info = api.getFinishedPaymentInfo(mdOrder)
-        val status = info.status
-        val error =
-            when {
-                info.sessionExpired -> SdkSessionExpiredException(mdOrder)
-                status == null ->
-                    when (checkout) {
-                        is CheckoutConfig.SessionId -> SdkSessionNotFoundException(checkout.value)
-                        is CheckoutConfig.MdOrder -> SdkOrderNotFoundException(mdOrder)
-                    }
-                status.containsAnyOfKeywordIgnoreCase(ORDER_STATUS_PAID) || cardSaved(info) -> return CheckoutResult.Completed(orderId())
-                // The gateway's code and wording when it has them (e.g. DECLINED_BY_MERCHANT: an API V2 session expired
-                // by the merchant).
-                status.containsAnyOfKeywordIgnoreCase(ORDER_STATUS_FAILED) ->
-                    SdkDeclinedException(
-                        declineCode = info.errorTypeName.orNullIfBlank(),
-                        message = declineReason(info) ?: "Order is declined",
-                    )
-                else -> SdkTransactionException("Order cannot be paid, status $status")
-            }
-        return CheckoutResult.Failed(orderId(), error)
     }
 
     /** @param reason the gateway's explanation for the payer, shown on the result screen */
