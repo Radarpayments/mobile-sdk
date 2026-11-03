@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
@@ -36,6 +37,8 @@ public actual fun GooglePayButton(
     modifier: Modifier,
 ) {
     if (GooglePayAvailability.isAvailable) {
+        // The view is built once per look: its listener calls the latest onClick, not the one of the first composition.
+        val latestClick = rememberUpdatedState(onClick)
         // Same corners and height as the other checkout buttons; the light variant on dark themes,
         // as Google's brand guidelines ask.
         val density = LocalDensity.current
@@ -55,7 +58,7 @@ public actual fun GooglePayButton(
                                 .apply { radiusPx?.let { setCornerRadius(it) } }
                                 .build(),
                         )
-                        setOnClickListener { onClick() }
+                        setOnClickListener { latestClick.value() }
                     }
                 },
             )
