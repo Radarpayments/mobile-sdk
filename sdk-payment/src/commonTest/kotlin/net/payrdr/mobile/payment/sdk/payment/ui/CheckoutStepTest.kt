@@ -7,6 +7,7 @@ import net.payrdr.mobile.payment.sdk.payment.result.CheckoutResult
 import net.payrdr.mobile.payment.sdk.payment.result.PaymentState
 import net.payrdr.mobile.payment.sdk.payment.result.ProcessingStep
 import net.payrdr.mobile.payment.sdk.payment.result.SavedCardInfo
+import net.payrdr.mobile.payment.sdk.payment.ui.components.WalletAvailability
 import kotlin.test.Test
 
 class CheckoutStepTest {
@@ -51,5 +52,49 @@ class CheckoutStepTest {
     fun `loading and methods and three-ds are separate steps`() {
         Step.Loading.key shouldNotBe methods.key
         threeDs.key shouldNotBe processing.key
+    }
+
+    @Test
+    fun `the session loads until the form and its wallets are in`() {
+        sessionStep(PaymentState.Initializing, emptyList(), WalletAvailability.None, null, methods) shouldBe Step.Loading
+        sessionStep(PaymentState.Processing(ProcessingStep.LOADING_SESSION), emptyList(), WalletAvailability.None, null, methods) shouldBe
+            Step.Loading
+        sessionStep(form, emptyList(), wallets = null, heldResult = null, lastStep = methods) shouldBe Step.Loading
+        sessionStep(PaymentState.Processing(ProcessingStep.SUBMITTING_PAYMENT), emptyList(), null, null, methods) shouldBe processing
+        sessionStep(PaymentState.ThreeDsChallenge, emptyList(), null, null, methods) shouldBe threeDs
+    }
+
+    @Test
+    fun `the form opens on its root or on the top of the stack`() {
+        sessionStep(form, emptyList(), WalletAvailability.None, null, Step.Loading) shouldBe methods
+        sessionStep(form, listOf(Route.Methods, Route.NewCard), WalletAvailability.None, null, Step.Loading) shouldBe newCard
+        val noCards = form.copy(savedCards = emptyList())
+        sessionStep(noCards, emptyList(), WalletAvailability.None, null, Step.Loading) shouldBe
+            Step.Form(Route.NewCard, noCards, isRoot = true)
+    }
+
+    @Test
+    fun `a completed run shows the held result or keeps the last step`() {
+        sessionStep(result.completed, emptyList(), WalletAvailability.None, heldResult = result.completed, lastStep = newCard) shouldBe
+            result
+        sessionStep(result.completed, emptyList(), WalletAvailability.None, heldResult = null, lastStep = newCard) shouldBe newCard
+    }
+
+    @Test
+    fun `the first form and a form back from a result start from the root`() {
+        stackFor(form, Route.Methods, stack = emptyList(), restart = false) shouldBe listOf(Route.Methods)
+        stackFor(form, Route.Methods, stack = listOf(Route.Methods, Route.NewCard), restart = true) shouldBe listOf(Route.Methods)
+        stackFor(form, Route.Methods, stack = listOf(Route.Methods, Route.NewCard), restart = false) shouldBe
+            listOf(Route.Methods, Route.NewCard)
+    }
+
+    @Test
+    fun `a removed card leaves the stack`() {
+        val gone = Route.Saved(card.copy(bindingId = "b2"))
+        stackFor(form, Route.Methods, stack = listOf(Route.Methods, Route.AllCards, gone), restart = false) shouldBe
+            listOf(Route.Methods, Route.AllCards)
+        stackFor(form, Route.Methods, stack = listOf(gone), restart = false) shouldBe listOf(Route.Methods)
+        stackFor(form, Route.Methods, stack = listOf(Route.Methods, Route.Saved(card)), restart = false) shouldBe
+            listOf(Route.Methods, Route.Saved(card))
     }
 }

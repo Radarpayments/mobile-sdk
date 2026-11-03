@@ -105,3 +105,47 @@ internal fun rootRoute(
     form: PaymentState.CardFormShown,
     wallets: WalletAvailability,
 ): Route = if (form.savedCards.isEmpty() && !wallets.offeredIn(form).any) Route.NewCard else Route.Methods
+
+/**
+ * The step [state] puts on screen. The card form opens on the top of [stack] (its root route while the stack is empty)
+ * once [wallets] are known; a finished run shows [heldResult] on the result screen, or keeps [lastStep] while the host
+ * closes.
+ */
+internal fun sessionStep(
+    state: PaymentState,
+    stack: List<Route>,
+    wallets: WalletAvailability?,
+    heldResult: PaymentState.Completed?,
+    lastStep: Step,
+): Step =
+    when (state) {
+        PaymentState.Initializing -> Step.Loading
+        is PaymentState.Processing ->
+            if (state.step == ProcessingStep.LOADING_SESSION) Step.Loading else Step.Processing(state.step)
+        is PaymentState.CardFormShown -> {
+            val route = wallets?.let { stack.lastOrNull() ?: rootRoute(state, it) }
+            if (route == null) Step.Loading else Step.Form(route, state, isRoot = stack.size <= 1)
+        }
+        PaymentState.ThreeDsChallenge -> Step.ThreeDs
+        // Without a result screen the host is about to close — keep the last frame.
+        is PaymentState.Completed -> heldResult?.let { Step.Result(it) } ?: lastStep
+    }
+
+/**
+ * The card steps for a new [form]: its [root] alone for the first form or one back from a result ([restart]), otherwise
+ * [stack] without a saved card the form no longer has.
+ */
+internal fun stackFor(
+    form: PaymentState.CardFormShown,
+    root: Route,
+    stack: List<Route>,
+    restart: Boolean,
+): List<Route> =
+    if (stack.isEmpty() || restart) {
+        listOf(root)
+    } else {
+        // A removed card can't stay open.
+        stack
+            .filter { it !is Route.Saved || form.savedCards.any { c -> c.bindingId == it.card.bindingId } }
+            .ifEmpty { listOf(root) }
+    }
