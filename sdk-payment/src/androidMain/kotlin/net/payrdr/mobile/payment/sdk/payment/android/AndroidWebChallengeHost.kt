@@ -26,7 +26,9 @@ import androidx.core.view.WindowInsetsCompat
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeout
+import net.payrdr.mobile.payment.sdk.payment.threeds.AcsForm
 import net.payrdr.mobile.payment.sdk.payment.threeds.ThreeDsChallenge
+import net.payrdr.mobile.payment.sdk.payment.threeds.ThreeDsRedirect
 import net.payrdr.mobile.payment.sdk.payment.threeds.ThreeDsResult
 import net.payrdr.mobile.payment.sdk.payment.threeds.WebChallengeHost
 import java.lang.ref.WeakReference
@@ -229,16 +231,7 @@ internal class ThreeDsWebActivity : ComponentActivity() {
         }
         setContentView(page)
 
-        val formBody =
-            buildString {
-                append("MD=")
-                append(Uri.encode(md))
-                append("&PaReq=")
-                append(Uri.encode(paReq))
-                append("&TermUrl=")
-                append(Uri.encode(termUrl))
-            }.toByteArray()
-        webView.postUrl(acsUrl, formBody)
+        webView.postUrl(acsUrl, AcsForm.body(md = md, paReq = paReq, termUrl = termUrl).toByteArray())
     }
 
     private fun handleRedirect(url: String) {
@@ -249,17 +242,11 @@ internal class ThreeDsWebActivity : ComponentActivity() {
             }
         // Flatten to Array<String> = [k, v, k, v, ...] for parcel transport.
         val flat = query.flatMap { listOf(it.first, it.second) }.toTypedArray()
-        // Detect error parameter from ACS convention.
-        val hasError = query.any { it.first.equals("error", ignoreCase = true) }
+        val failed = ThreeDsRedirect.result(query) as? ThreeDsResult.Failed
         val intent =
             Intent().apply {
-                putExtra(ThreeDsWebContract.RESULT_KEY_SUCCESS, !hasError)
-                if (hasError) {
-                    putExtra(
-                        ThreeDsWebContract.RESULT_KEY_REASON,
-                        query.firstOrNull { it.first.equals("error", true) }?.second ?: "unknown",
-                    )
-                }
+                putExtra(ThreeDsWebContract.RESULT_KEY_SUCCESS, failed == null)
+                if (failed != null) putExtra(ThreeDsWebContract.RESULT_KEY_REASON, failed.reason)
                 putExtra(ThreeDsWebContract.RESULT_KEY_QUERY, flat)
             }
         setResult(Activity.RESULT_OK, intent)
