@@ -2,6 +2,8 @@ package net.payrdr.mobile.payment.sdk.bridge
 
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.string.shouldContain
+import io.kotest.matchers.string.shouldNotContain
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
@@ -30,6 +32,29 @@ class CoreTokenTest {
     @Test fun `a saved card for an order and without one give tokens`() {
         token("""{"type":"binding","mdOrder":"md-1","bindingId":"b-1","cvc":"444","pubKey":$key}""")["token"] shouldNotBe null
         token("""{"type":"bindingInstant","bindingId":"b-1","pubKey":$key}""")["token"] shouldNotBe null
+    }
+
+    @Test fun `a request that does not parse never echoes the card back`() {
+        val badShapes =
+            listOf(
+                // A number where a string goes, a field of the wrong type, broken JSON after the card data.
+                """{"type":"card","pan":4532896701439077,"expiry":"12/28","cvc":"444","pubKey":$key}""",
+                """{"type":"card","pan":"4532896701439077","expiry":"12/28","cvc":{"v":"444"},"pubKey":$key}""",
+                """{"type":"card","pan":"4532896701439077","expiry":"12/28","cvc":"444","pubKey":$key""",
+            )
+        for (request in badShapes) {
+            val response = PayrdrBridge.coreToken(request)
+
+            token(request)["error"]!!.jsonObject["code"]!!.jsonPrimitive.content shouldBe "invalid_request"
+            response shouldNotContain "4532896701439077"
+            response shouldNotContain "444"
+        }
+    }
+
+    @Test fun `a request that does not parse names where it broke`() {
+        val response = token("""{"type":"card","pan":4532896701439077,"pubKey":$key}""")
+
+        response["error"]!!.jsonObject["message"]!!.jsonPrimitive.content shouldContain "$.pan"
     }
 
     @Test fun `missing fields come back as sdk-core codes keyed by field`() {

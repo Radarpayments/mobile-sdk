@@ -60,10 +60,19 @@ internal object BridgeJson {
         try {
             format.decodeFromString<T>(json)
         } catch (e: SerializationException) {
-            throw InvalidBridgeRequest(e.message ?: "Malformed request")
+            throw InvalidBridgeRequest(malformed(e))
         } catch (e: IllegalArgumentException) {
-            throw InvalidBridgeRequest(e.message ?: "Malformed request")
+            throw InvalidBridgeRequest(malformed(e))
         }
+
+    /**
+     * Where the request broke, and nothing of it: kotlinx's message quotes the request ("JSON input: …") and the token
+     * it stopped at, which for a card is its number or code.
+     */
+    fun malformed(e: Exception): String =
+        PATH.find(e.message.orEmpty())?.let { "Malformed request at ${it.groupValues[1]}" } ?: "Malformed request"
+
+    private val PATH = Regex("""at path: (\$[^\s]*)""")
 }
 
 @Serializable
