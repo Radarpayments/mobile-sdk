@@ -18,6 +18,7 @@ import com.google.android.gms.wallet.Wallet
 import com.google.android.gms.wallet.WalletConstants
 import kotlinx.coroutines.CompletableDeferred
 import net.payrdr.mobile.payment.sdk.payment.config.GooglePayConfig
+import net.payrdr.mobile.payment.sdk.payment.utils.MoneyFormatter
 import org.json.JSONObject
 import java.util.concurrent.atomic.AtomicReference
 
@@ -65,7 +66,7 @@ public class AndroidGooglePayTokenProvider(
         }
 
         val resolvedCountry = config.countryCode ?: countryCode
-        val totalPriceMajor = formatMajor(amountMinorUnits)
+        val totalPriceMajor = MoneyFormatter.majorString(amountMinorUnits, currencyCode)
 
         // Inside the try: a request the builder rejects must release `pending`, or every later tap is "in flight".
         return try {
@@ -186,13 +187,4 @@ public class AndroidGooglePayTokenProvider(
                     },
                 ).build(),
         )
-
-    private fun formatMajor(minor: Long): String {
-        // NOTE: hardcoded 2-decimal formatting. Currencies with non-2 fractional digits
-        // (JPY=0, KWD/BHD/IQD/JOD/OMR/TND=3) will produce wrong totalPrice.
-        val whole = minor / 100
-        val fraction = (minor % 100).let { if (it < 0) -it else it }
-        val frac = fraction.toString().padStart(2, '0')
-        return "$whole.$frac"
-    }
 }

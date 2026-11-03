@@ -117,6 +117,13 @@ class WalletResolverTest {
         WalletResolver.applePay(ApplePayConfig(merchantId = "merchant.shop"), noCurrency, settings).shouldBeNull()
     }
 
+    @Test fun `a wallet is off when the order's amount cannot be read - its sheet would show a made-up total`() {
+        val noAmount = session.copy(amount = "n/a")
+
+        WalletResolver.googlePay(GooglePayConfig(), noAmount, settings).shouldBeNull()
+        WalletResolver.applePay(ApplePayConfig(merchantId = "merchant.shop"), noAmount, settings).shouldBeNull()
+    }
+
     @Test fun `a blank value in the config falls back to the gateway and the order`() {
         val resolved = WalletResolver.googlePay(GooglePayConfig(merchantId = " ", gateway = "", countryCode = ""), session, settings)
 

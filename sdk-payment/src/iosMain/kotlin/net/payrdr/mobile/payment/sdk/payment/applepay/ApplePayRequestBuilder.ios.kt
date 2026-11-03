@@ -2,6 +2,7 @@ package net.payrdr.mobile.payment.sdk.payment.applepay
 
 import kotlinx.cinterop.ExperimentalForeignApi
 import net.payrdr.mobile.payment.sdk.payment.config.ApplePayConfig
+import net.payrdr.mobile.payment.sdk.payment.utils.MoneyFormatter
 import platform.Foundation.NSDecimalNumber
 import platform.PassKit.PKPaymentRequest
 import platform.PassKit.PKPaymentSummaryItem
@@ -46,19 +47,12 @@ public object ApplePayRequestBuilder {
         request.supportedNetworks = config.supportedNetworks.map { it.toPkPaymentNetwork() }
         request.merchantCapabilities = config.merchantCapabilities.toPkMerchantCapabilityMask()
 
-        val majorString = majorString(amountMinorUnits)
+        val majorString = MoneyFormatter.majorString(amountMinorUnits, currencyCode)
         val item = PKPaymentSummaryItem()
         item.label = merchantDisplayName
         item.amount = NSDecimalNumber(string = majorString)
         request.paymentSummaryItems = listOf(item)
 
         return request
-    }
-
-    private fun majorString(minor: Long): String {
-        val whole = minor / 100
-        val fraction = (minor % 100).let { if (it < 0) -it else it }
-        val frac = fraction.toString().padStart(2, '0')
-        return "$whole.$frac"
     }
 }

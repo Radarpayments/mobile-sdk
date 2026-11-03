@@ -24,6 +24,7 @@ internal class FakePaymentApi : PaymentApi {
     var nextSessionStatus: SessionStatusResponse =
         SessionStatusResponse(
             remainingSecs = 600L,
+            amount = "4990",
             currencyAlphaCode = "EUR",
             merchantInfo =
                 MerchantInfo(

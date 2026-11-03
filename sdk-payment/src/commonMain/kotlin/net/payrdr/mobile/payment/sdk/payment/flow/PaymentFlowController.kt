@@ -509,7 +509,8 @@ public class PaymentFlowController(
                 cardFormSnapshot?.let { _state.value = it }
                 return
             }
-        val amountMinor = MoneyFormatter.minorUnits(session.amount, session.currencyAlphaCode) ?: 0L
+        // Known: the resolver offers a wallet only when the order's amount can be read.
+        val amountMinor = checkNotNull(WalletResolver.amountMinor(session)) { "Wallet offered for an amount it cannot read" }
 
         _state.value = PaymentState.Processing(ProcessingStep.SUBMITTING_PAYMENT)
         val tokenResult =
@@ -557,7 +558,8 @@ public class PaymentFlowController(
                 cardFormSnapshot?.let { _state.value = it }
                 return
             }
-        val amountMinor = MoneyFormatter.minorUnits(session.amount, session.currencyAlphaCode) ?: 0L
+        // Known: the resolver offers a wallet only when the order's amount can be read.
+        val amountMinor = checkNotNull(WalletResolver.amountMinor(session)) { "Wallet offered for an amount it cannot read" }
         val merchantName = session.merchantInfo.merchantFullName.orEmpty()
 
         _state.value = PaymentState.Processing(ProcessingStep.SUBMITTING_PAYMENT)
