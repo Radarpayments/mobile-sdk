@@ -25,7 +25,9 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import net.payrdr.mobile.payment.sdk.payment.exception.SdkDeclinedException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkException
+import net.payrdr.mobile.payment.sdk.payment.exception.SdkPaymentApiException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkSessionExpiredException
 import net.payrdr.mobile.payment.sdk.payment.result.CheckoutResult
 import net.payrdr.mobile.payment.sdk.payment.result.OrderSummary
@@ -218,15 +220,25 @@ internal fun resultTitle(
 internal fun failureHint(error: SdkException?): StringResource =
     if (error is SdkSessionExpiredException) Res.string.result_session_expired else Res.string.result_failure_hint
 
-/** The chip for [error]; an expired session gets none, as its text above already says everything. */
+/**
+ * The chip for [error]: only what came from the gateway — a decline in its words, which are the buyer's, or the code of
+ * an error it answered with. A failure of the SDK's own (no network, a session not found) gets none: the buyer can do
+ * nothing with it, the text above already says what to do, and the app gets its type in the result. The SDK's messages
+ * are for developers: English, with ids and hosts in them.
+ */
 internal fun failureChip(
     description: String?,
     error: SdkException?,
-): String? = if (error is SdkSessionExpiredException) null else failureChipText(description = description, error = error?.message)
+): String? =
+    when (error) {
+        is SdkDeclinedException -> failureChipText(description = description, error = error.message)
+        is SdkPaymentApiException -> error.errorCode?.takeIf { it.isNotBlank() } ?: error.httpStatus?.let { "HTTP $it" }
+        else -> null
+    }
 
 /**
- * The technical error for the chip under the reason, or null when there is none or it only repeats [description]: a
- * bank's decline comes as both, and saying it twice reads as two different problems.
+ * The gateway's decline reason for the chip under the description, or null when there is none or it only repeats
+ * [description]: a bank's decline comes as both, and saying it twice reads as two different problems.
  */
 internal fun failureChipText(
     description: String?,
