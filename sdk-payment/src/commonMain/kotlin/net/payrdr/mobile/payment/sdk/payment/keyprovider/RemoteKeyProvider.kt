@@ -5,6 +5,7 @@ import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.isSuccess
+import kotlinx.coroutines.CancellationException
 import net.payrdr.mobile.payment.sdk.core.model.Key
 import net.payrdr.mobile.payment.sdk.payment.keyprovider.dto.ActiveKeysResponse
 
@@ -23,6 +24,8 @@ public class RemoteKeyProvider(
         val response: HttpResponse =
             try {
                 httpClient.get(url)
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Throwable) {
                 throw KeyProviderException("Network failure while loading active keys", e)
             }
@@ -32,6 +35,8 @@ public class RemoteKeyProvider(
         val parsed: ActiveKeysResponse =
             try {
                 response.body()
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Throwable) {
                 throw KeyProviderException("Malformed active keys response", e)
             }

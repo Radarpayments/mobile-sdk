@@ -16,6 +16,7 @@ import com.google.android.gms.wallet.PaymentDataRequest
 import com.google.android.gms.wallet.PaymentsClient
 import com.google.android.gms.wallet.Wallet
 import com.google.android.gms.wallet.WalletConstants
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import net.payrdr.mobile.payment.sdk.payment.config.GooglePayConfig
 import net.payrdr.mobile.payment.sdk.payment.utils.MoneyFormatter
@@ -114,6 +115,9 @@ public class AndroidGooglePayTokenProvider(
             } finally {
                 pending.compareAndSet(deferred, null)
             }
+        } catch (e: CancellationException) {
+            pending.compareAndSet(deferred, null)
+            throw e
         } catch (t: Throwable) {
             pending.compareAndSet(deferred, null)
             GooglePayTokenResult.Failure("GPay requestPaymentToken threw", t)
