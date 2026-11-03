@@ -17,6 +17,9 @@ class CardInputValidationTest {
     fun `pan length follows the network`() {
         CardInputValidation.pan("4111111111111111110") shouldBe null // Visa, 19 digits
         CardInputValidation.pan("41111111111111113") shouldBe FieldError.PAN_SHORT // Visa does not issue 17
+        CardInputValidation.pan("378282246310005") shouldBe null // Amex, 15
+        CardInputValidation.pan("36227206271667") shouldBe null // Diners, 14
+        CardInputValidation.pan("501800000009") shouldBe null // Maestro, 12
         CardFormatters.maxPanLength(CardNetwork.VISA) shouldBe 19
         CardFormatters.maxPanLength(CardNetwork.MASTERCARD) shouldBe 16
         CardFormatters.maxPanLength(CardNetwork.UNKNOWN) shouldBe 19

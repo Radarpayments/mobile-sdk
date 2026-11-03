@@ -10,6 +10,15 @@ class CardCodeValidatorTest {
         v.validate("123").isValid shouldBe true
     }
 
+    @Test fun `four digits pass - Amex prints a 4-digit code`() {
+        v.validate("1234").isValid shouldBe true
+    }
+
+    @Test
+    fun `five digits fail length`() {
+        v.validate("12345").errorCode shouldBe ValidationCodes.invalid
+    }
+
     @Test
     fun `empty fails required`() {
         v.validate("").errorCode shouldBe ValidationCodes.required
