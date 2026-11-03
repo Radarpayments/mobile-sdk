@@ -106,6 +106,16 @@ class ApplePayRequestBuilderTest {
         item.amount.stringValue shouldBe "100.55"
     }
 
+    @Test fun `paymentSummaryItem amount follows the currency's exponent`() {
+        fun amount(currency: String): String {
+            val request = ApplePayRequestBuilder.build(sampleConfig(), 1500L, currency, "US", "Test Merchant")
+            return (request.paymentSummaryItems[0] as PKPaymentSummaryItem).amount.stringValue
+        }
+
+        amount("JPY") shouldBe "1500"
+        amount("KWD") shouldBe "1.5"
+    }
+
     @Test fun `build rejects empty supportedNetworks`() {
         val bad = sampleConfig().copy(supportedNetworks = emptySet())
         shouldThrow<IllegalArgumentException> {

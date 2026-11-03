@@ -74,6 +74,15 @@ public object MoneyFormatter {
         return toMinor(parsed.groupValues[1], exponentOf(code))
     }
 
+    /**
+     * [minor] units of [currency] as the plain major-unit number wallet sheets take: dot-decimal, no grouping, the
+     * currency's own number of decimals (`10055 EUR` → `100.55`, `1500 JPY` → `1500`, `1500 KWD` → `1.500`).
+     */
+    internal fun majorString(
+        minor: Long,
+        currency: String,
+    ): String = formatMinor(minor, exponentOf(currency.trim().uppercase()), Style.PLAIN)
+
     /** `1.00 EUR`, `1 250,50 TRY`, `-49.90`: number (digits with separators) and an optional ISO code. */
     private val PREFORMATTED = Regex("""(-?\d[\d\s.,\u00A0]*)\s*([A-Za-z]{3})?""")
 
@@ -142,6 +151,9 @@ public object MoneyFormatter {
         companion object {
             private const val NBSP = "\u00A0"
             private val ENGLISH = Style(",", ".", signFirst = true, space = " ")
+
+            /** No grouping at all: `groupFrom` past any [Long]'s digits. */
+            val PLAIN = Style("", ".", signFirst = true, space = "", groupFrom = Int.MAX_VALUE)
 
             fun of(language: String?): Style =
                 when (language?.lowercase()?.substringBefore('-')) {

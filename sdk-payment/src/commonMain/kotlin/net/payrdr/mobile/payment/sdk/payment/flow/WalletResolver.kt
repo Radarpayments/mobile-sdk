@@ -5,11 +5,12 @@ import net.payrdr.mobile.payment.sdk.payment.api.dto.response.SessionStatusRespo
 import net.payrdr.mobile.payment.sdk.payment.config.ApplePayConfig
 import net.payrdr.mobile.payment.sdk.payment.config.GooglePayConfig
 import net.payrdr.mobile.payment.sdk.payment.gpay.GooglePayEnvironment
+import net.payrdr.mobile.payment.sdk.payment.utils.MoneyFormatter
 
 /**
  * The wallets an order can be paid with, and with what: the merchant's config over the gateway's settings and
  * the order. A wallet shows only when the gateway has enabled it for the merchant and not hidden it — as on the
- * gateway's payment page — and when every value it needs is known; nothing is guessed.
+ * gateway's payment page — and when every value it needs is known, the amount included; nothing is guessed.
  */
 internal object WalletResolver {
     /** `merchantOptions` entries that enable the wallets; `ecom2.hidden.payments` names that hide them. */
@@ -45,7 +46,8 @@ internal object WalletResolver {
                     it.allowedCardNetworks.isNotEmpty() &&
                     it.allowedAuthMethods.isNotEmpty() &&
                     isCountry(it.countryCode) &&
-                    isCurrency(session.currencyAlphaCode)
+                    isCurrency(session.currencyAlphaCode) &&
+                    hasAmount(session)
             }
     }
 
@@ -64,9 +66,13 @@ internal object WalletResolver {
                 it.supportedNetworks.isNotEmpty() &&
                     it.merchantCapabilities.isNotEmpty() &&
                     isCountry(it.countryCode) &&
-                    isCurrency(session.currencyAlphaCode)
+                    isCurrency(session.currencyAlphaCode) &&
+                    hasAmount(session)
             }
     }
+
+    /** The order's amount in minor units, which the wallet sheet shows; null when the session's amount cannot be read. */
+    fun amountMinor(session: SessionStatusResponse): Long? = MoneyFormatter.minorUnits(session.amount, session.currencyAlphaCode)
 
     /** A value the merchant actually set: a blank one leaves it to the gateway and the order. */
     private fun String?.given(): String? = this?.takeIf { it.isNotBlank() }
@@ -75,4 +81,6 @@ internal object WalletResolver {
     private fun isCountry(code: String?): Boolean = code?.length == 2
 
     private fun isCurrency(code: String?): Boolean = code?.length == 3
+
+    private fun hasAmount(session: SessionStatusResponse): Boolean = amountMinor(session) != null
 }

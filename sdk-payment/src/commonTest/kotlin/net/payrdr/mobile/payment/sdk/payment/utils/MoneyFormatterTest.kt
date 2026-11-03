@@ -25,6 +25,16 @@ class MoneyFormatterTest {
     }
 
     @Test
+    fun `wallet sheets get major units by the currency's exponent`() {
+        MoneyFormatter.majorString(10055, "EUR") shouldBe "100.55"
+        MoneyFormatter.majorString(5, "usd") shouldBe "0.05"
+        MoneyFormatter.majorString(1500, "JPY") shouldBe "1500"
+        MoneyFormatter.majorString(1500, "KWD") shouldBe "1.500"
+        MoneyFormatter.majorString(123456789, "BHD") shouldBe "123456.789"
+        MoneyFormatter.majorString(0, "EUR") shouldBe "0.00"
+    }
+
+    @Test
     fun `currency exponent is respected`() {
         MoneyFormatter.format("1500", "JPY") shouldBe "¥1,500"
         MoneyFormatter.format("1500", "KWD") shouldBe "1.500 KWD"
