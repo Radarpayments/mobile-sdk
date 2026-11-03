@@ -110,10 +110,19 @@ internal class Transfer(
     }
 }
 
+/** The cardholder the gateway gets when the buyer gave none, as its own payment page sends. */
+internal const val FALLBACK_CARDHOLDER = "CARDHOLDER"
+
+private const val CARDHOLDER_MAX_LENGTH = 30
+private val WHITESPACE = Regex("\\s+")
+
 /**
  * The cardholder sealed into a transfer's seToken: the P2P gateway refuses an empty one (`[fromCard.cardholderName]
  * empty`), unlike `processform.do`, which takes it beside the token. The name typed on the card, else the sender's name
- * from the transfer fields, else `CARDHOLDER`, as the payment does.
+ * from the transfer fields, else [FALLBACK_CARDHOLDER], as the payment does.
+ *
+ * The sender's name allows more than a card does (digits, brackets, any script), so it keeps only what sdk-core's
+ * `CardHolderValidator` accepts and is cut to its 30 characters: tokenization would refuse the rest.
  */
 internal fun transferCardholder(
     typed: String?,
@@ -121,8 +130,14 @@ internal fun transferCardholder(
 ): String =
     typed?.trim()?.takeIf { it.isNotEmpty() }
         ?: listOfNotNull(payerData[PayerField.PAYER_FIRST_NAME], payerData[PayerField.PAYER_LAST_NAME])
-            .map { it.trim() }
-            .filter { it.isNotEmpty() }
             .joinToString(" ")
+            .filter { it.isWhitespace() || it.fitsCardholder() }
+            .split(WHITESPACE)
+            .filter { word -> word.any { it.isLetter() } }
+            .joinToString(" ")
+            .take(CARDHOLDER_MAX_LENGTH)
+            .trimEnd()
             .takeIf { it.isNotEmpty() }
-        ?: "CARDHOLDER"
+        ?: FALLBACK_CARDHOLDER
+
+private fun Char.fitsCardholder(): Boolean = this in 'A'..'Z' || this in 'a'..'z' || this in ".'`-"
