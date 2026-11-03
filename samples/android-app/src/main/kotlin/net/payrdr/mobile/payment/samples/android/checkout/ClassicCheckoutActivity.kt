@@ -12,11 +12,11 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import net.payrdr.mobile.payment.samples.android.merchant.OrderRegistration
+import net.payrdr.mobile.payment.samples.android.merchant.merchantHttpClient
 import net.payrdr.mobile.payment.samples.android.merchant.merchantRegistrar
 import net.payrdr.mobile.payment.samples.android.prefs.AppPrefs
 import net.payrdr.mobile.payment.sdk.payment.android.PayrdrCheckout
 import net.payrdr.mobile.payment.sdk.payment.config.SdkPaymentConfig
-import net.payrdr.mobile.payment.sdk.payment.http.defaultHttpClientFactory
 import net.payrdr.mobile.payment.sdk.payment.result.CheckoutResult
 
 /**
@@ -32,7 +32,7 @@ class ClassicCheckoutActivity : ComponentActivity() {
     private lateinit var payButton: Button
 
     // One HTTP client for "your server" calls, however many times Pay is tapped.
-    private val http by lazy { defaultHttpClientFactory().create(config) }
+    private val http by lazy { merchantHttpClient() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

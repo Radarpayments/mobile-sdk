@@ -22,7 +22,7 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
-import net.payrdr.mobile.payment.sdk.payment.utils.SessionIdConverter
+import java.math.BigInteger
 import java.util.UUID
 
 /**
@@ -242,13 +242,34 @@ internal fun parseSessionResponse(body: String): OrderRegistration {
     val json = runCatching { Json.parseToJsonElement(body) as? JsonObject }.getOrNull()
     json ?: return OrderRegistration.Failed("Unexpected gateway response")
     json["id"]?.jsonPrimitive?.content?.let { id ->
-        val mdOrder = runCatching { SessionIdConverter.sessionIdToMdOrder(id) }.getOrNull()
-        return mdOrder?.let { OrderRegistration.Registered(it, sessionId = id) } ?: OrderRegistration.Failed("Unexpected session id $id")
+        val mdOrder = mdOrderOfSession(id) ?: return OrderRegistration.Failed("Unexpected session id $id")
+        return OrderRegistration.Registered(mdOrder, sessionId = id)
     }
     val error = json["error"] as? JsonObject
     val message = error?.get("errorMessage")?.jsonPrimitive?.content
     return OrderRegistration.Failed(message ?: "Gateway error ${error?.get("errorCode")?.jsonPrimitive?.content.orEmpty()}")
 }
+
+/** The mdOrder an API V2 session id encodes: the id is `ps_` + Base58 of `ps:` + mdOrder. Null for anything else. */
+internal fun mdOrderOfSession(sessionId: String): String? {
+    if (!sessionId.startsWith(SESSION_PREFIX)) return null
+    val encoded = sessionId.removePrefix(SESSION_PREFIX)
+    var number = BigInteger.ZERO
+    for (char in encoded) {
+        val digit = BASE58.indexOf(char).takeIf { it >= 0 } ?: return null
+        number = number * BASE58_RADIX + digit.toBigInteger()
+    }
+    // toByteArray() adds a sign byte; each leading "1" stands for a zero byte.
+    val bytes = number.toByteArray().dropWhile { it == 0.toByte() }
+    val zeros = List(encoded.takeWhile { it == BASE58[0] }.length) { 0.toByte() }
+    val decoded = (zeros + bytes).toByteArray().decodeToString()
+    return decoded.removePrefix(DECODED_PREFIX).takeIf { decoded.startsWith(DECODED_PREFIX) && it.isNotEmpty() }
+}
+
+private const val SESSION_PREFIX = "ps_"
+private const val DECODED_PREFIX = "ps:"
+private const val BASE58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
+private val BASE58_RADIX = BigInteger.valueOf(58)
 
 /** One gateway call of "your server": real time on the IO dispatcher, so a stalled DNS lookup cannot keep "Pay" busy. */
 private suspend fun callGateway(

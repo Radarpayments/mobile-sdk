@@ -48,12 +48,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import net.payrdr.mobile.payment.samples.android.R
 import net.payrdr.mobile.payment.samples.android.store.theme.StoreFonts
-import net.payrdr.mobile.payment.sdk.payment.ui.components.CardNetworkIcon
-import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentTheme
-import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentThemeProvider
-import net.payrdr.mobile.payment.sdk.payment.ui.util.CardFormatters
-import net.payrdr.mobile.payment.sdk.payment.ui.util.CardNetwork
-import net.payrdr.mobile.payment.sdk.payment.ui.util.CardNetworkResolver
 
 /**
  * The card fields as one group, the way the SDK's own form shows them: the number across the top with the
@@ -155,20 +149,19 @@ internal fun CardFieldsGroup(
                     vm.pan,
                     { typed ->
                         val digits = typed.filter(Char::isDigit)
-                        val pan = digits.take(CardFormatters.maxPanLength(CardNetworkResolver.resolve(digits)))
+                        val pan = digits.take(CardNetwork.of(digits).maxPanLength)
                         vm.setPan(pan)
                         // A new network may take a shorter CVC (Amex has 4 digits, the others 3).
-                        val cvcMax = CardFormatters.cvvLength(CardNetworkResolver.resolve(pan))
+                        val cvcMax = CardNetwork.of(pan).cvcLength
                         if (vm.cvc.length > cvcMax) vm.setCvc(vm.cvc.take(cvcMax))
                     },
                     stringResource(R.string.core_pan),
                     CellEdges(top = true, start = true, end = true),
                     digits,
                 ) {
-                    val network = CardNetworkResolver.resolve(vm.pan)
+                    val network = CardNetwork.of(vm.pan)
                     if (network != CardNetwork.UNKNOWN) {
-                        // The SDK's logo in brand colours, which come from its theme: light or dark like this screen.
-                        PaymentThemeProvider(if (colors.dark) PaymentTheme.Dark else PaymentTheme.Light) { CardNetworkIcon(network) }
+                        Text(network.displayName, color = colors.muted, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, maxLines = 1)
                     }
                 }
             }
@@ -187,7 +180,7 @@ internal fun CardFieldsGroup(
                 cell(
                     CoreField.CVC,
                     vm.cvc,
-                    { vm.setCvc(it.filter(Char::isDigit).take(CardFormatters.cvvLength(CardNetworkResolver.resolve(vm.pan)))) },
+                    { vm.setCvc(it.filter(Char::isDigit).take(CardNetwork.of(vm.pan).cvcLength)) },
                     stringResource(R.string.core_cvc),
                     CellEdges(end = true),
                     digits,
@@ -282,7 +275,7 @@ private val STROKE = 1.5.dp
 /** Shows the number's digits in the network's groups ("4111 1111 1111 1111", Amex 4-6-5). */
 internal object PanGroups : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
-        val shown = CardFormatters.formatPan(text.text)
+        val shown = CardNetwork.of(text.text).format(text.text)
         // Where each digit sits in the shown text; the offset after the last digit is the end.
         val positions = shown.indices.filter { shown[it].isDigit() }
         val mapping =

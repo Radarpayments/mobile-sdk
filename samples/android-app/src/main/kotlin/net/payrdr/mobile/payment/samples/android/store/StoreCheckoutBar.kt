@@ -53,6 +53,7 @@ import net.payrdr.mobile.payment.samples.android.checkout.rememberStoreCheckout
 import net.payrdr.mobile.payment.samples.android.merchant.OrderRegistrar
 import net.payrdr.mobile.payment.samples.android.merchant.OrderRegistration
 import net.payrdr.mobile.payment.samples.android.merchant.TransferPrefill
+import net.payrdr.mobile.payment.samples.android.merchant.merchantHttpClient
 import net.payrdr.mobile.payment.samples.android.merchant.merchantRegistrar
 import net.payrdr.mobile.payment.samples.android.prefs.AppPrefs
 import net.payrdr.mobile.payment.samples.android.prefs.rememberPrefs
@@ -62,7 +63,6 @@ import net.payrdr.mobile.payment.samples.android.store.theme.coverStyle
 import net.payrdr.mobile.payment.samples.android.store.theme.paymentTheme
 import net.payrdr.mobile.payment.sdk.payment.config.GooglePayConfig
 import net.payrdr.mobile.payment.sdk.payment.config.SdkPaymentConfig
-import net.payrdr.mobile.payment.sdk.payment.http.defaultHttpClientFactory
 
 internal const val PAY_BUTTON_TAG = "store_pay"
 internal const val SCENARIO_ROW_TAG = "store_scenario"
@@ -85,7 +85,7 @@ private fun gatewayRegistrar(
         login = snap.merchantLogin,
         password = snap.merchantPassword,
         apiKey = snap.apiKey,
-        http = defaultHttpClientFactory().create(SdkPaymentConfig(baseUrl = snap.baseUrl)),
+        http = merchantHttpClient(),
         orderType = snap.orderType,
         prefill = prefill,
     )

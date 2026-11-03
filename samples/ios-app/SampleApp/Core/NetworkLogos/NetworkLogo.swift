@@ -54,7 +54,7 @@ private final class ColorLogoShapes {
     private static var cache: [String: ColorLogoShapes] = [:]
 
     static func of(_ network: CardNetwork) -> ColorLogoShapes? {
-        let name = network.name
+        let name = network.rawValue
         if let cached = cache[name] { return cached }
         let logo: NetworkColorLogo
         switch name {
@@ -77,7 +77,7 @@ private final class ColorLogoShapes {
 /// Mark heights shared by the monochrome and the colour logos.
 enum NetworkLogoShapesHeight {
     static func mark(_ network: CardNetwork) -> CGFloat {
-        switch network.name {
+        switch network.rawValue {
         case "VISA": return 12
         case "UNIONPAY", "JCB": return 22
         case "DISCOVER": return 8

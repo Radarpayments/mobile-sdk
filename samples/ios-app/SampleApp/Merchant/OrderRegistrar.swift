@@ -220,9 +220,6 @@ func parseSessionResponse(_ data: Data) -> OrderRegistration {
 }
 
 /// The mdOrder an API V2 session id encodes: the id is `ps_` + Base58 of `ps:` + mdOrder. Nil for anything else.
-///
-/// The SDK's `SessionIdConverter.sessionIdToMdOrder` does the same, but it throws a Kotlin exception on a bad id,
-/// which Swift cannot catch; a gateway answer is not trusted that far.
 func mdOrder(ofSession sessionId: String) -> String? {
     guard sessionId.hasPrefix("ps_") else { return nil }
     let encoded = sessionId.dropFirst(3)

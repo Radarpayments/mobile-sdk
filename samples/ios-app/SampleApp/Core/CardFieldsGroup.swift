@@ -12,13 +12,13 @@ struct CardFieldsGroup: View {
     @State private var registry = MaskedFieldRegistry()
 
     var body: some View {
-        let network = CardNetworkResolver.shared.resolve(cardNumber: model.pan)
+        let network = CardNetwork(cardNumber: model.pan)
         VStack(alignment: .leading, spacing: 6) {
             Text("Card information").font(.custom("Inter", size: 13).weight(.semibold)).foregroundColor(colors.muted)
             VStack(spacing: 0) {
                 HStack(spacing: 0) {
                     cell(.pan, "Card number", text: panText, format: formatPan, edges: [.top, .leading, .trailing]) {
-                        if network.name != "UNKNOWN" { ColorNetworkLogo(network: network, dark: dark) }
+                        if network != .unknown { ColorNetworkLogo(network: network, dark: dark) }
                     }
                 }
                 .zIndex(highlight(.pan) != nil ? 1 : 0)
@@ -26,7 +26,7 @@ struct CardFieldsGroup: View {
                 HStack(spacing: 0) {
                     cell(.expiry, "MM/YY", text: $model.expiry, format: formatExpiryInput, edges: [.leading])
                     hairline.frame(width: stroke)
-                    cell(.cvc, "CVC/CVV", text: $model.cvc, format: { String($0.filter(\.isNumber).prefix(cvcLength(network))) }, edges: [.trailing])
+                    cell(.cvc, "CVC/CVV", text: $model.cvc, format: { String($0.filter(\.isNumber).prefix(network.cvcLength)) }, edges: [.trailing])
                 }
                 .zIndex(highlight(.expiry) != nil || highlight(.cvc) != nil ? 1 : 0)
                 hairline.frame(height: stroke)
@@ -52,12 +52,12 @@ struct CardFieldsGroup: View {
     /// The number as shown, in the network's groups ("4111 1111 1111 1111"); the model keeps the digits.
     private var panText: Binding<String> {
         Binding(
-            get: { CardFormatters.shared.formatPan(value: model.pan) },
+            get: { CardNetwork(cardNumber: model.pan).format(model.pan) },
             set: { shown in
                 let digits = shown.filter(\.isNumber)
                 model.pan = digits
                 // A new network may take a shorter CVC (Amex has 4 digits, the others 3).
-                let max = cvcLength(CardNetworkResolver.shared.resolve(cardNumber: digits))
+                let max = CardNetwork(cardNumber: digits).cvcLength
                 if model.cvc.count > max { model.cvc = String(model.cvc.prefix(max)) }
             }
         )
@@ -66,11 +66,9 @@ struct CardFieldsGroup: View {
     /// Digits only, as many as the network allows, in its groups.
     private func formatPan(_ typed: String) -> String {
         let all = typed.filter(\.isNumber)
-        let max = Int(CardFormatters.shared.maxPanLength(network: CardNetworkResolver.shared.resolve(cardNumber: all)))
-        return CardFormatters.shared.formatPan(value: String(all.prefix(max)))
+        let network = CardNetwork(cardNumber: all)
+        return network.format(String(all.prefix(network.maxPanLength)))
     }
-
-    private func cvcLength(_ network: CardNetwork) -> Int { Int(CardFormatters.shared.cvvLength(network: network)) }
 
     private let radius: CGFloat = 12
     private let stroke: CGFloat = 1.5

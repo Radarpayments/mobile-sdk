@@ -91,6 +91,7 @@ dependencies {
 
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.okhttp)
     implementation(libs.kotlinx.serialization.json)
 
     // Google Pay — sdk-payment declares play-services-wallet as compileOnly, so the app (the

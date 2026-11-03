@@ -33,21 +33,6 @@ struct SampleAppApp: App {
         return holder
     }()
 
-    init() {
-        IosCrashLoggerKt.installIosCrashLogger()
-        NSSetUncaughtExceptionHandler { exception in
-            NSLog("[ObjCUncaught] name=%@ reason=%@", exception.name.rawValue as NSString, (exception.reason ?? "<nil>") as NSString)
-            for frame in exception.callStackSymbols {
-                NSLog("[ObjCUncaught stack] %@", frame as NSString)
-            }
-        }
-        signal(SIGABRT) { sig in
-            NSLog("[SigAbrt] received SIGABRT")
-            signal(SIGABRT, SIG_DFL)
-            raise(SIGABRT)
-        }
-    }
-
     var body: some Scene {
         WindowGroup {
             NavigationStack(path: $pathHolder.path) {
