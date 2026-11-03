@@ -19,7 +19,7 @@ class StartScreenTest {
     private val ctx = InstrumentationRegistry.getInstrumentation().targetContext
 
     @Test fun showsThreeCovers() {
-        rule.setContent { StartScreen(onCover = {}, onSettings = {}, onCore = {}) }
+        rule.setContent { StartScreen(aftDemo = false, onCover = {}, onSettings = {}, onCore = {}) }
         rule.onNodeWithText("Hearth & Co").assertIsDisplayed()
         rule.onNodeWithText("Roast Lane").assertExists()
         rule.onNodeWithText("Stage Pass").assertExists()
@@ -27,27 +27,35 @@ class StartScreenTest {
 
     @Test fun coverTapOpensThatCover() {
         var opened: CoverId? = null
-        rule.setContent { StartScreen(onCover = { opened = it }, onSettings = {}, onCore = {}) }
+        rule.setContent { StartScreen(aftDemo = false, onCover = { opened = it }, onSettings = {}, onCore = {}) }
         rule.onNodeWithText("Roast Lane").performClick()
         assertEquals(CoverId.COFFEE, opened)
     }
 
+    @Test fun aftDemoShowsOnlyTheInvestBusiness() {
+        var opened: CoverId? = null
+        rule.setContent { StartScreen(aftDemo = true, onCover = { opened = it }, onSettings = {}, onCore = {}) }
+        rule.onNodeWithText("Roast Lane").assertDoesNotExist()
+        rule.onNodeWithText("Northwind").performClick()
+        assertEquals(CoverId.INVEST, opened)
+    }
+
     @Test fun sectionsNameBothSdks() {
-        rule.setContent { StartScreen(onCover = {}, onSettings = {}, onCore = {}) }
+        rule.setContent { StartScreen(aftDemo = false, onCover = {}, onSettings = {}, onCore = {}) }
         rule.onNodeWithText(ctx.getString(R.string.start_section_payment)).assertIsDisplayed()
         rule.onNodeWithText(ctx.getString(R.string.start_section_core)).performScrollTo().assertIsDisplayed()
     }
 
     @Test fun coreTileOpensSdkCore() {
         var opened = false
-        rule.setContent { StartScreen(onCover = {}, onSettings = {}, onCore = { opened = true }) }
+        rule.setContent { StartScreen(aftDemo = false, onCover = {}, onSettings = {}, onCore = { opened = true }) }
         rule.onNodeWithText(ctx.getString(R.string.core_tile_title)).performScrollTo().performClick()
         assertTrue(opened)
     }
 
     @Test fun gearOpensDeveloperScreen() {
         var opened = false
-        rule.setContent { StartScreen(onCover = {}, onSettings = { opened = true }, onCore = {}) }
+        rule.setContent { StartScreen(aftDemo = false, onCover = {}, onSettings = { opened = true }, onCore = {}) }
         rule.onNodeWithContentDescription(ctx.getString(R.string.start_settings)).performClick()
         assertTrue(opened)
     }
