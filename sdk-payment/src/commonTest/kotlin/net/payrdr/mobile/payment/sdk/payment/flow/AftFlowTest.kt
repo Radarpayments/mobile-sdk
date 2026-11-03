@@ -10,6 +10,7 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import net.payrdr.mobile.payment.sdk.core.SdkCore
+import net.payrdr.mobile.payment.sdk.core.validation.CardHolderValidator
 import net.payrdr.mobile.payment.sdk.payment.api.dto.request.P2PFromCard
 import net.payrdr.mobile.payment.sdk.payment.api.dto.request.WalletVendor
 import net.payrdr.mobile.payment.sdk.payment.api.dto.response.BindingItem
@@ -466,5 +467,21 @@ class AftFlowTest {
         holder(null, mapOf(PayerField.PAYER_FIRST_NAME to "Test", PayerField.PAYER_LAST_NAME to "User")) shouldBe "Test User"
         holder(" ", mapOf(PayerField.PAYER_LAST_NAME to "User")) shouldBe "User"
         holder(null) shouldBe "CARDHOLDER"
+        // Sender names allow more than a card does: what the card's rules refuse is dropped, not sent to fail tokenization.
+        holder(null, mapOf(PayerField.PAYER_FIRST_NAME to "Mary-Jane", PayerField.PAYER_LAST_NAME to "O'Neil")) shouldBe "Mary-Jane O'Neil"
+        holder(null, mapOf(PayerField.PAYER_FIRST_NAME to "Anna2", PayerField.PAYER_LAST_NAME to "Smith (Jr)")) shouldBe "Anna Smith Jr"
+        holder(null, mapOf(PayerField.PAYER_FIRST_NAME to "Мария")) shouldBe "CARDHOLDER"
+        holder(null, mapOf(PayerField.PAYER_FIRST_NAME to "Alexandrina", PayerField.PAYER_LAST_NAME to "Montgomery-Fitzwilliam")) shouldBe
+            "Alexandrina Montgomery-Fitzwil"
+    }
+
+    @Test fun `every transfer cardholder passes the card's holder rules`() {
+        val names = listOf("Mary-Jane", "O'Neil", "Anna2", "Smith (Jr)", "Мария", "Jean-Luc Picard de la Montagne Rouge", "  ", "#1")
+        for (first in names) {
+            for (last in names) {
+                val holder = transferCardholder(null, mapOf(PayerField.PAYER_FIRST_NAME to first, PayerField.PAYER_LAST_NAME to last))
+                CardHolderValidator().validate(holder).isValid shouldBe true
+            }
+        }
     }
 }

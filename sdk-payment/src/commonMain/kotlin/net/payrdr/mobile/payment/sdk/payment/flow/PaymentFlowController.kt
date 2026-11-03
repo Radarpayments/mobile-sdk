@@ -396,7 +396,7 @@ public class PaymentFlowController(
                     ProcessFormRequest(
                         paymentToken = token,
                         mdOrder = mdOrder,
-                        holder = intent.cardHolder?.ifBlank { "CARDHOLDER" } ?: "CARDHOLDER",
+                        holder = intent.cardHolder?.ifBlank { FALLBACK_CARDHOLDER } ?: FALLBACK_CARDHOLDER,
                         saveCard = intent.saveCard,
                         payerData = intent.payerData,
                     ),
@@ -448,7 +448,7 @@ public class PaymentFlowController(
                 ProcessFormRequest(
                     paymentToken = token,
                     mdOrder = mdOrder,
-                    holder = "CARDHOLDER",
+                    holder = FALLBACK_CARDHOLDER,
                     saveCard = false,
                     payerData = intent.payerData,
                 ),
