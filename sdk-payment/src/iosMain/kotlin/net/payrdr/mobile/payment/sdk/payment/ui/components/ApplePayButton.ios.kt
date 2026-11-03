@@ -90,7 +90,7 @@ public actual fun ApplePayButton(
     key(dark, radius, colors.background) {
         UIKitView(
             modifier = slotModifier,
-            factory = { applePayButtonView(dark, radius, colors.background, onClick) },
+            factory = { applePayButtonView(dark, radius, colors.background) { latestClick.value() } },
         )
     }
 }
