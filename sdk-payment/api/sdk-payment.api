@@ -1020,11 +1020,11 @@ public final class net/payrdr/mobile/payment/sdk/payment/ui/components/Composabl
 	public final fun getLambda$-984386938$sdk_payment_release ()Lkotlin/jvm/functions/Function2;
 }
 
-public final class net/payrdr/mobile/payment/sdk/payment/ui/payer/ComposableSingletons$PayerFieldsSectionKt {
-	public static final field INSTANCE Lnet/payrdr/mobile/payment/sdk/payment/ui/payer/ComposableSingletons$PayerFieldsSectionKt;
+public final class net/payrdr/mobile/payment/sdk/payment/ui/payer/ComposableSingletons$PayerPickersKt {
+	public static final field INSTANCE Lnet/payrdr/mobile/payment/sdk/payment/ui/payer/ComposableSingletons$PayerPickersKt;
 	public fun <init> ()V
-	public final fun getLambda$-1788167553$sdk_payment_release ()Lkotlin/jvm/functions/Function3;
-	public final fun getLambda$453131240$sdk_payment_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda$-371581146$sdk_payment_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda$-773512369$sdk_payment_release ()Lkotlin/jvm/functions/Function3;
 }
 
 public final class net/payrdr/mobile/payment/sdk/payment/ui/screens/ComposableSingletons$PageScaffoldKt {
