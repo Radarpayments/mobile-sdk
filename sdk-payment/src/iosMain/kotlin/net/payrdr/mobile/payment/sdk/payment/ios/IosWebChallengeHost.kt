@@ -3,18 +3,23 @@ package net.payrdr.mobile.payment.sdk.payment.ios
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCAction
+import kotlinx.cinterop.ObjCSignatureOverride
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeout
 import net.payrdr.mobile.payment.sdk.payment.threeds.AcsForm
 import net.payrdr.mobile.payment.sdk.payment.threeds.ThreeDsChallenge
+import net.payrdr.mobile.payment.sdk.payment.threeds.ThreeDsRedirect
 import net.payrdr.mobile.payment.sdk.payment.threeds.ThreeDsResult
 import net.payrdr.mobile.payment.sdk.payment.threeds.WebChallengeHost
+import platform.Foundation.NSError
 import platform.Foundation.NSMutableURLRequest
 import platform.Foundation.NSSelectorFromString
 import platform.Foundation.NSString
 import platform.Foundation.NSURL
 import platform.Foundation.NSURLComponents
+import platform.Foundation.NSURLErrorCancelled
+import platform.Foundation.NSURLErrorDomain
 import platform.Foundation.NSURLQueryItem
 import platform.Foundation.NSUTF8StringEncoding
 import platform.Foundation.addValue
@@ -36,6 +41,7 @@ import platform.UIKit.navigationItem
 import platform.UIKit.safeAreaLayoutGuide
 import platform.UIKit.topAnchor
 import platform.UIKit.trailingAnchor
+import platform.WebKit.WKNavigation
 import platform.WebKit.WKNavigationAction
 import platform.WebKit.WKNavigationActionPolicy
 import platform.WebKit.WKNavigationDelegateProtocol
@@ -69,8 +75,11 @@ public class IosWebChallengeHost(
                         ThreeDsWebViewController(
                             challenge = challenge,
                             onComplete = { outcome ->
-                                presenter.dismissViewControllerAnimated(false, completion = null)
-                                if (cont.isActive) cont.resume(outcome)
+                                // Once: a late callback (a load failing after the redirect) must not dismiss the checkout.
+                                if (cont.isActive) {
+                                    presenter.dismissViewControllerAnimated(false, completion = null)
+                                    cont.resume(outcome)
+                                }
                             },
                         )
                     val nav = UINavigationController(rootViewController = vc)
@@ -89,6 +98,10 @@ public class IosWebChallengeHost(
             ThreeDsResult.TimedOut
         }
 }
+
+// WebKit's legacy `WebKitErrorFrameLoadInterruptedByPolicyChange`, which the WebKit framework does not export.
+private const val WEBKIT_ERROR_DOMAIN = "WebKitErrorDomain"
+private const val FRAME_LOAD_INTERRUPTED_BY_POLICY_CHANGE = 102L
 
 /**
  * Hosts the WKWebView + navigation bar. Builds the POST body, performs the request, and routes
@@ -172,6 +185,33 @@ private class ThreeDsWebViewController(
         }
     }
 
+    /** The bank page did not load (no network, DNS, TLS): not the bank's answer, so the order status decides. */
+    @ObjCSignatureOverride
+    override fun webView(
+        webView: WKWebView,
+        didFailProvisionalNavigation: WKNavigation?,
+        withError: NSError,
+    ) {
+        failLoading(withError)
+    }
+
+    @ObjCSignatureOverride
+    override fun webView(
+        webView: WKWebView,
+        didFailNavigation: WKNavigation?,
+        withError: NSError,
+    ) {
+        failLoading(withError)
+    }
+
+    private fun failLoading(error: NSError) {
+        // A load cancelled by the next navigation or by the return URL's policy above is not a failure.
+        val cancelled =
+            (error.domain == NSURLErrorDomain && error.code == NSURLErrorCancelled) ||
+                (error.domain == WEBKIT_ERROR_DOMAIN && error.code == FRAME_LOAD_INTERRUPTED_BY_POLICY_CHANGE)
+        if (!cancelled) onComplete(ThreeDsResult.Interrupted("web-navigation-error: ${error.domain} ${error.code}"))
+    }
+
     private fun handleRedirect(urlString: String) {
         val components =
             NSURLComponents(
@@ -181,17 +221,6 @@ private class ThreeDsWebViewController(
         val query: List<NSURLQueryItem> =
             @Suppress("UNCHECKED_CAST")
             (components?.queryItems as? List<NSURLQueryItem> ?: emptyList())
-        val map = mutableMapOf<String, String>()
-        for (item in query) {
-            val name = item.name
-            val itemValue = item.value ?: ""
-            map[name] = itemValue
-        }
-        val hasError = map.keys.any { it.equals("error", ignoreCase = true) }
-        if (hasError) {
-            onComplete(ThreeDsResult.Failed(map["error"] ?: "unknown"))
-        } else {
-            onComplete(ThreeDsResult.Succeeded(map))
-        }
+        onComplete(ThreeDsRedirect.result(query.map { it.name to (it.value ?: "") }))
     }
 }
