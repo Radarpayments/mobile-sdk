@@ -1,5 +1,7 @@
 package net.payrdr.mobile.payment.samples.android.checkout
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
 import android.widget.Button
@@ -19,20 +21,24 @@ import net.payrdr.mobile.payment.sdk.payment.result.CheckoutResult
 
 /**
  * The SDK from a screen that is not written in Compose: a plain Activity with a button. This is the whole
- * integration — a [PayrdrCheckout] built in a field, and [PayrdrCheckout.present] when the buyer taps "Pay".
+ * integration — a [PayrdrCheckout] built in `onCreate`, and [PayrdrCheckout.present] when the buyer taps "Pay".
+ * An app with a fixed gateway can build it in a field instead; this one takes the gateway of the developer settings.
  */
 class ClassicCheckoutActivity : ComponentActivity() {
-    // Built in a field: it registers an activity result, which Android allows only before the screen starts.
-    private val checkout = PayrdrCheckout.Builder(SdkPaymentConfig(baseUrl = BASE_URL), ::onResult).build(this)
+    private lateinit var config: SdkPaymentConfig
+    private lateinit var checkout: PayrdrCheckout
 
     private lateinit var status: TextView
     private lateinit var payButton: Button
 
     // One HTTP client for "your server" calls, however many times Pay is tapped.
-    private val http by lazy { defaultHttpClientFactory().create(SdkPaymentConfig(baseUrl = BASE_URL)) }
+    private val http by lazy { defaultHttpClientFactory().create(config) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        config = SdkPaymentConfig(baseUrl = intent.getStringExtra(EXTRA_BASE_URL) ?: AppPrefs.BASE_URL)
+        // Before the screen starts: it registers an activity result, which Android allows only until then.
+        checkout = PayrdrCheckout.Builder(config, ::onResult).build(this)
         status = TextView(this).apply { text = "Tap Pay to open the payment sheet." }
         payButton = Button(this).apply { text = "Pay €1.00" }
         payButton.setOnClickListener { pay() }
@@ -55,7 +61,7 @@ class ClassicCheckoutActivity : ComponentActivity() {
             val registrar =
                 merchantRegistrar(
                     apiVersion = snap.apiVersion,
-                    baseUrl = BASE_URL,
+                    baseUrl = config.baseUrl,
                     login = snap.merchantLogin,
                     password = snap.merchantPassword,
                     apiKey = snap.apiKey,
@@ -86,9 +92,15 @@ class ClassicCheckoutActivity : ComponentActivity() {
             }
     }
 
-    private companion object {
-        const val BASE_URL = AppPrefs.BASE_URL
-        const val AMOUNT_MINOR = 100L
-        const val PADDING = 48
+    companion object {
+        private const val EXTRA_BASE_URL = "base_url"
+        private const val AMOUNT_MINOR = 100L
+        private const val PADDING = 48
+
+        /** Opens the screen paying through [baseUrl], the gateway the rest of the app uses. */
+        fun intent(
+            context: Context,
+            baseUrl: String,
+        ): Intent = Intent(context, ClassicCheckoutActivity::class.java).putExtra(EXTRA_BASE_URL, baseUrl)
     }
 }

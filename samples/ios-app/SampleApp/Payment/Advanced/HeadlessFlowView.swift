@@ -25,7 +25,7 @@ struct HeadlessFlowView: View {
                             let checkout: any CheckoutConfig = sessionId.map { CheckoutConfigSessionId(value: $0) as any CheckoutConfig }
                                 ?? CheckoutConfigMdOrder(value: freshOrder)
                             // A Kotlin Flow is an AsyncSequence in Swift.
-                            let states = store.sdk.paymentFlow(
+                            let states = SdkPayment.companion.create(config: store.config()).paymentFlow(
                                 checkout: checkout,
                                 webChallengeHost: host,
                                 scope: IosCoroutineScopeKt.iosMainScope()

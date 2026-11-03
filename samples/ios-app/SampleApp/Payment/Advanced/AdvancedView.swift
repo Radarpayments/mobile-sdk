@@ -7,6 +7,8 @@ struct AdvancedView: View {
     @AppStorage(AppPrefsKeys.mdOrder) var mdOrder: String = AppPrefsDefaults.mdOrder
     @Environment(\.dismiss) private var dismiss
     @State private var trigger = false
+    // The pinning demo's own config: the rest of the app keeps paying without the broken pin.
+    @State private var pinning: SslPinningConfig?
 
     var body: some View {
         ScrollView {
@@ -20,14 +22,14 @@ struct AdvancedView: View {
                                    message: "Sample collects PaymentState stream and renders FSM states live.",
                                    buttonText: "Open")
                     }.buttonStyle(.plain)
-                    SslPinningTile(mdOrder: mdOrder, trigger: $trigger)
+                    SslPinningTile(mdOrder: mdOrder, pinning: $pinning, trigger: $trigger)
                 }
                 .padding(16)
             }
         }
         .navigationBarHidden(true)
         .background(Color(red: 0.949, green: 0.957, blue: 0.973))
-        .payrdrCheckout(isPresented: $trigger, mdOrder: mdOrder, config: store.sdk.config) { r in
+        .payrdrCheckout(isPresented: $trigger, mdOrder: mdOrder, config: store.config(sslPinning: pinning)) { r in
             LastPaymentResult.set(r)
             pathHolder.push(.paymentResult)
         }
@@ -62,6 +64,7 @@ private struct ActionTile: View {
 
 private struct SslPinningTile: View {
     let mdOrder: String
+    @Binding var pinning: SslPinningConfig?
     @Binding var trigger: Bool
     @EnvironmentObject var store: SampleStore
 
@@ -77,11 +80,10 @@ private struct SslPinningTile: View {
             Text("Pin is a placeholder — sample demonstrates fail-fast behavior on mismatch.")
                 .font(.system(size: 10)).foregroundColor(Color(white: 0.42))
             PrimaryCta(text: "Buy (expect pin error)") {
-                let host = URL(string: store.baseUrl)?.host ?? "dev.bpcbt.com"
-                let pinning = SslPinningConfig.companion.builder()
+                let host = URL(string: store.config().baseUrl)?.host ?? "dev.bpcbt.com"
+                pinning = SslPinningConfig.companion.builder()
                     .addPin(hostname: host, sha256Pin: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=")
                     .build()
-                store.useConfig(sslPinning: pinning)
                 LastPaymentResult.begin(method: "CARD")
                 trigger = true
             }

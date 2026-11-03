@@ -1,6 +1,5 @@
 package net.payrdr.mobile.payment.samples.android.payment.advanced
 
-import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -76,7 +75,7 @@ fun AdvancedScreen(
                     title = "🧱 Screen without Compose",
                     body = "A plain Activity: `PayrdrCheckout.Builder(config) { … }.build(this)` in a field, `present(mdOrder)` on tap.",
                     buttonText = "Open",
-                    onClick = { context.startActivity(Intent(context, ClassicCheckoutActivity::class.java)) },
+                    onClick = { context.startActivity(ClassicCheckoutActivity.intent(context, snap.baseUrl)) },
                 )
                 Spacer(Modifier.height(10.dp))
                 SslPinningTile(baseUrl = snap.baseUrl, mdOrder = snap.mdOrder, onPay = onPay)
