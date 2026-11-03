@@ -1,6 +1,7 @@
 package net.payrdr.mobile.payment.sdk.payment.ssl
 
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
@@ -29,6 +30,31 @@ class SslPinningConfigTest {
                 .build()
 
         config.entries.first().hostname shouldBe "api.payrdr.net"
+    }
+
+    @Test fun `pins apply to a host as OkHttp's CertificatePinner applies them`() {
+        val a = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+        val b = "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB="
+        val c = "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC="
+        val config =
+            SslPinningConfig
+                .builder()
+                .addPin("api.payrdr.net", a)
+                .addPin("*.payrdr.net", b)
+                .addPin("**.bank.example", c)
+                .build()
+
+        config.pinsFor("api.payrdr.net") shouldBe setOf("sha256/$a", "sha256/$b")
+        config.pinsFor("API.Payrdr.net.") shouldBe setOf("sha256/$a", "sha256/$b")
+        // `*.` covers exactly one label.
+        config.pinsFor("pay.payrdr.net") shouldBe setOf("sha256/$b")
+        config.pinsFor("payrdr.net").shouldBeEmpty()
+        config.pinsFor("a.b.payrdr.net").shouldBeEmpty()
+        // `**.` covers the domain itself and any depth below it.
+        config.pinsFor("bank.example") shouldBe setOf("sha256/$c")
+        config.pinsFor("a.b.bank.example") shouldBe setOf("sha256/$c")
+        config.pinsFor("notbank.example").shouldBeEmpty()
+        config.pinsFor("other.host").shouldBeEmpty()
     }
 
     @Test fun `addPin rejects sha256-prefixed pin`() {

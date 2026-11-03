@@ -36,6 +36,33 @@ public class SslPinningConfig private constructor(
         val pinString: String,
     )
 
+    /**
+     * The pins enforced for [host] (any of them must match a certificate of the chain); empty when [host] is not
+     * pinned. Hostnames follow OkHttp's [okhttp3.CertificatePinner], so a config acts the same on both platforms:
+     * `*.example.com` covers one label below the domain, `**.example.com` the domain itself and any depth below.
+     */
+    internal fun pinsFor(host: String): Set<String> {
+        val normalized = normalizeHost(host)
+        return entries.filter { hostMatches(it.hostname, normalized) }.mapTo(linkedSetOf()) { it.pinString }
+    }
+
+    private fun hostMatches(
+        pattern: String,
+        host: String,
+    ): Boolean =
+        when {
+            pattern.startsWith("**.") -> {
+                val domain = pattern.removePrefix("**.")
+                host == domain || host.endsWith(".$domain")
+            }
+            pattern.startsWith("*.") -> {
+                val domain = pattern.removePrefix("*.")
+                val label = host.removeSuffix(".$domain")
+                host.endsWith(".$domain") && label.isNotEmpty() && '.' !in label
+            }
+            else -> host == pattern
+        }
+
     /** Builder for [SslPinningConfig]. Accumulates entries; deduplicated on [build]. */
     public class Builder {
         private val collected: MutableSet<PinEntry> = linkedSetOf()

@@ -32,9 +32,9 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 
 /**
  * Darwin TLS-challenge handler. On each TLS handshake: Apple's chain validation runs first;
- * then we extract the leaf cert's public-key bytes (SecKey external representation), prepend the
- * appropriate ASN.1 SubjectPublicKeyInfo header to reconstruct full SPKI DER, SHA-256 hash,
- * base64-encode, and compare to the configured pin. Matches `"sha256/<base64>"` pin strings
+ * then, for every certificate of the chain, we extract its public-key bytes (SecKey external representation),
+ * prepend the appropriate ASN.1 SubjectPublicKeyInfo header to reconstruct full SPKI DER, SHA-256 hash,
+ * base64-encode, and compare to the host's pins. Matches `"sha256/<base64>"` pin strings
  * (same format as OkHttp CertificatePinner accepts on Android and the documented openssl recipe).
  *
  * SPKI reconstruction is required because `SecKeyCopyExternalRepresentation` returns the bare
@@ -53,43 +53,45 @@ internal class DarwinPinningDelegate(
             return NSURLSessionAuthChallengePerformDefaultHandling to null
         }
 
-        val host = protectionSpace.host.lowercase().trimEnd('.')
         // If no pins configured for this host, fall through to default validation
         // — aligns with OkHttp's CertificatePinner semantics (only pinned hosts are enforced).
-        if (config.entries.none { it.hostname == host }) {
-            return NSURLSessionAuthChallengePerformDefaultHandling to null
-        }
+        val pins = config.pinsFor(protectionSpace.host)
+        if (pins.isEmpty()) return NSURLSessionAuthChallengePerformDefaultHandling to null
 
         val trust: SecTrustRef = protectionSpace.serverTrust ?: return defaultReject()
         // 1. Let Apple run its standard chain validation first.
         if (!SecTrustEvaluateWithError(trust, null)) return defaultReject()
 
-        // 2. Extract the leaf certificate and its public key bytes.
+        // 2. As OkHttp does, the chain passes when any of its certificates — leaf, intermediate or root — has a
+        //    pinned key, so a pin on the issuing CA survives the leaf's renewal.
         val certCount = SecTrustGetCertificateCount(trust).toInt()
-        if (certCount == 0) return defaultReject()
-        val leafCert: SecCertificateRef = SecTrustGetCertificateAtIndex(trust, 0L.convert()) ?: return defaultReject()
-        val leafKey = SecCertificateCopyKey(leafCert) ?: return defaultReject()
-        val keyData = SecKeyCopyExternalRepresentation(leafKey, null) ?: return defaultReject()
-
-        // 3. Extract raw key bytes (RSA PKCS#1 or EC uncompressed point) and detect key shape.
-        val publicKeyBytes = keyData.toKotlinByteArray() // consumes +1 ref, releases
-        val asn1Prefix = asn1SpkiPrefixFromBytes(publicKeyBytes) ?: return defaultReject()
-
-        // 4. Hash `prefix || keyBytes` — this reproduces SubjectPublicKeyInfo DER which matches
-        //    OkHttp CertificatePinner + the documented `openssl ... | openssl dgst -sha256` recipe.
-        val spkiBytes = asn1Prefix + publicKeyBytes
-        val hash = sha256(spkiBytes)
-
-        @OptIn(ExperimentalEncodingApi::class)
-        val b64 = Base64.encode(hash)
-        val pinString = "sha256/$b64"
-
-        val match = config.entries.any { it.hostname == host && it.pinString == pinString }
+        val match =
+            (0 until certCount).any { index ->
+                val cert = SecTrustGetCertificateAtIndex(trust, index.convert())
+                cert != null && spkiPin(cert) in pins
+            }
         return if (match) {
             NSURLSessionAuthChallengeUseCredential to NSURLCredential.credentialForTrust(trust)
         } else {
             defaultReject()
         }
+    }
+
+    /** `"sha256/<base64>"` of [cert]'s SubjectPublicKeyInfo, or null for a key this delegate cannot frame. */
+    private fun spkiPin(cert: SecCertificateRef): String? {
+        val key = SecCertificateCopyKey(cert) ?: return null
+        val keyData = SecKeyCopyExternalRepresentation(key, null)
+        CFRelease(key)
+        if (keyData == null) return null
+
+        // Raw key bytes (RSA PKCS#1 or EC uncompressed point); `prefix || keyBytes` reproduces the SubjectPublicKeyInfo
+        // DER that OkHttp CertificatePinner and the documented `openssl ... | openssl dgst -sha256` recipe hash.
+        val publicKeyBytes = keyData.toKotlinByteArray() // consumes +1 ref, releases
+        val asn1Prefix = asn1SpkiPrefixFromBytes(publicKeyBytes) ?: return null
+
+        @OptIn(ExperimentalEncodingApi::class)
+        val b64 = Base64.encode(sha256(asn1Prefix + publicKeyBytes))
+        return "sha256/$b64"
     }
 
     private fun defaultReject(): Pair<NSURLSessionAuthChallengeDisposition, NSURLCredential?> =
@@ -277,7 +279,7 @@ internal fun CFDataRef.toKotlinByteArray(): ByteArray =
         val length = CFDataGetLength(this).toInt()
         val bytes = ByteArray(length)
         if (length > 0) {
-            val ptr = CFDataGetBytePtr(this)!!.reinterpret<ByteVar>()
+            val ptr = checkNotNull(CFDataGetBytePtr(this)) { "CFData of $length bytes has no storage" }.reinterpret<ByteVar>()
             for (i in 0 until length) {
                 bytes[i] = ptr[i]
             }
