@@ -15,7 +15,7 @@ import net.payrdr.mobile.payment.sdk.payment.keyprovider.dto.ActiveKeysResponse
  * @param url remote endpoint returning `{"keys":[{"keyValue","protocolVersion","keyExpiration"}]}`
  * @param httpClient configured Ktor client (with `ContentNegotiation { json() }`)
  */
-public class RemoteKeyProvider(
+internal class RemoteKeyProvider(
     private val url: String,
     private val httpClient: HttpClient,
 ) : KeyProvider {

@@ -8,7 +8,7 @@ import net.payrdr.mobile.payment.sdk.core.validation.ValidationResult.Companion.
 /**
  * Rule for checking a string length range.
  */
-public class StringLengthRule(
+internal class StringLengthRule(
     private val code: String,
     private val message: String,
     private val minLength: Int = 0,

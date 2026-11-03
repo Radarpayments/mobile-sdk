@@ -334,28 +334,6 @@ class PaymentApiImplTest {
             response.error?.message shouldBe "Bad [paymentToken]"
         }
 
-    @Test fun `finish3dsVer2PaymentAnonymous sends tx id`() =
-        runTest {
-            val recorded = mutableListOf<HttpRequestData>()
-            val (client, _) =
-                mockJsonClient { req ->
-                    recorded += req
-                    json("""{}""")
-                }
-            val api = PaymentApiImpl(baseUrl = BASE_URL, httpClient = client)
-
-            api.finish3dsVer2PaymentAnonymous(threeDsServerTransId = "TX-1")
-
-            val body =
-                recorded
-                    .single()
-                    .body
-                    .toByteArray()
-                    .decodeToString()
-            recorded.single().url.encodedPath shouldBe "/rest/finish3dsVer2PaymentAnonymous.do"
-            body shouldContain "threeDSServerTransId=TX-1"
-        }
-
     @Test fun `getFinishedPaymentInfo parses status`() =
         runTest {
             val (client, _) =

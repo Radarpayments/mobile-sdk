@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
  * is shared between GPay and ApplePay backends).
  */
 @Serializable
-public data class ApplePayProcessFormResponse(
+internal data class ApplePayProcessFormResponse(
     @Serializable(with = WalletSuccessSerializer::class)
     val success: Boolean,
     val data: GPayData? = null,

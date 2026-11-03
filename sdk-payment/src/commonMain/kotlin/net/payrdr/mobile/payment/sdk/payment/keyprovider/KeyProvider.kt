@@ -10,12 +10,12 @@ import net.payrdr.mobile.payment.sdk.core.model.Key
  * Implemented in Swift: SKIE names a `suspend` function of a Kotlin interface with a `__` prefix and a completion
  * handler there (e.g. `__performChallenge(challenge:completionHandler:)`).
  */
-public interface KeyProvider {
+internal interface KeyProvider {
     /**
      * Returns the currently-active public key. Callers should not cache the result across
      * checkout sessions — keys rotate.
      *
      * @throws KeyProviderException if retrieval fails permanently
      */
-    public suspend fun provideKey(): Key
+    suspend fun provideKey(): Key
 }

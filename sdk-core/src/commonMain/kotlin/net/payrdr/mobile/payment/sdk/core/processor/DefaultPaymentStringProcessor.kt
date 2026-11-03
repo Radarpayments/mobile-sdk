@@ -17,7 +17,7 @@ import kotlin.time.Instant
  * @param zone time zone used for timestamp formatting — defaults to system default for production;
  *             tests override to a fixed zone for stable fixtures.
  */
-public class DefaultPaymentStringProcessor(
+internal class DefaultPaymentStringProcessor(
     private val zone: TimeZone = TimeZone.currentSystemDefault(),
 ) : PaymentStringProcessor {
     override fun createPaymentString(

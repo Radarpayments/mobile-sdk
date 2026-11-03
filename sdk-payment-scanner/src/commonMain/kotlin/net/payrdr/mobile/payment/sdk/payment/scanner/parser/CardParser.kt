@@ -1,6 +1,6 @@
 package net.payrdr.mobile.payment.sdk.payment.scanner.parser
 
-import net.payrdr.mobile.payment.sdk.core.validation.rules.LuhnStringRule
+import net.payrdr.mobile.payment.sdk.core.validation.CardRules
 import net.payrdr.mobile.payment.sdk.payment.scanner.ScannedCard
 import net.payrdr.mobile.payment.sdk.payment.scanner.camera.RecognizedLine
 
@@ -14,12 +14,10 @@ import net.payrdr.mobile.payment.sdk.payment.scanner.camera.RecognizedLine
  *  3. if [extractCardholder], pick the best uppercase-latin candidate not intersecting PAN/expiry
  *     and not in the issuer dictionary.
  */
-public class CardParser(
+internal class CardParser(
     private val now: YearMonth = YearMonth.systemNow(),
 ) {
-    private val luhn = LuhnStringRule(code = "LUHN", message = "luhn")
-
-    public fun parse(
+    fun parse(
         lines: List<RecognizedLine>,
         extractCardholder: Boolean,
     ): ScannedCard? {
@@ -33,7 +31,7 @@ public class CardParser(
         val candidates = mutableListOf<PanMatch>()
         for (line in lines) {
             val digits = line.text.filter { it in '0'..'9' }
-            if (digits.length in 13..19 && luhn.validateForError(digits).isValid) {
+            if (digits.length in 13..19 && CardRules.passesLuhn(digits)) {
                 candidates += PanMatch(digits, line)
             }
         }

@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
  * parent composable (the `SdkPaymentConfig.applePay == null` check happens upstream).
  */
 @Composable
-public expect fun ApplePayButton(
+internal expect fun ApplePayButton(
     onClick: () -> Unit,
     modifier: Modifier,
 )

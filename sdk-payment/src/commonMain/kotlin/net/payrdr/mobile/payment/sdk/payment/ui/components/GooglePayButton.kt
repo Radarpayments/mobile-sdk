@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
  * `SdkPaymentConfig.googlePay == null` check happens upstream).
  */
 @Composable
-public expect fun GooglePayButton(
+internal expect fun GooglePayButton(
     onClick: () -> Unit,
     modifier: Modifier,
 )

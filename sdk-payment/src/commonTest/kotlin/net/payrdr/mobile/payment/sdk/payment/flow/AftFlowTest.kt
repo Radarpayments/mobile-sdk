@@ -10,7 +10,7 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import net.payrdr.mobile.payment.sdk.core.SdkCore
-import net.payrdr.mobile.payment.sdk.core.validation.CardHolderValidator
+import net.payrdr.mobile.payment.sdk.core.validation.CardRules
 import net.payrdr.mobile.payment.sdk.payment.api.dto.request.P2PFromCard
 import net.payrdr.mobile.payment.sdk.payment.api.dto.request.WalletVendor
 import net.payrdr.mobile.payment.sdk.payment.api.dto.response.BindingItem
@@ -480,7 +480,7 @@ class AftFlowTest {
         for (first in names) {
             for (last in names) {
                 val holder = transferCardholder(null, mapOf(PayerField.PAYER_FIRST_NAME to first, PayerField.PAYER_LAST_NAME to last))
-                CardHolderValidator().validate(holder).isValid shouldBe true
+                CardRules.isValidHolder(holder) shouldBe true
             }
         }
     }

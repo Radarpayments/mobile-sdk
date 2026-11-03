@@ -8,8 +8,8 @@ import net.payrdr.mobile.payment.sdk.core.model.MsdkRegisteredFrom
  *
  * Format positions (1-based): `timestamp/uuid/pan/cvv/expdate/mdOrder/bindingId/cardholder/registeredFrom`.
  */
-public interface PaymentStringProcessor {
-    public fun createPaymentString(
+internal interface PaymentStringProcessor {
+    fun createPaymentString(
         order: String = "",
         timestamp: Long,
         uuid: String,

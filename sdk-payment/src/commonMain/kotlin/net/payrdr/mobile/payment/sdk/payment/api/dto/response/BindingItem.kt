@@ -3,7 +3,7 @@ package net.payrdr.mobile.payment.sdk.payment.api.dto.response
 import kotlinx.serialization.Serializable
 
 @Serializable
-public data class BindingItem(
+internal data class BindingItem(
     val id: String,
     val label: String,
     val paymentSystem: String,

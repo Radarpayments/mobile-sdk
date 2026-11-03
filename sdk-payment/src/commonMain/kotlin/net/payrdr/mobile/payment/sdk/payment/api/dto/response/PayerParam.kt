@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
  * One entry of `payerDataParamsNeedToBeFilled`: `{"VISA": [{"name": "EMAIL", "mandatory": true, "editable": true}]}`.
  */
 @Serializable
-public data class PayerParam(
+internal data class PayerParam(
     val name: String,
     val mandatory: Boolean = false,
     val editable: Boolean = true,

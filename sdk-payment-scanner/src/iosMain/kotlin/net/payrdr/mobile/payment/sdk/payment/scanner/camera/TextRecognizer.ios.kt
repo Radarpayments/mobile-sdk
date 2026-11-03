@@ -7,13 +7,13 @@ import platform.CoreMedia.CMSampleBufferRef
 import platform.Foundation.NSNumber
 
 @OptIn(ExperimentalForeignApi::class)
-public actual class TextRecognizer actual constructor() {
+internal actual class TextRecognizer actual constructor() {
     /**
      * Runs Vision on the camera frame synchronously. The work lives in Objective-C
      * (`scannervision.def`): Vision objects made from Kotlin would hold the camera buffer until the
      * next Kotlin GC and starve the capture output.
      */
-    public actual suspend fun recognize(frame: Any): List<RecognizedLine> {
+    actual suspend fun recognize(frame: Any): List<RecognizedLine> {
         val buffer = frame as? CMSampleBufferRef ?: return emptyList()
         return autoreleasepool {
             payrdr_recognize_text(buffer).orEmpty().mapNotNull { item ->
@@ -34,5 +34,5 @@ public actual class TextRecognizer actual constructor() {
         }
     }
 
-    public actual fun close(): Unit = Unit
+    actual fun close(): Unit = Unit
 }

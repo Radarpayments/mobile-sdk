@@ -8,16 +8,16 @@ import androidx.activity.ComponentActivity
 import androidx.startup.Initializer
 import java.lang.ref.WeakReference
 
-public object ContextHolder {
+internal object ContextHolder {
     @Volatile internal var appContext: Context? = null
 
-    public fun current(): Context =
+    fun current(): Context =
         appContext ?: error(
             "sdk-payment-scanner: application context not initialised. Ensure androidx.startup is enabled " +
                 "for your app, or call ContextHolder.init(context) manually from Application.onCreate.",
         )
 
-    public fun init(context: Context) {
+    fun init(context: Context) {
         val app = context.applicationContext
         if (appContext === app) return
         appContext = app
@@ -69,7 +69,7 @@ internal class LatestResumed<T : Any> {
     fun current(): T? = latest?.get()
 }
 
-public class ScannerInitializer : Initializer<Unit> {
+internal class ScannerInitializer : Initializer<Unit> {
     override fun create(context: Context) {
         ContextHolder.init(context)
     }

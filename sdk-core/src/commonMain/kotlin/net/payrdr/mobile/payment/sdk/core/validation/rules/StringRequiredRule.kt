@@ -6,7 +6,7 @@ import net.payrdr.mobile.payment.sdk.core.validation.ValidationResult
 /**
  * Rule that rejects blank / empty string values.
  */
-public class StringRequiredRule(
+internal class StringRequiredRule(
     private val code: String,
     private val message: String,
 ) : BaseValidationRule<String> {

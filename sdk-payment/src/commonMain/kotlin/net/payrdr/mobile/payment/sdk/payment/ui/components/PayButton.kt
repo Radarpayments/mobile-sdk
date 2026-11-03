@@ -24,7 +24,7 @@ import org.jetbrains.compose.resources.stringResource
  * @param showLock the lock before the label — the one sign of a protected payment the checkout shows
  */
 @Composable
-public fun PayButton(
+internal fun PayButton(
     label: String,
     onClick: () -> Unit,
     enabled: Boolean = true,

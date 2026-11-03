@@ -9,7 +9,7 @@ final class SampleStore: ObservableObject {
         SdkPaymentConfig(
             baseUrl: UserDefaults.standard.string(forKey: AppPrefsKeys.baseUrl) ?? AppPrefsDefaults.baseUrl,
             sslPinning: sslPinning,
-            cardScannerProvider: MlKitVisionCardScannerProvider(logger: nil)
+            cardScannerProvider: MlKitVisionCardScannerProvider(logTransport: nil)
         )
     }
 }

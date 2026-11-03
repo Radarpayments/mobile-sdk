@@ -11,16 +11,16 @@ import net.payrdr.mobile.payment.sdk.payment.config.SdkPaymentConfig
  *
  * Callers who need full control over the engine can pass [engineOverride] — useful in tests.
  */
-public interface HttpClientFactory {
+internal interface HttpClientFactory {
     /**
      * Build a Ktor [HttpClient] for [config]. When [engineOverride] is supplied it replaces the
      * platform-default engine (OkHttp/Darwin) — test doubles typically pass a MockEngine here.
      */
-    public fun create(
+    fun create(
         config: SdkPaymentConfig,
         engineOverride: HttpClientEngine? = null,
     ): HttpClient
 }
 
 /** Factory resolved for the current platform. Platform source sets provide the actual. */
-public expect fun defaultHttpClientFactory(): HttpClientFactory
+internal expect fun defaultHttpClientFactory(): HttpClientFactory

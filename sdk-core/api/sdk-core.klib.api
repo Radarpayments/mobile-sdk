@@ -6,6 +6,10 @@
 // - Show declarations: true
 
 // Library unique name: <net.payrdr.mobile.payment:sdk-core>
+open annotation class net.payrdr.mobile.payment.sdk.core/InternalPayrdrApi : kotlin/Annotation { // net.payrdr.mobile.payment.sdk.core/InternalPayrdrApi|null[0]
+    constructor <init>() // net.payrdr.mobile.payment.sdk.core/InternalPayrdrApi.<init>|<init>(){}[0]
+}
+
 final enum class net.payrdr.mobile.payment.sdk.core.model/MsdkRegisteredFrom : kotlin/Enum<net.payrdr.mobile.payment.sdk.core.model/MsdkRegisteredFrom> { // net.payrdr.mobile.payment.sdk.core.model/MsdkRegisteredFrom|null[0]
     enum entry MSDK_CORE // net.payrdr.mobile.payment.sdk.core.model/MsdkRegisteredFrom.MSDK_CORE|null[0]
     enum entry MSDK_FORMS // net.payrdr.mobile.payment.sdk.core.model/MsdkRegisteredFrom.MSDK_FORMS|null[0]
@@ -36,30 +40,6 @@ final enum class net.payrdr.mobile.payment.sdk.core.model/ParamField : kotlin/En
 
     final fun valueOf(kotlin/String): net.payrdr.mobile.payment.sdk.core.model/ParamField // net.payrdr.mobile.payment.sdk.core.model/ParamField.valueOf|valueOf#static(kotlin.String){}[0]
     final fun values(): kotlin/Array<net.payrdr.mobile.payment.sdk.core.model/ParamField> // net.payrdr.mobile.payment.sdk.core.model/ParamField.values|values#static(){}[0]
-}
-
-abstract interface <#A: kotlin/Any?> net.payrdr.mobile.payment.sdk.core.validation/BaseValidationRule { // net.payrdr.mobile.payment.sdk.core.validation/BaseValidationRule|null[0]
-    abstract fun validateForError(#A): net.payrdr.mobile.payment.sdk.core.validation/ValidationResult // net.payrdr.mobile.payment.sdk.core.validation/BaseValidationRule.validateForError|validateForError(1:0){}[0]
-}
-
-abstract interface net.payrdr.mobile.payment.sdk.core.crypto/CryptogramCipher { // net.payrdr.mobile.payment.sdk.core.crypto/CryptogramCipher|null[0]
-    abstract fun encode(kotlin/String, net.payrdr.mobile.payment.sdk.core.model/Key): kotlin/String // net.payrdr.mobile.payment.sdk.core.crypto/CryptogramCipher.encode|encode(kotlin.String;net.payrdr.mobile.payment.sdk.core.model.Key){}[0]
-}
-
-abstract interface net.payrdr.mobile.payment.sdk.core.processor/PaymentStringProcessor { // net.payrdr.mobile.payment.sdk.core.processor/PaymentStringProcessor|null[0]
-    abstract fun createPaymentString(kotlin/String = ..., kotlin/Long, kotlin/String, net.payrdr.mobile.payment.sdk.core.model/CardInfo, net.payrdr.mobile.payment.sdk.core.model/MsdkRegisteredFrom = ...): kotlin/String // net.payrdr.mobile.payment.sdk.core.processor/PaymentStringProcessor.createPaymentString|createPaymentString(kotlin.String;kotlin.Long;kotlin.String;net.payrdr.mobile.payment.sdk.core.model.CardInfo;net.payrdr.mobile.payment.sdk.core.model.MsdkRegisteredFrom){}[0]
-}
-
-final class net.payrdr.mobile.payment.sdk.core.crypto/Rsa { // net.payrdr.mobile.payment.sdk.core.crypto/Rsa|null[0]
-    constructor <init>() // net.payrdr.mobile.payment.sdk.core.crypto/Rsa.<init>|<init>(){}[0]
-
-    final fun encryptPkcs1(kotlin/ByteArray, kotlin/ByteArray): kotlin/ByteArray // net.payrdr.mobile.payment.sdk.core.crypto/Rsa.encryptPkcs1|encryptPkcs1(kotlin.ByteArray;kotlin.ByteArray){}[0]
-}
-
-final class net.payrdr.mobile.payment.sdk.core.crypto/RsaCryptogramCipher : net.payrdr.mobile.payment.sdk.core.crypto/CryptogramCipher { // net.payrdr.mobile.payment.sdk.core.crypto/RsaCryptogramCipher|null[0]
-    constructor <init>(net.payrdr.mobile.payment.sdk.core.crypto/Rsa = ...) // net.payrdr.mobile.payment.sdk.core.crypto/RsaCryptogramCipher.<init>|<init>(net.payrdr.mobile.payment.sdk.core.crypto.Rsa){}[0]
-
-    final fun encode(kotlin/String, net.payrdr.mobile.payment.sdk.core.model/Key): kotlin/String // net.payrdr.mobile.payment.sdk.core.crypto/RsaCryptogramCipher.encode|encode(kotlin.String;net.payrdr.mobile.payment.sdk.core.model.Key){}[0]
 }
 
 final class net.payrdr.mobile.payment.sdk.core.model/BindingInstantParams : net.payrdr.mobile.payment.sdk.core.model/PaymentCardParams.StoredCardPaymentParams { // net.payrdr.mobile.payment.sdk.core.model/BindingInstantParams|null[0]
@@ -103,41 +83,6 @@ final class net.payrdr.mobile.payment.sdk.core.model/BindingParams : net.payrdr.
     final fun toString(): kotlin/String // net.payrdr.mobile.payment.sdk.core.model/BindingParams.toString|toString(){}[0]
 }
 
-final class net.payrdr.mobile.payment.sdk.core.model/CardBindingIdIdentifier : net.payrdr.mobile.payment.sdk.core.model/CardIdentifier { // net.payrdr.mobile.payment.sdk.core.model/CardBindingIdIdentifier|null[0]
-    constructor <init>(kotlin/String) // net.payrdr.mobile.payment.sdk.core.model/CardBindingIdIdentifier.<init>|<init>(kotlin.String){}[0]
-
-    final val value // net.payrdr.mobile.payment.sdk.core.model/CardBindingIdIdentifier.value|{}value[0]
-        final fun <get-value>(): kotlin/String // net.payrdr.mobile.payment.sdk.core.model/CardBindingIdIdentifier.value.<get-value>|<get-value>(){}[0]
-
-    final fun component1(): kotlin/String // net.payrdr.mobile.payment.sdk.core.model/CardBindingIdIdentifier.component1|component1(){}[0]
-    final fun copy(kotlin/String = ...): net.payrdr.mobile.payment.sdk.core.model/CardBindingIdIdentifier // net.payrdr.mobile.payment.sdk.core.model/CardBindingIdIdentifier.copy|copy(kotlin.String){}[0]
-    final fun equals(kotlin/Any?): kotlin/Boolean // net.payrdr.mobile.payment.sdk.core.model/CardBindingIdIdentifier.equals|equals(kotlin.Any?){}[0]
-    final fun hashCode(): kotlin/Int // net.payrdr.mobile.payment.sdk.core.model/CardBindingIdIdentifier.hashCode|hashCode(){}[0]
-    final fun toString(): kotlin/String // net.payrdr.mobile.payment.sdk.core.model/CardBindingIdIdentifier.toString|toString(){}[0]
-}
-
-final class net.payrdr.mobile.payment.sdk.core.model/CardInfo { // net.payrdr.mobile.payment.sdk.core.model/CardInfo|null[0]
-    constructor <init>(net.payrdr.mobile.payment.sdk.core.model/CardIdentifier, net.payrdr.mobile.payment.sdk.core.model/ExpiryDate? = ..., kotlin/String? = ..., kotlin/String? = ...) // net.payrdr.mobile.payment.sdk.core.model/CardInfo.<init>|<init>(net.payrdr.mobile.payment.sdk.core.model.CardIdentifier;net.payrdr.mobile.payment.sdk.core.model.ExpiryDate?;kotlin.String?;kotlin.String?){}[0]
-
-    final val cardHolder // net.payrdr.mobile.payment.sdk.core.model/CardInfo.cardHolder|{}cardHolder[0]
-        final fun <get-cardHolder>(): kotlin/String? // net.payrdr.mobile.payment.sdk.core.model/CardInfo.cardHolder.<get-cardHolder>|<get-cardHolder>(){}[0]
-    final val cvv // net.payrdr.mobile.payment.sdk.core.model/CardInfo.cvv|{}cvv[0]
-        final fun <get-cvv>(): kotlin/String? // net.payrdr.mobile.payment.sdk.core.model/CardInfo.cvv.<get-cvv>|<get-cvv>(){}[0]
-    final val expDate // net.payrdr.mobile.payment.sdk.core.model/CardInfo.expDate|{}expDate[0]
-        final fun <get-expDate>(): net.payrdr.mobile.payment.sdk.core.model/ExpiryDate? // net.payrdr.mobile.payment.sdk.core.model/CardInfo.expDate.<get-expDate>|<get-expDate>(){}[0]
-    final val identifier // net.payrdr.mobile.payment.sdk.core.model/CardInfo.identifier|{}identifier[0]
-        final fun <get-identifier>(): net.payrdr.mobile.payment.sdk.core.model/CardIdentifier // net.payrdr.mobile.payment.sdk.core.model/CardInfo.identifier.<get-identifier>|<get-identifier>(){}[0]
-
-    final fun component1(): net.payrdr.mobile.payment.sdk.core.model/CardIdentifier // net.payrdr.mobile.payment.sdk.core.model/CardInfo.component1|component1(){}[0]
-    final fun component2(): net.payrdr.mobile.payment.sdk.core.model/ExpiryDate? // net.payrdr.mobile.payment.sdk.core.model/CardInfo.component2|component2(){}[0]
-    final fun component3(): kotlin/String? // net.payrdr.mobile.payment.sdk.core.model/CardInfo.component3|component3(){}[0]
-    final fun component4(): kotlin/String? // net.payrdr.mobile.payment.sdk.core.model/CardInfo.component4|component4(){}[0]
-    final fun copy(net.payrdr.mobile.payment.sdk.core.model/CardIdentifier = ..., net.payrdr.mobile.payment.sdk.core.model/ExpiryDate? = ..., kotlin/String? = ..., kotlin/String? = ...): net.payrdr.mobile.payment.sdk.core.model/CardInfo // net.payrdr.mobile.payment.sdk.core.model/CardInfo.copy|copy(net.payrdr.mobile.payment.sdk.core.model.CardIdentifier;net.payrdr.mobile.payment.sdk.core.model.ExpiryDate?;kotlin.String?;kotlin.String?){}[0]
-    final fun equals(kotlin/Any?): kotlin/Boolean // net.payrdr.mobile.payment.sdk.core.model/CardInfo.equals|equals(kotlin.Any?){}[0]
-    final fun hashCode(): kotlin/Int // net.payrdr.mobile.payment.sdk.core.model/CardInfo.hashCode|hashCode(){}[0]
-    final fun toString(): kotlin/String // net.payrdr.mobile.payment.sdk.core.model/CardInfo.toString|toString(){}[0]
-}
-
 final class net.payrdr.mobile.payment.sdk.core.model/CardInstantParams : net.payrdr.mobile.payment.sdk.core.model/PaymentCardParams.NewCardPaymentParams { // net.payrdr.mobile.payment.sdk.core.model/CardInstantParams|null[0]
     constructor <init>(kotlin/String, kotlin/String, kotlin/String, kotlin/String?, kotlin/String) // net.payrdr.mobile.payment.sdk.core.model/CardInstantParams.<init>|<init>(kotlin.String;kotlin.String;kotlin.String;kotlin.String?;kotlin.String){}[0]
 
@@ -161,19 +106,6 @@ final class net.payrdr.mobile.payment.sdk.core.model/CardInstantParams : net.pay
     final fun equals(kotlin/Any?): kotlin/Boolean // net.payrdr.mobile.payment.sdk.core.model/CardInstantParams.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // net.payrdr.mobile.payment.sdk.core.model/CardInstantParams.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // net.payrdr.mobile.payment.sdk.core.model/CardInstantParams.toString|toString(){}[0]
-}
-
-final class net.payrdr.mobile.payment.sdk.core.model/CardPanIdentifier : net.payrdr.mobile.payment.sdk.core.model/CardIdentifier { // net.payrdr.mobile.payment.sdk.core.model/CardPanIdentifier|null[0]
-    constructor <init>(kotlin/String) // net.payrdr.mobile.payment.sdk.core.model/CardPanIdentifier.<init>|<init>(kotlin.String){}[0]
-
-    final val value // net.payrdr.mobile.payment.sdk.core.model/CardPanIdentifier.value|{}value[0]
-        final fun <get-value>(): kotlin/String // net.payrdr.mobile.payment.sdk.core.model/CardPanIdentifier.value.<get-value>|<get-value>(){}[0]
-
-    final fun component1(): kotlin/String // net.payrdr.mobile.payment.sdk.core.model/CardPanIdentifier.component1|component1(){}[0]
-    final fun copy(kotlin/String = ...): net.payrdr.mobile.payment.sdk.core.model/CardPanIdentifier // net.payrdr.mobile.payment.sdk.core.model/CardPanIdentifier.copy|copy(kotlin.String){}[0]
-    final fun equals(kotlin/Any?): kotlin/Boolean // net.payrdr.mobile.payment.sdk.core.model/CardPanIdentifier.equals|equals(kotlin.Any?){}[0]
-    final fun hashCode(): kotlin/Int // net.payrdr.mobile.payment.sdk.core.model/CardPanIdentifier.hashCode|hashCode(){}[0]
-    final fun toString(): kotlin/String // net.payrdr.mobile.payment.sdk.core.model/CardPanIdentifier.toString|toString(){}[0]
 }
 
 final class net.payrdr.mobile.payment.sdk.core.model/CardParams : net.payrdr.mobile.payment.sdk.core.model/PaymentCardParams.NewCardPaymentParams { // net.payrdr.mobile.payment.sdk.core.model/CardParams|null[0]
@@ -202,22 +134,6 @@ final class net.payrdr.mobile.payment.sdk.core.model/CardParams : net.payrdr.mob
     final fun equals(kotlin/Any?): kotlin/Boolean // net.payrdr.mobile.payment.sdk.core.model/CardParams.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // net.payrdr.mobile.payment.sdk.core.model/CardParams.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // net.payrdr.mobile.payment.sdk.core.model/CardParams.toString|toString(){}[0]
-}
-
-final class net.payrdr.mobile.payment.sdk.core.model/ExpiryDate { // net.payrdr.mobile.payment.sdk.core.model/ExpiryDate|null[0]
-    constructor <init>(kotlin/Int, kotlin/Int) // net.payrdr.mobile.payment.sdk.core.model/ExpiryDate.<init>|<init>(kotlin.Int;kotlin.Int){}[0]
-
-    final val expMonth // net.payrdr.mobile.payment.sdk.core.model/ExpiryDate.expMonth|{}expMonth[0]
-        final fun <get-expMonth>(): kotlin/Int // net.payrdr.mobile.payment.sdk.core.model/ExpiryDate.expMonth.<get-expMonth>|<get-expMonth>(){}[0]
-    final val expYear // net.payrdr.mobile.payment.sdk.core.model/ExpiryDate.expYear|{}expYear[0]
-        final fun <get-expYear>(): kotlin/Int // net.payrdr.mobile.payment.sdk.core.model/ExpiryDate.expYear.<get-expYear>|<get-expYear>(){}[0]
-
-    final fun component1(): kotlin/Int // net.payrdr.mobile.payment.sdk.core.model/ExpiryDate.component1|component1(){}[0]
-    final fun component2(): kotlin/Int // net.payrdr.mobile.payment.sdk.core.model/ExpiryDate.component2|component2(){}[0]
-    final fun copy(kotlin/Int = ..., kotlin/Int = ...): net.payrdr.mobile.payment.sdk.core.model/ExpiryDate // net.payrdr.mobile.payment.sdk.core.model/ExpiryDate.copy|copy(kotlin.Int;kotlin.Int){}[0]
-    final fun equals(kotlin/Any?): kotlin/Boolean // net.payrdr.mobile.payment.sdk.core.model/ExpiryDate.equals|equals(kotlin.Any?){}[0]
-    final fun hashCode(): kotlin/Int // net.payrdr.mobile.payment.sdk.core.model/ExpiryDate.hashCode|hashCode(){}[0]
-    final fun toString(): kotlin/String // net.payrdr.mobile.payment.sdk.core.model/ExpiryDate.toString|toString(){}[0]
 }
 
 final class net.payrdr.mobile.payment.sdk.core.model/Key { // net.payrdr.mobile.payment.sdk.core.model/Key|null[0]
@@ -302,104 +218,8 @@ final class net.payrdr.mobile.payment.sdk.core.model/SdkCoreConfig { // net.payr
     final fun toString(): kotlin/String // net.payrdr.mobile.payment.sdk.core.model/SdkCoreConfig.toString|toString(){}[0]
 }
 
-final class net.payrdr.mobile.payment.sdk.core.processor/DefaultPaymentStringProcessor : net.payrdr.mobile.payment.sdk.core.processor/PaymentStringProcessor { // net.payrdr.mobile.payment.sdk.core.processor/DefaultPaymentStringProcessor|null[0]
-    constructor <init>(kotlinx.datetime/TimeZone = ...) // net.payrdr.mobile.payment.sdk.core.processor/DefaultPaymentStringProcessor.<init>|<init>(kotlinx.datetime.TimeZone){}[0]
-
-    final fun createPaymentString(kotlin/String, kotlin/Long, kotlin/String, net.payrdr.mobile.payment.sdk.core.model/CardInfo, net.payrdr.mobile.payment.sdk.core.model/MsdkRegisteredFrom): kotlin/String // net.payrdr.mobile.payment.sdk.core.processor/DefaultPaymentStringProcessor.createPaymentString|createPaymentString(kotlin.String;kotlin.Long;kotlin.String;net.payrdr.mobile.payment.sdk.core.model.CardInfo;net.payrdr.mobile.payment.sdk.core.model.MsdkRegisteredFrom){}[0]
-}
-
-final class net.payrdr.mobile.payment.sdk.core.validation.rules/ExpiryRule : net.payrdr.mobile.payment.sdk.core.validation/BaseValidationRule<kotlin/String> { // net.payrdr.mobile.payment.sdk.core.validation.rules/ExpiryRule|null[0]
-    constructor <init>(kotlin/String, kotlin/String) // net.payrdr.mobile.payment.sdk.core.validation.rules/ExpiryRule.<init>|<init>(kotlin.String;kotlin.String){}[0]
-
-    final fun validateForError(kotlin/String): net.payrdr.mobile.payment.sdk.core.validation/ValidationResult // net.payrdr.mobile.payment.sdk.core.validation.rules/ExpiryRule.validateForError|validateForError(kotlin.String){}[0]
-}
-
-final class net.payrdr.mobile.payment.sdk.core.validation.rules/IntRangeRule : net.payrdr.mobile.payment.sdk.core.validation/BaseValidationRule<kotlin/Int> { // net.payrdr.mobile.payment.sdk.core.validation.rules/IntRangeRule|null[0]
-    constructor <init>(kotlin/String, kotlin/String, kotlin/Int = ..., kotlin/Int = ...) // net.payrdr.mobile.payment.sdk.core.validation.rules/IntRangeRule.<init>|<init>(kotlin.String;kotlin.String;kotlin.Int;kotlin.Int){}[0]
-
-    final fun validateForError(kotlin/Int): net.payrdr.mobile.payment.sdk.core.validation/ValidationResult // net.payrdr.mobile.payment.sdk.core.validation.rules/IntRangeRule.validateForError|validateForError(kotlin.Int){}[0]
-}
-
-final class net.payrdr.mobile.payment.sdk.core.validation.rules/LuhnStringRule : net.payrdr.mobile.payment.sdk.core.validation/BaseValidationRule<kotlin/String> { // net.payrdr.mobile.payment.sdk.core.validation.rules/LuhnStringRule|null[0]
-    constructor <init>(kotlin/String, kotlin/String) // net.payrdr.mobile.payment.sdk.core.validation.rules/LuhnStringRule.<init>|<init>(kotlin.String;kotlin.String){}[0]
-
-    final fun validateForError(kotlin/String): net.payrdr.mobile.payment.sdk.core.validation/ValidationResult // net.payrdr.mobile.payment.sdk.core.validation.rules/LuhnStringRule.validateForError|validateForError(kotlin.String){}[0]
-}
-
-final class net.payrdr.mobile.payment.sdk.core.validation.rules/RegExRule : net.payrdr.mobile.payment.sdk.core.validation/BaseValidationRule<kotlin/String> { // net.payrdr.mobile.payment.sdk.core.validation.rules/RegExRule|null[0]
-    constructor <init>(kotlin/String, kotlin/String, kotlin.text/Regex) // net.payrdr.mobile.payment.sdk.core.validation.rules/RegExRule.<init>|<init>(kotlin.String;kotlin.String;kotlin.text.Regex){}[0]
-
-    final fun validateForError(kotlin/String): net.payrdr.mobile.payment.sdk.core.validation/ValidationResult // net.payrdr.mobile.payment.sdk.core.validation.rules/RegExRule.validateForError|validateForError(kotlin.String){}[0]
-}
-
-final class net.payrdr.mobile.payment.sdk.core.validation.rules/StringLengthRule : net.payrdr.mobile.payment.sdk.core.validation/BaseValidationRule<kotlin/String> { // net.payrdr.mobile.payment.sdk.core.validation.rules/StringLengthRule|null[0]
-    constructor <init>(kotlin/String, kotlin/String, kotlin/Int = ..., kotlin/Int = ...) // net.payrdr.mobile.payment.sdk.core.validation.rules/StringLengthRule.<init>|<init>(kotlin.String;kotlin.String;kotlin.Int;kotlin.Int){}[0]
-
-    final fun validateForError(kotlin/String): net.payrdr.mobile.payment.sdk.core.validation/ValidationResult // net.payrdr.mobile.payment.sdk.core.validation.rules/StringLengthRule.validateForError|validateForError(kotlin.String){}[0]
-}
-
-final class net.payrdr.mobile.payment.sdk.core.validation.rules/StringRequiredRule : net.payrdr.mobile.payment.sdk.core.validation/BaseValidationRule<kotlin/String> { // net.payrdr.mobile.payment.sdk.core.validation.rules/StringRequiredRule|null[0]
-    constructor <init>(kotlin/String, kotlin/String) // net.payrdr.mobile.payment.sdk.core.validation.rules/StringRequiredRule.<init>|<init>(kotlin.String;kotlin.String){}[0]
-
-    final fun validateForError(kotlin/String): net.payrdr.mobile.payment.sdk.core.validation/ValidationResult // net.payrdr.mobile.payment.sdk.core.validation.rules/StringRequiredRule.validateForError|validateForError(kotlin.String){}[0]
-}
-
-final class net.payrdr.mobile.payment.sdk.core.validation/CardBindingIdValidator : net.payrdr.mobile.payment.sdk.core.validation/BaseValidator<kotlin/String> { // net.payrdr.mobile.payment.sdk.core.validation/CardBindingIdValidator|null[0]
-    constructor <init>() // net.payrdr.mobile.payment.sdk.core.validation/CardBindingIdValidator.<init>|<init>(){}[0]
-}
-
-final class net.payrdr.mobile.payment.sdk.core.validation/CardCodeValidator : net.payrdr.mobile.payment.sdk.core.validation/BaseValidator<kotlin/String> { // net.payrdr.mobile.payment.sdk.core.validation/CardCodeValidator|null[0]
-    constructor <init>() // net.payrdr.mobile.payment.sdk.core.validation/CardCodeValidator.<init>|<init>(){}[0]
-}
-
-final class net.payrdr.mobile.payment.sdk.core.validation/CardExpiryValidator : net.payrdr.mobile.payment.sdk.core.validation/BaseValidator<kotlin/String> { // net.payrdr.mobile.payment.sdk.core.validation/CardExpiryValidator|null[0]
-    constructor <init>() // net.payrdr.mobile.payment.sdk.core.validation/CardExpiryValidator.<init>|<init>(){}[0]
-}
-
-final class net.payrdr.mobile.payment.sdk.core.validation/CardHolderValidator : net.payrdr.mobile.payment.sdk.core.validation/BaseValidator<kotlin/String> { // net.payrdr.mobile.payment.sdk.core.validation/CardHolderValidator|null[0]
-    constructor <init>() // net.payrdr.mobile.payment.sdk.core.validation/CardHolderValidator.<init>|<init>(){}[0]
-}
-
-final class net.payrdr.mobile.payment.sdk.core.validation/CardNumberValidator : net.payrdr.mobile.payment.sdk.core.validation/BaseValidator<kotlin/String> { // net.payrdr.mobile.payment.sdk.core.validation/CardNumberValidator|null[0]
-    constructor <init>() // net.payrdr.mobile.payment.sdk.core.validation/CardNumberValidator.<init>|<init>(){}[0]
-}
-
-final class net.payrdr.mobile.payment.sdk.core.validation/OrderNumberValidator : net.payrdr.mobile.payment.sdk.core.validation/BaseValidator<kotlin/String> { // net.payrdr.mobile.payment.sdk.core.validation/OrderNumberValidator|null[0]
-    constructor <init>() // net.payrdr.mobile.payment.sdk.core.validation/OrderNumberValidator.<init>|<init>(){}[0]
-}
-
-final class net.payrdr.mobile.payment.sdk.core.validation/PubKeyValidator : net.payrdr.mobile.payment.sdk.core.validation/BaseValidator<kotlin/String> { // net.payrdr.mobile.payment.sdk.core.validation/PubKeyValidator|null[0]
-    constructor <init>() // net.payrdr.mobile.payment.sdk.core.validation/PubKeyValidator.<init>|<init>(){}[0]
-}
-
-final class net.payrdr.mobile.payment.sdk.core.validation/ValidationResult { // net.payrdr.mobile.payment.sdk.core.validation/ValidationResult|null[0]
-    constructor <init>(kotlin/Boolean, kotlin/String?, kotlin/String?) // net.payrdr.mobile.payment.sdk.core.validation/ValidationResult.<init>|<init>(kotlin.Boolean;kotlin.String?;kotlin.String?){}[0]
-
-    final val errorCode // net.payrdr.mobile.payment.sdk.core.validation/ValidationResult.errorCode|{}errorCode[0]
-        final fun <get-errorCode>(): kotlin/String? // net.payrdr.mobile.payment.sdk.core.validation/ValidationResult.errorCode.<get-errorCode>|<get-errorCode>(){}[0]
-    final val errorMessage // net.payrdr.mobile.payment.sdk.core.validation/ValidationResult.errorMessage|{}errorMessage[0]
-        final fun <get-errorMessage>(): kotlin/String? // net.payrdr.mobile.payment.sdk.core.validation/ValidationResult.errorMessage.<get-errorMessage>|<get-errorMessage>(){}[0]
-    final val isValid // net.payrdr.mobile.payment.sdk.core.validation/ValidationResult.isValid|{}isValid[0]
-        final fun <get-isValid>(): kotlin/Boolean // net.payrdr.mobile.payment.sdk.core.validation/ValidationResult.isValid.<get-isValid>|<get-isValid>(){}[0]
-
-    final fun component1(): kotlin/Boolean // net.payrdr.mobile.payment.sdk.core.validation/ValidationResult.component1|component1(){}[0]
-    final fun component2(): kotlin/String? // net.payrdr.mobile.payment.sdk.core.validation/ValidationResult.component2|component2(){}[0]
-    final fun component3(): kotlin/String? // net.payrdr.mobile.payment.sdk.core.validation/ValidationResult.component3|component3(){}[0]
-    final fun copy(kotlin/Boolean = ..., kotlin/String? = ..., kotlin/String? = ...): net.payrdr.mobile.payment.sdk.core.validation/ValidationResult // net.payrdr.mobile.payment.sdk.core.validation/ValidationResult.copy|copy(kotlin.Boolean;kotlin.String?;kotlin.String?){}[0]
-    final fun equals(kotlin/Any?): kotlin/Boolean // net.payrdr.mobile.payment.sdk.core.validation/ValidationResult.equals|equals(kotlin.Any?){}[0]
-    final fun hashCode(): kotlin/Int // net.payrdr.mobile.payment.sdk.core.validation/ValidationResult.hashCode|hashCode(){}[0]
-    final fun toString(): kotlin/String // net.payrdr.mobile.payment.sdk.core.validation/ValidationResult.toString|toString(){}[0]
-
-    final object Companion { // net.payrdr.mobile.payment.sdk.core.validation/ValidationResult.Companion|null[0]
-        final val VALID // net.payrdr.mobile.payment.sdk.core.validation/ValidationResult.Companion.VALID|{}VALID[0]
-            final fun <get-VALID>(): net.payrdr.mobile.payment.sdk.core.validation/ValidationResult // net.payrdr.mobile.payment.sdk.core.validation/ValidationResult.Companion.VALID.<get-VALID>|<get-VALID>(){}[0]
-
-        final fun error(kotlin/String, kotlin/String): net.payrdr.mobile.payment.sdk.core.validation/ValidationResult // net.payrdr.mobile.payment.sdk.core.validation/ValidationResult.Companion.error|error(kotlin.String;kotlin.String){}[0]
-    }
-}
-
 final class net.payrdr.mobile.payment.sdk.core/SdkCore { // net.payrdr.mobile.payment.sdk.core/SdkCore|null[0]
-    constructor <init>(net.payrdr.mobile.payment.sdk.core.processor/PaymentStringProcessor = ..., net.payrdr.mobile.payment.sdk.core.crypto/CryptogramCipher = ...) // net.payrdr.mobile.payment.sdk.core/SdkCore.<init>|<init>(net.payrdr.mobile.payment.sdk.core.processor.PaymentStringProcessor;net.payrdr.mobile.payment.sdk.core.crypto.CryptogramCipher){}[0]
+    constructor <init>() // net.payrdr.mobile.payment.sdk.core/SdkCore.<init>|<init>(){}[0]
 
     final fun generate(net.payrdr.mobile.payment.sdk.core.model/SdkCoreConfig): net.payrdr.mobile.payment.sdk.core/TokenResult // net.payrdr.mobile.payment.sdk.core/SdkCore.generate|generate(net.payrdr.mobile.payment.sdk.core.model.SdkCoreConfig){}[0]
     final fun version(): kotlin/String // net.payrdr.mobile.payment.sdk.core/SdkCore.version|version(){}[0]
@@ -424,18 +244,6 @@ final class net.payrdr.mobile.payment.sdk.core/TokenResult { // net.payrdr.mobil
         final fun withErrors(kotlin.collections/Map<net.payrdr.mobile.payment.sdk.core.model/ParamField, kotlin/String>): net.payrdr.mobile.payment.sdk.core/TokenResult // net.payrdr.mobile.payment.sdk.core/TokenResult.Companion.withErrors|withErrors(kotlin.collections.Map<net.payrdr.mobile.payment.sdk.core.model.ParamField,kotlin.String>){}[0]
         final fun withToken(kotlin/String): net.payrdr.mobile.payment.sdk.core/TokenResult // net.payrdr.mobile.payment.sdk.core/TokenResult.Companion.withToken|withToken(kotlin.String){}[0]
     }
-}
-
-open class <#A: kotlin/Any?> net.payrdr.mobile.payment.sdk.core.validation/BaseValidator { // net.payrdr.mobile.payment.sdk.core.validation/BaseValidator|null[0]
-    constructor <init>() // net.payrdr.mobile.payment.sdk.core.validation/BaseValidator.<init>|<init>(){}[0]
-
-    final fun addRules(kotlin/Array<out net.payrdr.mobile.payment.sdk.core.validation/BaseValidationRule<#A>>...) // net.payrdr.mobile.payment.sdk.core.validation/BaseValidator.addRules|addRules(kotlin.Array<out|net.payrdr.mobile.payment.sdk.core.validation.BaseValidationRule<1:0>>...){}[0]
-    final fun validate(#A): net.payrdr.mobile.payment.sdk.core.validation/ValidationResult // net.payrdr.mobile.payment.sdk.core.validation/BaseValidator.validate|validate(1:0){}[0]
-}
-
-sealed class net.payrdr.mobile.payment.sdk.core.model/CardIdentifier { // net.payrdr.mobile.payment.sdk.core.model/CardIdentifier|null[0]
-    abstract val value // net.payrdr.mobile.payment.sdk.core.model/CardIdentifier.value|{}value[0]
-        abstract fun <get-value>(): kotlin/String // net.payrdr.mobile.payment.sdk.core.model/CardIdentifier.value.<get-value>|<get-value>(){}[0]
 }
 
 sealed class net.payrdr.mobile.payment.sdk.core.model/PaymentCardParams { // net.payrdr.mobile.payment.sdk.core.model/PaymentCardParams|null[0]
@@ -463,18 +271,17 @@ sealed class net.payrdr.mobile.payment.sdk.core.model/PaymentCardParams { // net
     }
 }
 
-final object net.payrdr.mobile.payment.sdk.core.crypto/PemKeyParser { // net.payrdr.mobile.payment.sdk.core.crypto/PemKeyParser|null[0]
-    final fun parsePublicKeyDer(kotlin/String): kotlin/ByteArray // net.payrdr.mobile.payment.sdk.core.crypto/PemKeyParser.parsePublicKeyDer|parsePublicKeyDer(kotlin.String){}[0]
-}
-
 final object net.payrdr.mobile.payment.sdk.core.utils/Base58Coder { // net.payrdr.mobile.payment.sdk.core.utils/Base58Coder|null[0]
     final fun decode(kotlin/String): kotlin/String // net.payrdr.mobile.payment.sdk.core.utils/Base58Coder.decode|decode(kotlin.String){}[0]
     final fun encode(kotlin/String): kotlin/String // net.payrdr.mobile.payment.sdk.core.utils/Base58Coder.encode|encode(kotlin.String){}[0]
     final fun isValidBase58String(kotlin/String): kotlin/Boolean // net.payrdr.mobile.payment.sdk.core.utils/Base58Coder.isValidBase58String|isValidBase58String(kotlin.String){}[0]
 }
 
-final object net.payrdr.mobile.payment.sdk.core.utils/BindingUtils { // net.payrdr.mobile.payment.sdk.core.utils/BindingUtils|null[0]
-    final fun extractBindingId(kotlin/String): kotlin/String // net.payrdr.mobile.payment.sdk.core.utils/BindingUtils.extractBindingId|extractBindingId(kotlin.String){}[0]
+final object net.payrdr.mobile.payment.sdk.core.validation/CardRules { // net.payrdr.mobile.payment.sdk.core.validation/CardRules|null[0]
+    final fun isValidExpiry(kotlin/String): kotlin/Boolean // net.payrdr.mobile.payment.sdk.core.validation/CardRules.isValidExpiry|isValidExpiry(kotlin.String){}[0]
+    final fun isValidHolder(kotlin/String): kotlin/Boolean // net.payrdr.mobile.payment.sdk.core.validation/CardRules.isValidHolder|isValidHolder(kotlin.String){}[0]
+    final fun isValidNumber(kotlin/String): kotlin/Boolean // net.payrdr.mobile.payment.sdk.core.validation/CardRules.isValidNumber|isValidNumber(kotlin.String){}[0]
+    final fun passesLuhn(kotlin/String): kotlin/Boolean // net.payrdr.mobile.payment.sdk.core.validation/CardRules.passesLuhn|passesLuhn(kotlin.String){}[0]
 }
 
 final object net.payrdr.mobile.payment.sdk.core.validation/ValidationCodes { // net.payrdr.mobile.payment.sdk.core.validation/ValidationCodes|null[0]
@@ -485,8 +292,3 @@ final object net.payrdr.mobile.payment.sdk.core.validation/ValidationCodes { // 
     final const val required // net.payrdr.mobile.payment.sdk.core.validation/ValidationCodes.required|{}required[0]
         final fun <get-required>(): kotlin/String // net.payrdr.mobile.payment.sdk.core.validation/ValidationCodes.required.<get-required>|<get-required>(){}[0]
 }
-
-final fun (kotlin/String).net.payrdr.mobile.payment.sdk.core.utils/digitsOnly(kotlin/Int? = ...): kotlin/String // net.payrdr.mobile.payment.sdk.core.utils/digitsOnly|digitsOnly@kotlin.String(kotlin.Int?){}[0]
-final fun (kotlin/String).net.payrdr.mobile.payment.sdk.core.utils/noSpaces(kotlin/Int? = ...): kotlin/String // net.payrdr.mobile.payment.sdk.core.utils/noSpaces|noSpaces@kotlin.String(kotlin.Int?){}[0]
-final fun (kotlin/String).net.payrdr.mobile.payment.sdk.core.utils/pemKeyContent(): kotlin/String // net.payrdr.mobile.payment.sdk.core.utils/pemKeyContent|pemKeyContent@kotlin.String(){}[0]
-final fun (kotlin/String).net.payrdr.mobile.payment.sdk.core.utils/toExpDate(): net.payrdr.mobile.payment.sdk.core.model/ExpiryDate // net.payrdr.mobile.payment.sdk.core.utils/toExpDate|toExpDate@kotlin.String(){}[0]

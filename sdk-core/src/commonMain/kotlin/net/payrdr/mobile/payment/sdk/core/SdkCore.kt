@@ -39,10 +39,12 @@ import kotlin.uuid.Uuid
  * dependencies in the public contract — merchants do not pass an Android `Context`.
  */
 @OptIn(ExperimentalUuidApi::class)
-public class SdkCore(
-    private val paymentStringProcessor: PaymentStringProcessor = DefaultPaymentStringProcessor(TimeZone.currentSystemDefault()),
-    private val cryptogramCipher: CryptogramCipher = RsaCryptogramCipher(),
+public class SdkCore internal constructor(
+    private val paymentStringProcessor: PaymentStringProcessor,
+    private val cryptogramCipher: CryptogramCipher,
 ) {
+    public constructor() : this(DefaultPaymentStringProcessor(TimeZone.currentSystemDefault()), RsaCryptogramCipher())
+
     private val orderValidator = OrderNumberValidator()
     private val expiryValidator = CardExpiryValidator()
     private val numberValidator = CardNumberValidator()

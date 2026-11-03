@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
  * gateway suggests for the payer's phone.
  */
 @Serializable
-public data class CustomerDetails(
+internal data class CustomerDetails(
     val email: String? = null,
     val phone: String? = null,
     val suggestedCountryCodes: List<SuggestedCountryCode> = emptyList(),
@@ -15,7 +15,7 @@ public data class CustomerDetails(
 
 /** Calling code with its country, e.g. `+44` / `GB`. */
 @Serializable
-public data class SuggestedCountryCode(
+internal data class SuggestedCountryCode(
     val phoneCountryCode: String? = null,
     val alpha2: String? = null,
 )

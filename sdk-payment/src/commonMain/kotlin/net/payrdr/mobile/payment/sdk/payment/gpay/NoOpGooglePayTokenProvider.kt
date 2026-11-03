@@ -3,7 +3,7 @@ package net.payrdr.mobile.payment.sdk.payment.gpay
 import net.payrdr.mobile.payment.sdk.payment.config.GooglePayConfig
 
 /** Default / placeholder provider. Tapping Google Pay while this is wired → `NotAvailable`. */
-public object NoOpGooglePayTokenProvider : GooglePayTokenProvider {
+internal object NoOpGooglePayTokenProvider : GooglePayTokenProvider {
     override suspend fun requestPaymentToken(
         config: GooglePayConfig,
         amountMinorUnits: Long,

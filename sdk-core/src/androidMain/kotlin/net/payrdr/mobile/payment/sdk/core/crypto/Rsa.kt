@@ -4,8 +4,8 @@ import java.security.KeyFactory
 import java.security.spec.X509EncodedKeySpec
 import javax.crypto.Cipher
 
-public actual class Rsa actual constructor() {
-    public actual fun encryptPkcs1(
+internal actual class Rsa actual constructor() {
+    actual fun encryptPkcs1(
         data: ByteArray,
         publicKeyDer: ByteArray,
     ): ByteArray {

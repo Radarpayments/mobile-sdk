@@ -11,13 +11,13 @@ private const val INSIDE_BASE58_PREFIX = "ps:"
  *
  * A session id is the Base58 encoding of `ps:{mdOrder}`, prefixed with `ps_`.
  */
-public object SessionIdConverter {
-    public fun mdOrderToSessionId(mdOrder: String): String {
+internal object SessionIdConverter {
+    fun mdOrderToSessionId(mdOrder: String): String {
         val encoded = Base58Coder.encode(INSIDE_BASE58_PREFIX + mdOrder)
         return OUTSIDE_BASE58_PREFIX + encoded.trim()
     }
 
-    public fun sessionIdToMdOrder(sessionId: String): String {
+    fun sessionIdToMdOrder(sessionId: String): String {
         if (sessionId.isBlank()) {
             throw SdkInvalidSessionIdException(sessionId)
         }

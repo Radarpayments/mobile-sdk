@@ -3,7 +3,7 @@ package net.payrdr.mobile.payment.sdk.payment.ui.util
 /**
  * Card network / payment system detected from a card number's leading digits.
  */
-public enum class CardNetwork {
+internal enum class CardNetwork {
     VISA,
     MASTERCARD,
     AMEX,
@@ -16,7 +16,7 @@ public enum class CardNetwork {
 }
 
 /** Human-readable network name, e.g. `Mastercard`; empty for [CardNetwork.UNKNOWN]. */
-public val CardNetwork.displayName: String
+internal val CardNetwork.displayName: String
     get() =
         when (this) {
             CardNetwork.VISA -> "Visa"

@@ -81,7 +81,7 @@ internal fun SheetOverlay(
     }
 }
 
-/** [BottomSheetContainer] that follows a downward drag and either dismisses or springs back. */
+/** [SheetSurface] that follows a downward drag and either dismisses or springs back. */
 @Composable
 internal fun DraggableSheet(
     onDismiss: () -> Unit,

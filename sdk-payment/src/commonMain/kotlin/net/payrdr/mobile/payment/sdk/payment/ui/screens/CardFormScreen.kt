@@ -146,7 +146,7 @@ private const val CARD_HOLDER_FIELD_ENABLED = false
  * @param onClose when non-null, the top bar gets a close action that leaves the whole checkout
  */
 @Composable
-public fun CardFormScreen(
+internal fun CardFormScreen(
     config: SdkPaymentConfig,
     onSubmit: (PaymentIntent.SubmitNewCard) -> Unit,
     onGooglePayClick: () -> Unit = {},

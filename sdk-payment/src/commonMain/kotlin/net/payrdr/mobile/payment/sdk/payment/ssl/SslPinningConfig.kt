@@ -1,5 +1,7 @@
 package net.payrdr.mobile.payment.sdk.payment.ssl
 
+import net.payrdr.mobile.payment.sdk.core.InternalPayrdrApi
+
 /**
  * Declarative SSL pinning configuration. Accepts pre-computed base64 SHA-256 SPKI pins.
  *
@@ -25,15 +27,16 @@ package net.payrdr.mobile.payment.sdk.payment.ssl
  * ```
  */
 public class SslPinningConfig private constructor(
-    public val entries: Set<PinEntry>,
+    @InternalPayrdrApi public val entries: Set<PinEntry>,
 ) {
     /**
      * A single pinned host+pin pair. [pinString] is always `"sha256/<base64>"` — the same
      * format accepted by [okhttp3.CertificatePinner.Builder.add].
      */
+    @InternalPayrdrApi
     public data class PinEntry(
-        val hostname: String,
-        val pinString: String,
+        public val hostname: String,
+        public val pinString: String,
     )
 
     /**

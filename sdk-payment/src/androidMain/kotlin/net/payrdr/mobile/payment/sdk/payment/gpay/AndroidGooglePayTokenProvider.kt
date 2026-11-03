@@ -39,7 +39,7 @@ import java.util.concurrent.atomic.AtomicReference
  * returns [GooglePayTokenResult.Failure] with message "GPay request already in flight"
  * instead of clobbering the first deferred.
  */
-public class AndroidGooglePayTokenProvider(
+internal class AndroidGooglePayTokenProvider(
     private val activity: ComponentActivity,
 ) : GooglePayTokenProvider {
     private val pending: AtomicReference<CompletableDeferred<GooglePayTokenResult>?> =

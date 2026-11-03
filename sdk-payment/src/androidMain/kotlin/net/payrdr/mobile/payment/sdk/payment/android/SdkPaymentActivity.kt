@@ -10,6 +10,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import net.payrdr.mobile.payment.sdk.payment.SdkPayment
+import net.payrdr.mobile.payment.sdk.payment.applepay.NoOpApplePayTokenProvider
 import net.payrdr.mobile.payment.sdk.payment.config.CheckoutConfig
 import net.payrdr.mobile.payment.sdk.payment.config.RestorableCheckout
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkException
@@ -78,6 +79,7 @@ internal class SdkPaymentActivity : ComponentActivity() {
                     } else {
                         NoOpGooglePayTokenProvider
                     },
+                applePayTokenProvider = NoOpApplePayTokenProvider,
             )
 
         // Transparent, edge-to-edge window: the merchant screen stays visible under the sheet's scrim.

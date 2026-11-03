@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 /** The `data` of a wallet payment answer: a 3DS challenge when the bank asks for one; a refusal carries only [redirectUrl]. */
 @Serializable
-public data class GPayData(
+internal data class GPayData(
     val orderId: String? = null,
     val acsUrl: String? = null,
     val paReq: String? = null,

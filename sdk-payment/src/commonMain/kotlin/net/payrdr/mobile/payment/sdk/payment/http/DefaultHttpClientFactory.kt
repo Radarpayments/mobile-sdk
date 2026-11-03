@@ -19,7 +19,7 @@ import net.payrdr.mobile.payment.sdk.payment.config.SdkPaymentConfig
  *  - `HttpTimeout` — connect 15s, request 60s, socket 60s.
  *  - `defaultRequest { Accept: application/json }`.
  */
-public object DefaultHttpClientFactory : HttpClientFactory {
+internal object DefaultHttpClientFactory : HttpClientFactory {
     override fun create(
         config: SdkPaymentConfig,
         engineOverride: HttpClientEngine?,

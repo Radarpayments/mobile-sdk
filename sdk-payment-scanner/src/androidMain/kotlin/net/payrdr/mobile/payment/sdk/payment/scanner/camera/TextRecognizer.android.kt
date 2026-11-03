@@ -9,11 +9,11 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-public actual class TextRecognizer actual constructor() {
+internal actual class TextRecognizer actual constructor() {
     private val client = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
 
     @SuppressLint("UnsafeOptInUsageError")
-    public actual suspend fun recognize(frame: Any): List<RecognizedLine> {
+    actual suspend fun recognize(frame: Any): List<RecognizedLine> {
         val proxy = frame as? ImageProxy ?: return emptyList()
         val media =
             proxy.image ?: run {
@@ -55,5 +55,5 @@ public actual class TextRecognizer actual constructor() {
         }
     }
 
-    public actual fun close(): Unit = client.close()
+    actual fun close(): Unit = client.close()
 }

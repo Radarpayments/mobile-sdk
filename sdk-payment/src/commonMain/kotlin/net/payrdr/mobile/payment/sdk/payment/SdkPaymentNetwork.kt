@@ -10,7 +10,7 @@ import net.payrdr.mobile.payment.sdk.payment.keyprovider.KeyProvider
  * @property api the gateway calls the checkout makes
  * @property keyProvider source of the RSA public key the card data is encrypted with
  */
-public class SdkPaymentNetwork(
-    public val api: PaymentApi,
-    public val keyProvider: KeyProvider,
+internal class SdkPaymentNetwork(
+    val api: PaymentApi,
+    val keyProvider: KeyProvider,
 )

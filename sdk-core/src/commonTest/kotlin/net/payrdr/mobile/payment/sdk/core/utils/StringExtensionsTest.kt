@@ -28,11 +28,6 @@ class StringExtensionsTest {
     }
 
     @Test
-    fun `noSpaces removes whitespace`() {
-        "4532 8967 0143 9077".noSpaces() shouldBe "4532896701439077"
-    }
-
-    @Test
     fun `toExpDate parses MM YY`() {
         val exp = "12/28".toExpDate()
         exp.expMonth shouldBe 12

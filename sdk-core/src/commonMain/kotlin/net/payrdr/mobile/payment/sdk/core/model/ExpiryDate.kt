@@ -6,7 +6,7 @@ package net.payrdr.mobile.payment.sdk.core.model
  * @property expYear full year, e.g. `2028`
  * @property expMonth month, 1..12
  */
-public data class ExpiryDate(
+internal data class ExpiryDate(
     val expYear: Int,
     val expMonth: Int,
 )

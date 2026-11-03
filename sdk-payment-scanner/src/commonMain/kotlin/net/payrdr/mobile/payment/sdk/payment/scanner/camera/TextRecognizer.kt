@@ -5,7 +5,7 @@ package net.payrdr.mobile.payment.sdk.payment.scanner.camera
  * Platform adapters must convert their native representation (ML Kit pixel top-left,
  * Vision bottom-left 0..1) into this shape before returning [RecognizedLine]s.
  */
-public data class NormalisedRect(
+internal data class NormalisedRect(
     val left: Float,
     val top: Float,
     val right: Float,
@@ -17,7 +17,7 @@ public data class NormalisedRect(
  * coordinate system. The parser relies on spatial relationships (expiry is usually below PAN)
  * so the bounding box must be reliable.
  */
-public data class RecognizedLine(
+internal data class RecognizedLine(
     val text: String,
     val boundingBox: NormalisedRect,
 )
@@ -30,8 +30,8 @@ public data class RecognizedLine(
  * Implementations dispatch onto a background thread internally; callers may invoke
  * from any coroutine context.
  */
-public expect class TextRecognizer() {
-    public suspend fun recognize(frame: Any): List<RecognizedLine>
+internal expect class TextRecognizer() {
+    suspend fun recognize(frame: Any): List<RecognizedLine>
 
-    public fun close()
+    fun close()
 }

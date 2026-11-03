@@ -19,23 +19,13 @@ import net.payrdr.mobile.payment.sdk.payment.ui.theme.LocalPaymentShapes
  * Bottom-sheet surface: rounded top corners, drag-handle pill, themed background, 14dp gaps
  * between children.
  *
- * The container is declarative only — dragging and scrim handling live in the host
+ * The surface is declarative only — dragging and scrim handling live in the host
  * (`PaymentCheckout` draws them for the turnkey checkout).
  *
  * @param onDismissRequest invoked when the drag-handle is tapped (optional affordance)
  * @param showGrabber hide the handle when the sheet is not draggable (e.g. inside a system sheet)
+ * @param sidePadding chosen by the caller: 0 for steps that keep their own
  */
-@Composable
-public fun BottomSheetContainer(
-    onDismissRequest: () -> Unit,
-    modifier: Modifier = Modifier,
-    showGrabber: Boolean = true,
-    content: @Composable ColumnScope.() -> Unit,
-) {
-    SheetSurface(onDismissRequest, modifier, showGrabber, SIDE_PADDING, content = content)
-}
-
-/** [BottomSheetContainer] with its side padding chosen by the caller (0 for steps that keep their own). */
 @Composable
 internal fun SheetSurface(
     onDismissRequest: () -> Unit,

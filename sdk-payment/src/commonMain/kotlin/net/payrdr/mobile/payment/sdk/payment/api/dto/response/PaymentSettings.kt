@@ -5,7 +5,7 @@ package net.payrdr.mobile.payment.sdk.payment.api.dto.response
  *
  * @property values every setting the gateway returned, by name (e.g. `googlePay.gateway`)
  */
-public data class PaymentSettings(
+internal data class PaymentSettings(
     val values: Map<String, String>,
 ) {
     /** `googlePay.environment`: `TEST` or `PRODUCTION`. */

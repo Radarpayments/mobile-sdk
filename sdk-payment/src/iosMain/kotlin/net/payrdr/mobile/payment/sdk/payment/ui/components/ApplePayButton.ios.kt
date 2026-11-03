@@ -47,7 +47,7 @@ import platform.objc.sel_registerName
  */
 @OptIn(ExperimentalForeignApi::class)
 @Composable
-public actual fun ApplePayButton(
+internal actual fun ApplePayButton(
     onClick: () -> Unit,
     modifier: Modifier,
 ) {

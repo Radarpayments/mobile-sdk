@@ -1,11 +1,14 @@
 package net.payrdr.mobile.payment.sdk.core.utils
 
+import net.payrdr.mobile.payment.sdk.core.InternalPayrdrApi
+
 /**
  * Utilities for Base58 encoding / decoding (Bitcoin alphabet, excluding `0`, `O`, `I`, `l`).
  *
  * Implementation is `BigInteger`-free to stay KMP-compatible. See the Bitcoin wiki reference
  * algorithm: https://en.bitcoin.it/wiki/Base58Check_encoding#Creating_a_Base58Check_string
  */
+@InternalPayrdrApi
 public object Base58Coder {
     private const val ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
     private const val BASE = 58

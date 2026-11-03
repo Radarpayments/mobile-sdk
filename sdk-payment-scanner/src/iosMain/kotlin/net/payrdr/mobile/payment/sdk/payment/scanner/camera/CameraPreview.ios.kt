@@ -48,7 +48,7 @@ private class CameraPreviewContainer : UIView(frame = CGRectZero.readValue()) {
 
 @OptIn(ExperimentalForeignApi::class)
 @Composable
-public actual fun CameraPreview(
+internal actual fun CameraPreview(
     onRecognized: (List<RecognizedLine>) -> Unit,
     onError: () -> Unit,
     torch: TorchState,

@@ -7,7 +7,7 @@ import net.payrdr.mobile.payment.sdk.core.validation.rules.StringRequiredRule
  *
  * Full RSA structural validation happens implicitly at encryption time.
  */
-public class PubKeyValidator : BaseValidator<String>() {
+internal class PubKeyValidator : BaseValidator<String>() {
     init {
         addRules(
             StringRequiredRule(code = ValidationCodes.required, message = "Public key is required"),

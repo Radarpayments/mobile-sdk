@@ -57,7 +57,7 @@ import org.jetbrains.compose.resources.stringResource
  * @param order amount / merchant shown under the headline; null hides the line
  */
 @Composable
-public fun ProcessingScreen(
+internal fun ProcessingScreen(
     step: ProcessingStep?,
     modifier: Modifier = Modifier,
     order: OrderSummary? = null,

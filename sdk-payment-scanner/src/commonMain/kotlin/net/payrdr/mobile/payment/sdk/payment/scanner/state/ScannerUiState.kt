@@ -2,24 +2,24 @@ package net.payrdr.mobile.payment.sdk.payment.scanner.state
 
 import net.payrdr.mobile.payment.sdk.payment.scanner.ScannedCard
 
-public sealed interface ScannerUiState {
-    public data object Initializing : ScannerUiState
+internal sealed interface ScannerUiState {
+    data object Initializing : ScannerUiState
 
-    public data object PermissionDenied : ScannerUiState
+    data object PermissionDenied : ScannerUiState
 
-    public data object Scanning : ScannerUiState
+    data object Scanning : ScannerUiState
 
-    public data class Detecting(
+    data class Detecting(
         val candidatePan: String,
     ) : ScannerUiState
 
-    public data class Success(
+    data class Success(
         val card: ScannedCard,
     ) : ScannerUiState
 
-    public data object Timeout : ScannerUiState
+    data object Timeout : ScannerUiState
 
-    public data object CameraUnavailable : ScannerUiState
+    data object CameraUnavailable : ScannerUiState
 
-    public data object Cancelled : ScannerUiState
+    data object Cancelled : ScannerUiState
 }

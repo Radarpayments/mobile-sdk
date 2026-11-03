@@ -39,7 +39,7 @@ import net.payrdr.mobile.payment.sdk.payment.exception.SdkPaymentApiException
  * with a lenient `Json` configuration).
  */
 @Suppress("TooGenericExceptionCaught", "TooManyFunctions")
-public class PaymentApiImpl(
+internal class PaymentApiImpl(
     private val baseUrl: String,
     private val httpClient: HttpClient,
 ) : PaymentApi {
@@ -101,16 +101,6 @@ public class PaymentApiImpl(
                     contentType(ContentType.Application.Json)
                     setBody(request)
                 }.asBody()
-        }
-
-    override suspend fun finish3dsVer2PaymentAnonymous(threeDsServerTransId: String): Unit =
-        runApi {
-            val params = Parameters.build { append("threeDSServerTransId", threeDsServerTransId) }
-            val response =
-                httpClient.post("$baseUrl${Endpoints.FINISH_3DS_VER2_PAYMENT}") {
-                    setBody(FormDataContent(params))
-                }
-            assertSuccess(response)
         }
 
     override suspend fun getFinishedPaymentInfo(orderId: String): FinishedPaymentInfoResponse =

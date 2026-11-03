@@ -27,7 +27,7 @@ import net.payrdr.mobile.payment.sdk.payment.ui.util.displayName
  *   sheet's background and so need [net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentThemeProvider] around them
  */
 @Composable
-public fun CardNetworkIcon(
+internal fun CardNetworkIcon(
     network: CardNetwork,
     modifier: Modifier = Modifier,
     tint: Color = Color.Unspecified,

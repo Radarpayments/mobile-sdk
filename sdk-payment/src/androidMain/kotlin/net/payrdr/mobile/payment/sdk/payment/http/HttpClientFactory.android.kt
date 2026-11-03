@@ -18,7 +18,7 @@ import okhttp3.CertificatePinner
  * with a [CertificatePinner] configured from the pin entries. When null, falls back to
  * [DefaultHttpClientFactory].
  */
-public object OkHttpClientFactory : HttpClientFactory {
+internal object OkHttpClientFactory : HttpClientFactory {
     override fun create(
         config: SdkPaymentConfig,
         engineOverride: HttpClientEngine?,
@@ -70,4 +70,4 @@ public object OkHttpClientFactory : HttpClientFactory {
 }
 
 /** Public accessor — returns [OkHttpClientFactory] on Android. */
-public actual fun defaultHttpClientFactory(): HttpClientFactory = OkHttpClientFactory
+internal actual fun defaultHttpClientFactory(): HttpClientFactory = OkHttpClientFactory

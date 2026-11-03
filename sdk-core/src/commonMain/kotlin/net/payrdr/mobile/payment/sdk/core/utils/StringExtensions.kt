@@ -6,7 +6,7 @@ import net.payrdr.mobile.payment.sdk.core.model.ExpiryDate
  * Strips PEM armor (`-----BEGIN/END PUBLIC KEY-----`, `-----BEGIN/END CERTIFICATE-----`)
  * and all whitespace from a PEM-encoded key, returning only the Base64 body.
  */
-public fun String.pemKeyContent(): String =
+internal fun String.pemKeyContent(): String =
     replace("-----BEGIN PUBLIC KEY-----", "")
         .replace("-----END PUBLIC KEY-----", "")
         .replace("-----BEGIN CERTIFICATE-----", "")
@@ -17,18 +17,9 @@ public fun String.pemKeyContent(): String =
  * Returns the receiver with all non-digit characters removed. If [maxLength] is set,
  * the resulting string is truncated to that many leading characters.
  */
-public fun String.digitsOnly(maxLength: Int? = null): String {
+internal fun String.digitsOnly(maxLength: Int? = null): String {
     val digits = replace(Regex("[^\\d.]"), "")
     return if (maxLength != null) digits.take(maxLength) else digits
-}
-
-/**
- * Returns the receiver with all whitespace characters removed. If [maxLength] is set,
- * the resulting string is truncated to that many leading characters.
- */
-public fun String.noSpaces(maxLength: Int? = null): String {
-    val trimmed = replace(Regex("[\\s.]"), "")
-    return if (maxLength != null) trimmed.take(maxLength) else trimmed
 }
 
 /**
@@ -36,7 +27,7 @@ public fun String.noSpaces(maxLength: Int? = null): String {
  *
  * @throws IllegalArgumentException if the input does not match `^\d{2}/\d{2}$`.
  */
-public fun String.toExpDate(): ExpiryDate {
+internal fun String.toExpDate(): ExpiryDate {
     require(matches(Regex("\\d{2}/\\d{2}"))) { "Incorrect format, should be MM/YY." }
     val month = substring(0, 2).toInt()
     val year = substring(3, 5).toInt() + EXP_YEAR_OFFSET

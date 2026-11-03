@@ -1,6 +1,6 @@
 package net.payrdr.mobile.payment.sdk.payment.scanner.camera
 
-public enum class CameraPermissionStatus { Granted, Denied, NotDetermined }
+internal enum class CameraPermissionStatus { Granted, Denied, NotDetermined }
 
 /**
  * Platform bridge around camera runtime-permission APIs.
@@ -11,10 +11,10 @@ public enum class CameraPermissionStatus { Granted, Denied, NotDetermined }
  * iOS: backs onto `AVCaptureDevice.authorizationStatus(for:)` / `requestAccess(for:)` /
  * `UIApplication.openSettingsURLString`.
  */
-public expect class CameraPermissionController() {
-    public fun status(): CameraPermissionStatus
+internal expect class CameraPermissionController() {
+    fun status(): CameraPermissionStatus
 
-    public suspend fun request(): CameraPermissionStatus
+    suspend fun request(): CameraPermissionStatus
 
-    public fun openSettings()
+    fun openSettings()
 }

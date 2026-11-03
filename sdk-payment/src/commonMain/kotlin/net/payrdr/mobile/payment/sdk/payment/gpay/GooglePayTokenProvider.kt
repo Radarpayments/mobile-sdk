@@ -15,7 +15,7 @@ import net.payrdr.mobile.payment.sdk.payment.config.GooglePayConfig
  * The `PaymentFlowController` encodes the token in base64, as the gateway reads it, and sends it to
  * `google/paymentOrder.do`, or for a transfer to `p2p/perform.do`.
  */
-public interface GooglePayTokenProvider {
+internal interface GooglePayTokenProvider {
     /**
      * @param config the complete config for this order — merchant id, gateway, gateway merchant id, environment,
      *   and country set (the merchant's config completed from the gateway and the order).
@@ -23,7 +23,7 @@ public interface GooglePayTokenProvider {
      * @param currencyCode ISO 4217 alpha-3 currency code: the order's.
      * @param countryCode ISO 3166-1 alpha-2 country code; the same as [GooglePayConfig.countryCode].
      */
-    public suspend fun requestPaymentToken(
+    suspend fun requestPaymentToken(
         config: GooglePayConfig,
         amountMinorUnits: Long,
         currencyCode: String,
@@ -32,20 +32,20 @@ public interface GooglePayTokenProvider {
 }
 
 /** Outcome of a Google Pay token request. */
-public sealed interface GooglePayTokenResult {
+internal sealed interface GooglePayTokenResult {
     /** User authorized payment; [paymentToken] is the encrypted JWE blob to hand to the backend. */
-    public data class Success(
+    data class Success(
         val paymentToken: String,
     ) : GooglePayTokenResult
 
     /** User dismissed the GPay sheet without completing. */
-    public data object Cancelled : GooglePayTokenResult
+    data object Cancelled : GooglePayTokenResult
 
     /** Google Pay is not available on this device (no Play Services, or iOS). */
-    public data object NotAvailable : GooglePayTokenResult
+    data object NotAvailable : GooglePayTokenResult
 
     /** Underlying failure from Play Services or token parsing. */
-    public data class Failure(
+    data class Failure(
         val reason: String,
         val cause: Throwable? = null,
     ) : GooglePayTokenResult

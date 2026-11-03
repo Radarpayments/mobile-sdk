@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
  * On camera startup failure, [onError] fires.
  */
 @Composable
-public expect fun CameraPreview(
+internal expect fun CameraPreview(
     onRecognized: (List<RecognizedLine>) -> Unit,
     onError: () -> Unit,
     torch: TorchState,
@@ -26,6 +26,6 @@ public expect fun CameraPreview(
 )
 
 /** UI-controlled torch state. The platform wires this to its TorchController internally. */
-public data class TorchState(
+internal data class TorchState(
     val enabled: Boolean,
 )

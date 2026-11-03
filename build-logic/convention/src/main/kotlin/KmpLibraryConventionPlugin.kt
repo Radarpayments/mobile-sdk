@@ -22,6 +22,7 @@ class KmpLibraryConventionPlugin : Plugin<Project> {
 
         extensions.configure<KotlinMultiplatformExtension> {
             jvmToolchain(libs.intVersion("jvm-target"))
+            explicitApi()
 
             androidTarget {
                 // What maven-publish publishes for Android (Flutter and React Native plugins consume it; see the root build).
@@ -56,6 +57,8 @@ class KmpLibraryConventionPlugin : Plugin<Project> {
             // kotlinx-datetime 0.7 (Compose Multiplatform 1.9) moved Instant and Clock to kotlin.time, which stays
             // experimental until Kotlin 2.3.
             sourceSets.all { languageSettings.optIn("kotlin.time.ExperimentalTime") }
+            // What the SDK modules share with each other and nobody else.
+            sourceSets.all { languageSettings.optIn("net.payrdr.mobile.payment.sdk.core.InternalPayrdrApi") }
 
             applyDefaultHierarchyTemplate()
         }

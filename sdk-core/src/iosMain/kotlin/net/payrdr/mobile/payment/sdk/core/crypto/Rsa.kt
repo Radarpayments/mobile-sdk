@@ -39,8 +39,8 @@ import platform.Security.kSecAttrKeyTypeRSA
 import platform.Security.kSecKeyAlgorithmRSAEncryptionPKCS1
 import platform.Security.kSecKeyOperationTypeEncrypt
 
-public actual class Rsa actual constructor() {
-    public actual fun encryptPkcs1(
+internal actual class Rsa actual constructor() {
+    actual fun encryptPkcs1(
         data: ByteArray,
         publicKeyDer: ByteArray,
     ): ByteArray {

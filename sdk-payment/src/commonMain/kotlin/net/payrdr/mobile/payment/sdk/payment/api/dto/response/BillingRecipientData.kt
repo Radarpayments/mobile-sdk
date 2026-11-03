@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 /** Recipient of a transfer (`billingRecipientData` of `getSessionStatus.do`); [recipientBirthday] is `YYYYMMDD`. */
 @Serializable
-public data class BillingRecipientData(
+internal data class BillingRecipientData(
     val recipientAccount: String? = null,
     val recipientAccountNumberType: String? = null,
     val recipientFirstName: String? = null,

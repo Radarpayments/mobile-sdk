@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-public actual fun GooglePayButton(
+internal actual fun GooglePayButton(
     onClick: () -> Unit,
     modifier: Modifier,
 ) {

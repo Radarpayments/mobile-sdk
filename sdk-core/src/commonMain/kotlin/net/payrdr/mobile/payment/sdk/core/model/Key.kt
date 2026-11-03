@@ -1,5 +1,7 @@
 package net.payrdr.mobile.payment.sdk.core.model
 
+import net.payrdr.mobile.payment.sdk.core.InternalPayrdrApi
+
 /**
  * Public key used to encrypt the payment cryptogram.
  *
@@ -7,8 +9,9 @@ package net.payrdr.mobile.payment.sdk.core.model
  * @property protocol must be `"RSA"` — other algorithms rejected at cipher time
  * @property expiration epoch-ms expiration timestamp; `Long.MAX_VALUE` means never expires
  */
+@InternalPayrdrApi
 public data class Key(
-    val value: String,
-    val protocol: String,
-    val expiration: Long,
+    public val value: String,
+    public val protocol: String,
+    public val expiration: Long,
 )

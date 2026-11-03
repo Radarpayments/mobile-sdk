@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-public actual fun NativeTextField(
+internal actual fun NativeTextField(
     value: String,
     onValueChange: (String) -> Unit,
     placeholder: String,

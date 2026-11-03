@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
  * Response from `getSessionStatus.do`.
  */
 @Serializable
-public data class SessionStatusResponse(
+internal data class SessionStatusResponse(
     val redirect: String? = null,
     val remainingSecs: Long? = null,
     val orderNumber: String? = null,

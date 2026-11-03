@@ -9,7 +9,7 @@ import kotlin.io.encoding.ExperimentalEncodingApi
  * returns a Base64-encoded token. Matches the wire format used by Radar PAYRDR SDK 3.x.
  */
 @OptIn(ExperimentalEncodingApi::class)
-public class RsaCryptogramCipher(
+internal class RsaCryptogramCipher(
     private val rsa: Rsa = Rsa(),
 ) : CryptogramCipher {
     override fun encode(

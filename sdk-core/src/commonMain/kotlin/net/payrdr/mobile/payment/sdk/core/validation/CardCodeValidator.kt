@@ -7,7 +7,7 @@ import net.payrdr.mobile.payment.sdk.core.validation.rules.StringRequiredRule
 /**
  * Validator for the card security code (CVC/CVV): 3 digits, or 4 as Amex prints on the front.
  */
-public class CardCodeValidator : BaseValidator<String>() {
+internal class CardCodeValidator : BaseValidator<String>() {
     init {
         addRules(
             StringRequiredRule(code = ValidationCodes.required, message = "CVC is required"),

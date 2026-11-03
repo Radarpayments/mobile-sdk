@@ -7,7 +7,7 @@ import net.payrdr.mobile.payment.sdk.core.validation.ValidationResult.Companion.
 /**
  * Rule to check a numeric value is within the inclusive range [min]..[max].
  */
-public class IntRangeRule(
+internal class IntRangeRule(
     private val code: String,
     private val message: String,
     private val min: Int = 0,

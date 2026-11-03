@@ -8,14 +8,14 @@ import platform.AVFoundation.hasTorch
 import platform.AVFoundation.setTorchMode
 
 @OptIn(ExperimentalForeignApi::class)
-public actual class TorchController actual constructor() {
+internal actual class TorchController actual constructor() {
     @kotlin.concurrent.Volatile private var device: AVCaptureDevice? = null
 
-    public fun attach(device: AVCaptureDevice?) {
+    fun attach(device: AVCaptureDevice?) {
         this.device = device
     }
 
-    public actual fun setEnabled(on: Boolean) {
+    actual fun setEnabled(on: Boolean) {
         val dev = device ?: return
         if (!dev.hasTorch) return
         if (dev.lockForConfiguration(null)) {
@@ -24,5 +24,5 @@ public actual class TorchController actual constructor() {
         }
     }
 
-    public actual fun isAvailable(): Boolean = device?.hasTorch == true
+    actual fun isAvailable(): Boolean = device?.hasTorch == true
 }
