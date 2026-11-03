@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 /** Response from `google/paymentOrder.do`. */
 @Serializable
-public data class ProcessFormGPayResponse(
+internal data class ProcessFormGPayResponse(
     @Serializable(with = WalletSuccessSerializer::class)
     val success: Boolean,
     val data: GPayData? = null,

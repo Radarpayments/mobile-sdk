@@ -20,7 +20,7 @@ import kotlinx.serialization.Serializable
  * @property errorTypeName refusal category, e.g. `DATA_INPUT_ERROR`
  */
 @Serializable
-public data class ProcessFormResponse(
+internal data class ProcessFormResponse(
     val errorCode: Int,
     val acsUrl: String? = null,
     val paReq: String? = null,

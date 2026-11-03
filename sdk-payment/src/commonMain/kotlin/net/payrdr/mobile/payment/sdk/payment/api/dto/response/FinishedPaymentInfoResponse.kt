@@ -13,7 +13,7 @@ import kotlinx.serialization.Serializable
  * @property orderFeatures order features, e.g. `VERIFY` for an order that only saves a card
  */
 @Serializable
-public data class FinishedPaymentInfoResponse(
+internal data class FinishedPaymentInfoResponse(
     val status: String? = null,
     val paymentDate: String? = null,
     val approvalCode: String? = null,

@@ -19,17 +19,17 @@ import kotlin.coroutines.resume
  * [net.payrdr.mobile.payment.sdk.payment.scanner.util.ScannerInitializer] (auto-registered via
  * `androidx.startup`), and asks for it from the `ComponentActivity` on screen, which the same initializer tracks.
  */
-public actual class CameraPermissionController actual constructor() {
+internal actual class CameraPermissionController actual constructor() {
     private val appContext: Context get() = ContextHolder.current()
 
-    public actual fun status(): CameraPermissionStatus {
+    actual fun status(): CameraPermissionStatus {
         val granted =
             ContextCompat.checkSelfPermission(appContext, Manifest.permission.CAMERA) ==
                 PackageManager.PERMISSION_GRANTED
         return if (granted) CameraPermissionStatus.Granted else CameraPermissionStatus.NotDetermined
     }
 
-    public actual suspend fun request(): CameraPermissionStatus {
+    actual suspend fun request(): CameraPermissionStatus {
         val activity = requireScannerActivity()
         return suspendCancellableCoroutine { cont ->
             val key = "sdk_payment_scanner_camera_${System.currentTimeMillis()}"
@@ -49,7 +49,7 @@ public actual class CameraPermissionController actual constructor() {
         }
     }
 
-    public actual fun openSettings() {
+    actual fun openSettings() {
         val intent =
             Intent(
                 Settings.ACTION_APPLICATION_DETAILS_SETTINGS,

@@ -1,11 +1,14 @@
 package net.payrdr.mobile.payment.sdk.payment.logger
 
+import net.payrdr.mobile.payment.sdk.core.InternalPayrdrApi
+
 /**
  * Fan-out logger that dispatches every event to every registered [LogTransport].
  *
  * @param transports list of sinks; events are dispatched in iteration order
  * @param minLevel minimum severity to forward; events below this are dropped before dispatch
  */
+@InternalPayrdrApi
 public class Logger(
     private val transports: List<LogTransport> = listOf(NoopLogTransport),
     private val minLevel: LogLevel = LogLevel.DEBUG,

@@ -71,8 +71,14 @@ public class SdkPayment internal constructor(
     public fun newFlow(
         webChallengeHost: WebChallengeHost,
         scope: CoroutineScope,
-        googlePayTokenProvider: GooglePayTokenProvider = NoOpGooglePayTokenProvider,
-        applePayTokenProvider: ApplePayTokenProvider = NoOpApplePayTokenProvider,
+    ): PaymentFlowController = newFlow(webChallengeHost, scope, NoOpGooglePayTokenProvider, NoOpApplePayTokenProvider)
+
+    /** [newFlow] with the wallet token sources of the turnkey checkout. */
+    internal fun newFlow(
+        webChallengeHost: WebChallengeHost,
+        scope: CoroutineScope,
+        googlePayTokenProvider: GooglePayTokenProvider,
+        applePayTokenProvider: ApplePayTokenProvider,
     ): PaymentFlowController =
         PaymentFlowController(
             api = api,
@@ -138,8 +144,8 @@ public class SdkPayment internal constructor(
         /** The SDK for [config]; it builds its own network layer from it. */
         public fun create(config: SdkPaymentConfig): SdkPayment = SdkPayment(config, network = null)
 
-        /** The SDK for [config] on a replaced [network] — for tests and special cases. */
-        public fun create(
+        /** The SDK for [config] on a replaced [network], for tests. */
+        internal fun create(
             config: SdkPaymentConfig,
             network: SdkPaymentNetwork,
         ): SdkPayment = SdkPayment(config, network)

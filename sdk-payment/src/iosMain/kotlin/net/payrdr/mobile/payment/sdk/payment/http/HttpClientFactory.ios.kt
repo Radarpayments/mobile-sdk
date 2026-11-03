@@ -16,7 +16,7 @@ import net.payrdr.mobile.payment.sdk.payment.config.SdkPaymentConfig
  * iOS actual. When [SdkPaymentConfig.sslPinning] is non-null, installs a Darwin engine whose
  * `NSURLSessionConfiguration` carries a pinning-aware challenge handler.
  */
-public object DarwinHttpClientFactory : HttpClientFactory {
+internal object DarwinHttpClientFactory : HttpClientFactory {
     override fun create(
         config: SdkPaymentConfig,
         engineOverride: HttpClientEngine?,
@@ -59,4 +59,4 @@ public object DarwinHttpClientFactory : HttpClientFactory {
     }
 }
 
-public actual fun defaultHttpClientFactory(): HttpClientFactory = DarwinHttpClientFactory
+internal actual fun defaultHttpClientFactory(): HttpClientFactory = DarwinHttpClientFactory

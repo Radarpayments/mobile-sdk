@@ -8,7 +8,7 @@ import net.payrdr.mobile.payment.sdk.core.validation.ValidationResult.Companion.
 /**
  * Rule checking that the string fully matches the given regular expression.
  */
-public class RegExRule(
+internal class RegExRule(
     private val code: String,
     private val message: String,
     private val regex: Regex,

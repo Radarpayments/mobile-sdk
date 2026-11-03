@@ -8,7 +8,7 @@ import net.payrdr.mobile.payment.sdk.core.validation.ValidationResult.Companion.
 /**
  * Rule that validates the numeric parts of an `MM/YY` expiry format.
  */
-public class ExpiryRule(
+internal class ExpiryRule(
     private val code: String,
     private val message: String,
 ) : BaseValidationRule<String> {

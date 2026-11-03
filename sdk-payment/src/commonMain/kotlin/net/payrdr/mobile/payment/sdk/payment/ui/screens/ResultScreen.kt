@@ -82,7 +82,7 @@ import org.jetbrains.compose.resources.stringResource
  * @param order amount / merchant / order number for the receipt
  */
 @Composable
-public fun ResultScreen(
+internal fun ResultScreen(
     result: CheckoutResult,
     onClose: () -> Unit,
     onRetry: (() -> Unit)? = null,

@@ -8,6 +8,6 @@ import kotlin.io.encoding.ExperimentalEncodingApi
  * Decodes a PEM-armored public key into raw DER-encoded SubjectPublicKeyInfo bytes.
  */
 @OptIn(ExperimentalEncodingApi::class)
-public object PemKeyParser {
-    public fun parsePublicKeyDer(pem: String): ByteArray = Base64.decode(pem.pemKeyContent())
+internal object PemKeyParser {
+    fun parsePublicKeyDer(pem: String): ByteArray = Base64.decode(pem.pemKeyContent())
 }

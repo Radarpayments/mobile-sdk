@@ -3,6 +3,6 @@ package net.payrdr.mobile.payment.sdk.payment.logger
 /**
  * Discards all events. Default transport when the consumer does not provide one.
  */
-public object NoopLogTransport : LogTransport {
+internal object NoopLogTransport : LogTransport {
     override fun log(event: LogEvent) = Unit
 }

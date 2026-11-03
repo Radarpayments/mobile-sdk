@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
 import net.payrdr.mobile.payment.sdk.payment.SdkPayment
 import net.payrdr.mobile.payment.sdk.payment.applepay.IosApplePayTokenProvider
 import net.payrdr.mobile.payment.sdk.payment.config.CheckoutConfig
+import net.payrdr.mobile.payment.sdk.payment.gpay.NoOpGooglePayTokenProvider
 import net.payrdr.mobile.payment.sdk.payment.result.CheckoutResult
 import net.payrdr.mobile.payment.sdk.payment.result.PaymentIntent
 import net.payrdr.mobile.payment.sdk.payment.ui.CheckoutPresentation
@@ -76,6 +77,7 @@ internal class SdkPaymentViewControllerFactory {
             sdk.newFlow(
                 webChallengeHost = webChallengeHost,
                 scope = scope,
+                googlePayTokenProvider = NoOpGooglePayTokenProvider,
                 applePayTokenProvider = IosApplePayTokenProvider(),
             )
 

@@ -72,7 +72,6 @@ internal class FakePaymentApi : PaymentApi {
     val processBindingFormCalls: MutableList<ProcessFormRequest> = mutableListOf()
     val googlePayCalls: MutableList<GooglePayProcessFormRequest> = mutableListOf()
     val applePayCalls: MutableList<ApplePayProcessFormRequest> = mutableListOf()
-    val finish3dsCalls: MutableList<String> = mutableListOf()
     val getFinishedPaymentInfoCalls: MutableList<String> = mutableListOf()
     val getPaymentSettingsCalls: MutableList<String> = mutableListOf()
     val unbindCardCalls: MutableList<Pair<String, String>> = mutableListOf()
@@ -107,10 +106,6 @@ internal class FakePaymentApi : PaymentApi {
     override suspend fun applePayProcessForm(request: ApplePayProcessFormRequest): ApplePayProcessFormResponse {
         applePayCalls += request
         return nextApplePayProcessFormResponse
-    }
-
-    override suspend fun finish3dsVer2PaymentAnonymous(threeDsServerTransId: String) {
-        finish3dsCalls += threeDsServerTransId
     }
 
     override suspend fun getFinishedPaymentInfo(orderId: String): FinishedPaymentInfoResponse {

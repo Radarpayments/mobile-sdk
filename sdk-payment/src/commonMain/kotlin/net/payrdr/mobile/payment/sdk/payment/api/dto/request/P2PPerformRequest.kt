@@ -12,7 +12,7 @@ import net.payrdr.mobile.payment.sdk.payment.result.PayerField
  * @property payerData payer, sender and recipient fields collected for this card
  * @property language language of the gateway's messages, e.g. `en`
  */
-public data class P2PPerformRequest(
+internal data class P2PPerformRequest(
     val mdOrder: String,
     val fromCard: P2PFromCard,
     val bindingNotNeeded: Boolean,
@@ -26,21 +26,21 @@ public data class P2PPerformRequest(
 }
 
 /** The card a transfer debits. */
-public sealed interface P2PFromCard {
+internal sealed interface P2PFromCard {
     /** A card, or a saved card with its CVC, sealed by `SdkCore.generate(...)`. */
-    public data class SeToken(
+    data class SeToken(
         val seToken: String,
     ) : P2PFromCard {
         override fun toString(): String = "SeToken(•••)"
     }
 
     /** A saved card the gateway debits without a CVC (`cvcBindingNotRequired`). */
-    public data class Binding(
+    data class Binding(
         val bindingId: String,
     ) : P2PFromCard
 
     /** A card in Apple Pay or Google Pay: the wallet's encrypted token, in base64, for the gateway to decrypt. */
-    public data class Wallet(
+    data class Wallet(
         val vendor: WalletVendor,
         val paymentToken: String,
     ) : P2PFromCard {
@@ -49,4 +49,4 @@ public sealed interface P2PFromCard {
 }
 
 /** The wallet a transfer's card comes from, as `fromCard.vendor` names it. */
-public enum class WalletVendor { APPLE, GOOGLE }
+internal enum class WalletVendor { APPLE, GOOGLE }

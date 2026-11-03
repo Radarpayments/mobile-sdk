@@ -5,8 +5,8 @@ private const val PREFIX = "pm_"
 /**
  * Utilities for parsing the stored-payment-method identifier format `pm_{base58(uuid)}`.
  */
-public object BindingUtils {
-    public fun extractBindingId(paymentMethodId: String): String {
+internal object BindingUtils {
+    fun extractBindingId(paymentMethodId: String): String {
         if (!isValidPaymentMethodId(paymentMethodId)) return ""
         val body = paymentMethodId.substring(PREFIX.length)
         return Base58Coder.decode(body).trim()

@@ -65,7 +65,7 @@ import org.jetbrains.compose.resources.stringResource
  * @param onClose when non-null, the top bar gets a close action that leaves the whole checkout
  */
 @Composable
-public fun CardListScreen(
+internal fun CardListScreen(
     savedCards: List<SavedCardInfo>,
     onCardClick: (SavedCardInfo) -> Unit,
     onAddNewCard: () -> Unit,

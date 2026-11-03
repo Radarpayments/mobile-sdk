@@ -14,8 +14,8 @@ import platform.PassKit.PKPaymentSummaryItem
  * touching PKPaymentAuthorizationController (which requires a running UI).
  */
 @OptIn(ExperimentalForeignApi::class)
-public object ApplePayRequestBuilder {
-    public fun build(
+internal object ApplePayRequestBuilder {
+    fun build(
         config: ApplePayConfig,
         amountMinorUnits: Long,
         currencyCode: String,

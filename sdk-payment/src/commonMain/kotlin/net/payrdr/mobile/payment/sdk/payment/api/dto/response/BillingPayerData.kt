@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
  * the sender's account, name, birthday (`YYYYMMDD`) and identity document.
  */
 @Serializable
-public data class BillingPayerData(
+internal data class BillingPayerData(
     val billingCountry: String? = null,
     val billingState: String? = null,
     val billingCity: String? = null,

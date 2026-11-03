@@ -28,7 +28,7 @@ import kotlin.concurrent.AtomicReference
  * call returns [ApplePayTokenResult.Failure] with message "Apple Pay request already in
  * flight" instead of clobbering the first deferred.
  */
-public class IosApplePayTokenProvider : ApplePayTokenProvider {
+internal class IosApplePayTokenProvider : ApplePayTokenProvider {
     private val pending: AtomicReference<CompletableDeferred<ApplePayTokenResult>?> =
         AtomicReference(null)
 

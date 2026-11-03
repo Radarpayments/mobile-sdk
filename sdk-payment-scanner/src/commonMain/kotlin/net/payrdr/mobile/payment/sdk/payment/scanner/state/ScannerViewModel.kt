@@ -29,7 +29,7 @@ import kotlin.time.Clock
  *
  * Call `onPermissionResult` before any other event.
  */
-public class ScannerViewModel(
+internal class ScannerViewModel(
     scope: CoroutineScope,
     private val config: CardScannerConfig,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
@@ -38,7 +38,7 @@ public class ScannerViewModel(
     private val workScope = scope
     private val workDispatcher = dispatcher
     private val _state = MutableStateFlow<ScannerUiState>(ScannerUiState.Initializing)
-    public val state: StateFlow<ScannerUiState> = _state.asStateFlow()
+    val state: StateFlow<ScannerUiState> = _state.asStateFlow()
 
     private val _result =
         MutableSharedFlow<CardScannerResult>(
@@ -46,7 +46,7 @@ public class ScannerViewModel(
             extraBufferCapacity = 1,
             onBufferOverflow = BufferOverflow.DROP_OLDEST,
         )
-    public val result: SharedFlow<CardScannerResult> = _result.asSharedFlow()
+    val result: SharedFlow<CardScannerResult> = _result.asSharedFlow()
 
     private var timeoutJob: Job? = null
     private var streakPan: String? = null
@@ -63,7 +63,7 @@ public class ScannerViewModel(
      */
     private var pendingResult: CardScannerResult? = null
 
-    public fun onPermissionResult(granted: Boolean) {
+    fun onPermissionResult(granted: Boolean) {
         if (!granted) {
             logger?.warning(TAG, "event=permission_denied")
             timeoutJob?.cancel()
@@ -87,7 +87,7 @@ public class ScannerViewModel(
             }
     }
 
-    public fun onParseResult(card: ScannedCard) {
+    fun onParseResult(card: ScannedCard) {
         val current = _state.value
         if (current is ScannerUiState.Success || current is ScannerUiState.Cancelled) return
         if (current is ScannerUiState.Timeout || current is ScannerUiState.CameraUnavailable) return
@@ -110,7 +110,7 @@ public class ScannerViewModel(
         }
     }
 
-    public fun onCancel() {
+    fun onCancel() {
         logger?.info(TAG, "event=cancelled")
         timeoutJob?.cancel()
         timeoutJob = null
@@ -122,7 +122,7 @@ public class ScannerViewModel(
         _result.tryEmit(emit)
     }
 
-    public fun onCameraError() {
+    fun onCameraError() {
         logger?.error(TAG, "event=camera_unavailable")
         timeoutJob?.cancel()
         timeoutJob = null
@@ -130,8 +130,8 @@ public class ScannerViewModel(
         pendingResult = CardScannerResult.Failed(CardScannerResult.Reason.CameraUnavailable)
     }
 
-    public companion object {
-        public const val REQUIRED_STREAK: Int = 3
+    companion object {
+        const val REQUIRED_STREAK: Int = 3
         private const val TAG: String = "CardScanner"
     }
 }

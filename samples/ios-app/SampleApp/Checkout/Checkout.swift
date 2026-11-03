@@ -55,7 +55,7 @@ func buildSdkConfig(baseUrl: String, scenario: Scenario, coverTheme: any Payment
 }
 
 // One provider for every config.
-private let cardScanner = MlKitVisionCardScannerProvider(logger: nil)
+private let cardScanner = MlKitVisionCardScannerProvider(logTransport: nil)
 
 /// Step 4: turns the SDK result into what the store shows next.
 func outcome(of result: CheckoutResult) -> CheckoutOutcome {

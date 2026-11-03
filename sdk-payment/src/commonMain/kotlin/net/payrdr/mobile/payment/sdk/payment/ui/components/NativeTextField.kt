@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
  * `UITextContentType` on iOS so that Keychain / Google Autofill / card scanners can populate
  * the field automatically. It also picks the keyboard, tabular digits and CVV masking.
  */
-public enum class TextFieldContentType {
+internal enum class TextFieldContentType {
     CREDIT_CARD_NUMBER,
     CREDIT_CARD_EXPIRATION,
     CREDIT_CARD_SECURITY_CODE,
@@ -69,7 +69,7 @@ internal val TextFieldContentType.isNumeric: Boolean
  * @param errorMessage what is wrong with the value, read by screen readers with the field; null when nothing is
  */
 @Composable
-public expect fun NativeTextField(
+internal expect fun NativeTextField(
     value: String,
     onValueChange: (String) -> Unit,
     placeholder: String,

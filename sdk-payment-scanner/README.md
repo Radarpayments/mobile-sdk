@@ -17,7 +17,7 @@ val sdk = SdkPayment.create(
         // …your existing config…
         cardScannerProvider = MlKitVisionCardScannerProvider(
             // optional: route scanner events through your existing LogTransport
-            logger = Logger(transports = listOf(myLogTransport)),
+            logTransport = myLogTransport,
         ),
     ),
 )

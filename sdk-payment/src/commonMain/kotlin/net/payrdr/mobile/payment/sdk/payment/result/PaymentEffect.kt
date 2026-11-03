@@ -11,9 +11,5 @@ public sealed interface PaymentEffect {
         val challenge: ThreeDsChallenge,
     ) : PaymentEffect
 
-    public data class ShowError(
-        val error: String,
-    ) : PaymentEffect
-
     public data object Dismiss : PaymentEffect
 }

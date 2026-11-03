@@ -50,16 +50,6 @@ class CardFormattersTest {
     }
 
     @Test
-    fun `maskPan shows only last 4 digits preceded by three dot groups`() {
-        CardFormatters.maskPan("4111111111111111") shouldBe "•••• •••• •••• 1111"
-    }
-
-    @Test
-    fun `maskPan handles pans shorter than 4 digits by returning as-is in bullet form`() {
-        CardFormatters.maskPan("123") shouldBe "•••"
-    }
-
-    @Test
     fun `digitsOnly strips everything non-digit`() {
         CardFormatters.digitsOnly("4111 abc 2222") shouldBe "41112222"
         CardFormatters.digitsOnly("") shouldBe ""

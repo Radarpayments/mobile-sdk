@@ -5,14 +5,14 @@ package net.payrdr.mobile.payment.sdk.core.validation
  *
  * Rules are evaluated in registration order; the first failing rule short-circuits.
  */
-public open class BaseValidator<DATA> {
+internal open class BaseValidator<DATA> {
     private val rules: MutableList<BaseValidationRule<DATA>> = mutableListOf()
 
     protected fun addRules(vararg checker: BaseValidationRule<DATA>) {
         rules.addAll(checker)
     }
 
-    public fun validate(data: DATA): ValidationResult {
+    fun validate(data: DATA): ValidationResult {
         rules.forEach { rule ->
             val result = rule.validateForError(data)
             if (!result.isValid) return result

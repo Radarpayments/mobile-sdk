@@ -44,7 +44,7 @@ public enum class PayerField(
 
     public companion object {
         /** Field by its gateway name, or null for names this SDK does not collect. */
-        public fun fromApiName(name: String): PayerField? = entries.firstOrNull { it.apiName.equals(name.trim(), ignoreCase = true) }
+        internal fun fromApiName(name: String): PayerField? = entries.firstOrNull { it.apiName.equals(name.trim(), ignoreCase = true) }
     }
 }
 

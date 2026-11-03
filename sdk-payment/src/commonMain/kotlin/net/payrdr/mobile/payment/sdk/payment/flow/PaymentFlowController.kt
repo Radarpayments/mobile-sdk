@@ -112,7 +112,7 @@ private val RECHECK_DELAYS_MS = listOf(1_000L, 2_000L, 4_000L)
  * settings and the order on start and offers each wallet only when the gateway has enabled it for the merchant.
  */
 @Suppress("TooGenericExceptionCaught", "LongParameterList")
-public class PaymentFlowController(
+public class PaymentFlowController internal constructor(
     private val api: PaymentApi,
     private val keyProvider: KeyProvider,
     private val core: SdkCore,
@@ -223,7 +223,6 @@ public class PaymentFlowController(
                     is PaymentIntent.UnbindSavedCard -> handleUnbindSavedCard(intent)
                     PaymentIntent.TapGooglePay -> handleTapGooglePay()
                     PaymentIntent.TapApplePay -> handleTapApplePay()
-                    is PaymentIntent.ThreeDsCompleted -> Unit // Handled inline in performChallenge
                     PaymentIntent.BackToPaymentMethods -> handleBackToPaymentMethods()
                     PaymentIntent.Cancel -> if (!resolving) complete(CheckoutResult.Canceled(orderId()))
                 }

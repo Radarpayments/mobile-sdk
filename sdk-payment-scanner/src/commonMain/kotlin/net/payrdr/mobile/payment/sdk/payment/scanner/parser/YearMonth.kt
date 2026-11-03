@@ -6,7 +6,7 @@ import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 
 /** Minimal (year, month) tuple — kotlinx-datetime has no portable `YearMonth`. */
-public data class YearMonth(
+internal data class YearMonth(
     val year: Int,
     val month: Int,
 ) : Comparable<YearMonth> {
@@ -15,8 +15,8 @@ public data class YearMonth(
         return if (yr != 0) yr else month.compareTo(other.month)
     }
 
-    public companion object {
-        public fun systemNow(): YearMonth {
+    companion object {
+        fun systemNow(): YearMonth {
             val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
             return YearMonth(now.year, now.month.number)
         }

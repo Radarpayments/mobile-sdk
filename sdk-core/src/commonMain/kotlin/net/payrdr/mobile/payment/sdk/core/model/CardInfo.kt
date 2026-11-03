@@ -8,7 +8,7 @@ package net.payrdr.mobile.payment.sdk.core.model
  * @property cvv card security code, null if not collected
  * @property cardHolder printed cardholder name, optional
  */
-public data class CardInfo(
+internal data class CardInfo(
     val identifier: CardIdentifier,
     val expDate: ExpiryDate? = null,
     val cvv: String? = null,

@@ -14,7 +14,7 @@ import net.payrdr.mobile.payment.sdk.payment.config.GooglePayConfig
  * This code has **no** platform dependencies — it's callable from commonTest and produces
  * byte-for-byte identical output on JVM and K/N.
  */
-public object GooglePayRequestBuilder {
+internal object GooglePayRequestBuilder {
     private val TOTAL_PRICE_PATTERN = Regex("""^\d+(\.\d+)?$""")
 
     /**
@@ -25,7 +25,7 @@ public object GooglePayRequestBuilder {
      * @param countryCode ISO 3166-1 alpha-2 country.
      * @return JSON string ready to pass to `PaymentDataRequest.fromJson(...)`.
      */
-    public fun buildPaymentDataRequest(
+    fun buildPaymentDataRequest(
         config: GooglePayConfig,
         totalPriceMajor: String,
         currencyCode: String,
@@ -65,7 +65,7 @@ public object GooglePayRequestBuilder {
      * Build the minimal `isReadyToPay` JSON — used by [GooglePayTokenProvider] to check GPay
      * availability before rendering the button.
      */
-    public fun buildIsReadyToPayRequest(config: GooglePayConfig): String =
+    fun buildIsReadyToPayRequest(config: GooglePayConfig): String =
         buildJsonObject {
             put("apiVersion", JsonPrimitive(2))
             put("apiVersionMinor", JsonPrimitive(0))
@@ -76,7 +76,7 @@ public object GooglePayRequestBuilder {
      * The `allowedPaymentMethods` array alone, as `ButtonOptions.setAllowedPaymentMethods` takes it: given the
      * whole `isReadyToPay` envelope, the button fails to build its view and stays blank.
      */
-    public fun buildButtonPaymentMethods(config: GooglePayConfig): String = readyToPayMethods(config).toString()
+    fun buildButtonPaymentMethods(config: GooglePayConfig): String = readyToPayMethods(config).toString()
 
     private fun readyToPayMethods(config: GooglePayConfig): JsonArray {
         require(config.allowedCardNetworks.isNotEmpty()) {

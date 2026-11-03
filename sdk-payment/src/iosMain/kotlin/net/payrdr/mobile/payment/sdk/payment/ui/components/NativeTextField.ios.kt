@@ -135,7 +135,7 @@ private val TextFieldContentType.isCardData: Boolean
             this == TextFieldContentType.CREDIT_CARD_HOLDER
 
 @Composable
-public actual fun NativeTextField(
+internal actual fun NativeTextField(
     value: String,
     onValueChange: (String) -> Unit,
     placeholder: String,

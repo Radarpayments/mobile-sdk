@@ -4,8 +4,8 @@ package net.payrdr.mobile.payment.sdk.payment.ui.util
  * Resolves a partial or complete card number to its [CardNetwork] by looking at the leading digits.
  * Ranges follow ISO/IEC 7812-1 BIN assignments and publicly documented processor ranges.
  */
-public object CardNetworkResolver {
-    public fun resolve(cardNumber: String): CardNetwork {
+internal object CardNetworkResolver {
+    fun resolve(cardNumber: String): CardNetwork {
         val digits = cardNumber.filter { it.isDigit() }
         if (digits.isEmpty()) return CardNetwork.UNKNOWN
 
@@ -51,7 +51,7 @@ public object CardNetworkResolver {
      * Network of a saved binding: from the gateway's `paymentSystem` name first (`VISA`,
      * `MASTERCARD`, …), falling back to the BIN inside [maskedPan].
      */
-    public fun resolveSaved(
+    fun resolveSaved(
         paymentSystem: String,
         maskedPan: String,
     ): CardNetwork {

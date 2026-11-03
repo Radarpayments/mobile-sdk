@@ -7,7 +7,7 @@ import net.payrdr.mobile.payment.sdk.core.validation.rules.StringRequiredRule
 /**
  * Validator for the card expiry in `MM/YY` format.
  */
-public class CardExpiryValidator : BaseValidator<String>() {
+internal class CardExpiryValidator : BaseValidator<String>() {
     init {
         addRules(
             StringRequiredRule(code = ValidationCodes.required, message = "Expiry is required"),

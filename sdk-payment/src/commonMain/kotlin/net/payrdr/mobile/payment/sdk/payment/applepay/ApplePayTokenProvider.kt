@@ -9,7 +9,7 @@ import net.payrdr.mobile.payment.sdk.payment.config.ApplePayConfig
  * Implemented in Swift: SKIE names a `suspend` function of a Kotlin interface with a `__` prefix and a completion
  * handler there (e.g. `__performChallenge(challenge:completionHandler:)`).
  */
-public interface ApplePayTokenProvider {
+internal interface ApplePayTokenProvider {
     /**
      * @param config merchant config — supplies merchant-id, supported networks.
      * @param amountMinorUnits the amount to charge, in minor currency units.
@@ -17,7 +17,7 @@ public interface ApplePayTokenProvider {
      * @param countryCode ISO 3166-1 alpha-2; the merchant's country unless [ApplePayConfig.countryCode] overrides it.
      * @param merchantDisplayName human-readable name used as the first summary-item label.
      */
-    public suspend fun requestPaymentToken(
+    suspend fun requestPaymentToken(
         config: ApplePayConfig,
         amountMinorUnits: Long,
         currencyCode: String,
@@ -27,20 +27,20 @@ public interface ApplePayTokenProvider {
 }
 
 /** Outcome of an Apple Pay sheet presentation. */
-public sealed interface ApplePayTokenResult {
+internal sealed interface ApplePayTokenResult {
     /** Encrypted payment token — a base64-encoded JSON blob from `PKPayment.token.paymentData`. */
-    public data class Success(
+    data class Success(
         val paymentToken: String,
     ) : ApplePayTokenResult
 
     /** User dismissed the Apple Pay sheet without authorizing. */
-    public data object Cancelled : ApplePayTokenResult
+    data object Cancelled : ApplePayTokenResult
 
     /** Apple Pay is not available on this device (non-iOS platform or device without provisioning). */
-    public data object NotAvailable : ApplePayTokenResult
+    data object NotAvailable : ApplePayTokenResult
 
     /** Apple Pay sheet presentation or authorization failed; [reason] describes the cause. */
-    public data class Failure(
+    data class Failure(
         val reason: String,
         val cause: Throwable? = null,
     ) : ApplePayTokenResult

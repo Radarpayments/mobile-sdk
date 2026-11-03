@@ -16,8 +16,8 @@ import platform.UIKit.UIApplicationOpenSettingsURLString
 import kotlin.coroutines.resume
 
 @OptIn(ExperimentalForeignApi::class)
-public actual class CameraPermissionController actual constructor() {
-    public actual fun status(): CameraPermissionStatus =
+internal actual class CameraPermissionController actual constructor() {
+    actual fun status(): CameraPermissionStatus =
         when (AVCaptureDevice.authorizationStatusForMediaType(AVMediaTypeVideo)) {
             AVAuthorizationStatusAuthorized -> CameraPermissionStatus.Granted
             AVAuthorizationStatusDenied, AVAuthorizationStatusRestricted -> CameraPermissionStatus.Denied
@@ -25,7 +25,7 @@ public actual class CameraPermissionController actual constructor() {
             else -> CameraPermissionStatus.NotDetermined
         }
 
-    public actual suspend fun request(): CameraPermissionStatus =
+    actual suspend fun request(): CameraPermissionStatus =
         suspendCancellableCoroutine { cont ->
             AVCaptureDevice.requestAccessForMediaType(AVMediaTypeVideo) { granted ->
                 if (cont.isActive) {
@@ -34,7 +34,7 @@ public actual class CameraPermissionController actual constructor() {
             }
         }
 
-    public actual fun openSettings() {
+    actual fun openSettings() {
         val url = NSURL.URLWithString(UIApplicationOpenSettingsURLString) ?: return
         UIApplication.sharedApplication.openURL(url, emptyMap<Any?, Any>()) {}
     }

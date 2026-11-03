@@ -11,7 +11,7 @@ import net.payrdr.mobile.payment.sdk.payment.result.PayerField
  * @property saveCard if true, the merchant should save the card as a binding
  * @property payerData payer fields collected for this card (email, phone, billing address)
  */
-public data class ProcessFormRequest(
+internal data class ProcessFormRequest(
     val paymentToken: String,
     val mdOrder: String,
     val holder: String,

@@ -43,7 +43,7 @@ import org.jetbrains.compose.resources.stringResource
  * @param order amount shown under the headline; null hides it
  */
 @Composable
-public fun ThreeDsChallengeScreen(
+internal fun ThreeDsChallengeScreen(
     onCancel: () -> Unit,
     modifier: Modifier = Modifier,
     order: OrderSummary? = null,

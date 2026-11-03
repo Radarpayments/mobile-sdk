@@ -25,7 +25,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
 @Composable
-public actual fun CameraPreview(
+internal actual fun CameraPreview(
     onRecognized: (List<RecognizedLine>) -> Unit,
     onError: () -> Unit,
     torch: TorchState,

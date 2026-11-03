@@ -128,7 +128,7 @@ import kotlin.time.TimeMark
 import kotlin.time.TimeSource
 
 /** How the checkout sits in its host. */
-public enum class CheckoutPresentation {
+internal enum class CheckoutPresentation {
     /**
      * The host window is transparent and covers the merchant screen: the first step is a bottom
      * sheet over a dimmed scrim, later steps fill the screen. Used by the turnkey Android Activity
@@ -161,7 +161,7 @@ public enum class CheckoutPresentation {
  * @param presentation whether to draw the first step as a sheet over a scrim
  */
 @Composable
-public fun PaymentCheckout(
+internal fun PaymentCheckout(
     config: SdkPaymentConfig,
     controller: PaymentFlowController,
     onResult: (CheckoutResult) -> Unit,

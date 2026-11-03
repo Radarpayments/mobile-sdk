@@ -54,12 +54,6 @@ public sealed interface PaymentIntent {
     /** User tapped the Apple Pay button: the controller opens Apple Pay with [PaymentState.CardFormShown.applePay]. */
     public data object TapApplePay : PaymentIntent
 
-    /** Report the 3DS challenge outcome back to the flow. */
-    public data class ThreeDsCompleted(
-        val success: Boolean,
-        val failureReason: String? = null,
-    ) : PaymentIntent
-
     /**
      * User chose "Pay with another card" on a declined result. Returns the flow to the last
      * [PaymentState.CardFormShown]; ignored unless the current state is a failed [PaymentState.Completed].

@@ -19,19 +19,19 @@ import androidx.compose.ui.node.DelegatableNode
  * CompositionLocal for the resolved [PaymentColors]. Inside a [PaymentThemeProvider] this is
  * always populated; outside it throws — screens must be composed under the provider.
  */
-public val LocalPaymentColors: androidx.compose.runtime.ProvidableCompositionLocal<PaymentColors> =
+internal val LocalPaymentColors: androidx.compose.runtime.ProvidableCompositionLocal<PaymentColors> =
     staticCompositionLocalOf { error("PaymentColors not provided — wrap content in PaymentThemeProvider { }") }
 
 /**
  * CompositionLocal for the resolved [PaymentTypography].
  */
-public val LocalPaymentTypography: androidx.compose.runtime.ProvidableCompositionLocal<PaymentTypography> =
+internal val LocalPaymentTypography: androidx.compose.runtime.ProvidableCompositionLocal<PaymentTypography> =
     staticCompositionLocalOf { PaymentTypography.Default }
 
 /**
  * CompositionLocal for the resolved [PaymentShapes].
  */
-public val LocalPaymentShapes: androidx.compose.runtime.ProvidableCompositionLocal<PaymentShapes> =
+internal val LocalPaymentShapes: androidx.compose.runtime.ProvidableCompositionLocal<PaymentShapes> =
     staticCompositionLocalOf { PaymentShapes.Default }
 
 /**
@@ -43,7 +43,7 @@ public val LocalPaymentShapes: androidx.compose.runtime.ProvidableCompositionLoc
  */
 @OptIn(ExperimentalMaterial3Api::class) // LocalRippleConfiguration
 @Composable
-public fun PaymentThemeProvider(
+internal fun PaymentThemeProvider(
     theme: PaymentTheme,
     content: @Composable () -> Unit,
 ) {

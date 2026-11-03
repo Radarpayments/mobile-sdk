@@ -11,7 +11,7 @@ import net.payrdr.mobile.payment.sdk.core.validation.ValidationResult.Companion.
  * @property code stable error code returned on failure
  * @property message debug message returned on failure
  */
-public class LuhnStringRule(
+internal class LuhnStringRule(
     private val code: String,
     private val message: String,
 ) : BaseValidationRule<String> {

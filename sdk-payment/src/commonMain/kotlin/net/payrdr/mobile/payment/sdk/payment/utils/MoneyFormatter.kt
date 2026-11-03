@@ -6,7 +6,7 @@ package net.payrdr.mobile.payment.sdk.payment.utils
  * look: currency sign instead of the ISO code (`€`, `₺`, ...) and the fraction always written out
  * (`€1.00`, `€1.34`). A string that cannot be parsed is passed through untouched.
  */
-public object MoneyFormatter {
+internal object MoneyFormatter {
     private val PREFIX_SYMBOLS = mapOf("EUR" to "€", "USD" to "$", "GBP" to "£", "JPY" to "¥", "CNY" to "¥")
     private val SUFFIX_SYMBOLS =
         mapOf(
@@ -27,7 +27,7 @@ public object MoneyFormatter {
      * @param currency ISO 4217 alpha code, e.g. `EUR`; null = no currency mark unless [amount] carries one
      * @return display string such as `€49.90` / `1,250 ₺`, or null when [amount] is blank
      */
-    public fun format(
+    fun format(
         amount: String?,
         currency: String?,
     ): String? = format(amount, currency, null)
@@ -37,7 +37,7 @@ public object MoneyFormatter {
      * currency sign where that language puts it — `€1,234.50` in English, `1.234,50 €` in German. null or a
      * language without its own conventions here keeps the English look.
      */
-    public fun format(
+    fun format(
         amount: String?,
         currency: String?,
         language: String?,

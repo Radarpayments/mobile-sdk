@@ -4,9 +4,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number
 import kotlinx.datetime.todayIn
-import net.payrdr.mobile.payment.sdk.core.validation.CardExpiryValidator
-import net.payrdr.mobile.payment.sdk.core.validation.CardHolderValidator
-import net.payrdr.mobile.payment.sdk.core.validation.CardNumberValidator
+import net.payrdr.mobile.payment.sdk.core.validation.CardRules
 import kotlin.time.Clock
 
 /** Specific, user-facing problem with one field of the card form. */
@@ -47,19 +45,19 @@ internal object CardInputValidation {
         if (digits.isEmpty()) return FieldError.PAN_EMPTY
         // A length the network does not issue (e.g. 17 digits of Visa) is an unfinished number.
         if (digits.length !in CardFormatters.panLengths(CardNetworkResolver.resolve(digits))) return FieldError.PAN_SHORT
-        return if (CardNumberValidator().validate(digits).isValid) null else FieldError.PAN_INVALID
+        return if (CardRules.isValidNumber(digits)) null else FieldError.PAN_INVALID
     }
 
     /**
      * Name on the card: at least 2 characters. The character set and the 30-character cap are sdk-core's
-     * [CardHolderValidator]: Latin letters, spaces, dots, apostrophes, backticks and hyphens, as on the gateway's
+     * [CardRules.isValidHolder]: Latin letters, spaces, dots, apostrophes, backticks and hyphens, as on the gateway's
      * payment page. Digits are rejected: the gateway refuses `JOHN123`.
      */
     fun holder(value: String): FieldError? {
         val name = value.trim()
         return when {
             name.isEmpty() -> FieldError.HOLDER_EMPTY
-            !CardHolderValidator().validate(name).isValid -> FieldError.HOLDER_FORMAT
+            !CardRules.isValidHolder(name) -> FieldError.HOLDER_FORMAT
             name.length < MIN_HOLDER_LENGTH -> FieldError.HOLDER_SHORT
             else -> null
         }
@@ -76,7 +74,7 @@ internal object CardInputValidation {
         if (digits.length < 4) return FieldError.EXPIRY_FORMAT
         val month = digits.take(2).toIntOrNull() ?: return FieldError.EXPIRY_FORMAT
         if (month !in 1..12) return FieldError.EXPIRY_MONTH
-        if (!CardExpiryValidator().validate(CardFormatters.formatExpiry(digits)).isValid) return FieldError.EXPIRY_FORMAT
+        if (!CardRules.isValidExpiry(CardFormatters.formatExpiry(digits))) return FieldError.EXPIRY_FORMAT
         val year = 2000 + (digits.takeLast(2).toIntOrNull() ?: return FieldError.EXPIRY_FORMAT)
         val expired = year < today.year || (year == today.year && month < today.month.number)
         return if (expired) FieldError.EXPIRY_PAST else null

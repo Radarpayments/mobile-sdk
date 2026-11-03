@@ -11,7 +11,7 @@ import net.payrdr.mobile.payment.sdk.core.validation.rules.StringRequiredRule
  * Rules (in order): non-blank → digits only → length 12..19 → Luhn checksum. 12..19 covers every network's PANs
  * (Maestro 12–19, Diners Club 14–19, Amex 15, the rest 16–19); per-network lengths are the card form's business.
  */
-public class CardNumberValidator : BaseValidator<String>() {
+internal class CardNumberValidator : BaseValidator<String>() {
     init {
         addRules(
             StringRequiredRule(code = ValidationCodes.required, message = "Card number is required"),

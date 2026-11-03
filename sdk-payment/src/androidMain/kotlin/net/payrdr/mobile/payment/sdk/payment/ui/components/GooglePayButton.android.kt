@@ -32,7 +32,7 @@ import org.jetbrains.compose.resources.stringResource
  * Material fallback otherwise.
  */
 @Composable
-public actual fun GooglePayButton(
+internal actual fun GooglePayButton(
     onClick: () -> Unit,
     modifier: Modifier,
 ) {

@@ -6,7 +6,7 @@ import net.payrdr.mobile.payment.sdk.payment.config.ApplePayConfig
  * Default [ApplePayTokenProvider] for platforms that cannot present the Apple Pay sheet.
  * Always returns [ApplePayTokenResult.NotAvailable] — used as the default on Android/common wiring.
  */
-public object NoOpApplePayTokenProvider : ApplePayTokenProvider {
+internal object NoOpApplePayTokenProvider : ApplePayTokenProvider {
     override suspend fun requestPaymentToken(
         config: ApplePayConfig,
         amountMinorUnits: Long,

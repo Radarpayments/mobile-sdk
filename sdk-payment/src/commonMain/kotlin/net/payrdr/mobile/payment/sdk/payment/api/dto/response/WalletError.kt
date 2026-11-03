@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 /** Why the gateway refused a wallet payment (`"success": false`); [displayErrorMessage] is meant for the buyer. */
 @Serializable
-public data class WalletError(
+internal data class WalletError(
     val code: String? = null,
     val description: String? = null,
     val message: String? = null,

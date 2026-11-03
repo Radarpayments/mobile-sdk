@@ -24,7 +24,7 @@ import org.jetbrains.compose.resources.ResourceEnvironment
 import org.jetbrains.compose.resources.ThemeQualifier
 
 /** Languages the SDK's screens are translated into; any other falls back to English. */
-public val SupportedPaymentLanguages: List<String> = listOf("en", "ru", "ro", "el", "bg", "de", "fr", "es", "ar")
+internal val SupportedPaymentLanguages: List<String> = listOf("en", "ru", "ro", "el", "bg", "de", "fr", "es", "ar")
 
 /**
  * Shows the SDK's screens inside [content] in [locale] — a language tag such as `"de"` or `"ar-AE"` — instead of
@@ -35,7 +35,7 @@ public val SupportedPaymentLanguages: List<String> = listOf("en", "ru", "ro", "e
  * the standalone screens (`CardFormScreen`, `ResultScreen`, …) in this when you show them on their own.
  */
 @Composable
-public fun PaymentLocaleProvider(
+internal fun PaymentLocaleProvider(
     locale: String?,
     content: @Composable () -> Unit,
 ) {

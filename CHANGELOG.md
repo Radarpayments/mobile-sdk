@@ -2,6 +2,25 @@
 
 ## [Unreleased]
 
+### Public API
+
+- The public API is what an app needs to take a payment: `PayrdrCheckout` (Android and iOS), the configs
+  (`SdkPaymentConfig`, `CheckoutConfig`, Google Pay and Apple Pay configs, `SslPinningConfig`, `PaymentTheme`),
+  `CheckoutResult` and the `Sdk*Exception`s, logging through `LogTransport`, the scanner's `CardScannerProvider`, the
+  headless `SdkPayment` flow and SDK Core's token generation. The rest is `internal`, and every module is built in
+  Kotlin's explicit API mode.
+- No longer public: the gateway client and its DTOs (`PaymentApi`, `PaymentApiImpl`), HTTP client factories, the key
+  source (`KeyProvider`, `RemoteKeyProvider`), the wallet token providers and request builders, `Logger`, the UI
+  components, screens and formatters (`CardFormatters`, `CardNetworkResolver`, `CardNetworkIcon`,
+  `PaymentThemeProvider`, `PaymentCheckout`), `MoneyFormatter`, `SessionIdConverter`, SDK Core's validators, rules,
+  cipher and string helpers, and the scanner's camera, parser and state classes.
+- Removed: `SdkPaymentNetwork` and `SdkPayment.create(config, network)`, the wallet parameters of `SdkPayment.newFlow`,
+  `CardNumberField`, `ExpiryField`, `CvvField`, `CardHolderField`, `NativeToggle`, `BottomSheetContainer`,
+  `CheckoutUiAction` with `reduceUiAction` and `rememberPaymentCheckoutState`, `AndroidApplePayTokenProvider`,
+  `IosGooglePayTokenProvider`, `PaymentEffect.ShowError`, `PaymentIntent.ThreeDsCompleted`,
+  `installIosCrashLogger`, and the unused `finish3dsVer2PaymentAnonymous` call.
+- `MlKitVisionCardScannerProvider` takes a `logTransport` instead of a `Logger`.
+
 ### Flutter and React Native
 
 - New module `sdk-bridge`: the SDK for apps that are not written in Kotlin or Swift. It takes the checkout config and
