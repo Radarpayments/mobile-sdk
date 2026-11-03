@@ -345,7 +345,8 @@ public final class net/payrdr/mobile/payment/sdk/core/validation/CardBindingIdVa
 }
 
 public final class net/payrdr/mobile/payment/sdk/core/validation/CardCodeValidator : net/payrdr/mobile/payment/sdk/core/validation/BaseValidator {
-	public static final field LENGTH I
+	public static final field MAX_LENGTH I
+	public static final field MIN_LENGTH I
 	public fun <init> ()V
 }
 

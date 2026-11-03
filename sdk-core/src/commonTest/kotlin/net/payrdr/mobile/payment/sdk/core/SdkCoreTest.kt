@@ -42,6 +42,29 @@ class SdkCoreTest {
     }
 
     @Test
+    fun `generate returns token for an Amex card with its 4-digit code`() {
+        val result =
+            sdk.generate(
+                SdkCoreConfig(
+                    cardParams =
+                        CardParams(
+                            mdOrder = "order-abc",
+                            pan = "378282246310005",
+                            cvc = "1234",
+                            expiryMMYY = "12/28",
+                            cardHolder = "MARY-ANN O'NEIL",
+                            pubKey = TEST_PUBLIC_KEY_PEM,
+                        ),
+                    timestamp = 1594009580806L,
+                    registeredFrom = MsdkRegisteredFrom.MSDK_CORE,
+                ),
+            )
+
+        result.errors.shouldBeEmpty()
+        result.token.shouldNotBeNull()
+    }
+
+    @Test
     fun `generate returns errors on invalid PAN`() {
         val result =
             sdk.generate(

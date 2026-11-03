@@ -5,6 +5,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number
 import kotlinx.datetime.todayIn
 import net.payrdr.mobile.payment.sdk.core.validation.CardExpiryValidator
+import net.payrdr.mobile.payment.sdk.core.validation.CardHolderValidator
 import net.payrdr.mobile.payment.sdk.core.validation.CardNumberValidator
 import kotlin.time.Clock
 
@@ -39,7 +40,6 @@ internal enum class FieldError {
  * card fields still comes from the sdk-core validators so the UI never accepts what tokenization rejects.
  */
 internal object CardInputValidation {
-    private val HOLDER = Regex("^[A-Za-z .'`-]+$")
     private const val MIN_HOLDER_LENGTH = 2
     private val EMAIL = Regex("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")
 
@@ -51,14 +51,15 @@ internal object CardInputValidation {
     }
 
     /**
-     * Name on the card: 2–26 characters as printed (ISO/IEC 7813), Latin letters, spaces and `. - ' \``
-     * as on the gateway's payment page. Digits are rejected: the gateway refuses `JOHN123`.
+     * Name on the card: at least 2 characters. The character set and the 30-character cap are sdk-core's
+     * [CardHolderValidator]: Latin letters, spaces, dots, apostrophes, backticks and hyphens, as on the gateway's
+     * payment page. Digits are rejected: the gateway refuses `JOHN123`.
      */
     fun holder(value: String): FieldError? {
         val name = value.trim()
         return when {
             name.isEmpty() -> FieldError.HOLDER_EMPTY
-            !HOLDER.matches(name) || name.none(Char::isLetter) -> FieldError.HOLDER_FORMAT
+            !CardHolderValidator().validate(name).isValid -> FieldError.HOLDER_FORMAT
             name.length < MIN_HOLDER_LENGTH -> FieldError.HOLDER_SHORT
             else -> null
         }

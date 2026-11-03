@@ -21,6 +21,13 @@ class CardNumberValidatorTest {
     }
 
     @Test
+    fun `accepts the shorter PANs other networks issue`() {
+        validator.validate("378282246310005").isValid shouldBe true // Amex, 15
+        validator.validate("36227206271667").isValid shouldBe true // Diners, 14
+        validator.validate("501800000009").isValid shouldBe true // Maestro, 12
+    }
+
+    @Test
     fun `rejects empty`() {
         val r = validator.validate("")
         r.isValid shouldBe false
@@ -29,7 +36,7 @@ class CardNumberValidatorTest {
 
     @Test
     fun `rejects too short`() {
-        val r = validator.validate("455673360410674")
+        val r = validator.validate("45567336041")
         r.isValid shouldBe false
         r.errorCode shouldBe ValidationCodes.invalid
         r.errorMessage!!.shouldContain("length")

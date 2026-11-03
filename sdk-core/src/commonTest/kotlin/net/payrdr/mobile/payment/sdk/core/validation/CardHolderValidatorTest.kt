@@ -10,6 +10,20 @@ class CardHolderValidatorTest {
         v.validate("JOHN SMITH").isValid shouldBe true
     }
 
+    @Test fun `hyphens apostrophes and dots pass - as on the gateway's payment page`() {
+        v.validate("MARY-ANN O'NEIL JR.").isValid shouldBe true
+    }
+
+    @Test
+    fun `digits fail format`() {
+        v.validate("JOHN123").errorCode shouldBe ValidationCodes.invalidFormat
+    }
+
+    @Test
+    fun `punctuation without a letter fails format`() {
+        v.validate("-.").errorCode shouldBe ValidationCodes.invalidFormat
+    }
+
     @Test
     fun `empty fails required`() {
         v.validate("").errorCode shouldBe ValidationCodes.required
