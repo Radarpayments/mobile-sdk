@@ -11,6 +11,7 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
@@ -52,6 +53,14 @@ class RemoteKeyProviderTest {
 
             key.protocol shouldBe "RSA"
             key.value.contains("AAAA") shouldBe true
+        }
+
+    @Test fun `a cancelled request stays a cancellation and does not become a key failure`() =
+        runTest {
+            val engine = MockEngine { throw CancellationException("checkout closed") }
+            val provider = RemoteKeyProvider(url = "https://example.com/se/keys.do", httpClient = client(engine))
+
+            shouldThrow<CancellationException> { provider.provideKey() }
         }
 
     @Test fun `throws KeyProviderException on HTTP 500`() =
