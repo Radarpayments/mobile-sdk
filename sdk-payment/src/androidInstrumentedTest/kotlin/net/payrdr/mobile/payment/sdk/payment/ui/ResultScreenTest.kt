@@ -43,7 +43,7 @@ class ResultScreenTest {
     }
 
     @Test
-    fun failure_renders_error_icon_title_reason_and_error_code() {
+    fun failure_renders_error_icon_title_and_reason_without_the_sdk_message() {
         val result =
             CheckoutResult.Failed(
                 orderId = "p1",
@@ -64,7 +64,8 @@ class ResultScreenTest {
         composeRule.onNodeWithTag("FailureIcon", useUnmergedTree = true).assertIsDisplayed()
         composeRule.onNodeWithText("Payment declined").assertIsDisplayed()
         composeRule.onNodeWithText("Insufficient funds").assertIsDisplayed()
-        composeRule.onNodeWithText("Something specific broke").assertIsDisplayed()
+        // No chip: the SDK's own message is for developers, not the buyer.
+        composeRule.onNodeWithText("Something specific broke").assertDoesNotExist()
         composeRule.onNodeWithText("Pay with another card").assertIsDisplayed()
     }
 }
