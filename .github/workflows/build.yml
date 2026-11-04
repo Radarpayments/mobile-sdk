@@ -43,7 +43,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: wrapper
-      - name: Assemble iOS targets
-        run: ./gradlew iosSimulatorArm64MainBinaries --no-daemon --stacktrace
+      - name: Link iOS frameworks
+        run: ./gradlew linkDebugFrameworkIosSimulatorArm64 --no-daemon --stacktrace
       - name: iOS simulator tests
         run: ./gradlew iosSimulatorArm64Test --no-daemon --stacktrace

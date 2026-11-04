@@ -72,9 +72,10 @@ scripts/build-bridge.sh                          # before running a plugin or Fl
 ```
 
 CI (`.github/workflows/build.yml`) runs `ktlintCheck detekt verifyVersions`, `assembleDebug assembleRelease`,
-`testDebugUnitTest testReleaseUnitTest`, `apiCheck` on Linux and `iosSimulatorArm64MainBinaries`,
+`testDebugUnitTest testReleaseUnitTest`, `apiCheck` on Linux and `linkDebugFrameworkIosSimulatorArm64`,
 `iosSimulatorArm64Test` on macOS. It does not run instrumented tests, the plugins' tests or the samples' Flutter/RN
-tests.
+tests. Release frameworks are linked only by `release.yml`: three modules linking release at once in one Gradle run
+exhaust the 4 GB heap on the 7 GB macOS runner (`OutOfMemoryError: GC overhead limit exceeded`).
 
 **Do not start heavy runs without being asked**: `iosSimulatorArm64MainBinaries`, release XCFrameworks
 (`build-bridge.sh release`), whole-repo `./gradlew build`, a fresh-clone CI replay. Release linking of Compose frameworks

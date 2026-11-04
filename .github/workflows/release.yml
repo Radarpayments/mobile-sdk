@@ -44,7 +44,6 @@ on:
       - '.github/spm-check/**'
       - 'scripts/*release*.sh'
       - 'scripts/build-bridge.sh'
-      - 'build.gradle.kts'
 
 concurrency:
   group: release
@@ -118,7 +117,7 @@ jobs:
       SDK: ${{ needs.version.outputs.sdk }}
       PLUGIN: ${{ needs.version.outputs.plugin }}
       MODE: ${{ needs.version.outputs.mode }}
-      RELEASE_BRANCH: ${{ github.ref_name }}
+      RELEASE_BRANCH: ${{ github.head_ref || github.ref_name }}
       GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4

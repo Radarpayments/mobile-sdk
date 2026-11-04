@@ -64,9 +64,9 @@ class KmpComposeLibraryConventionPlugin : Plugin<Project> {
             doLast {
                 outputs.files.asFileTree.matching { include("**/*.framework/Info.plist") }.forEach { plist ->
                     val framework = plist.parentFile
-                    val target = if (framework.parentFile.name.endsWith("simulator")) "iosSimulatorArm64" else "iosArm64"
+                    val slice = if (framework.parentFile.name.endsWith("simulator")) "iosSimulatorArm64" else "iosArm64"
                     copy {
-                        from(resources.get().dir("$target/composeResources"))
+                        from(resources.get().dir("$slice/composeResources"))
                         into(framework.resolve("composeResources"))
                     }
                 }
