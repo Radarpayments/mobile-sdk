@@ -10,6 +10,7 @@ import {
   TopUpAmount,
   amountMinor,
   amountValid,
+  decimalSeparator,
 } from '../src/store/invest/topUpAmount';
 
 const now = 1793280000000;
@@ -242,6 +243,21 @@ describe('Arabic input', () => {
   it('parse reads Arabic-Indic and Persian digits as ASCII', () => {
     expect(parseAmount('١٢٫٥')).toBe('12.5');
     expect(parseAmount('۳۰')).toBe('30');
+  });
+});
+
+describe('decimal separator', () => {
+  it('is the locale\'s, also where Intl has no formatToParts (Hermes on iOS)', () => {
+    const formatToParts = Intl.NumberFormat.prototype.formatToParts;
+    // @ts-expect-error the engine may lack it
+    delete Intl.NumberFormat.prototype.formatToParts;
+    try {
+      expect(decimalSeparator('en')).toBe('.');
+      expect(decimalSeparator('ru')).toBe(',');
+      expect(decimalSeparator('ar-EG')).toBe('٫');
+    } finally {
+      Intl.NumberFormat.prototype.formatToParts = formatToParts;
+    }
   });
 });
 

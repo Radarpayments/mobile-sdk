@@ -33,6 +33,7 @@ import {
   amountMinor,
   amountValid,
   canContinue,
+  decimalSeparator,
   MAX_TOP_UP,
   MIN_TOP_UP,
   PRESETS,
@@ -328,7 +329,7 @@ function useFormat() {
       }).format(minor / 100),
     time: (at: number) =>
       new Intl.DateTimeFormat(language, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(at)),
-    separator: new Intl.NumberFormat(language).formatToParts(1.5).find(p => p.type === 'decimal')?.value ?? '.',
+    separator: decimalSeparator(language),
   };
 }
 
