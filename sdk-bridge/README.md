@@ -6,7 +6,7 @@ into the SDK's own types and back. All mapping lives here, once, with its tests 
 
 | Platform | Entry point | Shipped as |
 |---|---|---|
-| Android | `PayrdrBridgeCheckout.start(activity, requestJson, onResult)` + `handleActivityResult(...)` | `net.payrdr.mobile.payment:sdk-bridge-android` (AAR) |
+| Android | `PayrdrBridgeCheckout.start(activity, requestJson, onResult)` + `handleActivityResult(...)` | `io.github.radarpayments:sdk-bridge-android` (AAR) |
 | iOS | `PayrdrBridgeCheckout().present(requestJson:from:onResult:)` | `PayrdrSdkBridge.xcframework` |
 | both | `PayrdrBridge.coreToken(requestJson)` | |
 
