@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <net.payrdr.mobile.payment:sdk-core>
+// Library unique name: <io.github.radarpayments:sdk-core>
 open annotation class net.payrdr.mobile.payment.sdk.core/InternalPayrdrApi : kotlin/Annotation { // net.payrdr.mobile.payment.sdk.core/InternalPayrdrApi|null[0]
     constructor <init>() // net.payrdr.mobile.payment.sdk.core/InternalPayrdrApi.<init>|<init>(){}[0]
 }

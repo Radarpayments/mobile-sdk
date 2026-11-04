@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <net.payrdr.mobile.payment:sdk-payment-scanner>
+// Library unique name: <io.github.radarpayments:sdk-payment-scanner>
 final class net.payrdr.mobile.payment.sdk.payment.scanner.provider/MlKitVisionCardScannerProvider : net.payrdr.mobile.payment.sdk.payment.scanner/CardScannerProvider { // net.payrdr.mobile.payment.sdk.payment.scanner.provider/MlKitVisionCardScannerProvider|null[0]
     constructor <init>(net.payrdr.mobile.payment.sdk.payment.logger/LogTransport? = ...) // net.payrdr.mobile.payment.sdk.payment.scanner.provider/MlKitVisionCardScannerProvider.<init>|<init>(net.payrdr.mobile.payment.sdk.payment.logger.LogTransport?){}[0]
 

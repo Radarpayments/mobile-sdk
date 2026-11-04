@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <net.payrdr.mobile.payment:sdk-payment>
+// Library unique name: <io.github.radarpayments:sdk-payment>
 final enum class net.payrdr.mobile.payment.sdk.payment.applepay/ApplePayMerchantCapability : kotlin/Enum<net.payrdr.mobile.payment.sdk.payment.applepay/ApplePayMerchantCapability> { // net.payrdr.mobile.payment.sdk.payment.applepay/ApplePayMerchantCapability|null[0]
     enum entry CREDIT // net.payrdr.mobile.payment.sdk.payment.applepay/ApplePayMerchantCapability.CREDIT|null[0]
     enum entry DEBIT // net.payrdr.mobile.payment.sdk.payment.applepay/ApplePayMerchantCapability.DEBIT|null[0]

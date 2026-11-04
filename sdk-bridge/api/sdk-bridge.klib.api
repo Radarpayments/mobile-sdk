@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <net.payrdr.mobile.payment:sdk-bridge>
+// Library unique name: <io.github.radarpayments:sdk-bridge>
 final class net.payrdr.mobile.payment.sdk.bridge/PayrdrBridgeCheckout { // net.payrdr.mobile.payment.sdk.bridge/PayrdrBridgeCheckout|null[0]
     constructor <init>() // net.payrdr.mobile.payment.sdk.bridge/PayrdrBridgeCheckout.<init>|<init>(){}[0]
 

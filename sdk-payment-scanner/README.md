@@ -6,7 +6,7 @@ Extracts PAN and expiry date; cardholder extraction is opt-in. Pure offline — 
 ## Gradle
 
 ```kotlin
-implementation("net.payrdr.mobile.payment:sdk-payment-scanner:<version>")
+implementation("io.github.radarpayments:sdk-payment-scanner:<version>")
 ```
 
 ## Wire it up
