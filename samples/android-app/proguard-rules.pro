@@ -1,1 +1,1 @@
-# Sample app — minification is disabled in both build types; this file is intentionally empty.
+# The SDK brings its own R8 rules (consumer-rules.pro in its AAR); the sample needs none of its own.
