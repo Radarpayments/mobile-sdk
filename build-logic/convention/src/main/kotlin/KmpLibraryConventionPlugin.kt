@@ -3,9 +3,13 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.register
+import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
+import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 /**
  * Applies the standard KMP library setup: Kotlin Multiplatform plugin, Android library plugin,
@@ -59,6 +63,23 @@ class KmpLibraryConventionPlugin : Plugin<Project> {
             sourceSets.all { languageSettings.optIn("kotlin.time.ExperimentalTime") }
             // What the SDK modules share with each other and nobody else.
             sourceSets.all { languageSettings.optIn("net.payrdr.mobile.payment.sdk.core.InternalPayrdrApi") }
+
+            // The version is written only in gradle.properties; the code and the iOS frameworks take it from there.
+            val generateSdkVersion =
+                tasks.register<GenerateSdkVersionTask>("generateSdkVersion") {
+                    sdkVersion.set(project.version.toString())
+                    packageName.set("net.payrdr.mobile.payment.sdk.${project.name.removePrefix("sdk-").replace("-", ".")}")
+                    outputDir.set(layout.buildDirectory.dir("generated/sdkVersion/kotlin"))
+                }
+            sourceSets.commonMain.get().kotlin.srcDir(generateSdkVersion.flatMap { it.outputDir })
+            targets.withType<KotlinNativeTarget>().configureEach {
+                binaries.withType<Framework>().configureEach {
+                    // Apple takes at most three integers here, in an embedded framework too: 4.0.0 for 4.0.0-beta.1.
+                    val release = project.version.toString().substringBefore('-')
+                    binaryOption("bundleShortVersionString", release)
+                    binaryOption("bundleVersion", release)
+                }
+            }
 
             applyDefaultHierarchyTemplate()
         }

@@ -64,6 +64,28 @@ tasks.register("publishAndroidToRepo") {
     }
 }
 
+// The plugins write the SDK version they depend on as text (they are built in the app, outside this build), and the
+// Flutter and React Native plugins share one version of their own. scripts/set-version.sh sets them all; this checks.
+tasks.register("verifyVersions") {
+    group = "verification"
+    description = "Checks that the plugins depend on this SDK version and share one version of their own."
+    val sdkVersion = version.toString()
+    val sdkDependents =
+        listOf("plugins/flutter/android/build.gradle.kts", "plugins/react-native/android/build.gradle").associateWith(::file)
+    val pubspec = file("plugins/flutter/pubspec.yaml")
+    val packageJson = file("plugins/react-native/package.json")
+    inputs.files(sdkDependents.values, pubspec, packageJson)
+    doLast {
+        sdkDependents.forEach { (path, file) ->
+            val dependsOn = Regex("""payrdrSdkVersion.*\?: "([^"]+)"""").find(file.readText())?.groupValues?.get(1)
+            check(dependsOn == sdkVersion) { "$path depends on SDK $dependsOn, the SDK is $sdkVersion: run scripts/set-version.sh" }
+        }
+        val flutter = Regex("""(?m)^version: (\S+)""").find(pubspec.readText())?.groupValues?.get(1)
+        val reactNative = Regex(""""version": "([^"]+)"""").find(packageJson.readText())?.groupValues?.get(1)
+        check(flutter == reactNative) { "The Flutter plugin is $flutter, the React Native one $reactNative: run scripts/set-version.sh" }
+    }
+}
+
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }
