@@ -1,7 +1,11 @@
 # CocoaPods form of the plugin; payrdr_sdk/Package.swift is the Swift Package Manager form of the same sources and framework.
+require 'yaml'
+pubspec = YAML.load_file(File.join(__dir__, '..', 'pubspec.yaml'))
+
 Pod::Spec.new do |s|
   s.name             = 'payrdr_sdk'
-  s.version          = '0.1.0'
+  # The plugin's version is the one in pubspec.yaml.
+  s.version          = pubspec['version']
   s.summary          = 'payrdr payment SDK for Flutter.'
   s.description      = <<-DESC
 The native payrdr payment sheet (3-D Secure, Apple Pay, card scanner) and SDK Core card encryption for Flutter apps.

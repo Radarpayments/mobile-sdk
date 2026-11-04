@@ -1,6 +1,7 @@
 package net.payrdr.mobile.payment.sdk.payment
 
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldMatch
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
@@ -34,7 +35,12 @@ class SdkPaymentTest {
     @Test
     fun `create returns SdkPayment with the provided config`() {
         val sdk = SdkPayment.create(SdkPaymentConfig(baseUrl = "https://pay.example.com"))
-        sdk.version() shouldBe "4.0.0-SNAPSHOT"
+        sdk.version() shouldBe SDK_VERSION
+    }
+
+    @Test
+    fun `the version is a semantic version`() {
+        SDK_VERSION shouldMatch Regex("""\d+\.\d+\.\d+(-[0-9A-Za-z.]+)?""")
     }
 
     @Test

@@ -22,8 +22,8 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: wrapper
-      - name: ktlint + detekt
-        run: ./gradlew ktlintCheck detekt --no-daemon --stacktrace
+      - name: ktlint + detekt + versions
+        run: ./gradlew ktlintCheck detekt verifyVersions --no-daemon --stacktrace
       - name: Assemble Android
         run: ./gradlew assembleDebug assembleRelease --no-daemon --stacktrace
       - name: Android unit tests

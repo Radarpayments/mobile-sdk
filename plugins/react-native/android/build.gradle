@@ -44,5 +44,5 @@ android {
 
 dependencies {
   implementation "com.facebook.react:react-android"
-  implementation "net.payrdr.mobile.payment:sdk-bridge-android:${payrdrSdkVersion}"
+  implementation "io.github.radarpayments:sdk-bridge-android:${payrdrSdkVersion}"
 }

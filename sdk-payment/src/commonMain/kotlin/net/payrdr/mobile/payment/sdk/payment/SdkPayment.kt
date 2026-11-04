@@ -59,7 +59,7 @@ public class SdkPayment internal constructor(
         network?.keyProvider ?: RemoteKeyProvider(url = config.effectiveKeyProviderUrl(), httpClient = httpClient)
     }
 
-    /** Returns the SDK version string (matches `gradle.properties` `version`). */
+    /** The SDK version, as published: `4.0.0`, `4.0.0-beta.1`. */
     public fun version(): String = VERSION
 
     /**
@@ -139,7 +139,7 @@ public class SdkPayment internal constructor(
 
     /** SDK metadata + primary factory for [SdkPayment]. */
     public companion object {
-        public const val VERSION: String = "4.0.0-SNAPSHOT"
+        public const val VERSION: String = SDK_VERSION
 
         /** The SDK for [config]; it builds its own network layer from it. */
         public fun create(config: SdkPaymentConfig): SdkPayment = SdkPayment(config, network = null)

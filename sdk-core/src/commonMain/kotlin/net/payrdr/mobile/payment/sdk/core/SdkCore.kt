@@ -89,9 +89,7 @@ public class SdkCore internal constructor(
         return buildToken(mdOrder, cardInfo, params.pubKey, config.timestamp, config.registeredFrom)
     }
 
-    /**
-     * Returns the SDK version string.
-     */
+    /** The SDK version, as published: `4.0.0`, `4.0.0-beta.1`. */
     public fun version(): String = VERSION
 
     private fun cardInfoForNew(p: PaymentCardParams.NewCardPaymentParams) =
@@ -173,6 +171,6 @@ public class SdkCore internal constructor(
     }
 
     private companion object {
-        const val VERSION = "4.0.0-SNAPSHOT"
+        const val VERSION = SDK_VERSION
     }
 }

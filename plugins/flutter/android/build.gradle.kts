@@ -1,5 +1,6 @@
 group = "net.payrdr.mobile.payment.flutter"
-version = "0.1.0"
+// The plugin's version is the one in pubspec.yaml.
+version = file("../pubspec.yaml").readLines().first { it.startsWith("version:") }.substringAfter(":").trim()
 
 buildscript {
     val kotlinVersion = "2.4.0"
@@ -80,7 +81,7 @@ kotlin {
 }
 
 dependencies {
-    implementation("net.payrdr.mobile.payment:sdk-bridge-android:$payrdrSdkVersion")
+    implementation("io.github.radarpayments:sdk-bridge-android:$payrdrSdkVersion")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.mockito:mockito-core:5.0.0")
 }
