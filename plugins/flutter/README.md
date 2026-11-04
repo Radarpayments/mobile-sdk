@@ -6,11 +6,17 @@ who keeps its own card form.
 
 ## Install
 
+The plugin is not on pub.dev yet: each [GitHub release](https://github.com/Radarpayments/mobile-sdk/releases) has it as
+`payrdr_sdk-<version>.tar.gz`, with the iOS framework inside. Unpack it next to your app and depend on it by path:
+
 ```yaml
 dependencies:
   payrdr_sdk:
-    path: ../plugins/flutter   # in this repository; see "From this repository" below
+    path: ../payrdr_sdk   # in this repository: ../plugins/flutter, see "From this repository" below
 ```
+
+On Android the plugin takes the SDK from Maven Central. An alpha is not there: its release has
+`payrdr-sdk-maven-<version>.zip`; unpack it and set `payrdrMavenUrl` in `android/gradle.properties` to that folder.
 
 Nothing else is required: `MainActivity` stays a `FlutterActivity`, the Android manifest needs no entries (Google Pay
 and the camera permission come with the SDK), and iOS works with Swift Package Manager (Flutter's default) as well as

@@ -8,10 +8,16 @@ A TurboModule (React Native 0.76+, New Architecture). Expo: works in a developme
 
 ## Install
 
+The module is not on npm yet: each [GitHub release](https://github.com/Radarpayments/mobile-sdk/releases) has it as
+`payrdr-react-native-sdk-<version>.tgz`, with the iOS framework inside.
+
 ```sh
-npm install @payrdr/react-native-sdk   # in this repository: "file:../../plugins/react-native", see below
+npm install ./payrdr-react-native-sdk-<version>.tgz   # in this repository: "file:../../plugins/react-native", see below
 cd ios && pod install
 ```
+
+On Android the module takes the SDK from Maven Central. An alpha is not there: its release has
+`payrdr-sdk-maven-<version>.zip`; unpack it and set `payrdrMavenUrl` in `android/gradle.properties` to that folder.
 
 Nothing else is required: `MainActivity` stays a `ReactActivity`, no code in `AppDelegate`, and the Android manifest
 needs no entries (Google Pay and the camera permission come with the SDK). Android minSdk 24.

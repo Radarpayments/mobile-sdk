@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFrameworkTask
 
 plugins {
     id("payrdr.kmp.library")
@@ -76,24 +75,6 @@ kotlin {
             freeCompilerArgs +=
                 "-Xoverride-konan-properties=osVersionMin.ios_arm64=14.0;osVersionMin.ios_simulator_arm64=14.0;osVersionMin.ios_x64=14.0"
             xcf.add(this)
-        }
-    }
-}
-
-// The checkout's strings and images (Compose resources of every module) go inside each framework of the XCFramework,
-// where Compose Multiplatform 1.9+ looks for them: the app needs no build phase to copy them, whatever brings the
-// framework in (Swift Package Manager, CocoaPods or Xcode).
-tasks.withType<XCFrameworkTask>().configureEach {
-    dependsOn("assembleIosArm64MainResources", "assembleIosSimulatorArm64MainResources")
-    val resources = layout.buildDirectory.dir("kotlin-multiplatform-resources/aggregated-resources")
-    doLast {
-        outputs.files.asFileTree.matching { include("**/*.framework/Info.plist") }.forEach { plist ->
-            val framework = plist.parentFile
-            val target = if (framework.parentFile.name.endsWith("simulator")) "iosSimulatorArm64" else "iosArm64"
-            copy {
-                from(resources.get().dir("$target/composeResources"))
-                into(framework.resolve("composeResources"))
-            }
         }
     }
 }

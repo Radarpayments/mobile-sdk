@@ -9,6 +9,32 @@ Supersedes the separate `android-sdk` and `ios-sdk` repositories starting from v
 - **sdk-payment** — payment SDK with UI (Compose Multiplatform), PaymentApi, 3DS web challenge, Apple Pay / Google Pay.
 - **sdk-payment-scanner** — optional card scanner (ML Kit on Android, Vision framework on iOS).
 
+## Install
+
+Versions: [GitHub releases](https://github.com/Radarpayments/mobile-sdk/releases). Android minSdk 24, iOS 14.
+
+**Android** — Maven Central:
+
+```kotlin
+dependencies {
+    implementation("io.github.radarpayments:sdk-payment:4.0.0")
+    implementation("io.github.radarpayments:sdk-payment-scanner:4.0.0") // optional: the card scanner
+    implementation("com.google.android.gms:play-services-wallet:19.4.0") // optional: Google Pay
+}
+```
+
+Headless tokenization only: `io.github.radarpayments:sdk-core`. Each release also has the AARs to download.
+
+**iOS** — Swift Package Manager: File → Add Package Dependencies → `https://github.com/Radarpayments/mobile-sdk`,
+product `PayrdrSDK`, then `import sdk_payment_scanner` (the whole SDK: checkout, SDK Core, card scanner). Each release
+also has `sdk_payment_scanner.xcframework.zip` to embed by hand.
+
+**Flutter, React Native** — the plugins are in each GitHub release: see [Flutter](plugins/flutter/README.md),
+[React Native](plugins/react-native/README.md).
+
+Pre-releases (`4.1.0-beta.1`, `4.1.0-rc.1`) are taken only when asked for exactly; alphas are only on GitHub, with a
+Maven repository to download.
+
 ## Languages
 
 The checkout's screens are translated into English, Russian, Romanian, Greek, Bulgarian, German, French, Spanish
