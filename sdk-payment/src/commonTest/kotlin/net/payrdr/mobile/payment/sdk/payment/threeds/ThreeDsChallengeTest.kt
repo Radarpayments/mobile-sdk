@@ -30,7 +30,7 @@ class ThreeDsChallengeTest {
         val c = challenge()
         val whitePage = "https://dev.bpcbt.com/payment/modules/verify-3ds2/collect-data-3ds2.html?orderId=${c.mdOrder}&lang=en"
         c.isReturnUrl(whitePage) shouldBe false
-        c.isReturnUrl("https://3ds.uat.radarpayment.online/acs2/acs/creq") shouldBe false
+        c.isReturnUrl("https://acs.example/acs2/acs/creq") shouldBe false
         c.isReturnUrl("https://dev.bpcbt.com/payment/rest/finish3dsVer2.do?MD=${c.mdOrder}") shouldBe false
     }
 

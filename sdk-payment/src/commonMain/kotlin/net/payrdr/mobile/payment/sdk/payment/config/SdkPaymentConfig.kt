@@ -10,7 +10,7 @@ import kotlin.native.ObjCName
 /**
  * Top-level configuration passed to [net.payrdr.mobile.payment.sdk.payment.SdkPayment.create].
  *
- * @property baseUrl payment gateway base URL, e.g. `https://pay.test.payrdr.net`
+ * @property baseUrl payment gateway base URL, e.g. `https://dev.bpcbt.com/payment`
  * @property keyProviderUrl URL that returns the active RSA public key set; defaults to `{baseUrl}/se/keys.do`
  * @property sslPinning opt-in certificate pinning config; null = system trust store, no pinning
  * @property logTransport sink for internal logging; null = [net.payrdr.mobile.payment.sdk.payment.logger.NoopLogTransport]
