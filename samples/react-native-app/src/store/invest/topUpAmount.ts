@@ -50,6 +50,15 @@ function ascii(c: string): string {
   return c;
 }
 
+/**
+ * The decimal separator `language` writes (`.`, `,` or the Arabic `٫`), read from a formatted 1.5: Hermes on iOS has
+ * no `Intl.NumberFormat.formatToParts`.
+ */
+export function decimalSeparator(language: string): string {
+  const oneAndHalf = new Intl.NumberFormat(language, { minimumFractionDigits: 1 }).format(1.5);
+  return oneAndHalf.replace(/[0-9\u0660-\u0669\u06F0-\u06F9\u061C\u200E\u200F]/g, '') || '.';
+}
+
 /** The amount of a preset chip. */
 export function presetAmount(minor: number): TopUpAmount {
   const cents = minor % 100;
