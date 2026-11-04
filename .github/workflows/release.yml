@@ -1,0 +1,269 @@
+name: Release
+
+# Actions → Release → Run workflow on the branch to release, or:
+#   gh workflow run release.yml --ref <branch> -f stage=beta -f mode=publish
+#
+# stage: alpha from any branch; beta, rc and stable from main only. scripts/release-version.sh computes the version
+#   from the tags and enforces the rules (AGENTS.md → Version); bump opens a new version after the last stable one.
+# mode:
+#   dry-run  (default) runs every check, builds, signs and packs everything, publishes nothing: the result is in the
+#            workflow artifacts
+#   validate also uploads the bundle to the Maven Central Portal, waits for its validation and drops it
+#   publish  publishes to Maven Central (not an alpha; cannot be undone), then pushes the tag and creates the GitHub
+#            release with the XCFramework, the AARs and the plugins; Swift Package Manager resolves the SDK by the tag.
+#            The release commit stays off the branches (main takes pull requests only); for a stable version a pull
+#            request brings it to main with the dated CHANGELOG section and the next -SNAPSHOT.
+# Publishing a stable version deletes the GitHub releases of its pre-releases (4.1.0-rc.*); their tags stay, so SPM
+# still resolves them when asked exactly, and Maven Central keeps their artifacts.
+# Pull requests that touch the release pipeline run it as a dry run.
+
+on:
+  workflow_dispatch:
+    inputs:
+      stage:
+        description: 'alpha (any branch); beta, rc, stable (main only)'
+        required: true
+        type: choice
+        options: [alpha, beta, rc, stable]
+      bump:
+        description: 'Opens a new version after the last stable one; none continues the version in pre-release'
+        required: true
+        default: none
+        type: choice
+        options: [none, patch, minor, major]
+      mode:
+        description: 'dry-run: build only; validate: check the bundle on Maven Central; publish: release'
+        required: true
+        default: dry-run
+        type: choice
+        options: [dry-run, validate, publish]
+  pull_request:
+    paths:
+      - '.github/workflows/release.yml'
+      - '.github/scripts/**'
+      - '.github/spm-check/**'
+      - 'scripts/*release*.sh'
+      - 'scripts/build-bridge.sh'
+      - 'build.gradle.kts'
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  SIGNING_KEY_FINGERPRINT: 6624D0D08D71522E191A9252018DA6ABF8CB0681
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      sdk: ${{ steps.version.outputs.sdk }}
+      plugin: ${{ steps.version.outputs.plugin }}
+      mode: ${{ steps.version.outputs.mode }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: version
+        env:
+          RELEASE_BRANCH: ${{ github.ref_name }}
+          STAGE: ${{ inputs.stage }}
+          BUMP: ${{ inputs.bump }}
+          INPUT_MODE: ${{ inputs.mode }}
+        run: |
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            sdk="0.0.0-pr.${{ github.event.number }}"
+            plugin="$sdk"
+            mode=dry-run
+          else
+            read -r sdk plugin <<< "$(scripts/release-version.sh "$STAGE" "${BUMP#none}")"
+            mode="$INPUT_MODE"
+          fi
+          echo "sdk=$sdk plugin=$plugin mode=$mode ref=$GITHUB_REF"
+
+          if [[ "$sdk" != *-alpha.* ]] &&
+            curl -sfI "https://repo1.maven.org/maven2/io/github/radarpayments/sdk-payment/$sdk/sdk-payment-$sdk.pom" >/dev/null; then
+            if [[ "$mode" == "dry-run" ]]; then
+              echo "::warning::$sdk is already on Maven Central"
+            else
+              echo "::error::$sdk is already on Maven Central"; exit 1
+            fi
+          fi
+
+          {
+            echo "sdk=$sdk"
+            echo "plugin=$plugin"
+            echo "mode=$mode"
+          } >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: version
+    if: github.event_name != 'pull_request'
+    uses: ./.github/workflows/build.yml
+
+  release:
+    needs: [version, build]
+    if: ${{ !cancelled() && needs.version.result == 'success' && needs.build.result != 'failure' }}
+    runs-on: macos-14
+    timeout-minutes: 150
+    env:
+      SDK: ${{ needs.version.outputs.sdk }}
+      PLUGIN: ${{ needs.version.outputs.plugin }}
+      MODE: ${{ needs.version.outputs.mode }}
+      RELEASE_BRANCH: ${{ github.ref_name }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: wrapper
+
+      - name: Check signing key
+        env:
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+        run: |
+          if [[ -z "$SIGNING_KEY" ]]; then
+            [[ "$MODE" != "dry-run" ]] && { echo "::error::SIGNING_KEY secret is not set"; exit 1; }
+            echo "::warning::SIGNING_KEY is not available, the bundle is not signed"
+            exit 0
+          fi
+          GNUPGHOME=$(mktemp -d)
+          export GNUPGHOME
+          gpg --batch --import <<<"$SIGNING_KEY" 2>/dev/null || true
+          fingerprint=$(gpg --list-secret-keys --with-colons | awk -F: '/^fpr/{print $10; exit}')
+          [[ -n "$fingerprint" ]] || { echo "::error::SIGNING_KEY is not a valid armored secret key"; exit 1; }
+          [[ "$fingerprint" == "$SIGNING_KEY_FINGERPRINT" ]] || { echo "::error::SIGNING_KEY is not the release signing key"; exit 1; }
+          echo test | gpg --batch --pinentry-mode loopback --passphrase-fd 3 --sign -o /dev/null 3<<<"$SIGNING_PASSWORD" \
+            || { echo "::error::SIGNING_PASSWORD does not unlock SIGNING_KEY"; exit 1; }
+          gpgconf --kill gpg-agent
+          rm -rf "$GNUPGHOME"
+
+      - name: Build
+        env:
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+        run: |
+          scripts/set-version.sh "$SDK" "$PLUGIN"
+          scripts/build-bridge.sh release
+          ./gradlew --console=plain :sdk-payment-scanner:assembleSdk_payment_scannerReleaseXCFramework \
+            publishAllPublicationsToStagingRepository
+
+      - name: Package
+        run: |
+          scripts/package-release.sh "$SDK" "$PLUGIN"
+          if [[ "$MODE" != "dry-run" ]]; then
+            missing=$(cd build/staging-deploy && find . -type f ! -name '*.asc' ! -name '*.md5' ! -name '*.sha*' \
+              -exec sh -c '[ -f "$1.asc" ] || echo "$1"' _ {} \;)
+            [[ -z "$missing" ]] || { echo "::error::Not signed: $missing"; exit 1; }
+          fi
+
+      - name: Integrator check (the XCFramework just built)
+        working-directory: .github/spm-check
+        env:
+          TEST_RUNNER_EXPECTED_SDK_VERSION: ${{ env.SDK }}
+        run: |
+          mkdir -p Frameworks
+          cp -R ../../sdk-payment-scanner/build/XCFrameworks/release/sdk_payment_scanner.xcframework Frameworks/
+          xcodebuild test -scheme SPMCheck-Package -destination "$(../scripts/simulator.sh)" |
+            grep -E "Test Case .*(passed|failed|skipped)|Executed|error:"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mobile-sdk-${{ env.SDK }}
+          path: |
+            build/release/
+            build/central-bundle.zip
+            Package.swift
+          retention-days: 14
+
+      - name: Maven Central
+        if: env.MODE != 'dry-run' && !contains(env.SDK, '-alpha.')
+        env:
+          MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+        run: .github/scripts/central-upload.sh build/central-bundle.zip "$MODE" "mobile-sdk $SDK"
+
+      - name: Commit and tag
+        if: env.MODE == 'publish'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -u
+          git add Package.swift
+          git commit -m "Release $SDK"
+          git tag -a "$SDK" -m "Release $SDK"
+          git push origin "$SDK"
+
+      - name: Pull request to main
+        if: env.MODE == 'publish' && !contains(env.SDK, '-')
+        run: |
+          next() { IFS=. read -r major minor patch <<< "$1"; echo "$major.$minor.$((patch + 1))-SNAPSHOT"; }
+          scripts/set-version.sh "$(next "$SDK")" "$(next "$PLUGIN")"
+          git commit -am "Next: $(next "$SDK")"
+          git push origin "HEAD:refs/heads/release/$SDK"
+          # A pull request opened with the workflow's token starts no workflow: reopening it by hand runs the checks.
+          gh pr create --base main --head "release/$SDK" --title "Release $SDK: changelog and $(next "$SDK")" \
+            --body "The release commit of $SDK (tagged, with the dated CHANGELOG section) and the next version. Close and reopen this pull request to run the checks, then merge it."
+
+      - name: GitHub release
+        if: env.MODE == 'publish'
+        run: |
+          flags=(--verify-tag --title "$SDK" --notes-file build/release/notes.md)
+          if [[ "$SDK" == *-* ]]; then flags+=(--prerelease); else flags+=(--latest); fi
+          assets=()
+          while IFS= read -r file; do assets+=("$file"); done < <(find build/release -type f ! -name notes.md)
+          gh release create "$SDK" "${assets[@]}" "${flags[@]}"
+
+      - name: Integrator check (the released version from GitHub)
+        if: env.MODE == 'publish'
+        working-directory: .github/spm-check
+        env:
+          PAYRDR_SDK_URL: ${{ github.server_url }}/${{ github.repository }}.git
+          PAYRDR_SDK_VERSION: ${{ env.SDK }}
+          TEST_RUNNER_EXPECTED_SDK_VERSION: ${{ env.SDK }}
+        run: |
+          rm -rf Frameworks
+          xcodebuild test -scheme SPMCheck-Package -destination "$(../scripts/simulator.sh)" |
+            grep -E "Test Case .*(passed|failed|skipped)|Executed|error:"
+
+      - name: Delete GitHub releases of the pre-releases
+        if: env.MODE == 'publish' && !contains(env.SDK, '-')
+        run: |
+          gh release list --limit 100 --json tagName,isPrerelease \
+            --jq ".[] | select(.isPrerelease and (.tagName | startswith(\"$SDK-\"))) | .tagName" |
+            while read -r tag; do
+              gh release delete "$tag" --yes
+              echo "Deleted the GitHub release $tag, the tag is kept"
+            done
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "### Mobile SDK $SDK, plugins $PLUGIN ($MODE)"
+            case "$MODE" in
+              dry-run) echo "Nothing was published. Everything the release would ship is in the workflow artifacts." ;;
+              validate) echo "Maven Central accepted the bundle; the deployment was dropped, nothing was published." ;;
+              publish)
+                [[ "$SDK" == *-alpha.* ]] || echo "Maven Central: \`implementation(\"io.github.radarpayments:sdk-payment:$SDK\")\`"
+                echo ""
+                echo "SPM: \`$GITHUB_SERVER_URL/$GITHUB_REPOSITORY\`, version \`$SDK\`, product \`PayrdrSDK\`"
+                echo ""
+                echo "GitHub release: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/releases/tag/$SDK" ;;
+            esac
+          } >> "$GITHUB_STEP_SUMMARY"

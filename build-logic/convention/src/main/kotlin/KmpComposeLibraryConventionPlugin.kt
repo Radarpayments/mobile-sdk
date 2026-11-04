@@ -2,9 +2,11 @@ import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.withType
 import org.jetbrains.compose.ComposeExtension
 import org.jetbrains.compose.resources.ResourcesExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFrameworkTask
 
 /**
  * Adds Compose Multiplatform + Kotlin Compose compiler plugin on top of `payrdr.kmp.library`.
@@ -50,6 +52,24 @@ class KmpComposeLibraryConventionPlugin : Plugin<Project> {
         extensions.configure<LibraryExtension> {
             buildFeatures {
                 compose = true
+            }
+        }
+
+        // The checkout's strings and images (Compose resources of every module) go inside each framework of the
+        // XCFramework, where Compose Multiplatform 1.9+ looks for them: the app needs no build phase to copy them,
+        // whatever brings the framework in (Swift Package Manager or Xcode).
+        tasks.withType<XCFrameworkTask>().configureEach {
+            dependsOn("assembleIosArm64MainResources", "assembleIosSimulatorArm64MainResources")
+            val resources = layout.buildDirectory.dir("kotlin-multiplatform-resources/aggregated-resources")
+            doLast {
+                outputs.files.asFileTree.matching { include("**/*.framework/Info.plist") }.forEach { plist ->
+                    val framework = plist.parentFile
+                    val target = if (framework.parentFile.name.endsWith("simulator")) "iosSimulatorArm64" else "iosArm64"
+                    copy {
+                        from(resources.get().dir("$target/composeResources"))
+                        into(framework.resolve("composeResources"))
+                    }
+                }
             }
         }
     }

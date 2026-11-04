@@ -36,11 +36,19 @@ subprojects {
     }
 }
 
-// The SDK's Android libraries in a Maven repository inside this build (build/maven), where the Flutter and React Native
-// plugins take them from: ./gradlew publishAndroidToRepo, or scripts/build-bridge.sh for everything the plugins need.
-val sdkLibraries = listOf("sdk-core", "sdk-payment", "sdk-payment-scanner", "sdk-bridge")
+// The SDK's libraries go to Maven Central and, for the Flutter and React Native plugins in this repository, to a Maven
+// repository inside this build (build/maven): ./gradlew publishAndroidToRepo, or scripts/build-bridge.sh for everything
+// the plugins need. A release publishes every target (the Android one as <module>-android, iOS klibs for Kotlin
+// Multiplatform apps) into build/staging-deploy, signed with SIGNING_KEY; .github/workflows/release.yml uploads it.
+val sdkLibraries =
+    mapOf(
+        "sdk-core" to "PAYRDR SDK Core: card validation and card encryption into a payment token",
+        "sdk-payment" to "PAYRDR payment SDK: the checkout with cards, 3-D Secure, Google Pay and Apple Pay",
+        "sdk-payment-scanner" to "PAYRDR card scanner for the checkout's card form",
+        "sdk-bridge" to "PAYRDR SDK for the Flutter and React Native plugins, as a JSON contract",
+    )
 subprojects {
-    if (name !in sdkLibraries) return@subprojects
+    val pomDescription = sdkLibraries[name] ?: return@subprojects
     // The Android release variant is published by the payrdr.kmp.library convention.
     apply(plugin = "maven-publish")
     extensions.configure<PublishingExtension> {
@@ -49,14 +57,62 @@ subprojects {
                 name = "sdkRepo"
                 url = uri(rootProject.layout.buildDirectory.dir("maven"))
             }
+            maven {
+                name = "staging"
+                url = uri(rootProject.layout.buildDirectory.dir("staging-deploy"))
+            }
         }
+        publications.withType<MavenPublication>().configureEach {
+            // Maven Central wants a javadoc jar next to every artifact; Dokka output would add nothing to the KDoc in the
+            // sources jar. One jar per publication, as signing the same file for two publications clashes.
+            val publication = name
+            artifact(
+                tasks.register<Jar>("${publication}JavadocJar") {
+                    archiveClassifier.set("javadoc")
+                    archiveAppendix.set(publication)
+                },
+            )
+            pom {
+                name.set(project.name)
+                description.set(pomDescription)
+                url.set("https://github.com/Radarpayments/mobile-sdk")
+                licenses {
+                    license {
+                        name.set("MIT License")
+                        url.set("https://opensource.org/licenses/MIT")
+                    }
+                }
+                developers {
+                    developer {
+                        id.set("radarpayments")
+                        name.set("BPC")
+                        url.set("https://github.com/Radarpayments")
+                    }
+                }
+                scm {
+                    url.set("https://github.com/Radarpayments/mobile-sdk")
+                    connection.set("scm:git:https://github.com/Radarpayments/mobile-sdk.git")
+                    developerConnection.set("scm:git:ssh://git@github.com/Radarpayments/mobile-sdk.git")
+                }
+            }
+        }
+    }
+    val signingKey = providers.environmentVariable("SIGNING_KEY").orNull
+    if (!signingKey.isNullOrBlank()) {
+        apply(plugin = "signing")
+        extensions.configure<SigningExtension> {
+            useInMemoryPgpKeys(signingKey, providers.environmentVariable("SIGNING_PASSWORD").orNull)
+            sign(the<PublishingExtension>().publications)
+        }
+        // Every publication of a multiplatform module shares the root module's files: Gradle wants the order explicit.
+        tasks.withType<AbstractPublishToMaven>().configureEach { mustRunAfter(tasks.withType<Sign>()) }
     }
 }
 
 tasks.register("publishAndroidToRepo") {
     group = "publishing"
     description = "Publishes the SDK's Android libraries to build/maven for the Flutter and React Native plugins."
-    sdkLibraries.forEach { module ->
+    sdkLibraries.keys.forEach { module ->
         dependsOn(
             ":$module:publishKotlinMultiplatformPublicationToSdkRepoRepository",
             ":$module:publishAndroidReleasePublicationToSdkRepoRepository",

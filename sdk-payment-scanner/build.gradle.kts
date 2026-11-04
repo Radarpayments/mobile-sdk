@@ -64,8 +64,8 @@ kotlin {
             // module keeps its Swift names under the `Sdk_core*` prefix (matching the shape
             // sdk_payment.xcframework exposed before scanner was added), so existing merchant
             // code that references e.g. `Sdk_coreTokenResult` keeps compiling.
+            xcf.add(this)
         }
-        xcf.add(target.binaries.getFramework("DEBUG"))
     }
 }
 
