@@ -6,6 +6,7 @@ import androidx.compose.ui.unit.dp
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
+import io.kotest.matchers.string.shouldNotContain
 import io.kotest.matchers.types.shouldBeInstanceOf
 import net.payrdr.mobile.payment.sdk.payment.applepay.ApplePayMerchantCapability
 import net.payrdr.mobile.payment.sdk.payment.applepay.ApplePayNetwork
@@ -19,6 +20,7 @@ import net.payrdr.mobile.payment.sdk.payment.gpay.GooglePayEnvironment
 import net.payrdr.mobile.payment.sdk.payment.logger.ConsoleLogTransport
 import net.payrdr.mobile.payment.sdk.payment.scanner.provider.MlKitVisionCardScannerProvider
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.DefaultDarkColors
+import net.payrdr.mobile.payment.sdk.payment.ui.theme.DefaultLightColors
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentShapes
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentTheme
 import kotlin.test.Test
@@ -153,5 +155,50 @@ class CheckoutRequestTest {
         val error = shouldThrow<InvalidBridgeRequest> { request("""{"baseUrl":"u","googlePay":{"cardNetworks":["NOT_A_NETWORK"]}}""") }
 
         error.message shouldContain "NOT_A_NETWORK"
+    }
+
+    @Test fun `corners set once round the buttons too unless they have their own`() {
+        val shapes =
+            request("""{"baseUrl":"u","theme":{"mode":"custom","cornerRadius":12}}""")
+                .config.theme
+                .let { (it as PaymentTheme.Custom).shapes }
+
+        shapes.button shouldBe RoundedCornerShape(12.dp)
+        request("""{"baseUrl":"u","theme":{"mode":"custom"}}""").config.theme shouldBe
+            PaymentTheme.Custom(colors = DefaultLightColors, shapes = PaymentShapes.Default)
+    }
+
+    @Test fun `a theme option outside the contract names the option and the value`() {
+        listOf(
+            """{"mode":"sepia"}""" to "sepia",
+            """{"mode":"custom","base":"sepia"}""" to "theme.base",
+            """{"mode":"custom","colors":{"accent":"#FFFFFF"}}""" to "accent",
+            """{"mode":"custom","colors":{"primary":"#FFF"}}""" to "#FFF",
+        ).forEach { (theme, named) ->
+            shouldThrow<InvalidBridgeRequest> { request("""{"baseUrl":"u","theme":$theme}""") }.message shouldContain named
+        }
+    }
+
+    @Test fun `a malformed SSL pin is an invalid request`() {
+        val error =
+            shouldThrow<InvalidBridgeRequest> {
+                request("""{"baseUrl":"u","sslPins":[{"host":"pay.example.com","sha256":"not-a-pin"}]}""")
+            }
+
+        error.message shouldContain "sslPins"
+    }
+
+    @Test fun `an unknown wallet option names the field it came in`() {
+        shouldThrow<InvalidBridgeRequest> { request("""{"baseUrl":"u","googlePay":{"environment":"STAGING"}}""") }
+            .message shouldContain "googlePay.environment"
+        shouldThrow<InvalidBridgeRequest> { request("""{"baseUrl":"u","applePay":{"merchantId":"m","networks":["NOPE"]}}""") }
+            .message shouldContain "applePay.networks"
+    }
+
+    @Test fun `a malformed request says where it broke and never quotes it`() {
+        val error = shouldThrow<InvalidBridgeRequest> { request("""{"baseUrl":"u","cardScanner":"secret-value"}""") }
+
+        error.message shouldContain "$.config.cardScanner"
+        error.message!! shouldNotContain "secret-value"
     }
 }

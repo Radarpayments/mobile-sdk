@@ -1,6 +1,7 @@
 package net.payrdr.mobile.payment.sdk.payment.ui.util
 
 import io.kotest.matchers.shouldBe
+import kotlinx.datetime.LocalDate
 import net.payrdr.mobile.payment.sdk.payment.result.PayerField
 import net.payrdr.mobile.payment.sdk.payment.result.PayerFieldSpec
 import kotlin.test.Test
@@ -10,7 +11,7 @@ class PayerFieldValidationTest {
         field: PayerField,
         value: String,
         mandatory: Boolean = true,
-    ) = PayerFieldValidation.validate(PayerFieldSpec(field, mandatory), value)
+    ) = PayerFieldValidation.validate(PayerFieldSpec(field, mandatory), value, today = LocalDate(2026, 11, 5))
 
     @Test
     fun `empty is an error only when mandatory`() {
@@ -55,5 +56,38 @@ class PayerFieldValidationTest {
         check(PayerField.BILLING_POSTAL_CODE, "NW1 6XE") shouldBe null
         check(PayerField.BILLING_POSTAL_CODE, "10115") shouldBe null
         check(PayerField.BILLING_POSTAL_CODE, "NW1#6XE") shouldBe FieldError.POSTAL_CODE_INVALID
+    }
+
+    @Test
+    fun `a birthday is a real past day`() {
+        check(PayerField.PAYER_BIRTHDAY, "29.02.2000") shouldBe null
+        check(PayerField.RECIPIENT_BIRTHDAY, "05.11.2026") shouldBe null
+        check(PayerField.PAYER_BIRTHDAY, "29.02.2001") shouldBe FieldError.DATE_INVALID
+        check(PayerField.PAYER_BIRTHDAY, "06.11.2026") shouldBe FieldError.DATE_INVALID
+        check(PayerField.RECIPIENT_BIRTHDAY, "1990-03-15") shouldBe FieldError.DATE_INVALID
+    }
+
+    @Test
+    fun `account and document numbers are the bank's own strings and are not checked`() {
+        check(PayerField.PAYER_ACCOUNT, "GB33 BUKB 2020 1555 5555 55") shouldBe null
+        check(PayerField.RECIPIENT_ACCOUNT, "name@example.com") shouldBe null
+        check(PayerField.PAYER_ID_NUMBER, "№ 12-34") shouldBe null
+        check(PayerField.RECIPIENT_ID_TYPE, "PASSPORT") shouldBe null
+    }
+
+    @Test
+    fun `the recipient's names and address follow the billing rules`() {
+        check(PayerField.RECIPIENT_FIRST_NAME, "Rita") shouldBe null
+        check(PayerField.RECIPIENT_LAST_NAME, "Иванова") shouldBe FieldError.LATIN_ONLY
+        check(PayerField.RECIPIENT_POSTAL_CODE, "-1000") shouldBe FieldError.POSTAL_CODE_INVALID
+        check(PayerField.RECIPIENT_COUNTRY, "") shouldBe FieldError.COUNTRY_EMPTY
+    }
+
+    @Test
+    fun `formatted fields fit exactly what they hold`() {
+        PayerFieldValidation.maxLength(PayerField.PAYER_BIRTHDAY) shouldBe "DD.MM.YYYY".length
+        PayerFieldValidation.maxLength(PayerField.RECIPIENT_BIRTHDAY) shouldBe "DD.MM.YYYY".length
+        PayerFieldValidation.maxLength(PayerField.BILLING_COUNTRY) shouldBe 2
+        PayerFieldValidation.maxLength(PayerField.RECIPIENT_COUNTRY) shouldBe 2
     }
 }

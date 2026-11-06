@@ -2,12 +2,21 @@ package net.payrdr.mobile.payment.sdk.payment.result
 
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
+import net.payrdr.mobile.payment.sdk.payment.exception.SdkApplePayException
+import net.payrdr.mobile.payment.sdk.payment.exception.SdkCryptogramException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkDeclinedException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkException
+import net.payrdr.mobile.payment.sdk.payment.exception.SdkGooglePayException
+import net.payrdr.mobile.payment.sdk.payment.exception.SdkInvalidSessionIdException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkNetworkException
+import net.payrdr.mobile.payment.sdk.payment.exception.SdkNotConfiguredException
+import net.payrdr.mobile.payment.sdk.payment.exception.SdkOrderNotFoundException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkPaymentApiException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkSessionExpiredException
+import net.payrdr.mobile.payment.sdk.payment.exception.SdkSessionNotFoundException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkThreeDsChallengeFailedException
+import net.payrdr.mobile.payment.sdk.payment.exception.SdkThreeDsTimeoutException
+import net.payrdr.mobile.payment.sdk.payment.exception.SdkTransactionException
 import kotlin.test.Test
 
 class CheckoutResultCodecTest {
@@ -58,6 +67,31 @@ class CheckoutResultCodecTest {
         failedWith(SdkSessionExpiredException("md-1"))
             .shouldBeInstanceOf<SdkSessionExpiredException>()
             .mdOrder shouldBe "md-1"
+    }
+
+    @Test fun `every SDK error crosses the activity result as itself with its message`() {
+        listOf(
+            SdkNetworkException("offline"),
+            SdkSessionNotFoundException("ps_1"),
+            SdkOrderNotFoundException("md-1"),
+            SdkInvalidSessionIdException("ps_?"),
+            SdkCryptogramException("no cryptogram"),
+            SdkNotConfiguredException("no gateway"),
+            SdkTransactionException("failed"),
+            SdkThreeDsTimeoutException(),
+            SdkGooglePayException("unavailable"),
+            SdkApplePayException("unavailable"),
+        ).forEach { error ->
+            val decoded = failedWith(error)
+            decoded::class shouldBe error::class
+            decoded.message shouldBe error.message
+        }
+    }
+
+    @Test fun `errors that name a session or an order keep it`() {
+        failedWith(SdkSessionNotFoundException("ps_1")).shouldBeInstanceOf<SdkSessionNotFoundException>().sessionId shouldBe "ps_1"
+        failedWith(SdkOrderNotFoundException("md-1")).shouldBeInstanceOf<SdkOrderNotFoundException>().mdOrder shouldBe "md-1"
+        failedWith(SdkInvalidSessionIdException("ps_?")).shouldBeInstanceOf<SdkInvalidSessionIdException>().sessionId shouldBe "ps_?"
     }
 
     @Test fun `an unrecognised exception arrives as a plain SdkException with its message`() {

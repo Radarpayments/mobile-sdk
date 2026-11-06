@@ -1,5 +1,6 @@
 package net.payrdr.mobile.payment.sdk.payment
 
+import androidx.compose.ui.text.intl.Locale
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldMatch
 import io.kotest.matchers.types.shouldBeInstanceOf
@@ -14,6 +15,7 @@ import kotlinx.coroutines.test.runTest
 import net.payrdr.mobile.payment.sdk.payment.api.PaymentApiImpl
 import net.payrdr.mobile.payment.sdk.payment.config.CheckoutConfig
 import net.payrdr.mobile.payment.sdk.payment.config.SdkPaymentConfig
+import net.payrdr.mobile.payment.sdk.payment.exception.SdkNetworkException
 import net.payrdr.mobile.payment.sdk.payment.flow.PaymentFlowController
 import net.payrdr.mobile.payment.sdk.payment.http.HttpClientFactory
 import net.payrdr.mobile.payment.sdk.payment.http.defaultHttpClientFactory
@@ -28,6 +30,7 @@ import net.payrdr.mobile.payment.sdk.payment.support.FakeWebChallengeHost
 import net.payrdr.mobile.payment.sdk.payment.support.Fixtures
 import net.payrdr.mobile.payment.sdk.payment.support.json
 import net.payrdr.mobile.payment.sdk.payment.support.mockJsonClient
+import net.payrdr.mobile.payment.sdk.payment.utils.MoneyFormatter
 import kotlin.test.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -76,6 +79,35 @@ class SdkPaymentTest {
             advanceUntilIdle()
 
             api.getSessionStatusCalls shouldBe listOf(Fixtures.TEST_MD_ORDER)
+        }
+
+    @Test
+    fun `completePayment returns the result the checkout ends with`() =
+        runTest {
+            val api = FakePaymentApi().apply { sessionStatusError = SdkNetworkException("offline") }
+            val sdk = SdkPayment.create(CONFIG, SdkPaymentNetwork(api, FakeKeyProvider()))
+
+            val result = sdk.completePayment(CheckoutConfig.MdOrder(Fixtures.TEST_MD_ORDER), FakeWebChallengeHost(), this)
+
+            result.shouldBeInstanceOf<CheckoutResult.Failed>().error.shouldBeInstanceOf<SdkNetworkException>()
+            result.orderId shouldBe Fixtures.TEST_MD_ORDER
+        }
+
+    @Test
+    fun `the amount is written in the checkout's language or the device's when it names none`() =
+        runTest {
+            fun amountIn(locale: String?): String? {
+                val controller =
+                    SdkPayment
+                        .create(CONFIG.copy(locale = locale), SdkPaymentNetwork(FakePaymentApi(), FakeKeyProvider()))
+                        .newFlow(FakeWebChallengeHost(), this)
+                controller.handle(PaymentIntent.Start(CheckoutConfig.MdOrder(Fixtures.TEST_MD_ORDER)))
+                advanceUntilIdle()
+                return controller.order.value?.formattedAmount
+            }
+
+            amountIn("de") shouldBe "49,90\u00A0€"
+            amountIn(" ") shouldBe MoneyFormatter.format("4990", "EUR", Locale.current.language)
         }
 
     @Test

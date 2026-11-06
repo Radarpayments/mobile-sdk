@@ -1,6 +1,7 @@
 package net.payrdr.mobile.payment.sdk.payment.ui.loading
 
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
@@ -9,6 +10,7 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class LoadingPhasesTest {
     /** Phases with the virtual time each arrived at; the session is ready at [readyAtMs] (null = never). */
     private fun TestScope.timeline(readyAtMs: Long?): List<Pair<Long, LoadingPhase>> {

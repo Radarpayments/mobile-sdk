@@ -70,6 +70,18 @@ class CoreTokenTest {
         result["errors"]!!.jsonObject.keys shouldBe setOf("mdOrder")
     }
 
+    @Test fun `each field a plugin's form shows comes back under its own key`() {
+        fun errorKeys(request: String) = token(request)["errors"]!!.jsonObject.keys
+
+        errorKeys("""{"type":"cardInstant","pan":"4532896701439077","expiry":"13/28","cvc":"444","pubKey":$key}""") shouldBe setOf("expiry")
+        errorKeys("""{"type":"cardInstant","pan":"4532896701439077","expiry":"12/28","cvc":"4","pubKey":$key}""") shouldBe setOf("cvc")
+        errorKeys(
+            """{"type":"cardInstant","pan":"4532896701439077","expiry":"12/28","cvc":"444","cardholder":"J0HN","pubKey":$key}""",
+        ) shouldBe setOf("cardholder")
+        errorKeys("""{"type":"cardInstant",$card,"pubKey":"not a key"}""") shouldBe setOf("pubKey")
+        errorKeys("""{"type":"bindingInstant","bindingId":"","pubKey":$key}""") shouldBe setOf("bindingId")
+    }
+
     @Test fun `an unknown type is an invalid request`() {
         token("""{"type":"wallet","pubKey":$key}""")["error"]!!.jsonObject["code"]!!.jsonPrimitive.content shouldBe "invalid_request"
         token("nope")["error"]!!.jsonObject["code"]!!.jsonPrimitive.content shouldBe "invalid_request"
