@@ -449,7 +449,8 @@ public class PaymentFlowController internal constructor(
             }
 
             // The gateway writes an empty `displayErrorMessage` when it has no wording for the buyer: the reason is then `error`.
-            response.acsUrl == null && refusalReason(response) != null -> {
+            // A transfer may be refused by its code alone, with no wording at all.
+            response.acsUrl == null && (refusalReason(response) != null || response.errorCode != 0) -> {
                 val reason = refusalReason(response)
                 completeWithError(SdkDeclinedException(declineCode = response.errorTypeName, message = reason), reason)
             }

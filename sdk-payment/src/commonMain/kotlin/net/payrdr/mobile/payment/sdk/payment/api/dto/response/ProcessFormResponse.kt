@@ -21,7 +21,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 internal data class ProcessFormResponse(
-    val errorCode: Int,
+    val errorCode: Int = 0,
     val acsUrl: String? = null,
     val paReq: String? = null,
     val termUrl: String? = null,

@@ -21,6 +21,7 @@ import net.payrdr.mobile.payment.sdk.payment.api.dto.response.SessionStatusRespo
 import net.payrdr.mobile.payment.sdk.payment.config.ApplePayConfig
 import net.payrdr.mobile.payment.sdk.payment.config.CheckoutConfig
 import net.payrdr.mobile.payment.sdk.payment.config.GooglePayConfig
+import net.payrdr.mobile.payment.sdk.payment.exception.SdkDeclinedException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkNotConfiguredException
 import net.payrdr.mobile.payment.sdk.payment.logger.Logger
 import net.payrdr.mobile.payment.sdk.payment.result.CheckoutResult
@@ -175,6 +176,21 @@ class AftFlowTest {
                 .terminal()
                 .shouldBeInstanceOf<CheckoutResult.Failed>()
                 .error.message shouldBe "Access denied"
+        }
+
+    @Test fun `a transfer refused by its code alone fails at once`() =
+        runTest {
+            val built = start(aft())
+            built.api.nextP2PPerformResponse = ProcessFormResponse(errorCode = 5)
+            built.controller.handle(PaymentIntent.TapApplePay)
+            advanceUntilIdle()
+
+            built
+                .terminal()
+                .shouldBeInstanceOf<CheckoutResult.Failed>()
+                .error
+                .shouldBeInstanceOf<SdkDeclinedException>()
+            built.api.getFinishedPaymentInfoCalls.shouldBeEmpty()
         }
 
     @Test fun `no wallets for a transfer that must save the card - a wallet saves none`() =
