@@ -693,6 +693,29 @@ class AppLocalizationsEs extends AppLocalizations {
   String get topupTryAgain => 'Intentar de nuevo';
 
   @override
+  String get topupAddCard => 'Añadir tarjeta';
+
+  @override
+  String get topupAddingCard => 'Añadiendo tarjeta…';
+
+  @override
+  String get topupCardAddedTitle => 'Tarjeta añadida';
+
+  @override
+  String get topupCardAddedBody => 'Elígela en la ventana de pago en tu próxima recarga. No se ha cobrado nada.';
+
+  @override
+  String get topupCardFailedTitle => 'Tarjeta no añadida';
+
+  @override
+  String get topupCardFailedBody =>
+      'El banco de la tarjeta no la confirmó. No se ha cobrado nada; prueba otra tarjeta.';
+
+  @override
+  String get topupCardUnknownBody =>
+      'El banco aún no ha confirmado la tarjeta. Si lo hace, aparecerá en tu próxima recarga.';
+
+  @override
   String doneCredited(String account) {
     return 'abonado en la cuenta de inversión •• $account';
   }

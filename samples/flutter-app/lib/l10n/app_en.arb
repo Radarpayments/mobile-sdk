@@ -340,6 +340,13 @@
   "topupUnknownTitle": "Status unknown",
   "topupUnknownBody": "Check the order in the merchant portal before trying again.",
   "topupTryAgain": "Try again",
+  "topupAddCard": "Add card",
+  "topupAddingCard": "Adding card…",
+  "topupCardAddedTitle": "Card added",
+  "topupCardAddedBody": "Choose it in the payment sheet at your next top-up. No money was taken.",
+  "topupCardFailedTitle": "Card not added",
+  "topupCardFailedBody": "The card's bank did not confirm it. No money was taken; try another card.",
+  "topupCardUnknownBody": "The bank has not confirmed the card yet. If it has, the card appears at your next top-up.",
   "doneCredited": "credited to investment account •• {account}",
   "@doneCredited": {
     "placeholders": {

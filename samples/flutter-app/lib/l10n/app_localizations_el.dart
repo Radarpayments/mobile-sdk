@@ -697,6 +697,29 @@ class AppLocalizationsEl extends AppLocalizations {
   String get topupTryAgain => 'Δοκιμάστε ξανά';
 
   @override
+  String get topupAddCard => 'Προσθήκη κάρτας';
+
+  @override
+  String get topupAddingCard => 'Προσθήκη κάρτας…';
+
+  @override
+  String get topupCardAddedTitle => 'Η κάρτα προστέθηκε';
+
+  @override
+  String get topupCardAddedBody => 'Επιλέξτε την στο παράθυρο πληρωμής στην επόμενη φόρτωση. Δεν χρεώθηκε κανένα ποσό.';
+
+  @override
+  String get topupCardFailedTitle => 'Η κάρτα δεν προστέθηκε';
+
+  @override
+  String get topupCardFailedBody =>
+      'Η τράπεζα της κάρτας δεν την επιβεβαίωσε. Δεν χρεώθηκε κανένα ποσό· δοκιμάστε άλλη κάρτα.';
+
+  @override
+  String get topupCardUnknownBody =>
+      'Η τράπεζα δεν έχει επιβεβαιώσει ακόμη την κάρτα. Αν την επιβεβαιώσει, θα εμφανιστεί στην επόμενη φόρτωση.';
+
+  @override
   String doneCredited(String account) {
     return 'πιστώθηκαν στον επενδυτικό λογαριασμό •• $account';
   }

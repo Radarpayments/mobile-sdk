@@ -690,6 +690,27 @@ class AppLocalizationsAr extends AppLocalizations {
   String get topupTryAgain => 'حاول مرة أخرى';
 
   @override
+  String get topupAddCard => 'إضافة بطاقة';
+
+  @override
+  String get topupAddingCard => 'جارٍ إضافة البطاقة…';
+
+  @override
+  String get topupCardAddedTitle => 'تمت إضافة البطاقة';
+
+  @override
+  String get topupCardAddedBody => 'اخترها في نافذة الدفع عند الشحن التالي. لم يُخصم أي مبلغ.';
+
+  @override
+  String get topupCardFailedTitle => 'لم تُضف البطاقة';
+
+  @override
+  String get topupCardFailedBody => 'لم يؤكد بنك البطاقة البطاقة. لم يُخصم أي مبلغ؛ جرّب بطاقة أخرى.';
+
+  @override
+  String get topupCardUnknownBody => 'لم يؤكد البنك البطاقة بعد. إن أكدها، ستظهر عند الشحن التالي.';
+
+  @override
   String doneCredited(String account) {
     return 'أُودع في الحساب الاستثماري •• $account';
   }

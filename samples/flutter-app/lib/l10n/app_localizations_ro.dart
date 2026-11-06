@@ -694,6 +694,29 @@ class AppLocalizationsRo extends AppLocalizations {
   String get topupTryAgain => 'Încearcă din nou';
 
   @override
+  String get topupAddCard => 'Adaugă card';
+
+  @override
+  String get topupAddingCard => 'Se adaugă cardul…';
+
+  @override
+  String get topupCardAddedTitle => 'Card adăugat';
+
+  @override
+  String get topupCardAddedBody =>
+      'Alegeți-l în fereastra de plată la următoarea alimentare. Nu s-a retras nicio sumă.';
+
+  @override
+  String get topupCardFailedTitle => 'Cardul nu a fost adăugat';
+
+  @override
+  String get topupCardFailedBody => 'Banca cardului nu l-a confirmat. Nu s-a retras nicio sumă; încercați alt card.';
+
+  @override
+  String get topupCardUnknownBody =>
+      'Banca nu a confirmat încă cardul. Dacă îl confirmă, cardul apare la următoarea alimentare.';
+
+  @override
   String doneCredited(String account) {
     return 'creditat în contul de investiții •• $account';
   }

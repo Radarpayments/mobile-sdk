@@ -18,7 +18,8 @@ import 'top_up_amount.dart';
 
 /// Northwind Invest, the AFT demo: portfolio → top-up amount → SDK sheet ("Transfer") → done. The transfer is
 /// registered with `registerP2P.do` and the investor's details; the account is credited only on a completed transfer
-/// and kept on the device.
+/// and kept on the device. "Add card" registers a transfer of 0 that only saves the card. The investor is always the
+/// demo buyer: an investment app knows its user, and a saved card shows up only for the clientId it was saved for.
 class InvestStore extends StatefulWidget {
   const InvestStore({super.key, required this.onOpenSettings});
 
@@ -35,6 +36,9 @@ class _InvestStoreState extends State<InvestStore> {
   late final StoreCheckout _checkout;
   _Screen _screen = _Screen.portfolio;
   DateTime _now = DateTime.now();
+
+  /// The sheet is open for "Add card": its result saves a card, it credits nothing.
+  bool _addingCard = false;
 
   @override
   void initState() {
@@ -67,14 +71,28 @@ class _InvestStoreState extends State<InvestStore> {
   Future<void> _pay() async {
     final amountMinor = _model.amount.minor;
     if (amountMinor == null) return;
+    setState(() => _addingCard = false);
+    final outcome = await _transfer(amountMinor);
+    if (outcome == null || !mounted) return;
+    _model.onOutcome(outcome, amountMinor);
+    if (_model.status is TopUpDone) setState(() => _screen = _Screen.done);
+  }
+
+  Future<void> _addCard() async {
+    setState(() => _addingCard = true);
+    final outcome = await _transfer(0);
+    if (outcome == null || !mounted) return;
+    _model.onCardOutcome(outcome);
+  }
+
+  Future<CheckoutOutcome?> _transfer(int amountMinor) {
     final scope = AppScope.of(context);
     final prefs = scope.prefs;
-    final scenario = prefs.scenario;
-    final outcome = await _checkout.pay(
+    return _checkout.pay(
       registrar: scope.transferRegistrarFactory(prefs, NorthwindProfile.prefill),
       config: buildSdkConfig(
         baseUrl: prefs.baseUrl,
-        scenario: scenario,
+        scenario: prefs.scenario,
         cover: coverStyle(CoverId.invest),
         themeOverride: prefs.sheetTheme,
         locale: prefs.localeOverride,
@@ -84,11 +102,8 @@ class _InvestStoreState extends State<InvestStore> {
         applePayMerchantId: prefs.applePayMerchantId,
       ),
       amountMinor: amountMinor,
-      clientId: scenario.buyerWithCards ? prefs.clientId : null,
+      clientId: prefs.clientId,
     );
-    if (outcome == null || !mounted) return;
-    _model.onOutcome(outcome, amountMinor);
-    if (_model.status is TopUpDone) setState(() => _screen = _Screen.done);
   }
 
   @override
@@ -119,8 +134,10 @@ class _InvestStoreState extends State<InvestStore> {
                     key: const ValueKey('topUp'),
                     model: _model,
                     checkout: _checkout,
+                    addingCard: _addingCard,
                     onBack: _toPortfolio,
                     onContinue: _pay,
+                    onAddCard: _addCard,
                     onOpenSettings: widget.onOpenSettings,
                   ),
                   _Screen.done => switch (_model.status) {
@@ -353,7 +370,7 @@ class _PrimaryButton extends StatelessWidget {
 }
 
 class _OutlineButton extends StatelessWidget {
-  const _OutlineButton({required this.label, required this.onPressed, this.icon});
+  const _OutlineButton({super.key, required this.label, required this.onPressed, this.icon});
 
   final String label;
   final VoidCallback? onPressed;
@@ -776,21 +793,26 @@ class _SectionTitle extends StatelessWidget {
 }
 
 /// The amount to top up the account with, typed on the system keyboard. "Continue" registers the transfer and the
-/// SDK sheet takes it from there.
+/// SDK sheet takes it from there; "Add card" ([onAddCard]) saves a card for later top-ups without moving money
+/// ([addingCard] while it runs).
 class _TopUp extends StatefulWidget {
   const _TopUp({
     super.key,
     required this.model,
     required this.checkout,
+    required this.addingCard,
     required this.onBack,
     required this.onContinue,
+    required this.onAddCard,
     required this.onOpenSettings,
   });
 
   final InvestModel model;
   final StoreCheckout checkout;
+  final bool addingCard;
   final VoidCallback onBack;
   final VoidCallback onContinue;
+  final VoidCallback onAddCard;
   final VoidCallback onOpenSettings;
 
   @override
@@ -841,8 +863,9 @@ class _TopUpState extends State<_TopUp> {
     final amount = model.amount;
     final status = model.status;
     final busy = widget.checkout.busy;
+    final addingCard = widget.addingCard;
     final String label;
-    if (busy) {
+    if (busy && !addingCard) {
       label = l10n.topupCreating;
     } else if (status is TopUpDeclined) {
       label = l10n.topupTryAgain;
@@ -902,6 +925,13 @@ class _TopUpState extends State<_TopUp> {
                     ),
                   ],
                 ),
+              ),
+              const SizedBox(height: 10),
+              _OutlineButton(
+                key: const Key('topup_add_card'),
+                label: busy && addingCard ? l10n.topupAddingCard : l10n.topupAddCard,
+                icon: Icons.credit_card,
+                onPressed: busy ? null : widget.onAddCard,
               ),
               const SizedBox(height: 22),
               Text(
@@ -968,15 +998,15 @@ class _TopUpState extends State<_TopUp> {
               ],
               ScenarioRow(
                 cover: CoverId.invest,
-                buyerWithCards: context.prefs.scenario.buyerWithCards,
-                onTap: () => showScenarioSheet(context),
+                buyerWithCards: true,
+                onTap: () => showScenarioSheet(context, buyerChoice: false),
               ),
               const SizedBox(height: 10),
               _PrimaryButton(
                 key: const Key('invest_continue'),
                 label: label,
-                busy: busy,
-                onPressed: status.canContinue(amount) ? widget.onContinue : null,
+                busy: busy && !addingCard,
+                onPressed: status.canContinue(amount) && !busy ? widget.onContinue : null,
               ),
             ],
           ),
@@ -1039,23 +1069,28 @@ class _Banner extends StatelessWidget {
     final (title, body) = switch (status) {
       TopUpDeclined() => (l10n.topupFailedTitle, l10n.topupFailedBody),
       TopUpUnconfirmed() => (l10n.topupUnknownTitle, l10n.topupUnknownBody),
+      TopUpCardAdded() => (l10n.topupCardAddedTitle, l10n.topupCardAddedBody),
+      TopUpCardDeclined() => (l10n.topupCardFailedTitle, l10n.topupCardFailedBody),
+      TopUpCardUnconfirmed() => (l10n.topupUnknownTitle, l10n.topupCardUnknownBody),
       _ => (null, null),
     };
     if (title == null || body == null) return const SizedBox.shrink();
+    final added = status is TopUpCardAdded;
+    final tint = added ? InvestColors.accent : InvestColors.error;
     return Semantics(
       liveRegion: true,
       child: Container(
         margin: const EdgeInsets.only(top: 12),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
-          color: InvestColors.errorSoft,
+          color: added ? InvestColors.accentSoft : InvestColors.errorSoft,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: const Color(0x73F87171)),
+          border: Border.all(color: tint.withValues(alpha: 0.45)),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(Icons.error_outline, color: InvestColors.error, size: 22),
+            Icon(added ? Icons.check_circle_outline : Icons.error_outline, color: tint, size: 22),
             const SizedBox(width: 10),
             Expanded(
               child: Column(
@@ -1063,7 +1098,7 @@ class _Banner extends StatelessWidget {
                 children: [
                   Text(title, style: plex(15, weight: FontWeight.w600)),
                   Text(body, style: plex(13, color: InvestColors.muted)),
-                  if (status case TopUpDeclined(:final message?))
+                  if (status case TopUpDeclined(:final message?) || TopUpCardDeclined(:final message?))
                     Padding(
                       padding: const EdgeInsets.only(top: 6),
                       child: Text(l10n.topupFailedDetail(message), style: plex(12, color: InvestColors.muted)),

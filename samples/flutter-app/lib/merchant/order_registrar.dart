@@ -95,6 +95,9 @@ class GatewayOrderRegistrar implements OrderRegistrar {
   final TransferPrefill? prefill;
 
   static const _eur = '978';
+  static const _withoutToCard = 'WITHOUT_TO_CARD';
+  static const _verify = 'VERIFY';
+  static const _forceCreateBinding = 'FORCE_CREATE_BINDING';
 
   @override
   Future<OrderRegistration> register(int amountMinor, String? clientId) async {
@@ -120,7 +123,11 @@ class GatewayOrderRegistrar implements OrderRegistrar {
 
   /// A one-leg AFT transfer (`WITHOUT_TO_CARD`, transaction type `A`): the buyer's card is debited, the money goes
   /// to the recipient; the sheet asks for the sender and recipient details the gateway needs.
+  ///
+  /// A transfer of 0 only saves the buyer's card for [clientId]: the gateway checks the card and reverses (`VERIFY`),
+  /// and refuses `VERIFY` without `FORCE_CREATE_BINDING`.
   Future<OrderRegistration> _registerTransfer(int amountMinor, String? clientId) {
+    final features = amountMinor == 0 ? const [_withoutToCard, _verify, _forceCreateBinding] : const [_withoutToCard];
     final order = {
       'username': _login,
       'password': _password,
@@ -129,9 +136,7 @@ class GatewayOrderRegistrar implements OrderRegistrar {
       'orderNumber': _newOrderNumber(),
       'returnUrl': _returnUrl,
       'transactionTypeIndicator': 'A',
-      'features': {
-        'feature': ['WITHOUT_TO_CARD'],
-      },
+      'features': {'feature': features},
       'clientId': ?clientId,
       'email': ?prefill?.email,
       if (prefill?.billingPayerData case final payer? when payer.isNotEmpty) 'billingPayerData': payer,

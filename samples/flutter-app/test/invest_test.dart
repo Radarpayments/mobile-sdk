@@ -95,6 +95,7 @@ void main() {
 
     test('unconfirmed blocks continue', () {
       expect(const TopUpUnconfirmed().canContinue(const TopUpAmount()), isFalse);
+      expect(const TopUpCardUnconfirmed().canContinue(const TopUpAmount()), isTrue);
       expect(const TopUpDeclined(null).canContinue(const TopUpAmount()), isTrue);
       expect(const TopUpEditing().canContinue(const TopUpAmount()), isTrue);
       expect(const TopUpEditing().canContinue(TopUpAmount.parse('5')), isFalse);
@@ -140,6 +141,29 @@ void main() {
       expect(model.status, const TopUpUnconfirmed());
       expect(model.account.freeCashMinor, 1240);
       model.onOutcome(const Cancelled(), 10000);
+      expect(model.status, const TopUpEditing());
+    });
+
+    test('a saved card credits nothing and the top-up may go on', () {
+      final model = InvestModel(load: () => seed, save: (_) => fail('nothing to save'), clock: () => 1000);
+      model.onCardOutcome(const Success('md-verify'));
+      expect(model.account, seed);
+      expect(model.status, const TopUpCardAdded());
+      model.edit('100');
+      expect(model.status.canContinue(model.amount), isTrue);
+    });
+
+    test('a card the bank refused or did not confirm leaves the top-up open', () {
+      final model = InvestModel(load: () => seed, save: (_) => fail('nothing to save'), clock: () => 1000);
+      model.edit('100');
+      model.onCardOutcome(const Declined('Issuer declined'));
+      expect(model.status, const TopUpCardDeclined('Issuer declined'));
+      expect(model.status.canContinue(model.amount), isTrue);
+      model.onCardOutcome(const Unconfirmed('md-verify'));
+      expect(model.status, const TopUpCardUnconfirmed());
+      expect(model.status.canContinue(model.amount), isTrue);
+      expect(model.account, seed);
+      model.onCardOutcome(const Cancelled());
       expect(model.status, const TopUpEditing());
     });
 

@@ -61,6 +61,17 @@ class InvestModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// The sheet of "Add card" closed: the account does not change, whatever the outcome.
+  void onCardOutcome(CheckoutOutcome outcome) {
+    _status = switch (outcome) {
+      Success() => const TopUpCardAdded(),
+      Declined(:final message) => TopUpCardDeclined(message),
+      Unconfirmed() => const TopUpCardUnconfirmed(),
+      Cancelled() => const TopUpEditing(),
+    };
+    notifyListeners();
+  }
+
   /// Buys the Global ETF for [amountMinor] (at most the free cash), without a payment.
   void invest(int amountMinor) {
     _update(_account.invest(amountMinor, _clock()));

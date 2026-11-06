@@ -1399,6 +1399,48 @@ abstract class AppLocalizations {
   /// **'Try again'**
   String get topupTryAgain;
 
+  /// No description provided for @topupAddCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Add card'**
+  String get topupAddCard;
+
+  /// No description provided for @topupAddingCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Adding card…'**
+  String get topupAddingCard;
+
+  /// No description provided for @topupCardAddedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Card added'**
+  String get topupCardAddedTitle;
+
+  /// No description provided for @topupCardAddedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose it in the payment sheet at your next top-up. No money was taken.'**
+  String get topupCardAddedBody;
+
+  /// No description provided for @topupCardFailedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Card not added'**
+  String get topupCardFailedTitle;
+
+  /// No description provided for @topupCardFailedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The card\'s bank did not confirm it. No money was taken; try another card.'**
+  String get topupCardFailedBody;
+
+  /// No description provided for @topupCardUnknownBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The bank has not confirmed the card yet. If it has, the card appears at your next top-up.'**
+  String get topupCardUnknownBody;
+
   /// No description provided for @doneCredited.
   ///
   /// In en, this message translates to:

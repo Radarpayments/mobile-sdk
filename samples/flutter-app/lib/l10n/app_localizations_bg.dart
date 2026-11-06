@@ -693,6 +693,28 @@ class AppLocalizationsBg extends AppLocalizations {
   String get topupTryAgain => 'Опитай отново';
 
   @override
+  String get topupAddCard => 'Добави карта';
+
+  @override
+  String get topupAddingCard => 'Добавяне на карта…';
+
+  @override
+  String get topupCardAddedTitle => 'Картата е добавена';
+
+  @override
+  String get topupCardAddedBody => 'Изберете я в прозореца за плащане при следващото захранване. Не е изтеглена сума.';
+
+  @override
+  String get topupCardFailedTitle => 'Картата не е добавена';
+
+  @override
+  String get topupCardFailedBody => 'Банката на картата не я потвърди. Не е изтеглена сума; опитайте с друга карта.';
+
+  @override
+  String get topupCardUnknownBody =>
+      'Банката още не е потвърдила картата. Ако я потвърди, тя ще се появи при следващото захранване.';
+
+  @override
   String doneCredited(String account) {
     return 'заверени по инвестиционна сметка •• $account';
   }

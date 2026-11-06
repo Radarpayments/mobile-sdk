@@ -692,6 +692,28 @@ class AppLocalizationsRu extends AppLocalizations {
   String get topupTryAgain => 'Попробовать снова';
 
   @override
+  String get topupAddCard => 'Добавить карту';
+
+  @override
+  String get topupAddingCard => 'Добавляем карту…';
+
+  @override
+  String get topupCardAddedTitle => 'Карта добавлена';
+
+  @override
+  String get topupCardAddedBody => 'Выберите её в окне оплаты при следующем пополнении. Деньги не списаны.';
+
+  @override
+  String get topupCardFailedTitle => 'Карта не добавлена';
+
+  @override
+  String get topupCardFailedBody => 'Банк карты её не подтвердил. Деньги не списаны, попробуйте другую карту.';
+
+  @override
+  String get topupCardUnknownBody =>
+      'Банк ещё не подтвердил карту. Если подтвердит, она появится при следующем пополнении.';
+
+  @override
   String doneCredited(String account) {
     return 'зачислено на инвест-счёт •• $account';
   }

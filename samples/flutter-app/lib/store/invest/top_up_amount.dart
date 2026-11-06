@@ -76,7 +76,13 @@ sealed class TopUpStatus {
   const TopUpStatus();
 
   /// Whether "Continue" may start a transfer of [amount] now.
-  bool canContinue(TopUpAmount amount) => amount.valid && (this is TopUpEditing || this is TopUpDeclined);
+  bool canContinue(TopUpAmount amount) =>
+      amount.valid &&
+      (this is TopUpEditing ||
+          this is TopUpDeclined ||
+          this is TopUpCardAdded ||
+          this is TopUpCardDeclined ||
+          this is TopUpCardUnconfirmed);
 }
 
 final class TopUpEditing extends TopUpStatus {
@@ -134,4 +140,39 @@ final class TopUpDone extends TopUpStatus {
 
   @override
   int get hashCode => Object.hash(orderId, amountMinor, freeCashBefore, freeCashAfter, at);
+}
+
+/// "Add card" saved the card: the sheet offers it at the next top-up. No money moved.
+final class TopUpCardAdded extends TopUpStatus {
+  const TopUpCardAdded();
+
+  @override
+  bool operator ==(Object other) => other is TopUpCardAdded;
+
+  @override
+  int get hashCode => (TopUpCardAdded).hashCode;
+}
+
+/// "Add card" was refused; [message] is the SDK's text, when it has one.
+final class TopUpCardDeclined extends TopUpStatus {
+  const TopUpCardDeclined(this.message);
+
+  final String? message;
+
+  @override
+  bool operator ==(Object other) => other is TopUpCardDeclined && other.message == message;
+
+  @override
+  int get hashCode => message.hashCode;
+}
+
+/// Whether "Add card" saved the card is not known; no money moved, so a top-up may still go ahead.
+final class TopUpCardUnconfirmed extends TopUpStatus {
+  const TopUpCardUnconfirmed();
+
+  @override
+  bool operator ==(Object other) => other is TopUpCardUnconfirmed;
+
+  @override
+  int get hashCode => (TopUpCardUnconfirmed).hashCode;
 }

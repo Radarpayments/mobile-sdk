@@ -6,17 +6,23 @@ import 'start_screen.dart';
 import 'theme/cover_style.dart';
 
 /// Opens the demo panel. Neutral on purpose — it is a tool for the person showing the demo, not part
-/// of the store — and the same in every cover. Every change is saved at once.
-Future<void> showScenarioSheet(BuildContext context) => showModalBottomSheet<void>(
+/// of the store — and the same in every cover. Every change is saved at once. [buyerChoice] is false where the buyer
+/// is always the one with saved cards (Northwind): only "Reset" is left.
+Future<void> showScenarioSheet(BuildContext context, {bool buyerChoice = true}) => showModalBottomSheet<void>(
   context: context,
   isScrollControlled: true,
   showDragHandle: true,
   backgroundColor: StartColors.surface,
-  builder: (_) => Theme(data: StartColors.theme, child: const ScenarioSheet()),
+  builder: (_) => Theme(
+    data: StartColors.theme,
+    child: ScenarioSheet(buyerChoice: buyerChoice),
+  ),
 );
 
 class ScenarioSheet extends StatelessWidget {
-  const ScenarioSheet({super.key});
+  const ScenarioSheet({super.key, this.buyerChoice = true});
+
+  final bool buyerChoice;
 
   @override
   Widget build(BuildContext context) {
@@ -39,19 +45,20 @@ class ScenarioSheet extends StatelessWidget {
                   style: font(StoreFonts.inter, 20, weight: FontWeight.w800, color: StartColors.text),
                 ),
                 GroupHeader(l10n.scenarioBuyer),
-                SegmentedButton<bool>(
-                  segments: [
-                    ButtonSegment(value: false, label: Text(l10n.scenarioGuest)),
-                    ButtonSegment(
-                      value: true,
-                      label: Text(l10n.scenarioWithCards, key: const Key('scenario_with_cards')),
-                    ),
-                  ],
-                  selected: {scenario.buyerWithCards},
-                  showSelectedIcon: false,
-                  onSelectionChanged: (selected) =>
-                      prefs.setScenario(prefs.scenario.copyWith(buyerWithCards: selected.first)),
-                ),
+                if (buyerChoice)
+                  SegmentedButton<bool>(
+                    segments: [
+                      ButtonSegment(value: false, label: Text(l10n.scenarioGuest)),
+                      ButtonSegment(
+                        value: true,
+                        label: Text(l10n.scenarioWithCards, key: const Key('scenario_with_cards')),
+                      ),
+                    ],
+                    selected: {scenario.buyerWithCards},
+                    showSelectedIcon: false,
+                    onSelectionChanged: (selected) =>
+                        prefs.setScenario(prefs.scenario.copyWith(buyerWithCards: selected.first)),
+                  ),
                 Padding(
                   padding: const EdgeInsets.only(top: 4),
                   child: Row(

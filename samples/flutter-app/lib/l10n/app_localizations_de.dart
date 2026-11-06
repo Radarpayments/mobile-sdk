@@ -692,6 +692,30 @@ class AppLocalizationsDe extends AppLocalizations {
   String get topupTryAgain => 'Erneut versuchen';
 
   @override
+  String get topupAddCard => 'Karte hinzufügen';
+
+  @override
+  String get topupAddingCard => 'Karte wird hinzugefügt…';
+
+  @override
+  String get topupCardAddedTitle => 'Karte hinzugefügt';
+
+  @override
+  String get topupCardAddedBody =>
+      'Wählen Sie sie bei der nächsten Aufladung im Zahlungsfenster. Es wurde nichts abgebucht.';
+
+  @override
+  String get topupCardFailedTitle => 'Karte nicht hinzugefügt';
+
+  @override
+  String get topupCardFailedBody =>
+      'Die Bank der Karte hat sie nicht bestätigt. Es wurde nichts abgebucht; versuchen Sie eine andere Karte.';
+
+  @override
+  String get topupCardUnknownBody =>
+      'Die Bank hat die Karte noch nicht bestätigt. Wenn sie es tut, erscheint die Karte bei der nächsten Aufladung.';
+
+  @override
   String doneCredited(String account) {
     return 'dem Anlagekonto •• $account gutgeschrieben';
   }

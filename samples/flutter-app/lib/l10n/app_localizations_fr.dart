@@ -696,6 +696,30 @@ class AppLocalizationsFr extends AppLocalizations {
   String get topupTryAgain => 'Réessayer';
 
   @override
+  String get topupAddCard => 'Ajouter une carte';
+
+  @override
+  String get topupAddingCard => 'Ajout de la carte…';
+
+  @override
+  String get topupCardAddedTitle => 'Carte ajoutée';
+
+  @override
+  String get topupCardAddedBody =>
+      'Choisissez-la dans la fenêtre de paiement lors de votre prochaine alimentation. Aucun montant n\'a été débité.';
+
+  @override
+  String get topupCardFailedTitle => 'Carte non ajoutée';
+
+  @override
+  String get topupCardFailedBody =>
+      'La banque de la carte ne l\'a pas confirmée. Aucun montant n\'a été débité ; essayez une autre carte.';
+
+  @override
+  String get topupCardUnknownBody =>
+      'La banque n\'a pas encore confirmé la carte. Si elle le fait, la carte apparaîtra lors de la prochaine alimentation.';
+
+  @override
   String doneCredited(String account) {
     return 'crédité sur le compte d\'investissement •• $account';
   }

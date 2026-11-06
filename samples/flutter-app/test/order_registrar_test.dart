@@ -125,6 +125,23 @@ void main() {
       expect(body['orderNumber'], matches(RegExp(r'^demo-[0-9a-f]{20}$')));
     });
 
+    test('an AFT order of zero only saves the buyer\'s card', () async {
+      late http.Request sent;
+      final client = MockClient((request) async {
+        sent = request;
+        return http.Response('{"errorCode":0,"orderId":"md-verify"}', 200);
+      });
+
+      await registrar(client, orderType: OrderType.aft).register(0, 'c-1');
+
+      final body = jsonDecode(sent.body) as Map<String, Object?>;
+      expect(body, containsPair('amount', 0));
+      expect(body['features'], {
+        'feature': ['WITHOUT_TO_CARD', 'VERIFY', 'FORCE_CREATE_BINDING'],
+      });
+      expect(body, containsPair('clientId', 'c-1'));
+    });
+
     test('a guest transfer carries no clientId', () async {
       late http.Request sent;
       final client = MockClient((request) async {

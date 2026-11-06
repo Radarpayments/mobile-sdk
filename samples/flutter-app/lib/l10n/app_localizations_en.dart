@@ -691,6 +691,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get topupTryAgain => 'Try again';
 
   @override
+  String get topupAddCard => 'Add card';
+
+  @override
+  String get topupAddingCard => 'Adding card…';
+
+  @override
+  String get topupCardAddedTitle => 'Card added';
+
+  @override
+  String get topupCardAddedBody => 'Choose it in the payment sheet at your next top-up. No money was taken.';
+
+  @override
+  String get topupCardFailedTitle => 'Card not added';
+
+  @override
+  String get topupCardFailedBody => 'The card\'s bank did not confirm it. No money was taken; try another card.';
+
+  @override
+  String get topupCardUnknownBody =>
+      'The bank has not confirmed the card yet. If it has, the card appears at your next top-up.';
+
+  @override
   String doneCredited(String account) {
     return 'credited to investment account •• $account';
   }
