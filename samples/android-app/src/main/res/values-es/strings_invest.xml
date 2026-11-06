@@ -36,6 +36,13 @@
     <string name="topup_unknown_title">Estado desconocido</string>
     <string name="topup_unknown_body">Compruebe el pedido en el portal del comercio antes de volver a intentarlo.</string>
     <string name="topup_try_again">Intentar de nuevo</string>
+    <string name="topup_add_card">Añadir tarjeta</string>
+    <string name="topup_adding_card">Añadiendo tarjeta…</string>
+    <string name="topup_card_added_title">Tarjeta añadida</string>
+    <string name="topup_card_added_body">Elígela en la ventana de pago en tu próxima recarga. No se ha cobrado nada.</string>
+    <string name="topup_card_failed_title">Tarjeta no añadida</string>
+    <string name="topup_card_failed_body">El banco de la tarjeta no la confirmó. No se ha cobrado nada; prueba otra tarjeta.</string>
+    <string name="topup_card_unknown_body">El banco aún no ha confirmado la tarjeta. Si lo hace, aparecerá en tu próxima recarga.</string>
     <string name="done_credited">abonado en la cuenta de inversión •• %1$s</string>
     <string name="done_operation">Operación</string>
     <string name="done_operation_value">AFT · a cuenta propia</string>

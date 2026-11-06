@@ -36,6 +36,13 @@
     <string name="topup_unknown_title">Status unbekannt</string>
     <string name="topup_unknown_body">Prüfen Sie die Bestellung im Händlerportal, bevor Sie es erneut versuchen.</string>
     <string name="topup_try_again">Erneut versuchen</string>
+    <string name="topup_add_card">Karte hinzufügen</string>
+    <string name="topup_adding_card">Karte wird hinzugefügt…</string>
+    <string name="topup_card_added_title">Karte hinzugefügt</string>
+    <string name="topup_card_added_body">Wählen Sie sie bei der nächsten Aufladung im Zahlungsfenster. Es wurde nichts abgebucht.</string>
+    <string name="topup_card_failed_title">Karte nicht hinzugefügt</string>
+    <string name="topup_card_failed_body">Die Bank der Karte hat sie nicht bestätigt. Es wurde nichts abgebucht; versuchen Sie eine andere Karte.</string>
+    <string name="topup_card_unknown_body">Die Bank hat die Karte noch nicht bestätigt. Wenn sie es tut, erscheint die Karte bei der nächsten Aufladung.</string>
     <string name="done_credited">dem Anlagekonto •• %1$s gutgeschrieben</string>
     <string name="done_operation">Vorgang</string>
     <string name="done_operation_value">AFT · auf eigenes Konto</string>

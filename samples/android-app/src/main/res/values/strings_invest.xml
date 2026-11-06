@@ -38,6 +38,13 @@
     <string name="topup_unknown_title">Status unknown</string>
     <string name="topup_unknown_body">Check the order in the merchant portal before trying again.</string>
     <string name="topup_try_again">Try again</string>
+    <string name="topup_add_card">Add card</string>
+    <string name="topup_adding_card">Adding card…</string>
+    <string name="topup_card_added_title">Card added</string>
+    <string name="topup_card_added_body">Choose it in the payment sheet at your next top-up. No money was taken.</string>
+    <string name="topup_card_failed_title">Card not added</string>
+    <string name="topup_card_failed_body">The card\'s bank did not confirm it. No money was taken; try another card.</string>
+    <string name="topup_card_unknown_body">The bank has not confirmed the card yet. If it has, the card appears at your next top-up.</string>
     <string name="done_credited">credited to investment account •• %1$s</string>
     <string name="done_operation">Operation</string>
     <string name="done_operation_value">AFT · to own account</string>

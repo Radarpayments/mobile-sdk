@@ -36,6 +36,13 @@
     <string name="topup_unknown_title">Неизвестен статус</string>
     <string name="topup_unknown_body">Проверете поръчката в портала на търговеца, преди да опитате отново.</string>
     <string name="topup_try_again">Опитай отново</string>
+    <string name="topup_add_card">Добави карта</string>
+    <string name="topup_adding_card">Добавяне на карта…</string>
+    <string name="topup_card_added_title">Картата е добавена</string>
+    <string name="topup_card_added_body">Изберете я в прозореца за плащане при следващото захранване. Не е изтеглена сума.</string>
+    <string name="topup_card_failed_title">Картата не е добавена</string>
+    <string name="topup_card_failed_body">Банката на картата не я потвърди. Не е изтеглена сума; опитайте с друга карта.</string>
+    <string name="topup_card_unknown_body">Банката още не е потвърдила картата. Ако я потвърди, тя ще се появи при следващото захранване.</string>
     <string name="done_credited">заверени по инвестиционна сметка •• %1$s</string>
     <string name="done_operation">Операция</string>
     <string name="done_operation_value">AFT · към собствена сметка</string>

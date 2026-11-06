@@ -38,11 +38,14 @@ internal const val SCENARIO_CARDS_TAG = "scenario_with_cards"
 /**
  * The demo panel. Neutral on purpose — it is a tool for the person showing the demo, not part of the
  * store — and the same in every cover.
+ *
+ * @param buyerChoice false where the buyer is always the one with saved cards (Northwind): only "Reset" is left
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScenarioSheet(
     scenario: Scenario,
+    buyerChoice: Boolean = true,
     onChange: (Scenario) -> Unit,
     onResetBuyer: () -> Unit,
     onDismiss: () -> Unit,
@@ -60,19 +63,7 @@ fun ScenarioSheet(
                     color = StartColors.text,
                 )
                 GroupHeader(R.string.scenario_buyer)
-                SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
-                    SegmentedButton(
-                        selected = !scenario.buyerWithCards,
-                        onClick = { onChange(scenario.copy(buyerWithCards = false)) },
-                        shape = SegmentedButtonDefaults.itemShape(0, 2),
-                    ) { Text(stringResource(R.string.scenario_guest)) }
-                    SegmentedButton(
-                        selected = scenario.buyerWithCards,
-                        onClick = { onChange(scenario.copy(buyerWithCards = true)) },
-                        shape = SegmentedButtonDefaults.itemShape(1, 2),
-                        modifier = Modifier.testTag(SCENARIO_CARDS_TAG),
-                    ) { Text(stringResource(R.string.scenario_with_cards)) }
-                }
+                if (buyerChoice) BuyerChoice(scenario, onChange)
                 Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 4.dp)) {
                     Text(
                         stringResource(R.string.scenario_with_cards_hint),
@@ -90,6 +81,26 @@ fun ScenarioSheet(
                 ToggleRow(R.string.scenario_sdk_result, scenario.sdkResultScreen) { onChange(scenario.copy(sdkResultScreen = it)) }
             }
         }
+    }
+}
+
+@Composable
+private fun BuyerChoice(
+    scenario: Scenario,
+    onChange: (Scenario) -> Unit,
+) {
+    SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
+        SegmentedButton(
+            selected = !scenario.buyerWithCards,
+            onClick = { onChange(scenario.copy(buyerWithCards = false)) },
+            shape = SegmentedButtonDefaults.itemShape(0, 2),
+        ) { Text(stringResource(R.string.scenario_guest)) }
+        SegmentedButton(
+            selected = scenario.buyerWithCards,
+            onClick = { onChange(scenario.copy(buyerWithCards = true)) },
+            shape = SegmentedButtonDefaults.itemShape(1, 2),
+            modifier = Modifier.testTag(SCENARIO_CARDS_TAG),
+        ) { Text(stringResource(R.string.scenario_with_cards)) }
     }
 }
 

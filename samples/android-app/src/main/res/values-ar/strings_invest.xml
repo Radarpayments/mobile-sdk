@@ -36,6 +36,13 @@
     <string name="topup_unknown_title">الحالة غير معروفة</string>
     <string name="topup_unknown_body">تحقق من الطلب في بوابة التاجر قبل المحاولة مرة أخرى.</string>
     <string name="topup_try_again">حاول مرة أخرى</string>
+    <string name="topup_add_card">إضافة بطاقة</string>
+    <string name="topup_adding_card">جارٍ إضافة البطاقة…</string>
+    <string name="topup_card_added_title">تمت إضافة البطاقة</string>
+    <string name="topup_card_added_body">اخترها في نافذة الدفع عند الشحن التالي. لم يُخصم أي مبلغ.</string>
+    <string name="topup_card_failed_title">لم تُضف البطاقة</string>
+    <string name="topup_card_failed_body">لم يؤكد بنك البطاقة البطاقة. لم يُخصم أي مبلغ؛ جرّب بطاقة أخرى.</string>
+    <string name="topup_card_unknown_body">لم يؤكد البنك البطاقة بعد. إن أكدها، ستظهر عند الشحن التالي.</string>
     <string name="done_credited">أُودع في الحساب الاستثماري •• %1$s</string>
     <string name="done_operation">العملية</string>
     <string name="done_operation_value">AFT · إلى حسابك</string>

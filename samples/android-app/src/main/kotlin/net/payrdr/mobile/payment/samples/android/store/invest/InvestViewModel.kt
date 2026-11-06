@@ -65,6 +65,17 @@ class InvestViewModel(
             }
     }
 
+    /** The sheet of "Add card" closed: the account does not change, whatever the outcome. */
+    fun onCardOutcome(outcome: CheckoutOutcome) {
+        mutableStatus.value =
+            when (outcome) {
+                is CheckoutOutcome.Success -> TopUpStatus.CardAdded
+                is CheckoutOutcome.Declined -> TopUpStatus.CardDeclined(outcome.message)
+                is CheckoutOutcome.Unconfirmed -> TopUpStatus.CardUnconfirmed
+                CheckoutOutcome.Cancelled -> TopUpStatus.Editing
+            }
+    }
+
     /** Buys the Global ETF for [amountMinor] (at most the free cash), without a payment. */
     fun invest(amountMinor: Long) {
         update(mutableAccount.value.invest(amountMinor, clock()))

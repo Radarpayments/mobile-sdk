@@ -40,6 +40,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
@@ -55,21 +56,28 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import compose.icons.TablerIcons
 import compose.icons.tablericons.AlertCircle
+import compose.icons.tablericons.CircleCheck
+import compose.icons.tablericons.CreditCard
 import compose.icons.tablericons.TrendingUp
 import net.payrdr.mobile.payment.samples.android.R
 import net.payrdr.mobile.payment.samples.android.checkout.CheckoutState
 import java.text.DecimalFormatSymbols
 
+internal const val ADD_CARD_TAG = "topup_add_card"
+
 /**
  * The amount to top up the account with. "Continue" registers the transfer ([onContinue]) and the SDK sheet takes
- * it from there; [footer] is the demo panel row and a registration error, if any.
+ * it from there; "Add card" ([onAddCard]) saves a card for later top-ups without moving money ([addingCard] while it
+ * runs); [footer] is the demo panel row and a registration error, if any.
  */
 @Composable
 internal fun TopUpScreen(
     vm: InvestViewModel,
     checkout: CheckoutState,
+    addingCard: Boolean,
     onBack: () -> Unit,
     onContinue: () -> Unit,
+    onAddCard: () -> Unit,
     footer: @Composable () -> Unit,
 ) {
     val account by vm.account.collectAsState()
@@ -87,6 +95,13 @@ internal fun TopUpScreen(
             InnerTopBar(stringResource(R.string.topup_title), onBack)
             StatusBanner(status)
             DestinationCard(account.freeCashMinor, Modifier.padding(top = 12.dp))
+            OutlineButton(
+                stringResource(if (busy && addingCard) R.string.topup_adding_card else R.string.topup_add_card),
+                onAddCard,
+                Modifier.fillMaxWidth().padding(top = 10.dp).testTag(ADD_CARD_TAG),
+                enabled = !busy,
+                icon = TablerIcons.CreditCard,
+            )
             Text(
                 stringResource(R.string.topup_amount),
                 modifier = Modifier.fillMaxWidth().padding(top = 22.dp),
@@ -118,38 +133,55 @@ internal fun TopUpScreen(
             footer()
             val label =
                 when {
-                    busy -> stringResource(R.string.topup_creating)
+                    busy && !addingCard -> stringResource(R.string.topup_creating)
                     status is TopUpStatus.Declined -> stringResource(R.string.topup_try_again)
                     else -> stringResource(R.string.topup_continue, amount.minor?.let { eur(it) } ?: "—")
                 }
-            PrimaryButton(label, onContinue, Modifier.fillMaxWidth(), enabled = status.canContinue(amount), busy = busy)
+            PrimaryButton(
+                label,
+                onContinue,
+                Modifier.fillMaxWidth(),
+                enabled = status.canContinue(amount) && !busy,
+                busy = busy && !addingCard,
+            )
         }
     }
 }
 
 @Composable
 private fun StatusBanner(status: TopUpStatus) {
-    val (title, body) =
+    val (titleRes, bodyRes) =
         when (status) {
-            is TopUpStatus.Declined -> stringResource(R.string.topup_failed_title) to stringResource(R.string.topup_failed_body)
-            TopUpStatus.Unconfirmed -> stringResource(R.string.topup_unknown_title) to stringResource(R.string.topup_unknown_body)
+            is TopUpStatus.Declined -> R.string.topup_failed_title to R.string.topup_failed_body
+            TopUpStatus.Unconfirmed -> R.string.topup_unknown_title to R.string.topup_unknown_body
+            TopUpStatus.CardAdded -> R.string.topup_card_added_title to R.string.topup_card_added_body
+            is TopUpStatus.CardDeclined -> R.string.topup_card_failed_title to R.string.topup_card_failed_body
+            TopUpStatus.CardUnconfirmed -> R.string.topup_unknown_title to R.string.topup_card_unknown_body
             else -> return
         }
+    val title = stringResource(titleRes)
+    val body = stringResource(bodyRes)
+    val tint = if (status == TopUpStatus.CardAdded) InvestColors.accent else InvestColors.error
     Row(
         Modifier
             .padding(top = 12.dp)
             .fillMaxWidth()
             .clip(RoundedCornerShape(14.dp))
-            .background(InvestColors.errorSoft)
-            .border(1.dp, InvestColors.error.copy(alpha = 0.45f), RoundedCornerShape(14.dp))
+            .background(if (status == TopUpStatus.CardAdded) InvestColors.accentSoft else InvestColors.errorSoft)
+            .border(1.dp, tint.copy(alpha = 0.45f), RoundedCornerShape(14.dp))
             .padding(horizontal = 14.dp, vertical = 12.dp)
             .semantics { liveRegion = LiveRegionMode.Polite },
     ) {
-        Icon(TablerIcons.AlertCircle, contentDescription = null, tint = InvestColors.error, modifier = Modifier.size(22.dp))
+        Icon(
+            if (status == TopUpStatus.CardAdded) TablerIcons.CircleCheck else TablerIcons.AlertCircle,
+            contentDescription = null,
+            tint = tint,
+            modifier = Modifier.size(22.dp),
+        )
         Column(Modifier.padding(start = 10.dp)) {
             Text(title, style = plex(15.sp, FontWeight.SemiBold))
             Text(body, style = plex(13.sp, color = InvestColors.muted))
-            (status as? TopUpStatus.Declined)?.message?.let {
+            ((status as? TopUpStatus.Declined)?.message ?: (status as? TopUpStatus.CardDeclined)?.message)?.let {
                 Text(
                     stringResource(R.string.topup_failed_detail, it),
                     modifier = Modifier.padding(top = 6.dp),

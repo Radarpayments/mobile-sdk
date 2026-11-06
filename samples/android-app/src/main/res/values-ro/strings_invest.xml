@@ -36,6 +36,13 @@
     <string name="topup_unknown_title">Stare necunoscută</string>
     <string name="topup_unknown_body">Verificați comanda în portalul comerciantului înainte de a încerca din nou.</string>
     <string name="topup_try_again">Încearcă din nou</string>
+    <string name="topup_add_card">Adaugă card</string>
+    <string name="topup_adding_card">Se adaugă cardul…</string>
+    <string name="topup_card_added_title">Card adăugat</string>
+    <string name="topup_card_added_body">Alegeți-l în fereastra de plată la următoarea alimentare. Nu s-a retras nicio sumă.</string>
+    <string name="topup_card_failed_title">Cardul nu a fost adăugat</string>
+    <string name="topup_card_failed_body">Banca cardului nu l-a confirmat. Nu s-a retras nicio sumă; încercați alt card.</string>
+    <string name="topup_card_unknown_body">Banca nu a confirmat încă cardul. Dacă îl confirmă, cardul apare la următoarea alimentare.</string>
     <string name="done_credited">creditat în contul de investiții •• %1$s</string>
     <string name="done_operation">Operațiune</string>
     <string name="done_operation_value">AFT · în contul propriu</string>

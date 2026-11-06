@@ -95,7 +95,26 @@ sealed interface TopUpStatus {
         val freeCashAfter: Long,
         val at: Long,
     ) : TopUpStatus
+
+    /** "Add card" saved the card: the sheet offers it at the next top-up. No money moved. */
+    data object CardAdded : TopUpStatus
+
+    /** "Add card" was refused; [message] is the SDK's text, when it has one. */
+    data class CardDeclined(
+        val message: String?,
+    ) : TopUpStatus
+
+    /** Whether "Add card" saved the card is not known; no money moved, so a top-up may still go ahead. */
+    data object CardUnconfirmed : TopUpStatus
 }
 
 /** Whether "Continue" may start a transfer of [amount] now. */
-fun TopUpStatus.canContinue(amount: TopUpAmount): Boolean = amount.valid && (this == TopUpStatus.Editing || this is TopUpStatus.Declined)
+fun TopUpStatus.canContinue(amount: TopUpAmount): Boolean =
+    amount.valid &&
+        (
+            this == TopUpStatus.Editing ||
+                this is TopUpStatus.Declined ||
+                this == TopUpStatus.CardAdded ||
+                this is TopUpStatus.CardDeclined ||
+                this == TopUpStatus.CardUnconfirmed
+        )

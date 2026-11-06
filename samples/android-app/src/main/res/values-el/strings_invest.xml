@@ -36,6 +36,13 @@
     <string name="topup_unknown_title">Άγνωστη κατάσταση</string>
     <string name="topup_unknown_body">Ελέγξτε την παραγγελία στην πύλη εμπόρου πριν δοκιμάσετε ξανά.</string>
     <string name="topup_try_again">Δοκιμάστε ξανά</string>
+    <string name="topup_add_card">Προσθήκη κάρτας</string>
+    <string name="topup_adding_card">Προσθήκη κάρτας…</string>
+    <string name="topup_card_added_title">Η κάρτα προστέθηκε</string>
+    <string name="topup_card_added_body">Επιλέξτε την στο παράθυρο πληρωμής στην επόμενη φόρτωση. Δεν χρεώθηκε κανένα ποσό.</string>
+    <string name="topup_card_failed_title">Η κάρτα δεν προστέθηκε</string>
+    <string name="topup_card_failed_body">Η τράπεζα της κάρτας δεν την επιβεβαίωσε. Δεν χρεώθηκε κανένα ποσό· δοκιμάστε άλλη κάρτα.</string>
+    <string name="topup_card_unknown_body">Η τράπεζα δεν έχει επιβεβαιώσει ακόμη την κάρτα. Αν την επιβεβαιώσει, θα εμφανιστεί στην επόμενη φόρτωση.</string>
     <string name="done_credited">πιστώθηκαν στον επενδυτικό λογαριασμό •• %1$s</string>
     <string name="done_operation">Συναλλαγή</string>
     <string name="done_operation_value">AFT · σε δικό σας λογαριασμό</string>

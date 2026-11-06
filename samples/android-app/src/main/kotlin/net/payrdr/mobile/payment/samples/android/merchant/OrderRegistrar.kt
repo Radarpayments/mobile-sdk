@@ -103,11 +103,15 @@ class GatewayOrderRegistrar(
     /**
      * A one-leg AFT transfer (`WITHOUT_TO_CARD`, transaction type `A`): the buyer's card is debited, the money goes to
      * the recipient; the sheet asks for the sender and recipient details the gateway needs.
+     *
+     * A transfer of 0 only saves the buyer's card for [clientId]: the gateway checks the card and reverses (`VERIFY`),
+     * and refuses `VERIFY` without `FORCE_CREATE_BINDING`.
      */
     private suspend fun registerTransfer(
         amountMinor: Long,
         clientId: String?,
     ): OrderRegistration {
+        val features = if (amountMinor == 0L) listOf(WITHOUT_TO_CARD, VERIFY, FORCE_CREATE_BINDING) else listOf(WITHOUT_TO_CARD)
         val order =
             buildJsonObject {
                 put("username", login)
@@ -117,7 +121,7 @@ class GatewayOrderRegistrar(
                 put("orderNumber", newOrderNumber())
                 put("returnUrl", RETURN_URL)
                 put("transactionTypeIndicator", "A")
-                put("features", buildJsonObject { put("feature", JsonArray(listOf(JsonPrimitive("WITHOUT_TO_CARD")))) })
+                put("features", buildJsonObject { put("feature", JsonArray(features.map(::JsonPrimitive))) })
                 if (clientId != null) put("clientId", clientId)
                 prefill?.let { p ->
                     p.email?.let { put("email", it) }
@@ -154,6 +158,9 @@ class GatewayOrderRegistrar(
     private companion object {
         const val EUR = "978"
         const val ORDER_NUMBER_RANDOM_CHARS = 20
+        const val WITHOUT_TO_CARD = "WITHOUT_TO_CARD"
+        const val VERIFY = "VERIFY"
+        const val FORCE_CREATE_BINDING = "FORCE_CREATE_BINDING"
     }
 }
 

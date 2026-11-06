@@ -64,6 +64,26 @@ class InvestViewModelTest {
         assertEquals(false, vm.status.value.canContinue(vm.amount.value))
     }
 
+    @Test fun `a saved card credits nothing and the top-up may go on`() {
+        vm.onCardOutcome(CheckoutOutcome.Success("md-verify"))
+        assertEquals(InvestAccount.SEED, vm.account.value)
+        assertEquals(emptyList(), saved)
+        assertEquals(TopUpStatus.CardAdded, vm.status.value)
+        vm.edit("100")
+        assertEquals(true, vm.status.value.canContinue(vm.amount.value))
+    }
+
+    @Test fun `a card the bank refused or did not confirm leaves the top-up open`() {
+        vm.edit("100")
+        vm.onCardOutcome(CheckoutOutcome.Declined("Issuer declined"))
+        assertEquals(TopUpStatus.CardDeclined("Issuer declined"), vm.status.value)
+        assertEquals(true, vm.status.value.canContinue(vm.amount.value))
+        vm.onCardOutcome(CheckoutOutcome.Unconfirmed("md-verify"))
+        assertEquals(TopUpStatus.CardUnconfirmed, vm.status.value)
+        assertEquals(true, vm.status.value.canContinue(vm.amount.value))
+        assertEquals(InvestAccount.SEED, vm.account.value)
+    }
+
     @Test fun `cancel goes back to editing`() {
         vm.onOutcome(CheckoutOutcome.Declined(null), 10000)
         vm.onOutcome(CheckoutOutcome.Cancelled, 10000)

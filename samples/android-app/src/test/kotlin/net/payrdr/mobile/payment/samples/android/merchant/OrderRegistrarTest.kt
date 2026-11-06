@@ -221,6 +221,16 @@ class OrderRegistrarTest {
             )
         }
 
+    @Test fun `an AFT order of zero only saves the buyer's card`() =
+        runTest {
+            GatewayOrderRegistrar(baseUrl, "login", "secret", http(), orderType = OrderType.AFT).register(0, "c-1")
+
+            val body = requests.single().json()
+            assertEquals("0", body.getValue("amount").jsonPrimitive.content)
+            assertEquals("""{"feature":["WITHOUT_TO_CARD","VERIFY","FORCE_CREATE_BINDING"]}""", body.getValue("features").toString())
+            assertEquals("c-1", body.getValue("clientId").jsonPrimitive.content)
+        }
+
     @Test fun `a refused AFT registration gives the gateway's message`() {
         assertEquals(
             OrderRegistration.Failed("Features are invalid"),

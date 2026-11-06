@@ -33,7 +33,8 @@ import net.payrdr.mobile.payment.samples.android.store.theme.CoverTheme
 /**
  * Northwind Invest, the AFT demo: portfolio → top-up amount → SDK sheet ("Transfer") → done. The transfer is
  * registered with `registerP2P.do` and the investor's details; the account is credited only on a completed transfer
- * and kept on the device.
+ * and kept on the device. "Add card" registers a transfer of 0 that only saves the card. The investor is always the
+ * demo buyer: an investment app knows its user, and a saved card shows up only for the clientId it was saved for.
  */
 @Composable
 fun InvestStore(
@@ -50,6 +51,8 @@ fun InvestStore(
     var screen by rememberSaveable { mutableStateOf(Screen.PORTFOLIO) }
     // The amount of the transfer in the sheet: the keypad may not change it meanwhile, but keep what was sent.
     var sentMinor by rememberSaveable { mutableLongStateOf(0L) }
+    // The sheet is open for "Add card": its result saves a card, it credits nothing.
+    var addingCard by rememberSaveable { mutableStateOf(false) }
     var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
 
     val factory = LocalTransferRegistrarFactory.current
@@ -63,7 +66,7 @@ fun InvestStore(
             registrar = registrar,
             onMdOrder = { md -> scope.launch { prefs.setLastMdOrder(md) } },
             onOutcome = { outcome ->
-                vm.onOutcome(outcome, sentMinor)
+                if (addingCard) vm.onCardOutcome(outcome) else vm.onOutcome(outcome, sentMinor)
                 if (vm.status.value is TopUpStatus.Done) screen = Screen.DONE
             },
         )
@@ -95,11 +98,17 @@ fun InvestStore(
                     TopUpScreen(
                         vm = vm,
                         checkout = checkoutState,
+                        addingCard = addingCard,
                         onBack = ::toPortfolio,
                         onContinue = {
                             val minor = vm.amount.value.minor ?: return@TopUpScreen
                             sentMinor = minor
-                            checkout.pay(minor, snap.clientId.takeIf { snap.scenario.buyerWithCards })
+                            addingCard = false
+                            checkout.pay(minor, snap.clientId)
+                        },
+                        onAddCard = {
+                            addingCard = true
+                            checkout.pay(0, snap.clientId)
                         },
                     ) { TopUpFooter(snap, prefs, checkoutState, onOpenSettings) }
                 Screen.DONE ->
@@ -130,10 +139,11 @@ private fun TopUpFooter(
     val scope = rememberCoroutineScope()
     var sheetOpen by rememberSaveable { mutableStateOf(false) }
     (checkout as? CheckoutState.RegistrationFailed)?.let { RegistrationError(CoverId.INVEST, it.reason, onOpenSettings) }
-    ScenarioRow(CoverId.INVEST, snap.scenario.buyerWithCards) { sheetOpen = true }
+    ScenarioRow(CoverId.INVEST, buyerWithCards = true) { sheetOpen = true }
     if (sheetOpen) {
         ScenarioSheet(
             scenario = snap.scenario,
+            buyerChoice = false,
             onChange = { scope.launch { prefs.setScenario(it) } },
             onResetBuyer = { scope.launch { prefs.resetClientId() } },
             onDismiss = { sheetOpen = false },
