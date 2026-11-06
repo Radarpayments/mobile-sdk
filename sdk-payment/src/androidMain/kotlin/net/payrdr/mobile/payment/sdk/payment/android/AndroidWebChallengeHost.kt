@@ -18,6 +18,7 @@ import android.webkit.WebViewClient
 import android.widget.FrameLayout
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
+import androidx.activity.addCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.core.app.ActivityOptionsCompat
@@ -141,6 +142,10 @@ internal class ThreeDsWebActivity : ComponentActivity() {
         // Closing as interrupted lets the checkout ask the gateway how the payment ended.
         if (savedInstanceState != null) return finishWithFailure("bank page restored", interrupted = true)
         shown = WeakReference(this)
+        onBackPressedDispatcher.addCallback(this) {
+            setResult(Activity.RESULT_CANCELED)
+            finish()
+        }
         // Appears and goes without a transition: the checkout's full-screen sheet under it is the motion.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, 0, 0)
@@ -283,11 +288,5 @@ internal class ThreeDsWebActivity : ComponentActivity() {
     internal companion object {
         /** The bank page on screen, so the host can close it when the challenge times out. */
         var shown: WeakReference<ThreeDsWebActivity>? = null
-    }
-
-    @Suppress("DEPRECATION")
-    override fun onBackPressed() {
-        setResult(Activity.RESULT_CANCELED)
-        super.onBackPressed()
     }
 }

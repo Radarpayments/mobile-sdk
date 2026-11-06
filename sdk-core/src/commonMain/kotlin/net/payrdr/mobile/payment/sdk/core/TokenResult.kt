@@ -10,6 +10,7 @@ import net.payrdr.mobile.payment.sdk.core.model.ParamField
  * @property token generated token string, or `null` on failure
  * @property errors per-field error codes — empty on success
  */
+@ConsistentCopyVisibility
 public data class TokenResult private constructor(
     val token: String?,
     val errors: Map<ParamField, String>,

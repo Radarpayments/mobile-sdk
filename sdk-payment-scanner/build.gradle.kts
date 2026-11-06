@@ -69,6 +69,7 @@ kotlin {
     }
 }
 
+@OptIn(kotlinx.validation.ExperimentalBCVApi::class)
 apiValidation {
     klib {
         enabled = true

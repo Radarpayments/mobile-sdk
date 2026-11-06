@@ -10,10 +10,10 @@ enum class CoverId { FURNITURE, COFFEE, TICKETS, INVEST }
 /** A thing the buyer can put in the cart; [priceMinor] is in euro cents. */
 data class Product(
     val id: String,
-    @StringRes val name: Int,
-    @StringRes val subtitle: Int?,
+    @param:StringRes val name: Int,
+    @param:StringRes val subtitle: Int?,
     val priceMinor: Long,
-    @DrawableRes val image: Int?,
+    @param:DrawableRes val image: Int?,
 )
 
 /** What each demo business sells. Prices are euro cents. */

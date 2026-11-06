@@ -20,7 +20,7 @@ import kotlin.native.ObjCName
 @OptIn(ExperimentalObjCName::class)
 public data class ApplePayConfig(
     // Swift calls `ApplePayConfig(merchantId:…)` with defaults (bundled Swift initializer); see SdkPaymentConfig.
-    @ObjCName(swiftName = "__merchantId")
+    @param:ObjCName(swiftName = "__merchantId")
     val merchantId: String,
     val supportedNetworks: Set<ApplePayNetwork> =
         setOf(

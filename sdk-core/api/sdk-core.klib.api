@@ -235,7 +235,6 @@ final class net.payrdr.mobile.payment.sdk.core/TokenResult { // net.payrdr.mobil
 
     final fun component1(): kotlin/String? // net.payrdr.mobile.payment.sdk.core/TokenResult.component1|component1(){}[0]
     final fun component2(): kotlin.collections/Map<net.payrdr.mobile.payment.sdk.core.model/ParamField, kotlin/String> // net.payrdr.mobile.payment.sdk.core/TokenResult.component2|component2(){}[0]
-    final fun copy(kotlin/String? = ..., kotlin.collections/Map<net.payrdr.mobile.payment.sdk.core.model/ParamField, kotlin/String> = ...): net.payrdr.mobile.payment.sdk.core/TokenResult // net.payrdr.mobile.payment.sdk.core/TokenResult.copy|copy(kotlin.String?;kotlin.collections.Map<net.payrdr.mobile.payment.sdk.core.model.ParamField,kotlin.String>){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // net.payrdr.mobile.payment.sdk.core/TokenResult.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // net.payrdr.mobile.payment.sdk.core/TokenResult.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // net.payrdr.mobile.payment.sdk.core/TokenResult.toString|toString(){}[0]

@@ -28,7 +28,7 @@ import kotlin.native.ObjCName
 public data class SdkPaymentConfig(
     // Swift calls `SdkPaymentConfig(baseUrl:…)` with defaults (bundled Swift initializer); this full constructor gets a
     // label of its own so that initializer can call it.
-    @ObjCName(swiftName = "__baseUrl")
+    @param:ObjCName(swiftName = "__baseUrl")
     val baseUrl: String,
     val keyProviderUrl: String? = null,
     val sslPinning: SslPinningConfig? = null,

@@ -2,6 +2,7 @@ package net.payrdr.mobile.payment.sdk.payment.ui.util
 
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.toComposeImageBitmap
+import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.usePinned
@@ -23,7 +24,7 @@ private val cache = mutableMapOf<String, ImageBitmap?>()
 /** Emoji glyphs fill about this share of the font size, so the font is scaled up to fill the box. */
 private const val GLYPH_FILL = 0.82
 
-@OptIn(ExperimentalForeignApi::class)
+@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 internal actual fun flagBitmap(
     iso: String,
     sizePx: Int,

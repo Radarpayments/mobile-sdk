@@ -91,6 +91,7 @@ android {
     }
 }
 
+@OptIn(kotlinx.validation.ExperimentalBCVApi::class)
 apiValidation {
     klib {
         enabled = true

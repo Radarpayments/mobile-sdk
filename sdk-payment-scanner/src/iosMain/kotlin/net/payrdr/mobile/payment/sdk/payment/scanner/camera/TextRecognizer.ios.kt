@@ -1,12 +1,15 @@
 package net.payrdr.mobile.payment.sdk.payment.scanner.camera
 
+import cnames.structs.opaqueCMSampleBuffer
+import kotlinx.cinterop.BetaInteropApi
+import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.autoreleasepool
+import kotlinx.cinterop.reinterpret
 import net.payrdr.mobile.payment.sdk.payment.scanner.vision.payrdr_recognize_text
-import platform.CoreMedia.CMSampleBufferRef
 import platform.Foundation.NSNumber
 
-@OptIn(ExperimentalForeignApi::class)
+@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 internal actual class TextRecognizer actual constructor() {
     /**
      * Runs Vision on the camera frame synchronously. The work lives in Objective-C
@@ -14,7 +17,7 @@ internal actual class TextRecognizer actual constructor() {
      * next Kotlin GC and starve the capture output.
      */
     actual suspend fun recognize(frame: Any): List<RecognizedLine> {
-        val buffer = frame as? CMSampleBufferRef ?: return emptyList()
+        val buffer = (frame as? CPointer<*>)?.reinterpret<opaqueCMSampleBuffer>() ?: return emptyList()
         return autoreleasepool {
             payrdr_recognize_text(buffer).orEmpty().mapNotNull { item ->
                 val line = item as? List<*> ?: return@mapNotNull null

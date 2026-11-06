@@ -289,7 +289,7 @@ private sealed interface FieldKind {
 
     /** Copied from elsewhere: monospace, with a "Paste" action and an optional [hint]. */
     data class Pasted(
-        @StringRes val hint: Int?,
+        @param:StringRes val hint: Int?,
         val singleLine: Boolean = true,
     ) : FieldKind
 }

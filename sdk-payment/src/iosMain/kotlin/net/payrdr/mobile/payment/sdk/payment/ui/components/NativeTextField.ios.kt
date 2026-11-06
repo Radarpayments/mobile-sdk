@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.UIKitInteropInteractionMode
 import androidx.compose.ui.viewinterop.UIKitInteropProperties
 import androidx.compose.ui.viewinterop.UIKitView
+import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.COpaquePointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCAction
@@ -168,7 +169,7 @@ internal actual fun NativeTextField(
     }
 }
 
-@OptIn(ExperimentalForeignApi::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalForeignApi::class, ExperimentalComposeUiApi::class, BetaInteropApi::class)
 @Composable
 private fun UIKitTextField(
     value: String,
@@ -371,6 +372,7 @@ internal fun contentTypeFor(contentType: TextFieldContentType): String? =
  * Bridges Objective-C `UIControl` target-action back to Kotlin lambdas. We cannot attach a
  * closure directly to `addTarget(_:action:forControlEvents:)`, so we use a tiny NSObject subclass.
  */
+@OptIn(BetaInteropApi::class)
 private class TextFieldTarget(
     private val onChange: (String) -> Unit,
     private val onFocus: (Boolean) -> Unit,

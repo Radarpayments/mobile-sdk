@@ -1,5 +1,6 @@
 package net.payrdr.mobile.payment.samples.android.dev
 
+import android.content.ClipData
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -34,12 +35,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.platform.toClipEntry
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -83,7 +84,7 @@ fun DeveloperScreen(
     val (prefsState, prefs) = rememberPrefs()
     val snap = prefsState.value ?: return
     val scope = rememberCoroutineScope()
-    val clipboard = LocalClipboardManager.current
+    val clipboard = LocalClipboard.current
     val (baseUrl, onBaseUrl) = rememberPersistedText(snap.baseUrl) { prefs.setBaseUrl(it) }
     val (login, onLogin) = rememberPersistedText(snap.merchantLogin) { prefs.setCredentials(login = it) }
     val (password, onPassword) = rememberPersistedText(snap.merchantPassword) { prefs.setCredentials(password = it) }
@@ -153,7 +154,7 @@ fun DeveloperScreen(
                     )
                 }
                 snap.lastMdOrder?.let { md ->
-                    TextButton(onClick = { clipboard.setText(AnnotatedString(md)) }) {
+                    TextButton(onClick = { scope.launch { clipboard.setClipEntry(ClipData.newPlainText("mdOrder", md).toClipEntry()) } }) {
                         Text(stringResource(R.string.dev_copy), color = StartColors.link)
                     }
                 }

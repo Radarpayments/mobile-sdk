@@ -27,6 +27,9 @@ class KmpLibraryConventionPlugin : Plugin<Project> {
         extensions.configure<KotlinMultiplatformExtension> {
             jvmToolchain(libs.intVersion("jvm-target"))
             explicitApi()
+            // expect/actual classes are still Beta in Kotlin 2.2 and warn on every declaration; the SDK uses them only
+            // where the platforms really differ.
+            compilerOptions { freeCompilerArgs.add("-Xexpect-actual-classes") }
 
             androidTarget {
                 // What maven-publish publishes for Android (Flutter and React Native plugins consume it; see the root build).
