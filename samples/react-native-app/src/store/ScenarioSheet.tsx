@@ -8,9 +8,18 @@ import { font, StartColors } from './theme/coverStyle';
 
 /**
  * The demo panel. Neutral on purpose — it is a tool for the person showing the demo, not part of the store — and the
- * same in every cover. Every change is saved at once.
+ * same in every cover. Every change is saved at once. `buyerChoice` is false where the buyer is always the one with
+ * saved cards (Northwind): only "Reset" is left.
  */
-export function ScenarioSheet({ visible, onClose }: { visible: boolean; onClose: () => void }) {
+export function ScenarioSheet({
+  visible,
+  onClose,
+  buyerChoice = true,
+}: {
+  visible: boolean;
+  onClose: () => void;
+  buyerChoice?: boolean;
+}) {
   return (
     <Modal
       visible={visible}
@@ -22,12 +31,12 @@ export function ScenarioSheet({ visible, onClose }: { visible: boolean; onClose:
     >
       {/* Screen readers close it with their escape gesture or Back, so the scrim is for taps only. */}
       <Pressable style={styles.scrim} onPress={onClose} accessible={false} />
-      <SheetBody onClose={onClose} />
+      <SheetBody onClose={onClose} buyerChoice={buyerChoice} />
     </Modal>
   );
 }
 
-function SheetBody({ onClose }: { onClose: () => void }) {
+function SheetBody({ onClose, buyerChoice }: { onClose: () => void; buyerChoice: boolean }) {
   const prefs = usePrefs();
   const { strings } = useL10n();
   const insets = useSafeAreaInsets();
@@ -53,27 +62,29 @@ function SheetBody({ onClose }: { onClose: () => void }) {
         {strings.scenarioTitle}
       </Text>
       <GroupHeader title={strings.scenarioBuyer} />
-      <View style={styles.segments} accessibilityRole="radiogroup">
-        {[
-          { value: false, label: strings.scenarioGuest, testID: 'scenario_guest' },
-          { value: true, label: strings.scenarioWithCards, testID: 'scenario_with_cards' },
-        ].map(({ value, label, testID }, index) => (
-          <Tap
-            key={testID}
-            testID={testID}
-            accessibilityRole="radio"
-            accessibilityState={{ selected: scenario.buyerWithCards === value }}
-            onPress={() => update({ buyerWithCards: value })}
-            style={[
-              styles.segment,
-              index > 0 && styles.segmentNext,
-              scenario.buyerWithCards === value && styles.segmentSelected,
-            ]}
-          >
-            <Text style={styles.segmentLabel}>{label}</Text>
-          </Tap>
-        ))}
-      </View>
+      {buyerChoice && (
+        <View style={styles.segments} accessibilityRole="radiogroup">
+          {[
+            { value: false, label: strings.scenarioGuest, testID: 'scenario_guest' },
+            { value: true, label: strings.scenarioWithCards, testID: 'scenario_with_cards' },
+          ].map(({ value, label, testID }, index) => (
+            <Tap
+              key={testID}
+              testID={testID}
+              accessibilityRole="radio"
+              accessibilityState={{ selected: scenario.buyerWithCards === value }}
+              onPress={() => update({ buyerWithCards: value })}
+              style={[
+                styles.segment,
+                index > 0 && styles.segmentNext,
+                scenario.buyerWithCards === value && styles.segmentSelected,
+              ]}
+            >
+              <Text style={styles.segmentLabel}>{label}</Text>
+            </Tap>
+          ))}
+        </View>
+      )}
       <View style={styles.hintRow}>
         <Text style={styles.hint}>{strings.scenarioWithCardsHint}</Text>
         <Tap onPress={prefs.resetClientId} style={styles.reset}>

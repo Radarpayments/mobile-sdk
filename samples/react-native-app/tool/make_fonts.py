@@ -54,6 +54,8 @@ ICONS = {
     "arrow_upward": 0xE0A0,
     "notifications_none": 0xE451,
     "error_outline": 0xE238,
+    "check_circle_outline": 0xE15A,
+    "credit_card": 0xE19F,
 }
 
 

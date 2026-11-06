@@ -53,7 +53,8 @@ type Screen = 'portfolio' | 'topUp' | 'done';
 /**
  * Northwind Invest, the AFT demo: portfolio → top-up amount → SDK sheet ("Transfer") → done. The transfer is
  * registered with `registerP2P.do` and the investor's details; the account is credited only on a completed transfer
- * and kept on the device.
+ * and kept on the device. "Add card" registers a transfer of 0 that only saves the card. The investor is always the
+ * demo buyer: an investment app knows its user, and a saved card shows up only for the clientId it was saved for.
  */
 export function InvestStore({ onBack, onOpenSettings }: { onBack: () => void; onOpenSettings: () => void }) {
   const scope = useAppScope();
@@ -72,6 +73,8 @@ export function InvestStore({ onBack, onOpenSettings }: { onBack: () => void; on
   const [screen, setScreen] = useState<Screen>('portfolio');
   const [now, setNow] = useState(Date.now());
   const [scenarioOpen, setScenarioOpen] = useState(false);
+  // The sheet is open for "Add card": its result saves a card, it credits nothing.
+  const [addingCard, setAddingCard] = useState(false);
 
   // A reset in the developer settings shows at once.
   useEffect(() => scope.prefs.subscribe(() => model.reload()), [scope.prefs, model]);
@@ -91,9 +94,8 @@ export function InvestStore({ onBack, onOpenSettings }: { onBack: () => void; on
     return () => sub.remove();
   });
 
-  const pay = async () => {
-    const minor = amountMinor(model.amount);
-    if (minor === undefined) return;
+  const transfer = async (minor: number, card: boolean) => {
+    setAddingCard(card);
     const scenario = prefs.scenario;
     const outcome = await checkout.pay({
       registrar: (scope.transferRegistrarFactory ?? gatewayTransferRegistrar)(prefs, northwindPrefill),
@@ -109,11 +111,20 @@ export function InvestStore({ onBack, onOpenSettings }: { onBack: () => void; on
         applePayMerchantId: prefs.applePayMerchantId,
       }),
       amountMinor: minor,
-      clientId: scenario.buyerWithCards ? prefs.clientId : undefined,
+      clientId: prefs.clientId,
     });
     if (!outcome) return;
+    if (card) {
+      model.onCardOutcome(outcome);
+      return;
+    }
     model.onOutcome(outcome, minor);
     if (model.status.kind === 'done') setScreen('done');
+  };
+
+  const pay = () => {
+    const minor = amountMinor(model.amount);
+    if (minor !== undefined) transfer(minor, false);
   };
 
   const status = model.status;
@@ -131,15 +142,18 @@ export function InvestStore({ onBack, onOpenSettings }: { onBack: () => void; on
       )}
       {screen === 'topUp' && (
         <KeyboardAware>
-          <TopUp model={model} busy={busy} onBack={toPortfolio} onContinue={pay}>
+          <TopUp
+            model={model}
+            busy={busy}
+            addingCard={addingCard}
+            onBack={toPortfolio}
+            onContinue={pay}
+            onAddCard={() => transfer(0, true)}
+          >
             {state.step === 'registrationFailed' && (
               <RegistrationError cover="invest" state={state} onOpenSettings={onOpenSettings} />
             )}
-            <ScenarioRow
-              cover="invest"
-              buyerWithCards={prefs.scenario.buyerWithCards}
-              onPress={() => setScenarioOpen(true)}
-            />
+            <ScenarioRow cover="invest" buyerWithCards onPress={() => setScenarioOpen(true)} />
           </TopUp>
         </KeyboardAware>
       )}
@@ -154,7 +168,7 @@ export function InvestStore({ onBack, onOpenSettings }: { onBack: () => void; on
           onPortfolio={toPortfolio}
         />
       )}
-      <ScenarioSheet visible={scenarioOpen} onClose={() => setScenarioOpen(false)} />
+      <ScenarioSheet visible={scenarioOpen} onClose={() => setScenarioOpen(false)} buyerChoice={false} />
     </SafeAreaView>
   );
 }
@@ -272,15 +286,18 @@ function OutlineButton({
   onPress,
   enabled = true,
   icon,
+  testID,
 }: {
   label: string;
   onPress: () => void;
   enabled?: boolean;
   icon?: IconName;
+  testID?: string;
 }) {
   const color = enabled ? C.text : C.muted;
   return (
     <Tap
+      testID={testID}
       onPress={onPress}
       disabled={!enabled}
       accessibilityState={{ disabled: !enabled }}
@@ -522,30 +539,36 @@ function SectionTitle({ title, trailing }: { title: string; trailing?: string })
 
 /**
  * The amount to top up the account with, typed on the system keyboard. "Continue" registers the transfer and the
- * SDK sheet takes it from there; `children` is the demo panel row and a registration error, if any.
+ * SDK sheet takes it from there; "Add card" (`onAddCard`) saves a card for later top-ups without moving money
+ * (`addingCard` while it runs); `children` is the demo panel row and a registration error, if any.
  */
 function TopUp({
   model,
   busy,
+  addingCard,
   onBack,
   onContinue,
+  onAddCard,
   children,
 }: {
   model: InvestModel;
   busy: boolean;
+  addingCard: boolean;
   onBack: () => void;
   onContinue: () => void;
+  onAddCard: () => void;
   children: ReactNode;
 }) {
   const { strings, eur, eurWhole, separator } = useFormat();
   const amount = model.amount;
   const status = model.status;
   const shown = amount.replace('.', separator);
-  const label = busy
-    ? strings.topupCreating
-    : status.kind === 'declined'
-    ? strings.topupTryAgain
-    : strings.topupContinue(amountMinor(amount) === undefined ? '—' : eur(amountMinor(amount)!));
+  const label =
+    busy && !addingCard
+      ? strings.topupCreating
+      : status.kind === 'declined'
+      ? strings.topupTryAgain
+      : strings.topupContinue(amountMinor(amount) === undefined ? '—' : eur(amountMinor(amount)!));
   return (
     <View style={styles.fill}>
       <ScrollView contentContainerStyle={styles.page} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
@@ -576,6 +599,15 @@ function TopUp({
               </View>
             </View>
           </Card>
+        </View>
+        <View style={styles.top10}>
+          <OutlineButton
+            testID="topup_add_card"
+            label={busy && addingCard ? strings.topupAddingCard : strings.topupAddCard}
+            icon="credit_card"
+            enabled={!busy}
+            onPress={onAddCard}
+          />
         </View>
         <Text style={[plex(13, { color: C.muted }), styles.center, styles.top22]}>{strings.topupAmount}</Text>
         <View style={[styles.row, styles.amountRow]}>
@@ -627,8 +659,8 @@ function TopUp({
         <PrimaryButton
           testID="invest_continue"
           label={label}
-          busy={busy}
-          enabled={canContinue(status, amount)}
+          busy={busy && !addingCard}
+          enabled={canContinue(status, amount) && !busy}
           onPress={onContinue}
         />
       </View>
@@ -638,17 +670,26 @@ function TopUp({
 
 function Banner({ status }: { status: TopUpStatus }) {
   const { strings } = useL10n();
-  if (status.kind !== 'declined' && status.kind !== 'unconfirmed') return null;
-  const title = status.kind === 'declined' ? strings.topupFailedTitle : strings.topupUnknownTitle;
-  const body = status.kind === 'declined' ? strings.topupFailedBody : strings.topupUnknownBody;
+  const texts: Partial<Record<TopUpStatus['kind'], [string, string]>> = {
+    declined: [strings.topupFailedTitle, strings.topupFailedBody],
+    unconfirmed: [strings.topupUnknownTitle, strings.topupUnknownBody],
+    cardAdded: [strings.topupCardAddedTitle, strings.topupCardAddedBody],
+    cardDeclined: [strings.topupCardFailedTitle, strings.topupCardFailedBody],
+    cardUnconfirmed: [strings.topupUnknownTitle, strings.topupCardUnknownBody],
+  };
+  const text = texts[status.kind];
+  if (!text) return null;
+  const [title, body] = text;
+  const added = status.kind === 'cardAdded';
+  const message = status.kind === 'declined' || status.kind === 'cardDeclined' ? status.message : undefined;
   return (
-    <View style={styles.banner} accessibilityLiveRegion="polite">
-      <Icon name="error_outline" color={C.error} size={22} />
+    <View style={[styles.banner, added && styles.bannerAdded]} accessibilityLiveRegion="polite">
+      <Icon name={added ? 'check_circle_outline' : 'error_outline'} color={added ? C.accent : C.error} size={22} />
       <View style={[styles.grow, styles.gap10]}>
         <Text style={plex(15, { weight: 600 })}>{title}</Text>
         <Text style={plex(13, { color: C.muted })}>{body}</Text>
-        {status.kind === 'declined' && status.message !== undefined && (
-          <Text style={[plex(12, { color: C.muted }), styles.top6]}>{strings.topupFailedDetail(status.message)}</Text>
+        {message !== undefined && (
+          <Text style={[plex(12, { color: C.muted }), styles.top6]}>{strings.topupFailedDetail(message)}</Text>
         )}
       </View>
     </View>
@@ -734,6 +775,7 @@ const styles = StyleSheet.create({
   gap12: { marginHorizontal: 12 },
   top6: { marginTop: 6 },
   top8: { marginTop: 8 },
+  top10: { marginTop: 10 },
   top12: { marginTop: 12 },
   top16: { marginTop: 16 },
   top18: { marginTop: 18 },
@@ -840,6 +882,7 @@ const styles = StyleSheet.create({
     borderColor: '#F8717173',
     backgroundColor: C.errorSoft,
   },
+  bannerAdded: { borderColor: '#22C55E73', backgroundColor: C.accentSoft },
   footer: { paddingHorizontal: 20, paddingTop: 8, paddingBottom: 12, gap: 10 },
   checkOuter: {
     marginTop: 64,

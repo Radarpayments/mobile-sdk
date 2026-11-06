@@ -139,6 +139,15 @@ describe('GatewayOrderRegistrar, AFT transfer', () => {
     });
   });
 
+  test("an AFT order of zero only saves the buyer's card", async () => {
+    const fetch = answering(transferReply);
+    await registrar(fetch, { orderType: 'AFT' }).register(0, 'c-1');
+    const body = JSON.parse(fetch.mock.calls[0][1].body);
+    expect(body.amount).toBe(0);
+    expect(body.features).toEqual({ feature: ['WITHOUT_TO_CARD', 'VERIFY', 'FORCE_CREATE_BINDING'] });
+    expect(body.clientId).toBe('c-1');
+  });
+
   test('a guest transfer carries no clientId', async () => {
     const fetch = answering(transferReply);
     await registrar(fetch, { orderType: 'AFT' }).register(100, undefined);

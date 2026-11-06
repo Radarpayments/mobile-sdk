@@ -82,6 +82,25 @@ export class InvestModel extends Listenable {
     this.notify();
   }
 
+  /** The sheet of "Add card" closed: the account does not change, whatever the outcome. */
+  onCardOutcome(outcome: CheckoutOutcome): void {
+    switch (outcome.kind) {
+      case 'success':
+        this.state = { kind: 'cardAdded' };
+        break;
+      case 'declined':
+        this.state = { kind: 'cardDeclined', message: outcome.message };
+        break;
+      case 'unconfirmed':
+        this.state = { kind: 'cardUnconfirmed' };
+        break;
+      case 'cancelled':
+        this.state = { kind: 'editing' };
+        break;
+    }
+    this.notify();
+  }
+
   /** Buys the Global ETF for `amountMinor` (at most the free cash), without a payment. */
   invest(amountMinor: number): void {
     this.update(InvestAccount.invest(this.current, amountMinor, this.clock()));

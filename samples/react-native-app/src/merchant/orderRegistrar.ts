@@ -118,9 +118,13 @@ export class GatewayOrderRegistrar implements OrderRegistrar {
   /**
    * A one-leg AFT transfer (`WITHOUT_TO_CARD`, transaction type `A`): the buyer's card is debited, the money goes to
    * the recipient; the sheet asks for the sender and recipient details the gateway needs.
+   *
+   * A transfer of 0 only saves the buyer's card for `clientId`: the gateway checks the card and reverses (`VERIFY`),
+   * and refuses `VERIFY` without `FORCE_CREATE_BINDING`.
    */
   private registerTransfer(amountMinor: number, clientId: string | undefined): Promise<OrderRegistration> {
     const { baseUrl, login, password } = this.options;
+    const feature = amountMinor === 0 ? ['WITHOUT_TO_CARD', 'VERIFY', 'FORCE_CREATE_BINDING'] : ['WITHOUT_TO_CARD'];
     const order = {
       username: login,
       password,
@@ -129,11 +133,13 @@ export class GatewayOrderRegistrar implements OrderRegistrar {
       orderNumber: newOrderNumber(),
       returnUrl: RETURN_URL,
       transactionTypeIndicator: 'A',
-      features: { feature: ['WITHOUT_TO_CARD'] },
+      features: { feature },
       ...(clientId === undefined ? {} : { clientId }),
       ...(this.prefill?.email === undefined ? {} : { email: this.prefill.email }),
       ...(isEmpty(this.prefill?.billingPayerData) ? {} : { billingPayerData: this.prefill?.billingPayerData }),
-      ...(isEmpty(this.prefill?.billingRecipientData) ? {} : { billingRecipientData: this.prefill?.billingRecipientData }),
+      ...(isEmpty(this.prefill?.billingRecipientData)
+        ? {}
+        : { billingRecipientData: this.prefill?.billingRecipientData }),
     };
     return callGateway(this.options, parseRegisterResponse, () => ({
       url: `${baseUrl.replace(/\/+$/, '')}/rest/api/p2p/registerP2P.do`,

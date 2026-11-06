@@ -68,15 +68,20 @@ export function presetAmount(minor: number): TopUpAmount {
 
 /**
  * Where the top-up screen is in the transfer: typing (`editing`), refused (`declined`), not known (`unconfirmed`:
- * the money is not credited and the app does not offer to pay again), or credited (`done`).
+ * the money is not credited and the app does not offer to pay again), or credited (`done`). "Add card" ends in
+ * `cardAdded` (the sheet offers the card at the next top-up), `cardDeclined` or `cardUnconfirmed`; no money moved in
+ * any of them, so a top-up may still go ahead.
  */
 export type TopUpStatus =
   | { kind: 'editing' }
   | { kind: 'declined'; message?: string }
   | { kind: 'unconfirmed' }
-  | { kind: 'done'; orderId: string; amountMinor: number; freeCashBefore: number; freeCashAfter: number; at: number };
+  | { kind: 'done'; orderId: string; amountMinor: number; freeCashBefore: number; freeCashAfter: number; at: number }
+  | { kind: 'cardAdded' }
+  | { kind: 'cardDeclined'; message?: string }
+  | { kind: 'cardUnconfirmed' };
 
 /** Whether "Continue" may start a transfer of `amount` now. */
 export function canContinue(status: TopUpStatus, amount: TopUpAmount): boolean {
-  return amountValid(amount) && (status.kind === 'editing' || status.kind === 'declined');
+  return amountValid(amount) && status.kind !== 'unconfirmed' && status.kind !== 'done';
 }

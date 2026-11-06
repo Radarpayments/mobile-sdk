@@ -19,6 +19,8 @@ const glyphs = {
   arrow_upward: 0xe0a0,
   notifications_none: 0xe451,
   error_outline: 0xe238,
+  check_circle_outline: 0xe15a,
+  credit_card: 0xe19f,
 } as const;
 
 export type IconName = keyof typeof glyphs;

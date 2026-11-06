@@ -153,6 +153,41 @@ describe('InvestModel', () => {
     expect(model.status).toEqual({ kind: 'editing' });
   });
 
+  test('a saved card credits nothing and the top-up may go on', () => {
+    const saved: InvestAccount[] = [];
+    const model = new InvestModel(
+      () => seedAccount,
+      a => saved.push(a),
+      () => 1000,
+    );
+    model.onCardOutcome({ kind: 'success', paymentId: 'md-verify' });
+    expect(model.account).toEqual(seedAccount);
+    expect(saved).toEqual([]);
+    expect(model.status).toEqual({ kind: 'cardAdded' });
+    model.edit('100');
+    expect(canContinue(model.status, model.amount)).toBe(true);
+  });
+
+  test('a card the bank refused or did not confirm leaves the top-up open', () => {
+    const model = new InvestModel(
+      () => seedAccount,
+      () => {
+        throw new Error('nothing to save');
+      },
+      () => 1000,
+    );
+    model.edit('100');
+    model.onCardOutcome({ kind: 'declined', message: 'Issuer declined' });
+    expect(model.status).toEqual({ kind: 'cardDeclined', message: 'Issuer declined' });
+    expect(canContinue(model.status, model.amount)).toBe(true);
+    model.onCardOutcome({ kind: 'unconfirmed', paymentId: 'md-verify' });
+    expect(model.status).toEqual({ kind: 'cardUnconfirmed' });
+    expect(canContinue(model.status, model.amount)).toBe(true);
+    expect(model.account).toEqual(seedAccount);
+    model.onCardOutcome({ kind: 'cancelled' });
+    expect(model.status).toEqual({ kind: 'editing' });
+  });
+
   test('the field and the presets edit the amount', () => {
     const model = new InvestModel(
       () => seedAccount,
