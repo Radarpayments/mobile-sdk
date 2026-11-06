@@ -33,6 +33,7 @@ internal class ResultDelivery(
         private set
 
     fun deliver(result: CheckoutResult) {
+        if (delivered) return
         delivered = true
         if (slidesAway) {
             pending = result
