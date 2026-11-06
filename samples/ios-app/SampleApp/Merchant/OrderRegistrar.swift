@@ -89,8 +89,12 @@ struct GatewayOrderRegistrar: OrderRegistrar, CustomStringConvertible {
 
     /// A one-leg AFT transfer (`WITHOUT_TO_CARD`, transaction type `A`): the buyer's card is debited, the money goes to
     /// the recipient; the sheet asks for the sender and recipient details the gateway needs.
+    ///
+    /// A transfer of 0 only saves the buyer's card for `clientId`: the gateway checks the card and reverses (`VERIFY`),
+    /// and refuses `VERIFY` without `FORCE_CREATE_BINDING`.
     private func registerTransfer(amountMinor: Int64, clientId: String?) async -> OrderRegistration {
         guard let url = gatewayUrl("/rest/api/p2p/registerP2P.do") else { return .failed(message: "Bad gateway URL") }
+        let features = amountMinor == 0 ? ["WITHOUT_TO_CARD", "VERIFY", "FORCE_CREATE_BINDING"] : ["WITHOUT_TO_CARD"]
         var body: [String: Any] = [
             "username": login,
             "password": password,
@@ -99,7 +103,7 @@ struct GatewayOrderRegistrar: OrderRegistrar, CustomStringConvertible {
             "orderNumber": newOrderNumber(),
             "returnUrl": returnUrl,
             "transactionTypeIndicator": "A",
-            "features": ["feature": ["WITHOUT_TO_CARD"]],
+            "features": ["feature": features],
         ]
         if let clientId { body["clientId"] = clientId }
         if let prefill {

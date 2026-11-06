@@ -42,6 +42,26 @@ final class InvestModeTests: XCTestCase {
         XCTAssertEqual(model.status, .editing)
     }
 
+    @MainActor func test_a_saved_card_credits_nothing_and_the_top_up_may_go_on() {
+        let model = InvestModel(load: { .seed }, save: { _ in XCTFail("nothing to save") }, clock: { 1000 })
+        model.onCardOutcome(.success(paymentId: "md-verify"))
+        XCTAssertEqual(model.status, .cardAdded)
+        XCTAssertEqual(model.account, .seed)
+        XCTAssertTrue(model.status.canContinue(model.amount))
+    }
+
+    @MainActor func test_a_card_the_bank_refused_or_did_not_confirm_leaves_the_top_up_open() {
+        let model = InvestModel(load: { .seed }, save: { _ in XCTFail("nothing to save") }, clock: { 1000 })
+        model.onCardOutcome(.declined(message: "Issuer declined"))
+        XCTAssertEqual(model.status, .cardDeclined(message: "Issuer declined"))
+        XCTAssertTrue(model.status.canContinue(model.amount))
+        model.onCardOutcome(.unconfirmed(paymentId: "md-verify"))
+        XCTAssertEqual(model.status, .cardUnconfirmed)
+        XCTAssertTrue(model.status.canContinue(model.amount))
+        model.onCardOutcome(.cancelled)
+        XCTAssertEqual(model.status, .editing)
+    }
+
     func test_an_open_business_stays_only_while_the_mode_still_shows_it() {
         XCTAssertTrue(coverFits(.invest, aftDemo: true))
         XCTAssertFalse(coverFits(.invest, aftDemo: false))

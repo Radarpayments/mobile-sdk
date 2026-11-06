@@ -743,6 +743,59 @@
         }
       }
     },
+    "Add card": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إضافة بطاقة"
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Добави карта"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Karte hinzufügen"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Προσθήκη κάρτας"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Añadir tarjeta"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter une carte"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adaugă card"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Добавить карту"
+          }
+        }
+      }
+    },
     "Add to cart · %@": {
       "extractionState": "manual",
       "localizations": {
@@ -792,6 +845,59 @@
           "stringUnit": {
             "state": "translated",
             "value": "В корзину · %@"
+          }
+        }
+      }
+    },
+    "Adding card…": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "جارٍ إضافة البطاقة…"
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Добавяне на карта…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Karte wird hinzugefügt…"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Προσθήκη κάρτας…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Añadiendo tarjeta…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajout de la carte…"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se adaugă cardul…"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Добавляем карту…"
           }
         }
       }
@@ -1832,6 +1938,59 @@
         }
       }
     },
+    "Card added": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تمت إضافة البطاقة"
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Картата е добавена"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Karte hinzugefügt"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Η κάρτα προστέθηκε"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tarjeta añadida"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carte ajoutée"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Card adăugat"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Карта добавлена"
+          }
+        }
+      }
+    },
     "Card data turns into a token for your server": {
       "extractionState": "manual",
       "localizations": {
@@ -1987,6 +2146,59 @@
           "stringUnit": {
             "state": "translated",
             "value": "Данные карты"
+          }
+        }
+      }
+    },
+    "Card not added": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لم تُضف البطاقة"
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Картата не е добавена"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Karte nicht hinzugefügt"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Η κάρτα δεν προστέθηκε"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tarjeta no añadida"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carte non ajoutée"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cardul nu a fost adăugat"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Карта не добавлена"
           }
         }
       }
@@ -2517,6 +2729,59 @@
           "stringUnit": {
             "state": "translated",
             "value": "К оплате · %@"
+          }
+        }
+      }
+    },
+    "Choose it in the payment sheet at your next top-up. No money was taken.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اخترها في نافذة الدفع عند الشحن التالي. لم يُخصم أي مبلغ."
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Изберете я в прозореца за плащане при следващото захранване. Не е изтеглена сума."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wählen Sie sie bei der nächsten Aufladung im Zahlungsfenster. Es wurde nichts abgebucht."
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Επιλέξτε την στο παράθυρο πληρωμής στην επόμενη φόρτωση. Δεν χρεώθηκε κανένα ποσό."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elígela en la ventana de pago en tu próxima recarga. No se ha cobrado nada."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisissez-la dans la fenêtre de paiement lors de votre prochaine alimentation. Aucun montant n'a été débité."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alegeți-l în fereastra de plată la următoarea alimentare. Nu s-a retras nicio sumă."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выберите её в окне оплаты при следующем пополнении. Деньги не списаны."
           }
         }
       }
@@ -8862,6 +9127,59 @@
         }
       }
     },
+    "The bank has not confirmed the card yet. If it has, the card appears at your next top-up.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لم يؤكد البنك البطاقة بعد. إن أكدها، ستظهر عند الشحن التالي."
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Банката още не е потвърдила картата. Ако я потвърди, тя ще се появи при следващото захранване."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Bank hat die Karte noch nicht bestätigt. Wenn sie es tut, erscheint die Karte bei der nächsten Aufladung."
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Η τράπεζα δεν έχει επιβεβαιώσει ακόμη την κάρτα. Αν την επιβεβαιώσει, θα εμφανιστεί στην επόμενη φόρτωση."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El banco aún no ha confirmado la tarjeta. Si lo hace, aparecerá en tu próxima recarga."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La banque n'a pas encore confirmé la carte. Si elle le fait, la carte apparaîtra lors de la prochaine alimentation."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Banca nu a confirmat încă cardul. Dacă îl confirmă, cardul apare la următoarea alimentare."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Банк ещё не подтвердил карту. Если подтвердит, она появится при следующем пополнении."
+          }
+        }
+      }
+    },
     "The card's bank declined the operation. No money was taken; try another card.": {
       "extractionState": "manual",
       "localizations": {
@@ -8911,6 +9229,59 @@
           "stringUnit": {
             "state": "translated",
             "value": "Банк карты отклонил операцию. Деньги не списаны, попробуйте другую карту."
+          }
+        }
+      }
+    },
+    "The card's bank did not confirm it. No money was taken; try another card.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لم يؤكد بنك البطاقة البطاقة. لم يُخصم أي مبلغ؛ جرّب بطاقة أخرى."
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Банката на картата не я потвърди. Не е изтеглена сума; опитайте с друга карта."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Bank der Karte hat sie nicht bestätigt. Es wurde nichts abgebucht; versuchen Sie eine andere Karte."
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Η τράπεζα της κάρτας δεν την επιβεβαίωσε. Δεν χρεώθηκε κανένα ποσό· δοκιμάστε άλλη κάρτα."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El banco de la tarjeta no la confirmó. No se ha cobrado nada; prueba otra tarjeta."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La banque de la carte ne l'a pas confirmée. Aucun montant n'a été débité ; essayez une autre carte."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Banca cardului nu l-a confirmat. Nu s-a retras nicio sumă; încercați alt card."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Банк карты её не подтвердил. Деньги не списаны, попробуйте другую карту."
           }
         }
       }

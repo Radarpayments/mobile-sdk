@@ -3,7 +3,8 @@ import sdk_payment_scanner
 
 /// Northwind Invest, the AFT demo: portfolio → top-up amount → SDK sheet ("Transfer") → done. The transfer is
 /// registered with `registerP2P.do` and the investor's details; the account is credited only on a completed transfer
-/// and kept on the device.
+/// and kept on the device. "Add card" registers a transfer of 0 that only saves the card. The investor is always the
+/// demo buyer: an investment app knows its user, and a saved card shows up only for the clientId it was saved for.
 struct InvestStoreView: View {
     let back: () -> Void
     let openSettings: () -> Void
@@ -18,6 +19,8 @@ struct InvestStoreView: View {
     @State private var panelOpen = false
     /// The amount of the transfer in the sheet.
     @State private var sentMinor: Int64 = 0
+    /// The sheet is open for "Add card": its result saves a card, it credits nothing.
+    @State private var addingCard = false
     @State private var now = Date()
 
     init(back: @escaping () -> Void, openSettings: @escaping () -> Void) {
@@ -40,11 +43,12 @@ struct InvestStoreView: View {
                 PortfolioView(account: model.account, now: now, onBack: back, onTopUp: { screen = .topUp },
                               onInvest: { model.invest(model.account.freeCashMinor) })
             case .topUp:
-                TopUpView(model: model, checkout: checkout, onBack: toPortfolio, onContinue: pay) {
+                TopUpView(model: model, checkout: checkout, addingCard: addingCard, onBack: toPortfolio, onContinue: pay,
+                          onAddCard: addCard) {
                     if case let .registrationFailed(reason) = checkout.state {
                         RegistrationErrorView(cover: .invest, reason: reason, onOpenSettings: openSettings)
                     }
-                    ScenarioRow(cover: .invest, buyerWithCards: scenario.buyerWithCards) { panelOpen = true }
+                    ScenarioRow(cover: .invest, buyerWithCards: true) { panelOpen = true }
                 }
             case .done:
                 if case let .done(orderId, amountMinor, before, after, at) = model.status {
@@ -65,7 +69,7 @@ struct InvestStoreView: View {
             checkout.resetError()
             wirePresent()
         }
-        .sheet(isPresented: $panelOpen) { ScenarioSheet(scenario: $scenario) }
+        .sheet(isPresented: $panelOpen) { ScenarioSheet(scenario: $scenario, buyerChoice: false) }
         .onChange(of: scenario) { StorePrefs().scenario = $0 }
     }
 
@@ -78,8 +82,15 @@ struct InvestStoreView: View {
     private func pay() {
         guard let minor = model.amount.minor else { return }
         sentMinor = minor
+        addingCard = false
         wirePresent()
-        checkout.pay(amountMinor: minor, clientId: scenario.buyerWithCards ? StorePrefs().clientId : nil)
+        checkout.pay(amountMinor: minor, clientId: StorePrefs().clientId)
+    }
+
+    private func addCard() {
+        addingCard = true
+        wirePresent()
+        checkout.pay(amountMinor: 0, clientId: StorePrefs().clientId)
     }
 
     /// Step 3 in Northwind's look, then step 4: credit on a completed transfer.
@@ -99,7 +110,11 @@ struct InvestStoreView: View {
             )
             presentCheckout(config: config, mdOrder: mdOrder, sessionId: sessionId) { result in
                 checkout.sheetClosed()
-                model.onOutcome(outcome(of: result), amountMinor: sentMinor)
+                if addingCard {
+                    model.onCardOutcome(outcome(of: result))
+                } else {
+                    model.onOutcome(outcome(of: result), amountMinor: sentMinor)
+                }
                 if case .done = model.status { screen = .done }
             }
         }
@@ -298,12 +313,15 @@ struct PortfolioView: View {
 }
 
 /// The amount to top up the account with, typed on the system keyboard. "Continue" registers the transfer and the
-/// SDK sheet takes it from there; `footer` is the demo panel row and a registration error, if any.
+/// SDK sheet takes it from there; "Add card" saves a card for later top-ups without moving money (`addingCard` while
+/// it runs); `footer` is the demo panel row and a registration error, if any.
 struct TopUpView<Footer: View>: View {
     @ObservedObject var model: InvestModel
     @ObservedObject var checkout: StoreCheckout
+    let addingCard: Bool
     let onBack: () -> Void
     let onContinue: () -> Void
+    let onAddCard: () -> Void
     @ViewBuilder let footer: Footer
 
     @State private var field = ""
@@ -323,6 +341,16 @@ struct TopUpView<Footer: View>: View {
                     .padding(.top, 4)
                     banner
                     destination.padding(.top, 12)
+                    NWOutlineButton(
+                        label: busy && addingCard
+                            ? String(localized: "Adding card…", bundle: AppLanguage.bundle)
+                            : String(localized: "Add card", bundle: AppLanguage.bundle),
+                        icon: "creditcard",
+                        enabled: !busy,
+                        action: onAddCard
+                    )
+                    .accessibilityIdentifier("topup_add_card")
+                    .padding(.top, 10)
                     Text("Amount").font(NW.font(13)).foregroundColor(NW.muted).padding(.top, 22)
                     amountField
                     Text("from \(eur(TopUpAmount.min)) to \(eur(TopUpAmount.max))")
@@ -335,7 +363,8 @@ struct TopUpView<Footer: View>: View {
             .scrollDismissesKeyboard(.interactively)
             VStack(spacing: 10) {
                 footer
-                NWPrimaryButton(label: continueLabel, enabled: model.status.canContinue(model.amount), busy: busy, action: onContinue)
+                NWPrimaryButton(label: continueLabel, enabled: model.status.canContinue(model.amount) && !busy,
+                                busy: busy && !addingCard, action: onContinue)
             }
             .padding(.horizontal, 20)
             .padding(.top, 8)
@@ -352,7 +381,7 @@ struct TopUpView<Footer: View>: View {
     }
 
     private var continueLabel: String {
-        if busy { return String(localized: "Creating transfer…", bundle: AppLanguage.bundle) }
+        if busy && !addingCard { return String(localized: "Creating transfer…", bundle: AppLanguage.bundle) }
         if case .declined = model.status { return String(localized: "Try again", bundle: AppLanguage.bundle) }
         let amount = model.amount.minor.map { eur($0) } ?? "—"
         return String(localized: "Continue · \(amount)", bundle: AppLanguage.bundle)
@@ -392,25 +421,40 @@ struct TopUpView<Footer: View>: View {
             case .unconfirmed:
                 return (String(localized: "Status unknown", bundle: AppLanguage.bundle),
                         String(localized: "Check the order in the merchant portal before trying again.", bundle: AppLanguage.bundle))
+            case .cardAdded:
+                return (String(localized: "Card added", bundle: AppLanguage.bundle),
+                        String(localized: "Choose it in the payment sheet at your next top-up. No money was taken.", bundle: AppLanguage.bundle))
+            case .cardDeclined:
+                return (String(localized: "Card not added", bundle: AppLanguage.bundle),
+                        String(localized: "The card's bank did not confirm it. No money was taken; try another card.", bundle: AppLanguage.bundle))
+            case .cardUnconfirmed:
+                return (String(localized: "Status unknown", bundle: AppLanguage.bundle),
+                        String(localized: "The bank has not confirmed the card yet. If it has, the card appears at your next top-up.",
+                               bundle: AppLanguage.bundle))
             default: return nil
             }
         }()
+        let added = model.status == .cardAdded
+        let tint = added ? NW.accent : NW.error
         if let (title, body) = texts {
             HStack(alignment: .top, spacing: 10) {
-                Image(systemName: "exclamationmark.circle").foregroundColor(NW.error).accessibilityHidden(true)
+                Image(systemName: added ? "checkmark.circle" : "exclamationmark.circle").foregroundColor(tint).accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(verbatim: title).font(NW.font(15, .semibold)).foregroundColor(NW.text)
                     Text(verbatim: body).font(NW.font(13)).foregroundColor(NW.muted)
                     if case let .declined(message?) = model.status {
                         Text("Gateway: \(message)").font(NW.font(12)).foregroundColor(NW.muted).padding(.top, 4)
                     }
+                    if case let .cardDeclined(message?) = model.status {
+                        Text("Gateway: \(message)").font(NW.font(12)).foregroundColor(NW.muted).padding(.top, 4)
+                    }
                 }
                 Spacer(minLength: 0)
             }
             .padding(.horizontal, 14).padding(.vertical, 12)
-            .background(NW.error.opacity(0.12))
+            .background(tint.opacity(0.12))
             .clipShape(RoundedRectangle(cornerRadius: 14))
-            .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(NW.error.opacity(0.45), lineWidth: 1))
+            .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(tint.opacity(0.45), lineWidth: 1))
             .padding(.top, 12)
         }
     }

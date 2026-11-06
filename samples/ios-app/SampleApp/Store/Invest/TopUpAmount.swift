@@ -72,12 +72,18 @@ enum TopUpStatus: Equatable {
     case unconfirmed
     /// Credited: `amountMinor` of order `orderId` took free cash from `freeCashBefore` to `freeCashAfter`.
     case done(orderId: String, amountMinor: Int64, freeCashBefore: Int64, freeCashAfter: Int64, at: Int64)
+    /// "Add card" saved the card: the sheet offers it at the next top-up. No money moved.
+    case cardAdded
+    /// "Add card" was refused; `message` is the SDK's text, when it has one.
+    case cardDeclined(message: String?)
+    /// Whether "Add card" saved the card is not known; no money moved, so a top-up may still go ahead.
+    case cardUnconfirmed
 
     /// Whether "Continue" may start a transfer of `amount` now.
     func canContinue(_ amount: TopUpAmount) -> Bool {
         guard amount.valid else { return false }
         switch self {
-        case .editing, .declined: return true
+        case .editing, .declined, .cardAdded, .cardDeclined, .cardUnconfirmed: return true
         case .unconfirmed, .done: return false
         }
     }

@@ -49,6 +49,16 @@ final class InvestModel: ObservableObject {
         }
     }
 
+    /// The sheet of "Add card" closed: the account does not change, whatever the outcome.
+    func onCardOutcome(_ outcome: CheckoutOutcome) {
+        switch outcome {
+        case .success: status = .cardAdded
+        case let .declined(message): status = .cardDeclined(message: message)
+        case .unconfirmed: status = .cardUnconfirmed
+        case .cancelled: status = .editing
+        }
+    }
+
     /// Buys the Global ETF for `amountMinor` (at most the free cash), without a payment.
     func invest(_ amountMinor: Int64) { update(account.invest(amountMinor: amountMinor, at: clock())) }
 

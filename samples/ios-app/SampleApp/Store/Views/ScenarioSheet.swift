@@ -4,16 +4,20 @@ import SwiftUI
 /// store — and the same in every cover.
 struct ScenarioSheet: View {
     @Binding var scenario: Scenario
+    /// False where the buyer is always the one with saved cards (Northwind): only "Reset" is left.
+    var buyerChoice = true
 
     var body: some View {
         NavigationStack {
             Form {
                 Section {
-                    Picker("Buyer", selection: $scenario.buyerWithCards) {
-                        Text("Guest").tag(false)
-                        Text("With cards").tag(true).accessibilityIdentifier("scenario_with_cards")
+                    if buyerChoice {
+                        Picker("Buyer", selection: $scenario.buyerWithCards) {
+                            Text("Guest").tag(false)
+                            Text("With cards").tag(true).accessibilityIdentifier("scenario_with_cards")
+                        }
+                        .pickerStyle(.segmented)
                     }
-                    .pickerStyle(.segmented)
                     HStack {
                         Text("Cards appear after a payment with “Save card”")
                             .font(.footnote)

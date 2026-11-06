@@ -251,6 +251,15 @@ final class OrderRegistrarTests: XCTestCase {
         XCTAssertTrue((1...32).contains(orderNumber.count), "orderNumber '\(orderNumber)' is \(orderNumber.count) chars")
     }
 
+    func test_an_AFT_order_of_zero_only_saves_the_buyers_card() async {
+        _ = await GatewayOrderRegistrar(baseUrl: baseUrl, login: "login", password: "secret", session: session, orderType: .aft)
+            .register(amountMinor: 0, clientId: "c-1")
+        let body = json()
+        XCTAssertEqual((body["amount"] as? NSNumber)?.int64Value, 0)
+        XCTAssertEqual((body["features"] as? [String: Any])?["feature"] as? [String], ["WITHOUT_TO_CARD", "VERIFY", "FORCE_CREATE_BINDING"])
+        XCTAssertEqual(body["clientId"] as? String, "c-1")
+    }
+
     func test_an_AFT_guest_sends_no_clientId() async {
         _ = await GatewayOrderRegistrar(baseUrl: baseUrl, login: "login", password: "secret", session: session, orderType: .aft)
             .register(amountMinor: 100, clientId: nil)
