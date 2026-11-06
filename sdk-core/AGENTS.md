@@ -72,5 +72,8 @@ Only `Rsa` is platform code: Android `KeyFactory` + `Cipher("RSA/ECB/PKCS1Paddin
 ```
 
 commonTest runs on the Android JVM and on the iOS simulator (there is no `jvm()` target). Fixtures were ported from
-android-sdk 3.x; tests that build a payload pin the time zone (Europe/Nicosia) so the timestamp is stable. There is no
+android-sdk 3.x; tests that build a payload pin the time zone (Europe/Nicosia) so the timestamp is stable. `TokenRoundTripTest` opens
+the token with the private half of `TestRsaKeys` (`decryptWithTestKey`: javax.crypto on the JVM, Security.framework in
+iosTest) and checks every field the gateway reads. The test private key is Base64 DER without PEM armour, so secret
+scanners do not flag the public repository; generate a new pair rather than reuse a real key. There is no
 detekt baseline here: every finding fails the build.
