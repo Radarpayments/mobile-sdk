@@ -188,11 +188,14 @@ there must be one provider call site.
   `FakePaymentApi` (programmable `next…` answers and errors, gates, recorded calls), `FakeKeyProvider`,
   `FakeWebChallengeHost`, fake wallet token providers, `Fixtures` (test RSA key, mdOrder, PAN), `mockJsonClient` for
   Ktor `MockEngine`. Add to these rather than writing new fakes.
-- androidUnitTest: `PayrdrCheckoutTest`, `PayrdrCheckoutIntentTest` (no Robolectric). `live/` talks to a real gateway and
+- androidUnitTest: `PayrdrCheckoutTest`, `PayrdrCheckoutIntentTest` (no Robolectric). `CertificatePinningTest` checks the OkHttp pinner
+  against `ssl/TestCertificates` (each key type, a CA-issued chain, pins as `openssl` computes them). `live/` talks to a real gateway and
   is skipped unless environment variables are set (`PAYRDR_API2_KEY`; `PAYRDR_AFT_BASE_URL`, `PAYRDR_AFT_LOGIN`,
   `PAYRDR_AFT_PASSWORD`, …). Credentials only ever come from the environment.
 - iosTest: `AccessibilityTest` (Compose UI test without a device: names, live regions, announcements, hidden overlay
-  content), `ApplePayRequestBuilderTest`. snake_case test names.
+  content), `ResultDeliverySheetTest`, `ApplePayRequestBuilderTest`, `DarwinPinningDelegateTest`. The simulator test
+  process cannot reach the trust daemon (`SecTrustEvaluateWithError` fails with errSecInternal, -26276), so the pinning
+  test checks the SPKI pins and the chain matching, not the system chain check. snake_case test names.
 - androidInstrumentedTest: `CardFormScreenTest`, `CheckoutSkeletonTest`, `ProcessingScreenTest`, `ResultScreenTest`;
   assume an English device. Match amounts and masks with `ltr(…)`; the expiry hint has a word joiner (`MM/⁠YY`); call
   `Espresso.closeSoftKeyboard()` before tapping Pay; `SuccessIcon`/`FailureIcon` need `useUnmergedTree = true`; screens

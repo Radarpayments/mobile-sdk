@@ -52,33 +52,42 @@ internal class DarwinPinningDelegate(
         if (protectionSpace.authenticationMethod != NSURLAuthenticationMethodServerTrust) {
             return NSURLSessionAuthChallengePerformDefaultHandling to null
         }
+        return decide(protectionSpace.host, protectionSpace.serverTrust)
+    }
 
+    /** What to answer a server-trust challenge from [host] presenting [serverTrust]. */
+    internal fun decide(
+        host: String,
+        serverTrust: SecTrustRef?,
+    ): Pair<NSURLSessionAuthChallengeDisposition, NSURLCredential?> {
         // If no pins configured for this host, fall through to default validation
         // — aligns with OkHttp's CertificatePinner semantics (only pinned hosts are enforced).
-        val pins = config.pinsFor(protectionSpace.host)
+        val pins = config.pinsFor(host)
         if (pins.isEmpty()) return NSURLSessionAuthChallengePerformDefaultHandling to null
 
-        val trust: SecTrustRef = protectionSpace.serverTrust ?: return defaultReject()
+        val trust: SecTrustRef = serverTrust ?: return defaultReject()
         // 1. Let Apple run its standard chain validation first.
         if (!SecTrustEvaluateWithError(trust, null)) return defaultReject()
 
-        // 2. As OkHttp does, the chain passes when any of its certificates — leaf, intermediate or root — has a
-        //    pinned key, so a pin on the issuing CA survives the leaf's renewal.
-        val certCount = SecTrustGetCertificateCount(trust).toInt()
-        val match =
-            (0 until certCount).any { index ->
-                val cert = SecTrustGetCertificateAtIndex(trust, index.convert())
-                cert != null && spkiPin(cert) in pins
-            }
-        return if (match) {
+        val chain = (0 until SecTrustGetCertificateCount(trust).toInt()).mapNotNull { SecTrustGetCertificateAtIndex(trust, it.convert()) }
+        return if (hasPinnedKey(chain, pins)) {
             NSURLSessionAuthChallengeUseCredential to NSURLCredential.credentialForTrust(trust)
         } else {
             defaultReject()
         }
     }
 
+    /**
+     * 2. As OkHttp does, the chain passes when any of its certificates — leaf, intermediate or root — has a
+     *    pinned key, so a pin on the issuing CA survives the leaf's renewal.
+     */
+    internal fun hasPinnedKey(
+        chain: List<SecCertificateRef>,
+        pins: Set<String>,
+    ): Boolean = chain.any { spkiPin(it) in pins }
+
     /** `"sha256/<base64>"` of [cert]'s SubjectPublicKeyInfo, or null for a key this delegate cannot frame. */
-    private fun spkiPin(cert: SecCertificateRef): String? {
+    internal fun spkiPin(cert: SecCertificateRef): String? {
         val key = SecCertificateCopyKey(cert) ?: return null
         val keyData = SecKeyCopyExternalRepresentation(key, null)
         CFRelease(key)
