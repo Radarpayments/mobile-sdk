@@ -685,6 +685,68 @@ class PaymentFlowControllerTest {
                 .result shouldBe CheckoutResult.Canceled(Fixtures.TEST_MD_ORDER)
         }
 
+    @Test fun `the bank page confirming after a cancel neither reopens the checkout nor asks the order status`() =
+        runTest {
+            val gate = CompletableDeferred<ThreeDsResult>()
+            val host =
+                object : WebChallengeHost {
+                    override suspend fun performChallenge(challenge: ThreeDsChallenge): ThreeDsResult = gate.await()
+                }
+            val api = FakePaymentApi().apply { nextProcessFormResponse = threeDs }
+            val controller =
+                PaymentFlowController(
+                    api = api,
+                    keyProvider = FakeKeyProvider(),
+                    core = SdkCore(),
+                    webChallengeHost = host,
+                    logger = Logger(),
+                    scope = this,
+                )
+            submitCard(BuildResult(controller, api, FakeWebChallengeHost(), FakeGooglePayTokenProvider(), FakeApplePayTokenProvider()))
+            advanceUntilIdle()
+            controller.handle(PaymentIntent.Cancel)
+            advanceUntilIdle()
+
+            controller.state.test {
+                awaitItem().shouldBeInstanceOf<PaymentState.Completed>()
+                gate.complete(ThreeDsResult.Succeeded(queryParams = emptyMap()))
+                advanceUntilIdle()
+                expectNoEvents()
+            }
+            api.getFinishedPaymentInfoCalls.shouldBeEmpty()
+        }
+
+    @Test fun `a cancel while the card is being sealed sends nothing`() =
+        runTest {
+            val keyProvider = FakeKeyProvider().apply { gate = CompletableDeferred() }
+            val built = buildController(keyProvider = keyProvider)
+            submitCard(built)
+            runCurrent()
+            built.controller.handle(PaymentIntent.Cancel)
+            runCurrent()
+            keyProvider.gate?.complete(Unit)
+            advanceUntilIdle()
+
+            built.terminal() shouldBe CheckoutResult.Canceled(Fixtures.TEST_MD_ORDER)
+            built.api.processFormCalls.shouldBeEmpty()
+        }
+
+    @Test fun `a cancel while the sent payment awaits its answer is ignored`() =
+        runTest {
+            val built = buildController()
+            built.api.processFormGate = CompletableDeferred()
+            submitCard(built)
+            runCurrent()
+            built.controller.handle(PaymentIntent.Cancel)
+            runCurrent()
+            built.controller.state.value
+                .shouldBeInstanceOf<PaymentState.Processing>()
+            built.api.processFormGate?.complete(Unit)
+            advanceUntilIdle()
+
+            built.terminal() shouldBe CheckoutResult.Completed(Fixtures.TEST_MD_ORDER)
+        }
+
     @Test fun `after a successful challenge a lost status answer and no attempt recorded is unknown`() =
         runTest {
             val built = buildController()

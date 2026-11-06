@@ -34,7 +34,6 @@ import kotlinx.coroutines.flow.first
 import net.payrdr.mobile.payment.sdk.payment.config.SdkPaymentConfig
 import net.payrdr.mobile.payment.sdk.payment.flow.PaymentFlowController
 import net.payrdr.mobile.payment.sdk.payment.result.CheckoutResult
-import net.payrdr.mobile.payment.sdk.payment.result.PaymentEffect
 import net.payrdr.mobile.payment.sdk.payment.result.PaymentIntent
 import net.payrdr.mobile.payment.sdk.payment.result.PaymentState
 import net.payrdr.mobile.payment.sdk.payment.result.ProcessingStep
@@ -87,8 +86,8 @@ internal enum class CheckoutPresentation {
 
 /**
  * Root composable for the SDK checkout UI. Observes `controller.state` and renders the
- * appropriate step; observes `controller.effects` and invokes [onResult] exactly once when the flow
- * dismisses (or, with [SdkPaymentConfig.showResultScreen], when the buyer leaves the result screen).
+ * appropriate step and invokes [onResult] exactly once when the flow
+ * completes (or, with [SdkPaymentConfig.showResultScreen], when the buyer leaves the result screen).
  *
  * Steps: payment sheet (wallets, saved cards, new card) → new card / saved-card CVV / all cards →
  * processing → 3-D Secure → result. Navigation between the card steps is local to the UI; the
@@ -162,10 +161,10 @@ internal fun PaymentCheckout(
         // The sheet leaves by its own height, as it came in; a full-screen slide would flick it away.
         var sheetHeight by remember { mutableIntStateOf(0) }
 
-        // Watch for terminal state: deliver it, or hold it for the result screen.
+        // Watch for terminal state: deliver it, or hold it for the result screen. The state, not the one-shot Dismiss: a
+        // run that ends before this first composes (a start that fails at once) has emitted its Dismiss to nobody.
         LaunchedEffect(controller) {
-            controller.effects.filterIsInstance<PaymentEffect.Dismiss>().collect {
-                val terminal = controller.state.value as? PaymentState.Completed ?: return@collect
+            controller.state.filterIsInstance<PaymentState.Completed>().collect { terminal ->
                 // A cancel needs no screen; an unknown outcome has none of its own (the merchant checks the order).
                 val hasScreen = terminal.result is CheckoutResult.Completed || terminal.result is CheckoutResult.Failed
                 if (config.showResultScreen && hasScreen) heldResult = terminal else delivery.deliver(terminal.result)

@@ -190,7 +190,7 @@ public class PaymentFlowController internal constructor(
                     PaymentIntent.TapGooglePay -> handleTapWallet(WalletVendor.GOOGLE)
                     PaymentIntent.TapApplePay -> handleTapWallet(WalletVendor.APPLE)
                     PaymentIntent.BackToPaymentMethods -> handleBackToPaymentMethods()
-                    PaymentIntent.Cancel -> if (!resolving) complete(CheckoutResult.Canceled(orderId()))
+                    PaymentIntent.Cancel -> if (cancellable()) complete(CheckoutResult.Canceled(orderId()))
                 }
             } catch (e: CancellationException) {
                 throw e
@@ -215,7 +215,7 @@ public class PaymentFlowController internal constructor(
     }
 
     private suspend fun handleStart(checkout: CheckoutConfig) {
-        _state.value = PaymentState.Processing(ProcessingStep.LOADING_SESSION)
+        moveTo(PaymentState.Processing(ProcessingStep.LOADING_SESSION))
         mdOrder =
             when (checkout) {
                 is CheckoutConfig.MdOrder -> checkout.value
@@ -247,7 +247,7 @@ public class PaymentFlowController internal constructor(
         val (googlePay, applePay) = if (walletsOffered) wallets.offered(session) else null to null
         val form = cardForm(session, transfer, payerData, googlePay, applePay)
         cardFormSnapshot = form
-        _state.value = form
+        moveTo(form)
     }
 
     private suspend fun handleSubmitNewCard(intent: PaymentIntent.SubmitNewCard) {
@@ -263,7 +263,7 @@ public class PaymentFlowController internal constructor(
                 )
             }
 
-        _state.value = PaymentState.Processing(ProcessingStep.SUBMITTING_PAYMENT)
+        moveTo(PaymentState.Processing(ProcessingStep.SUBMITTING_PAYMENT))
         paymentSent = true
         val transfer = transfer
         val response =
@@ -296,14 +296,14 @@ public class PaymentFlowController internal constructor(
         val transfer = transfer
         if (transfer != null && transfer.cvcBindingNotRequired) {
             // The gateway wants a CVC inside a saved card's seToken: without one the card goes by its binding id.
-            _state.value = PaymentState.Processing(ProcessingStep.SUBMITTING_PAYMENT)
+            moveTo(PaymentState.Processing(ProcessingStep.SUBMITTING_PAYMENT))
             paymentSent = true
             resolveProcessFormResponse(api.p2pPerformByBinding(transferFromSavedCard(P2PFromCard.Binding(intent.bindingId), intent)))
             return
         }
         val token = tokenize { pubKey -> BindingParams(mdOrder = mdOrder, bindingID = intent.bindingId, cvc = intent.cvc, pubKey = pubKey) }
 
-        _state.value = PaymentState.Processing(ProcessingStep.SUBMITTING_PAYMENT)
+        moveTo(PaymentState.Processing(ProcessingStep.SUBMITTING_PAYMENT))
         paymentSent = true
         if (transfer != null) {
             resolveProcessFormResponse(api.p2pPerformByBinding(transferFromSavedCard(P2PFromCard.SeToken(token), intent)))
@@ -325,10 +325,10 @@ public class PaymentFlowController internal constructor(
 
     /** The payment token of the card [params] describe, sealed with the gateway's current public key. */
     private suspend fun tokenize(params: (pubKey: String) -> PaymentCardParams): String {
-        _state.value = PaymentState.Processing(ProcessingStep.LOADING_PUBLIC_KEY)
+        moveTo(PaymentState.Processing(ProcessingStep.LOADING_PUBLIC_KEY))
         val key = keyProvider.provideKey()
 
-        _state.value = PaymentState.Processing(ProcessingStep.TOKENIZING_CARD)
+        moveTo(PaymentState.Processing(ProcessingStep.TOKENIZING_CARD))
         val tokenResult =
             core.generate(
                 SdkCoreConfig(
@@ -392,17 +392,18 @@ public class PaymentFlowController internal constructor(
         if (form == null || !offered) {
             // A button the order does not offer (e.g. a merchant's own form): nothing to open, the form stays.
             logger.warning(TAG, "${vendor.title} tapped but not offered for this order")
-            form?.let { _state.value = it }
+            form?.let(::moveTo)
             return
         }
 
-        _state.value = PaymentState.Processing(ProcessingStep.SUBMITTING_PAYMENT)
+        moveTo(PaymentState.Processing(ProcessingStep.SUBMITTING_PAYMENT))
         val token = wallets.token(vendor, form, session)
         if (token == null) {
             // The buyer dismissed the wallet's sheet: back to the form, the checkout goes on.
-            _state.value = form
+            moveTo(form)
             return
         }
+        ensureOpen()
         paymentSent = true
         val response =
             if (transfer != null) {
@@ -419,7 +420,7 @@ public class PaymentFlowController internal constructor(
                 throw SdkNotConfiguredException("Merchant requires 3DS2SDK which this SDK does not support")
 
             response.acsUrl != null && response.paReq != null && response.termUrl != null -> {
-                _state.value = PaymentState.ThreeDsChallenge
+                moveTo(PaymentState.ThreeDsChallenge)
                 val challenge =
                     ThreeDsChallenge(
                         mdOrder = mdOrder,
@@ -461,7 +462,7 @@ public class PaymentFlowController internal constructor(
         response.displayErrorMessage?.takeIf { it.isNotBlank() } ?: response.error?.takeIf { it.isNotBlank() }
 
     private suspend fun finalize() {
-        _state.value = PaymentState.Processing(ProcessingStep.FINALIZING)
+        moveTo(PaymentState.Processing(ProcessingStep.FINALIZING))
         val finishedInfo = api.getFinishedPaymentInfo(mdOrder)
         if (outcome.settled(finishedInfo) != null) {
             completeFrom(finishedInfo)
@@ -526,7 +527,7 @@ public class PaymentFlowController internal constructor(
      * payment that went through.
      */
     private suspend fun recheck(settles: (FinishedPaymentInfoResponse) -> Boolean = { outcome.settled(it) != null }): Recheck {
-        _state.value = PaymentState.Processing(ProcessingStep.FINALIZING)
+        moveTo(PaymentState.Processing(ProcessingStep.FINALIZING))
         resolving = true
         try {
             var lastError: SdkException? = null
@@ -565,6 +566,25 @@ public class PaymentFlowController internal constructor(
         _state.value = PaymentState.Completed(result = result, receipt = receipt)
         _effects.tryEmit(PaymentEffect.Dismiss)
     }
+
+    /**
+     * Moves the run on to [next]. A run that has already ended (the buyer cancelled while a request was out) stops
+     * here: a late answer must neither reopen the checkout nor send anything more.
+     */
+    private fun moveTo(next: PaymentState) {
+        ensureOpen()
+        _state.value = next
+    }
+
+    private fun ensureOpen() {
+        if (_state.value is PaymentState.Completed) throw CancellationException("The checkout has already ended")
+    }
+
+    /**
+     * Not while a sent payment awaits its answer or its status is asked again: the gateway may charge it regardless,
+     * and the merchant would be told it was cancelled. On the bank page the buyer may: that is a refusal to confirm.
+     */
+    private fun cancellable(): Boolean = !resolving && !(paymentInFlight && paymentSent && _state.value != PaymentState.ThreeDsChallenge)
 
     /** The order the checkout pays; before the session id is decoded (or if it cannot be), the id the merchant passed. */
     private fun orderId(): String = mdOrder.ifBlank { originalCheckoutId }
