@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.detekt) apply false
     alias(libs.plugins.bcv) apply false
     alias(libs.plugins.skie) apply false
+    alias(libs.plugins.kover)
 }
 
 subprojects {
@@ -49,6 +50,10 @@ val sdkLibraries =
     )
 subprojects {
     val pomDescription = sdkLibraries[name] ?: return@subprojects
+    apply(plugin = rootProject.libs.plugins.kover.get().pluginId)
+    extensions.configure<kotlinx.kover.gradle.plugin.dsl.KoverProjectExtension> {
+        currentProject { createVariant("sdk") { add("debug") } }
+    }
     // The Android release variant is published by the payrdr.kmp.library convention.
     apply(plugin = "maven-publish")
     extensions.configure<PublishingExtension> {
@@ -144,4 +149,23 @@ tasks.register("verifyVersions") {
 
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
+}
+
+// Test coverage of the SDK as testDebugUnitTest runs it (commonMain and androidMain): ./gradlew koverHtmlReportSdk.
+// Kotlin/Native has no coverage tool, so iosMain and what only iosTest covers do not count.
+dependencies {
+    sdkLibraries.keys.forEach { kover(project(":$it")) }
+}
+
+kover {
+    currentProject { createVariant("sdk") {} }
+    reports {
+        filters {
+            excludes {
+                // Screens are covered on devices and in iosTest, which this report does not see; generated code is not ours.
+                annotatedBy("androidx.compose.runtime.Composable")
+                classes("*.generated.resources.*", "*ComposableSingletons*", "*\$\$serializer")
+            }
+        }
+    }
 }

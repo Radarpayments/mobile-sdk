@@ -68,6 +68,7 @@ Check narrowly: the affected module, debug, one iOS target.
 ./gradlew :<module>:ktlintCheck :<module>:detekt # :<module>:ktlintFormat fixes formatting
 ./gradlew :<module>:apiCheck                     # :<module>:apiDump after an intended public API change
 ./gradlew :sdk-payment:connectedDebugAndroidTest # needs a running emulator/device
+./gradlew koverHtmlReportSdk                     # JVM test coverage of the four SDK modules → build/reports/kover/htmlSdk
 scripts/build-bridge.sh                          # before running a plugin or Flutter/RN sample
 ```
 
