@@ -87,8 +87,8 @@ internal object MoneyFormatter {
     private val PREFORMATTED = Regex("""(-?\d[\d\s.,\u00A0]*)\s*([A-Za-z]{3})?""")
 
     /**
-     * Converts a formatted number to minor units. The last `.` or `,` is the decimal separator only if it
-     * is followed by exactly [exponent] digits; otherwise every separator groups thousands (`1,000`).
+     * Converts a formatted number to minor units. The last `.` or `,` is the decimal separator if it is followed by
+     * one to [exponent] digits (`10.5`, `10.50`); otherwise every separator groups thousands (`1,000`).
      */
     private fun toMinor(
         text: String,
@@ -98,7 +98,7 @@ internal object MoneyFormatter {
         val negative = number.startsWith("-")
         val body = number.removePrefix("-")
         val separator = body.indexOfLast { it == '.' || it == ',' }
-        val hasFraction = exponent > 0 && separator >= 0 && body.length - separator - 1 == exponent
+        val hasFraction = exponent > 0 && separator >= 0 && body.length - separator - 1 in 1..exponent
         val whole = (if (hasFraction) body.substring(0, separator) else body).filter { it.isDigit() }
         val fraction = if (hasFraction) body.substring(separator + 1) else ""
         if (whole.isEmpty() || !fraction.all { it.isDigit() }) return null

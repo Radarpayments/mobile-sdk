@@ -77,6 +77,8 @@ class MoneyFormatterTest {
         MoneyFormatter.minorUnits("49.90 EUR", null) shouldBe 4990L
         MoneyFormatter.minorUnits("1 250,50 TRY", "TRY") shouldBe 125050L
         MoneyFormatter.minorUnits("1,000 EUR", "EUR") shouldBe 100000L
+        MoneyFormatter.minorUnits("10.5 EUR", "EUR") shouldBe 1050L
+        MoneyFormatter.minorUnits("1.234,5 EUR", "EUR") shouldBe 123450L
         MoneyFormatter.minorUnits("1.500 KWD", null) shouldBe 1500L
         MoneyFormatter.minorUnits("about ten", "EUR") shouldBe null
         MoneyFormatter.minorUnits(null, "EUR") shouldBe null
