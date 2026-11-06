@@ -20,7 +20,6 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import net.payrdr.mobile.payment.sdk.payment.config.GooglePayConfig
 import net.payrdr.mobile.payment.sdk.payment.utils.MoneyFormatter
-import org.json.JSONObject
 import java.util.concurrent.atomic.AtomicReference
 
 /**
@@ -157,14 +156,8 @@ internal class AndroidGooglePayTokenProvider(
                 resumeWith(deferred, GooglePayTokenResult.Failure("PaymentData.toJson() returned null"))
                 return
             }
-        val token =
-            runCatching {
-                JSONObject(json)
-                    .getJSONObject("paymentMethodData")
-                    .getJSONObject("tokenizationData")
-                    .getString("token")
-            }.getOrNull()
-        if (token.isNullOrBlank()) {
+        val token = googlePayToken(json)
+        if (token == null) {
             resumeWith(deferred, GooglePayTokenResult.Failure("Missing paymentMethodData.tokenizationData.token"))
         } else {
             resumeWith(deferred, GooglePayTokenResult.Success(token))
