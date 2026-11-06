@@ -47,13 +47,6 @@ public class SdkTransactionException(
 ) : SdkException(message, cause)
 
 /**
- * Attempt to pay an already-paid order.
- */
-public class SdkAlreadyPaidException(
-    public val paymentId: String,
-) : SdkException("Payment $paymentId already completed")
-
-/**
  * Session lookup failed — session id does not exist on the server.
  */
 public class SdkSessionNotFoundException(
@@ -91,25 +84,12 @@ public class SdkCryptogramException(
 ) : SdkException(message, cause)
 
 /**
- * Public key could not be loaded, parsed, or used.
- */
-public class SdkInvalidPublicKeyException(
-    message: String? = null,
-    cause: Throwable? = null,
-) : SdkException(message, cause)
-
-/**
  * Merchant is missing required configuration — most notably the deprecated 3DS2 native SDK,
  * for which this SDK has no fallback. The caller should surface this as a hard failure.
  */
 public class SdkNotConfiguredException(
     message: String,
 ) : SdkException(message)
-
-/**
- * User cancelled the payment (backed out of the sheet, dismissed 3DS, etc.).
- */
-public class SdkCancelledByUserException : SdkException("Payment cancelled by user")
 
 /**
  * The 3DS v1 web-challenge flow failed — ACS returned error, redirect contained non-success

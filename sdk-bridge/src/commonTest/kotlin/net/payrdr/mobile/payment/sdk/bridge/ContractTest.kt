@@ -19,14 +19,11 @@ import net.payrdr.mobile.payment.sdk.payment.config.ApplePayConfig
 import net.payrdr.mobile.payment.sdk.payment.config.CheckoutConfig
 import net.payrdr.mobile.payment.sdk.payment.config.GooglePayConfig
 import net.payrdr.mobile.payment.sdk.payment.config.SdkPaymentConfig
-import net.payrdr.mobile.payment.sdk.payment.exception.SdkAlreadyPaidException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkApplePayException
-import net.payrdr.mobile.payment.sdk.payment.exception.SdkCancelledByUserException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkCryptogramException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkDeclinedException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkGooglePayException
-import net.payrdr.mobile.payment.sdk.payment.exception.SdkInvalidPublicKeyException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkInvalidSessionIdException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkNetworkException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkNotConfiguredException
@@ -155,15 +152,12 @@ class ContractTest {
                 SdkPaymentApiException(),
                 SdkNetworkException(),
                 SdkTransactionException(),
-                SdkAlreadyPaidException("p-1"),
                 SdkSessionNotFoundException("ps_1"),
                 SdkOrderNotFoundException("md-1"),
                 SdkSessionExpiredException("md-1"),
                 SdkInvalidSessionIdException("x"),
                 SdkCryptogramException(),
-                SdkInvalidPublicKeyException(),
                 SdkNotConfiguredException("no gateway"),
-                SdkCancelledByUserException(),
                 SdkThreeDsChallengeFailedException("denied"),
                 SdkThreeDsTimeoutException(),
                 SdkGooglePayException(),

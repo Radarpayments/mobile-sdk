@@ -71,9 +71,9 @@ plugin's iOS folder.
 | `unknown` | The payment was sent but how it ended is not known; `error` is the last one seen, if any. Check the order on the server. |
 
 `error.code`: `declined` (+ `declineCode`), `api` (+ `httpStatus`, `gatewayErrorCode`), `network`, `transaction`,
-`already_paid`, `session_not_found`, `order_not_found`, `session_expired` (the time to pay ran out; the order is
-declined, register a new one), `invalid_session_id`, `cryptogram`, `invalid_public_key`,
-`not_configured`, `cancelled_by_user`, `three_ds_failed`, `three_ds_timeout`, `google_pay`, `apple_pay`, `unknown` — and,
+`session_not_found`, `order_not_found`, `session_expired` (the time to pay ran out; the order is
+declined, register a new one), `invalid_session_id`, `cryptogram`,
+`not_configured`, `three_ds_failed`, `three_ds_timeout`, `google_pay`, `apple_pay`, `unknown` — and,
 when nothing opened, `invalid_request` (the request broke this contract), `busy` (a checkout is already open) or
 `no_screen` (no activity / key window to open over).
 

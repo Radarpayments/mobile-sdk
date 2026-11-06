@@ -4,12 +4,12 @@ import io.kotest.matchers.shouldBe
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
-import net.payrdr.mobile.payment.sdk.payment.exception.SdkAlreadyPaidException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkDeclinedException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkNetworkException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkPaymentApiException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkSessionExpiredException
+import net.payrdr.mobile.payment.sdk.payment.exception.SdkSessionNotFoundException
 import net.payrdr.mobile.payment.sdk.payment.result.CheckoutResult
 import kotlin.test.Test
 
@@ -48,12 +48,12 @@ class CheckoutResultJsonTest {
     @Test fun `every SDK error has a stable code`() {
         val codes =
             listOf(
-                SdkAlreadyPaidException("p-1") to "already_paid",
+                SdkSessionNotFoundException("ps_1") to "session_not_found",
                 SdkSessionExpiredException("md-1") to "session_expired",
                 SdkException("something") to "unknown",
             ).map { (error, _) -> json(CheckoutResult.Failed("md-1", error))["error"]!!.jsonObject["code"].toString().trim('"') }
 
-        codes shouldBe listOf("already_paid", "session_expired", "unknown")
+        codes shouldBe listOf("session_not_found", "session_expired", "unknown")
     }
 
     @Test fun `a request the bridge could not read fails with its reason`() {

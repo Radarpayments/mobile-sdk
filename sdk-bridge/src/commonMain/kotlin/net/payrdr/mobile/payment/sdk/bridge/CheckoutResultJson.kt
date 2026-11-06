@@ -4,14 +4,11 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonObjectBuilder
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
-import net.payrdr.mobile.payment.sdk.payment.exception.SdkAlreadyPaidException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkApplePayException
-import net.payrdr.mobile.payment.sdk.payment.exception.SdkCancelledByUserException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkCryptogramException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkDeclinedException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkGooglePayException
-import net.payrdr.mobile.payment.sdk.payment.exception.SdkInvalidPublicKeyException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkInvalidSessionIdException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkNetworkException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkNotConfiguredException
@@ -86,15 +83,12 @@ internal object CheckoutResultJson {
             is SdkPaymentApiException -> "api"
             is SdkNetworkException -> "network"
             is SdkTransactionException -> "transaction"
-            is SdkAlreadyPaidException -> "already_paid"
             is SdkSessionNotFoundException -> "session_not_found"
             is SdkOrderNotFoundException -> "order_not_found"
             is SdkSessionExpiredException -> "session_expired"
             is SdkInvalidSessionIdException -> "invalid_session_id"
             is SdkCryptogramException -> "cryptogram"
-            is SdkInvalidPublicKeyException -> "invalid_public_key"
             is SdkNotConfiguredException -> "not_configured"
-            is SdkCancelledByUserException -> "cancelled_by_user"
             is SdkThreeDsChallengeFailedException -> "three_ds_failed"
             is SdkThreeDsTimeoutException -> "three_ds_timeout"
             is SdkGooglePayException -> "google_pay"

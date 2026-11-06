@@ -5,7 +5,6 @@ import net.payrdr.mobile.payment.sdk.payment.exception.SdkCryptogramException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkDeclinedException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkGooglePayException
-import net.payrdr.mobile.payment.sdk.payment.exception.SdkInvalidPublicKeyException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkInvalidSessionIdException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkNetworkException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkNotConfiguredException
@@ -89,7 +88,6 @@ internal object CheckoutResultCodec {
             is SdkSessionExpiredException -> "session_expired"
             is SdkInvalidSessionIdException -> "invalid_session_id"
             is SdkCryptogramException -> "cryptogram"
-            is SdkInvalidPublicKeyException -> "invalid_public_key"
             is SdkNotConfiguredException -> "not_configured"
             is SdkTransactionException -> "transaction"
             is SdkThreeDsChallengeFailedException -> "three_ds_failed"
@@ -114,7 +112,6 @@ internal object CheckoutResultCodec {
             "session_expired" -> SdkSessionExpiredException(id)
             "invalid_session_id" -> SdkInvalidSessionIdException(id)
             "cryptogram" -> SdkCryptogramException(message)
-            "invalid_public_key" -> SdkInvalidPublicKeyException(message)
             "not_configured" -> SdkNotConfiguredException(message.orEmpty())
             "transaction" -> SdkTransactionException(message)
             "three_ds_failed" -> SdkThreeDsChallengeFailedException(id)

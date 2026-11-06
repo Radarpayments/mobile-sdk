@@ -134,7 +134,6 @@ enum CheckoutErrorCode {
   api('api'),
   network('network'),
   transaction('transaction'),
-  alreadyPaid('already_paid'),
   sessionNotFound('session_not_found'),
   orderNotFound('order_not_found'),
 
@@ -142,9 +141,7 @@ enum CheckoutErrorCode {
   sessionExpired('session_expired'),
   invalidSessionId('invalid_session_id'),
   cryptogram('cryptogram'),
-  invalidPublicKey('invalid_public_key'),
   notConfigured('not_configured'),
-  cancelledByUser('cancelled_by_user'),
   threeDsFailed('three_ds_failed'),
   threeDsTimeout('three_ds_timeout'),
   googlePay('google_pay'),

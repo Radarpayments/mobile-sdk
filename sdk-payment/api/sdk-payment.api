@@ -173,22 +173,11 @@ public final class net/payrdr/mobile/payment/sdk/payment/config/SdkPaymentConfig
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class net/payrdr/mobile/payment/sdk/payment/exception/SdkAlreadyPaidException : net/payrdr/mobile/payment/sdk/payment/exception/SdkException {
-	public static final field $stable I
-	public fun <init> (Ljava/lang/String;)V
-	public final fun getPaymentId ()Ljava/lang/String;
-}
-
 public final class net/payrdr/mobile/payment/sdk/payment/exception/SdkApplePayException : net/payrdr/mobile/payment/sdk/payment/exception/SdkException {
 	public static final field $stable I
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-}
-
-public final class net/payrdr/mobile/payment/sdk/payment/exception/SdkCancelledByUserException : net/payrdr/mobile/payment/sdk/payment/exception/SdkException {
-	public static final field $stable I
-	public fun <init> ()V
 }
 
 public final class net/payrdr/mobile/payment/sdk/payment/exception/SdkCryptogramException : net/payrdr/mobile/payment/sdk/payment/exception/SdkException {
@@ -214,13 +203,6 @@ public class net/payrdr/mobile/payment/sdk/payment/exception/SdkException : java
 }
 
 public final class net/payrdr/mobile/payment/sdk/payment/exception/SdkGooglePayException : net/payrdr/mobile/payment/sdk/payment/exception/SdkException {
-	public static final field $stable I
-	public fun <init> ()V
-	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-}
-
-public final class net/payrdr/mobile/payment/sdk/payment/exception/SdkInvalidPublicKeyException : net/payrdr/mobile/payment/sdk/payment/exception/SdkException {
 	public static final field $stable I
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
@@ -418,10 +400,6 @@ public final class net/payrdr/mobile/payment/sdk/payment/result/CheckoutResult$F
 	public final fun getError ()Lnet/payrdr/mobile/payment/sdk/payment/exception/SdkException;
 	public fun getOrderId ()Ljava/lang/String;
 	public fun hashCode ()I
-public final class net/payrdr/mobile/payment/sdk/payment/result/CheckoutResultKt {
-	public static final fun withOrderId (Lnet/payrdr/mobile/payment/sdk/payment/result/CheckoutResult;Ljava/lang/String;)Lnet/payrdr/mobile/payment/sdk/payment/result/CheckoutResult;
-}
-
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -438,6 +416,10 @@ public final class net/payrdr/mobile/payment/sdk/payment/result/CheckoutResult$U
 	public fun getOrderId ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/payrdr/mobile/payment/sdk/payment/result/CheckoutResultKt {
+	public static final fun withOrderId (Lnet/payrdr/mobile/payment/sdk/payment/result/CheckoutResult;Ljava/lang/String;)Lnet/payrdr/mobile/payment/sdk/payment/result/CheckoutResult;
 }
 
 public final class net/payrdr/mobile/payment/sdk/payment/result/OrderSummary {
