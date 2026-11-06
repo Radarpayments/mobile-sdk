@@ -3,12 +3,6 @@ package net.payrdr.mobile.payment.sdk.payment.http
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.okhttp.OkHttp
-import io.ktor.client.plugins.HttpTimeout
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.defaultRequest
-import io.ktor.http.HttpHeaders
-import io.ktor.serialization.kotlinx.json.json
-import kotlinx.serialization.json.Json
 import net.payrdr.mobile.payment.sdk.payment.config.SdkPaymentConfig
 import net.payrdr.mobile.payment.sdk.payment.ssl.SslPinningConfig
 import okhttp3.CertificatePinner
@@ -27,28 +21,8 @@ internal object OkHttpClientFactory : HttpClientFactory {
             return DefaultHttpClientFactory.create(config, engineOverride)
         }
 
-        val json =
-            Json {
-                ignoreUnknownKeys = true
-                isLenient = true
-                encodeDefaults = true
-                explicitNulls = false
-            }
         val pinner = buildCertificatePinner(config.sslPinning)
-
-        return HttpClient(engineOverride ?: OkHttp.create { configureEngine(pinner) }) {
-            install(ContentNegotiation) { json(json) }
-            install(HttpTimeout) {
-                connectTimeoutMillis = 15_000
-                requestTimeoutMillis = 60_000
-                socketTimeoutMillis = 60_000
-            }
-            defaultRequest {
-                if (!headers.contains(HttpHeaders.Accept)) {
-                    headers.append(HttpHeaders.Accept, "application/json")
-                }
-            }
-        }
+        return HttpClient(engineOverride ?: OkHttp.create { configureEngine(pinner) }) { gatewayDefaults() }
     }
 
     private fun io.ktor.client.engine.okhttp.OkHttpConfig.configureEngine(pinner: CertificatePinner?) {
@@ -59,7 +33,7 @@ internal object OkHttpClientFactory : HttpClientFactory {
         }
     }
 
-    private fun buildCertificatePinner(ssl: SslPinningConfig?): CertificatePinner? {
+    internal fun buildCertificatePinner(ssl: SslPinningConfig?): CertificatePinner? {
         if (ssl == null || ssl.entries.isEmpty()) return null
         val b = CertificatePinner.Builder()
         ssl.entries.forEach { entry ->

@@ -1,6 +1,7 @@
 package net.payrdr.mobile.payment.sdk.payment.http
 
 import io.ktor.client.HttpClient
+import io.ktor.client.HttpClientConfig
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -13,41 +14,41 @@ import net.payrdr.mobile.payment.sdk.payment.config.SdkPaymentConfig
 /**
  * Unpinned baseline. Used whenever [SdkPaymentConfig.sslPinning] is `null` and for tests that
  * supply their own engine override.
- *
- * Installs:
- *  - `ContentNegotiation` with a lenient JSON codec.
- *  - `HttpTimeout` — connect 15s, request 60s, socket 60s.
- *  - `defaultRequest { Accept: application/json }`.
  */
 internal object DefaultHttpClientFactory : HttpClientFactory {
     override fun create(
         config: SdkPaymentConfig,
         engineOverride: HttpClientEngine?,
-    ): HttpClient {
-        val json =
-            Json {
-                ignoreUnknownKeys = true
-                isLenient = true
-                encodeDefaults = true
-                explicitNulls = false
-            }
-        val configureBlock: io.ktor.client.HttpClientConfig<*>.() -> Unit = {
-            install(ContentNegotiation) { json(json) }
-            install(HttpTimeout) {
-                connectTimeoutMillis = 15_000
-                requestTimeoutMillis = 60_000
-                socketTimeoutMillis = 60_000
-            }
-            defaultRequest {
-                if (!headers.contains(HttpHeaders.Accept)) {
-                    headers.append(HttpHeaders.Accept, "application/json")
-                }
-            }
-        }
-        return if (engineOverride != null) {
-            HttpClient(engineOverride, configureBlock)
+    ): HttpClient =
+        if (engineOverride != null) {
+            HttpClient(engineOverride) { gatewayDefaults() }
         } else {
-            HttpClient(configureBlock)
+            HttpClient { gatewayDefaults() }
+        }
+}
+
+private val gatewayJson =
+    Json {
+        ignoreUnknownKeys = true
+        isLenient = true
+        encodeDefaults = true
+        explicitNulls = false
+    }
+
+/**
+ * What every gateway client has, pinned or not: a lenient JSON codec, timeouts (connect 15 s, request and socket
+ * 60 s) and `Accept: application/json`.
+ */
+internal fun HttpClientConfig<*>.gatewayDefaults() {
+    install(ContentNegotiation) { json(gatewayJson) }
+    install(HttpTimeout) {
+        connectTimeoutMillis = 15_000
+        requestTimeoutMillis = 60_000
+        socketTimeoutMillis = 60_000
+    }
+    defaultRequest {
+        if (!headers.contains(HttpHeaders.Accept)) {
+            headers.append(HttpHeaders.Accept, "application/json")
         }
     }
 }
