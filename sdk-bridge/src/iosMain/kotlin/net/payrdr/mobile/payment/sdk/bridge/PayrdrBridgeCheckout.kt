@@ -3,6 +3,7 @@ package net.payrdr.mobile.payment.sdk.bridge
 import net.payrdr.mobile.payment.sdk.payment.config.CheckoutConfig
 import net.payrdr.mobile.payment.sdk.payment.ios.PayrdrCheckout
 import net.payrdr.mobile.payment.sdk.payment.result.CheckoutResult
+import net.payrdr.mobile.payment.sdk.payment.result.withOrderId
 import platform.UIKit.UIApplication
 import platform.UIKit.UIViewController
 import platform.UIKit.UIWindow
@@ -38,7 +39,11 @@ public class PayrdrBridgeCheckout {
         val opened =
             presenter != null &&
                 when (val order = request.checkout) {
-                    is CheckoutConfig.MdOrder -> checkout.present(order.value, presenter) { finish(it.orOrder(request.orderId), onResult) }
+                    is CheckoutConfig.MdOrder ->
+                        checkout.present(
+                            order.value,
+                            presenter,
+                        ) { finish(it.withOrderId(request.orderId), onResult) }
                     is CheckoutConfig.SessionId -> checkout.presentSession(order.value, presenter) { finish(it, onResult) }
                 }
         if (opened) {

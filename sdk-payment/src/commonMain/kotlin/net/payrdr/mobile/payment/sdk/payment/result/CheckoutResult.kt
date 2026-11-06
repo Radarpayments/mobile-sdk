@@ -1,5 +1,6 @@
 package net.payrdr.mobile.payment.sdk.payment.result
 
+import net.payrdr.mobile.payment.sdk.core.InternalPayrdrApi
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkException
 
 /**
@@ -40,7 +41,8 @@ public sealed interface CheckoutResult {
 }
 
 /** This result naming [orderId] when it names none (the checkout was closed before it learned the order). */
-internal fun CheckoutResult.withOrderId(orderId: String): CheckoutResult =
+@InternalPayrdrApi
+public fun CheckoutResult.withOrderId(orderId: String): CheckoutResult =
     if (this.orderId.isNotEmpty()) {
         this
     } else {

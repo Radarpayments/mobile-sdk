@@ -418,6 +418,10 @@ public final class net/payrdr/mobile/payment/sdk/payment/result/CheckoutResult$F
 	public final fun getError ()Lnet/payrdr/mobile/payment/sdk/payment/exception/SdkException;
 	public fun getOrderId ()Ljava/lang/String;
 	public fun hashCode ()I
+public final class net/payrdr/mobile/payment/sdk/payment/result/CheckoutResultKt {
+	public static final fun withOrderId (Lnet/payrdr/mobile/payment/sdk/payment/result/CheckoutResult;Ljava/lang/String;)Lnet/payrdr/mobile/payment/sdk/payment/result/CheckoutResult;
+}
+
 	public fun toString ()Ljava/lang/String;
 }
 
