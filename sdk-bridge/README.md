@@ -1,28 +1,37 @@
 # sdk-bridge
 
-The SDK for apps that are not written in Kotlin or Swift. The Flutter plugin (`plugins/flutter`) and the React Native
-module (`plugins/react-native`) are thin: they pass JSON strings between their language and this module, which turns them
-into the SDK's own types and back. All mapping lives here, once, with its tests (`src/commonTest`).
+The SDK for apps written in neither Kotlin nor Swift. The [Flutter plugin](../plugins/flutter/README.md) and the
+[React Native module](../plugins/react-native/README.md) send this module a JSON string and get a JSON string back.
+Reading the JSON, building the SDK's types and writing the result all happen here, in one place, with tests in
+`src/commonTest`. The plugins only carry strings.
 
-| Platform | Entry point | Shipped as |
+You need this page if you work on a plugin or write your own. Apps using a plugin don't call the bridge directly.
+
+## Entry points
+
+| Platform | Call | Shipped as |
 |---|---|---|
-| Android | `PayrdrBridgeCheckout.start(activity, requestJson, onResult)` + `handleActivityResult(...)` | `io.github.radarpayments:sdk-bridge-android` (AAR) |
-| iOS | `PayrdrBridgeCheckout().present(requestJson:from:onResult:)` | `PayrdrSdkBridge.xcframework` |
-| both | `PayrdrBridge.coreToken(requestJson)` | |
+| Android | `PayrdrBridgeCheckout.start(activity, requestJson, onResult)`, then forward activity results to `handleActivityResult(requestCode, resultCode, data)` | `io.github.radarpayments:sdk-bridge-android` (AAR) |
+| iOS | `PayrdrBridgeCheckout().present(requestJson:from:onResult:)`; `dismiss()` closes the sheet, and its result still arrives | `PayrdrSdkBridge.xcframework` |
+| Both | `PayrdrBridge.coreToken(requestJson)` returns the result JSON at once | |
 
-`scripts/build-bridge.sh [debug|release]` builds both: the Android libraries into `build/maven`, the framework into each
-plugin's iOS folder.
+On Android, call `start` on the main thread. The sheet opens with `startActivityForResult` and request code
+`PayrdrBridgeCheckout.REQUEST_CODE` (`0x7A01`); don't use that code for anything else in the app.
 
-## Why it is shaped like this
+`scripts/build-bridge.sh [debug|release]` builds both: the Android libraries into `build/maven` and the framework into
+each plugin's iOS folder. Run it before building a plugin or a Flutter / React Native sample.
 
-- **One Kotlin framework.** `PayrdrSdkBridge.xcframework` holds all of the SDK (core, payment, scanner): an app gets one
-  Kotlin/Native runtime. The checkout's strings and images (Compose resources) are inside each framework, where Compose
-  Multiplatform 1.9+ finds them, so the app needs no build phase whether the framework comes through Swift Package Manager,
-  CocoaPods or Xcode.
-- **No changes to the app's activity.** The sheet starts with `startActivityForResult` (`PayrdrCheckoutIntent`), so a
-  plain `FlutterActivity` or `ReactActivity` works; the plugin forwards activity results.
-- **Google Pay included.** `sdk-payment` keeps `play-services-wallet` optional; the bridge depends on it and declares
-  `com.google.android.gms.wallet.api.enabled` in its manifest, so a plugin user touches neither Gradle nor the manifest.
+## Why it is built this way
+
+- **One framework on iOS.** `PayrdrSdkBridge.xcframework` contains the whole SDK: core, payment and scanner. An app
+  can hold only one Kotlin/Native runtime, so the SDK can't come as several frameworks. The sheet's texts and images
+  are inside the framework, so the app needs no extra build phase, whether it uses Swift Package Manager, CocoaPods or
+  plain Xcode.
+- **The app's activity stays as it is.** Because the sheet starts with `startActivityForResult`, a plain
+  `FlutterActivity` or `ReactActivity` works. The plugin only forwards activity results.
+- **Google Pay works out of the box.** `sdk-payment` leaves Google Pay optional; the bridge depends on
+  `play-services-wallet` and enables the Wallet API in its manifest. A plugin user touches neither Gradle nor the
+  manifest.
 
 ## Checkout request
 
@@ -44,18 +53,31 @@ plugin's iOS folder.
 }
 ```
 
-- Only `config.baseUrl` and one of `mdOrder` / `sessionId` (API v2, `ps_…`) are required; everything else keeps the
-  SDK's default. Unknown fields are ignored, so a newer plugin works with an older SDK.
-- `theme.mode`: `system` (default), `light`, `dark` or `custom`. A custom theme starts from `base` (`light` | `dark`) and
-  changes only the colours it names, as `#RRGGBB` or `#AARRGGBB`: `primary`, `onPrimary`, `background`, `onBackground`,
-  `surface`, `onSurface`, `error`, `onError`, `outline`, `success`, `onSurfaceVariant`, `placeholder`, `outlineStrong`,
-  `scrim`. `cornerRadius` (fields and cards) and `buttonCornerRadius` are in dp / points.
-- `googlePay`: `merchantId`, `merchantName`, `gateway`, `gatewayMerchantId`, `environment` (`TEST` | `PRODUCTION`),
-  `countryCode`, `cardNetworks` (`AMEX`, `DISCOVER`, `INTERAC`, `JCB`, `MASTERCARD`, `VISA`), `authMethods` (`PAN_ONLY`,
-  `CRYPTOGRAM_3DS`), `billingAddressRequired`. Any of them may be left out: the SDK takes it from the gateway and the
-  order. `{}` turns Google Pay on with everything from the gateway.
-- `applePay`: `merchantId` (required), `countryCode`, `networks` (`AMEX`, `DISCOVER`, `JCB`, `MASTERCARD`, `VISA`),
-  `capabilities` (`THREE_D_SECURE`, `EMV`, `CREDIT`, `DEBIT`).
+Required: `config.baseUrl`, plus either `mdOrder` (API V1) or `sessionId` (API V2, `ps_…`). Everything else has the
+SDK's default.
+
+Unknown fields are ignored, so a newer plugin works with an older bridge. An unknown value is different: a colour
+name, theme mode or card network the bridge doesn't know makes the request `invalid_request`.
+
+**`theme`**
+- `mode`: `system` (default), `light`, `dark` or `custom`.
+- A `custom` theme starts from `base` (`light` or `dark`) and changes only the colours you list. Colours are
+  `#RRGGBB` or `#AARRGGBB`. Names: `primary`, `onPrimary`, `background`, `onBackground`, `surface`, `onSurface`,
+  `error`, `onError`, `outline`, `success`, `onSurfaceVariant`, `placeholder`, `outlineStrong`, `scrim`.
+- `cornerRadius` rounds fields and cards, `buttonCornerRadius` rounds buttons; both are in dp / points. Without
+  `buttonCornerRadius`, buttons take `cornerRadius`.
+
+**`googlePay`** — every field is optional; the SDK takes what's missing from the gateway and the order. `{}` turns
+Google Pay on with everything from the gateway.
+- `merchantId`, `merchantName`, `gateway`, `gatewayMerchantId`, `countryCode`, `billingAddressRequired`
+- `environment`: `TEST` or `PRODUCTION`
+- `cardNetworks`: `AMEX`, `DISCOVER`, `INTERAC`, `JCB`, `MASTERCARD`, `VISA`
+- `authMethods`: `PAN_ONLY`, `CRYPTOGRAM_3DS`
+
+**`applePay`**
+- `merchantId` (required), `countryCode`
+- `networks`: `AMEX`, `DISCOVER`, `JCB`, `MASTERCARD`, `VISA`
+- `capabilities`: `THREE_D_SECURE`, `EMV`, `CREDIT`, `DEBIT`
 
 ## Checkout result
 
@@ -66,37 +88,65 @@ plugin's iOS folder.
 | `status` | Meaning |
 |---|---|
 | `completed` | The gateway confirmed the payment. |
-| `failed` | The payment did not happen, or the sheet could not open; `error` says why. |
+| `failed` | The payment didn't happen, or the sheet couldn't open. `error` says why. |
 | `canceled` | The buyer closed the sheet. |
-| `unknown` | The payment was sent but how it ended is not known; `error` is the last one seen, if any. Check the order on the server. |
+| `unknown` | The payment was sent, but its outcome isn't known. `error` is the last error seen, if any. Check the order on your server. |
 
-`error.code`: `declined` (+ `declineCode`), `api` (+ `httpStatus`, `gatewayErrorCode`), `network`, `transaction`,
-`session_not_found`, `order_not_found`, `session_expired` (the time to pay ran out; the order is
-declined, register a new one), `invalid_session_id`, `cryptogram`,
-`not_configured`, `three_ds_failed`, `three_ds_timeout`, `google_pay`, `apple_pay`, `unknown` — and,
-when nothing opened, `invalid_request` (the request broke this contract), `busy` (a checkout is already open) or
-`no_screen` (no activity / key window to open over).
+When the checkout was opened with a `sessionId`, `orderId` is an empty string.
+
+`error.code` when the sheet opened:
+
+| Code | What happened |
+|---|---|
+| `declined` | The bank declined the payment; `declineCode` has the gateway's code |
+| `api` | The gateway answered with an error; extra fields `httpStatus` and `gatewayErrorCode` |
+| `network` | The gateway couldn't be reached |
+| `transaction` | The payment couldn't start, or the order was in an unexpected state |
+| `order_not_found`, `session_not_found` | The gateway doesn't know this order or session |
+| `session_expired` | The time to pay ran out; the order is declined, register a new one |
+| `invalid_session_id` | The `sessionId` isn't a valid `ps_…` ID |
+| `cryptogram` | The card data couldn't be encrypted |
+| `not_configured` | The merchant is set up at the gateway for something this SDK doesn't support, such as the native 3DS2 SDK |
+| `three_ds_failed`, `three_ds_timeout` | 3-D Secure failed or wasn't finished in time |
+| `google_pay`, `apple_pay` | The wallet failed |
+| `unknown` | Any other error |
+
+`error.code` when nothing opened (status `failed`):
+
+| Code | What happened |
+|---|---|
+| `invalid_request` | The request breaks this contract |
+| `busy` | A checkout is already open |
+| `no_screen` | There is no activity or key window to open the sheet over |
 
 ## SDK Core token
 
-Request: `{"type": "card" | "cardInstant" | "binding" | "bindingInstant", "pubKey": "<PEM>", ...}`
+The request is a JSON object with a `type`, the gateway's public key `pubKey` (PEM) and the fields of that type:
 
 | `type` | Fields |
 |---|---|
 | `card` | `mdOrder`, `pan`, `expiry` (`MM/YY`), `cvc`, `cardholder` (optional) |
-| `cardInstant` | as `card`, without `mdOrder` |
+| `cardInstant` | the same, without `mdOrder` |
 | `binding` | `mdOrder`, `bindingId`, `cvc` (optional) |
 | `bindingInstant` | `bindingId`, `cvc` (optional) |
 
-Result: `{"token": "…"}`, or `{"errors": {"pan": "required", …}}` with sdk-core's codes (`required`, `invalid`,
-`invalid-format`) keyed by `pan`, `expiry`, `cvc`, `cardholder`, `bindingId`, `mdOrder`, `pubKey`, or
-`{"error": {"code": "invalid_request", "message": "…"}}`.
+The result is one of three:
 
-## Sample messages
+- `{"token": "…"}` — the token for the gateway.
+- `{"errors": {"pan": "required", …}}` — the data didn't pass validation. Keys: `pan`, `expiry`, `cvc`, `cardholder`,
+  `bindingId`, `mdOrder`, `pubKey`, `storedPaymentId`, `unknown`. Values: `required`, `invalid`, `invalid-format`.
+- `{"error": {"code": "invalid_request", "message": "…"}}` — the request breaks this contract.
 
-`contract/` holds sample messages of every kind above: what the plugins send (`checkout-requests.json`,
-`core-token-requests.json`), what the bridge sends back (`checkout-results.json`, `core-token-results.json`) and every
-error code (`error-codes.json`). Three test suites read the same files: `ContractTest` here, `test/contract_test.dart`
-of the Flutter plugin and `src/__tests__/contract.test.ts` of the React Native one. A change to the contract is a change
-to these files; every side that does not follow it fails, and a case added to a file fails each side until it has an
-answer for it.
+## Contract files
+
+`contract/` holds sample messages for everything above:
+
+| File | Contents |
+|---|---|
+| `checkout-requests.json`, `core-token-requests.json` | What the plugins send |
+| `checkout-results.json`, `core-token-results.json` | What the bridge sends back |
+| `error-codes.json` | Every error code |
+
+Three test suites read these files: `ContractTest` here, `test/contract_test.dart` in the Flutter plugin and
+`src/__tests__/contract.test.ts` in the React Native module. To change the contract, change these files. A side that
+doesn't follow the change fails its tests, and a new case fails on every side until that side handles it.

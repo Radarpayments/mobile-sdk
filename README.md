@@ -1,77 +1,110 @@
-# PAYRDR Mobile SDK (Kotlin Multiplatform)
+# PAYRDR Mobile SDK
 
-Unified Kotlin Multiplatform implementation of the PAYRDR Mobile SDK for Android and iOS.
-Supersedes the separate `android-sdk` and `ios-sdk` repositories starting from version `4.0.0`.
+A payment sheet for Android and iOS apps. Your app opens it over its own screen; the buyer pays by card (with 3-D
+Secure), with a saved card, Google Pay or Apple Pay, and can scan the card with the camera. The sheet then tells your
+app how the payment ended.
+
+The SDK is written once in Kotlin Multiplatform and replaces the separate `android-sdk` and `ios-sdk` repositories
+from version 4.0.0. Flutter and React Native apps use it through [plugins](#flutter-and-react-native).
 
 ## Modules
 
-- **sdk-core** — headless tokenization library (card validation, RSA cryptogram, payment-string processor).
-- **sdk-payment** — payment SDK with UI (Compose Multiplatform), PaymentApi, 3DS web challenge, Apple Pay / Google Pay.
-- **sdk-payment-scanner** — optional card scanner (ML Kit on Android, Vision framework on iOS).
+| Module | What it does | When you need it |
+|---|---|---|
+| `sdk-payment` | The payment sheet: card form, 3-D Secure, saved cards, Google Pay, Apple Pay | Always |
+| `sdk-payment-scanner` | Reads the card number and expiry with the camera ([details](sdk-payment-scanner/README.md)) | Optional on Android; on iOS it is the framework you link |
+| `sdk-core` | Checks card data and encrypts it into a token (`seToken`), without any UI | Only if you are PCI DSS certified and keep your own card form |
+
+## Requirements
+
+- Android: minSdk 24, and Kotlin 2.1 or newer in your app (the SDK's Compose Multiplatform 1.10 needs it).
+- iOS: 14.0.
 
 ## Install
 
-Versions: [GitHub releases](https://github.com/Radarpayments/mobile-sdk/releases); the first one is `4.0.0-beta.1`.
-Android minSdk 24 and Kotlin 2.1 or newer in the app (the SDK's Compose Multiplatform 1.10 needs it), iOS 14.
+The first release is `4.0.0-beta.1`. All versions are listed on
+[GitHub releases](https://github.com/Radarpayments/mobile-sdk/releases).
 
-**Android** — Maven Central:
+### Android
+
+The libraries are on Maven Central:
 
 ```kotlin
 dependencies {
     implementation("io.github.radarpayments:sdk-payment:4.0.0-beta.1")
-    implementation("io.github.radarpayments:sdk-payment-scanner:4.0.0-beta.1") // optional: the card scanner
+    implementation("io.github.radarpayments:sdk-payment-scanner:4.0.0-beta.1") // optional: card scanner
     implementation("com.google.android.gms:play-services-wallet:19.4.0") // optional: Google Pay
 }
 ```
 
-Headless tokenization only: `io.github.radarpayments:sdk-core`. Each release also has the AARs to download. The
-manifest needs nothing: the internet permission and the SDK's activities are merged in, and the scanner adds the camera
-permission (add `<uses-feature android:name="android.hardware.camera" android:required="false" />` to stay listed for
-devices without a camera).
+You don't need to edit the manifest. The SDK brings the internet permission and its activities, and the scanner brings
+the camera permission, marked as not required, so devices without a camera can still install your app.
 
-**iOS** — Swift Package Manager: File → Add Package Dependencies → `https://github.com/Radarpayments/mobile-sdk`,
-product `PayrdrSDK`, then `import sdk_payment_scanner` (the whole SDK: checkout, SDK Core, card scanner). Each release
-also has `sdk_payment_scanner.xcframework.zip` to embed by hand. Apple Pay needs the Apple Pay capability with your
-merchant id (Signing & Capabilities); the card scanner needs `NSCameraUsageDescription` in `Info.plist`, or App Store
-review rejects the build.
+For tokenization only, depend on `io.github.radarpayments:sdk-core`. Each GitHub release also has the AARs.
 
-**Flutter, React Native** — the plugins are in each GitHub release: see [Flutter](plugins/flutter/README.md),
-[React Native](plugins/react-native/README.md).
+### iOS
 
-Pre-releases (`4.1.0-beta.1`, `4.1.0-rc.1`) are taken only when asked for exactly; alphas are only on GitHub, with a
-Maven repository to download.
+Add the package with Swift Package Manager: File → Add Package Dependencies →
+`https://github.com/Radarpayments/mobile-sdk`, product `PayrdrSDK`. Then:
 
-## Quick start
+```swift
+import sdk_payment_scanner
+```
 
-A payment takes four steps: describe the checkout, get an order from your server, open the payment sheet, handle the
-result.
+This one module has everything: the payment sheet, SDK Core and the card scanner. If you don't use SPM, each release
+has `sdk_payment_scanner.xcframework.zip` to embed by hand.
 
-**1. Your server registers the order.** The app never holds the merchant's login, password or API key. Through API V1
-the server calls `register.do` and hands the app an mdOrder; through API V2 it calls `POST /api2/sessions` and hands
-over a session id (`ps_…`) — set its `successUrl` and `failureUrl` to `sdk://done` or to your own pages. Google Pay and
-Apple Pay show in the sheet only when the gateway has enabled them for the merchant.
+Two features need setup in Xcode:
 
-**2. Describe the checkout and 3. open the sheet — Android.** Build the checkout while the screen is being created
-(in a field or in `onCreate`: it registers an activity result), so the result arrives even after a rotation:
+- Apple Pay: add the Apple Pay capability with your merchant ID (Signing & Capabilities).
+- Card scanner: add `NSCameraUsageDescription` to `Info.plist`. App Store review rejects a build that opens the camera
+  without it.
+
+### Flutter and React Native
+
+Each GitHub release has the plugins. See the [Flutter plugin](plugins/flutter/README.md) and the
+[React Native module](plugins/react-native/README.md).
+
+## Take a payment
+
+### 1. Your server creates the order
+
+The app never holds the merchant's login, password or API key. Your server registers the order at the gateway and
+passes the app one of two things:
+
+- API V1: the server calls `register.do` and gets an `mdOrder`.
+- API V2: the server calls `POST /api2/sessions` and gets a session ID (`ps_…`). Set the session's `successUrl` and
+  `failureUrl` to `sdk://done` or to your own pages.
+
+Google Pay and Apple Pay appear in the sheet only if the gateway has them enabled for the merchant.
+
+### 2. Open the sheet on Android
+
+Create the checkout when the screen is created — in a field or in `onCreate`. It registers for an activity result, so
+the result still reaches you after a screen rotation.
 
 ```kotlin
 val config = SdkPaymentConfig(
     baseUrl = "https://dev.bpcbt.com/payment",
-    googlePay = GooglePayConfig(), // optional; the rest comes from the gateway and the order
+    googlePay = GooglePayConfig(), // optional; everything else comes from the gateway and the order
     cardScannerProvider = MlKitVisionCardScannerProvider(), // optional; needs sdk-payment-scanner
 )
 
 class CartActivity : AppCompatActivity() {
     private val checkout = PayrdrCheckout.Builder(config) { result -> handle(result) }.build(this)
 
-    fun onPayClick(mdOrder: String) = checkout.present(mdOrder) // API V2: checkout.presentSession(sessionId)
+    fun onPayClick(mdOrder: String) = checkout.present(mdOrder)
 }
 ```
 
-In Compose: `val checkout = rememberPayrdrCheckout(config) { result -> handle(result) }`. A plain Activity can use
-`PayrdrCheckoutIntent` with `startActivityForResult`.
+For API V2, call `checkout.presentSession(sessionId)` instead.
 
-**2–3 — iOS.** On the main thread; keep the `PayrdrCheckout` while the sheet is open:
+In Compose, use `val checkout = rememberPayrdrCheckout(config) { result -> handle(result) }`. From a plain `Activity`,
+start `PayrdrCheckoutIntent` with `startActivityForResult`.
+
+### 2. Open the sheet on iOS
+
+Call it on the main thread, and keep a reference to `PayrdrCheckout` while the sheet is open.
 
 ```swift
 import sdk_payment_scanner
@@ -82,53 +115,64 @@ let config = SdkPaymentConfig(
     cardScannerProvider: MlKitVisionCardScannerProvider(logTransport: nil) // optional
 )
 let checkout = PayrdrCheckout(config: config)
+
 checkout.present(mdOrder: mdOrder, from: viewController) { result in handle(result) }
-// or: let result = try await checkout.present(mdOrder: mdOrder, from: viewController)
-// API V2: checkout.presentSession(sessionId: sessionId, from: viewController) { result in … }
 ```
 
-In SwiftUI: `.payrdrCheckout(isPresented: $paying, mdOrder: mdOrder, config: config) { result in … }` (mdOrder only;
-a session opens through `presentSession`).
+There is also an async version: `let result = try await checkout.present(mdOrder: mdOrder, from: viewController)`.
+For API V2, call `checkout.presentSession(sessionId: sessionId, from: viewController) { result in … }`.
 
-**4. Handle the result.** Every result carries `orderId`; your server, not the result, decides whether goods are
-released.
+In SwiftUI, use the modifier `.payrdrCheckout(isPresented: $paying, mdOrder: mdOrder, config: config) { result in … }`.
+It takes an `mdOrder` only; open an API V2 session with `presentSession`.
+
+### 3. Handle the result
+
+The result has one of four types, and each carries the `orderId`.
 
 ```kotlin
 when (result) {
     is CheckoutResult.Completed -> showPaid(result.orderId)
-    is CheckoutResult.Failed -> showDeclined(result.error) // the payment definitely did not happen
+    is CheckoutResult.Failed -> showDeclined(result.error) // the payment did not happen
     is CheckoutResult.Canceled -> Unit // the buyer closed the sheet
-    is CheckoutResult.Unknown -> checkOnServer(result.orderId) // sent, outcome not known: do not offer to pay again
+    is CheckoutResult.Unknown -> checkOnServer(result.orderId) // sent, but the outcome is not known
 }
 ```
 
-In Swift: `switch onEnum(of: result) { case .completed(let paid): … case .failed, .canceled, .unknown … }`.
+In Swift: `switch onEnum(of: result) { case .completed(let paid): … }`.
 
-`SdkPaymentConfig` also takes `locale`, `theme` (`PaymentTheme` System / Light / Dark / Custom), `showResultScreen`
-(the SDK shows its own success or declined screen first), `logTransport` (your log sink; the SDK has no crash
-reporter) and `sslPinning`.
+Don't release the goods on the result alone: ask your server for the order status. After `Unknown`, don't offer to pay
+again until the server knows how the order ended.
 
-## Languages
+## Configuration
 
-The checkout's screens are translated into English, Russian, Romanian, Greek, Bulgarian, German, French, Spanish
-and Arabic (laid out right to left). By default they follow the device language; to fix one, pass it in the
-config — `SdkPaymentConfig(baseUrl = …, locale = "de")` — or wrap standalone screens in `PaymentLocaleProvider`.
-The order amount is written the way that language writes amounts (`€1,234.50`, `1.234,50 €`).
+Besides `baseUrl`, the wallets and the scanner, `SdkPaymentConfig` takes:
 
-## Build
+| Parameter | What it does |
+|---|---|
+| `locale` | The sheet's language, e.g. `"de"`. By default it follows the device. |
+| `theme` | `PaymentTheme.System` (default), `Light`, `Dark`, or `Custom` with your colours. |
+| `showResultScreen` | `true`: the SDK shows its own success or decline screen and returns the result after the buyer taps Done. Off by default. |
+| `logTransport` | Where the SDK's logs go. The SDK has no crash reporter; plug yours in here. |
+| `sslPinning` | Certificate pinning for the gateway. Off by default: the system trust store is used. |
+| `keyProviderUrl` | Where to get the gateway's public keys. Defaults to `{baseUrl}/se/keys.do`. |
 
-```bash
-./gradlew build                           # Build all modules + run all tests
-./gradlew :sdk-core:allTests              # Run sdk-core tests on all targets
-./gradlew :sdk-core:iosSimulatorArm64Test # Run sdk-core tests on iOS simulator (requires macOS)
-```
+The sheet is translated into English, Russian, Romanian, Greek, Bulgarian, German, French, Spanish and Arabic (right
+to left). Amounts are written the way the language writes them: `€1,234.50` in English, `1.234,50 €` in German.
 
-## Documentation
+## Versions
+
+Betas, release candidates and stable versions are on Maven Central and SPM. Take a beta or a release candidate
+(`4.1.0-beta.1`, `4.1.0-rc.1`) only by writing its exact version. Alphas are on GitHub only; each alpha release
+includes a Maven repository as a zip.
+
+## More documentation
 
 - [Card scanner](sdk-payment-scanner/README.md)
-- [Bridge for Flutter and React Native: the JSON contract](sdk-bridge/README.md)
-- [Flutter plugin](plugins/flutter/README.md), [React Native plugin](plugins/react-native/README.md)
+- [Flutter plugin](plugins/flutter/README.md) and [React Native module](plugins/react-native/README.md)
+- [The JSON contract behind the plugins](sdk-bridge/README.md)
 - [Sample apps](samples/README.md)
+
+To work on the SDK itself, start with [AGENTS.md](AGENTS.md): the toolchain, the build commands and the rules.
 
 ## License
 

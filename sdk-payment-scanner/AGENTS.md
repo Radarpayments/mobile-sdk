@@ -1,6 +1,6 @@
 # sdk-payment-scanner — agent notes
 
-Read the root `AGENTS.md` first, and `README.md` here (behaviour, log events, the manual device checklist).
+Read the root `AGENTS.md` first, and `README.md` here (what the integrator and the buyer see, log events).
 
 ## What this module is
 
@@ -53,6 +53,9 @@ Platform files are named `X.android.kt` / `X.ios.kt`.
   `build.gradle.kts` explains the CoreMedia crash below 12.2.
 - `PrivacyInfo.xcprivacy` declares the camera reason; the host app adds `NSCameraUsageDescription`.
 - **No PAN digits in logs**, ever: log events are `event=…` with tag `CardScanner`, as listed in the README.
+- `CardScannerConfig` (`extractCardholder`, `timeoutSeconds`, `enableTorchButton`) is public, but no integrator can set
+  it: the provider takes no config and the card form passes the default. So the cardholder is never read through the
+  SDK UI, and "cardholder extraction off" and "cardholder not found" both end as `cardholder = null`.
 
 ## Tests
 
@@ -64,4 +67,15 @@ Platform files are named `X.android.kt` / `X.ios.kt`.
 - androidUnitTest: `LatestResumedTest` (the `ContextHolder` activity tracking).
 - iosTest: `CardScannerOverlayTest`, a pixel check with `runComposeUiTest` — Compose UI tests need no device on iOS.
   Test names there are snake_case: Kotlin/Native rejects some characters (commas) in backtick names.
-- Camera behaviour itself is checked by hand on devices (README checklist).
+- Camera behaviour itself is checked by hand on devices before shipping a change to this module:
+  - a physical iPhone and a low-end physical Android, good light: PAN and expiry read in under 2 s;
+  - low light: the torch toggle works;
+  - permission denied → "Open settings" → grant → reopen the scanner: it scans;
+  - a scuffed card: the 30 s timeout appears and the buyer can type the card instead;
+  - closing mid-scan returns to the card form with the fields untouched.
+- Not covered by tests yet: the camera controllers (`TextRecognizer`, `TorchController`, `CameraPermissionController`)
+  are `internal expect class`, so no fake can be injected. Testing them needs `interface` + `expect class DefaultX`.
+
+## Out of scope
+
+NFC / EMV reading and CVC scanning (back of the card, a different flow) — each would be a separate module or flow.

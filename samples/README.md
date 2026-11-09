@@ -1,132 +1,150 @@
-# payrdr SDK Sample Apps
+# Sample apps
 
-Demo stores that show how a merchant app takes payments with `sdk-payment`, and a card form of the
-merchant's own encrypted with `sdk-core`:
+Demo stores that take payments with the PAYRDR SDK. The same demo is built four times:
 
-- **Android** — Jetpack Compose. See `android-app/`.
-- **iOS** — SwiftUI. See `ios-app/`.
-- **Flutter** — the same demo on the `payrdr_sdk` plugin. See `flutter-app/`.
-- **React Native** — the same demo on the `@payrdr/react-native-sdk` module. See `react-native-app/`.
-
-## What the demo shows
-
-The start screen has two sections: **SDK Payment** with three businesses and **SDK Core**.
-
-### SDK Payment
-
-The three businesses look and sell differently, but each runs the same
-payment path and every payment scenario:
-
-| Business | What you do | Sheet theme |
+| App | Built with | Folder |
 |---|---|---|
-| **Hearth & Co** — furniture | catalogue → product → cart → Pay | light, black button |
-| **Roast Lane** — coffee shop | menu → order → Pay; "Order again" pays the last order with a saved card | dark, cream button |
-| **Stage Pass** — tickets | event → seats → checkout with a seat hold → Pay | light, orange button |
+| Android | Jetpack Compose, `sdk-payment` | `android-app/` |
+| iOS | SwiftUI, `sdk-payment` | `ios-app/` |
+| Flutter | the `payrdr_sdk` plugin | `flutter-app/` ([README](flutter-app/README.md)) |
+| React Native | the `@payrdr/react-native-sdk` module | `react-native-app/` ([README](react-native-app/README.md)) |
 
-Every cart has the same bottom: a **Scenario** row and the store's **Pay** button.
+## Before you start
 
-1. **Pay** registers an order for the cart total ("your server", see below) and gets an mdOrder.
-2. The SDK sheet opens in the business's brand: `PaymentTheme.Custom` built from its colours.
-3. When the sheet closes, the store shows its own result screen. The merchant app decides what
-   comes next; the SDK only reports success, decline or cancel.
+The apps don't ship with merchant credentials. Open the gear on the start screen and enter, under **Credentials**,
+the merchant login and password (API V1) or the API key (API V2) of a merchant on the gateway you use. They stay on
+the device.
 
-The **Scenario** row opens the demo panel:
+## What's in the demo
 
-- **Buyer** — *Guest*, or *With cards*: the order carries a demo `clientId`, so cards saved with
-  "Save card" in an earlier payment show up. *Reset* starts a new buyer without cards.
-- **Payment** — Google Pay (Android) / Apple Pay (iOS), the card scanner, and the SDK's own result
-  screen (`showResultScreen`).
+The start screen has two sections: **SDK Payment** with three stores, and **SDK Core**.
 
-Which payer details the SDK asks for (email, phone, billing address) is decided by the merchant's
-settings on the gateway, not by the app.
+### The stores
+
+Each store looks and sells differently, but they pay the same way:
+
+| Store | What you do | Sheet theme |
+|---|---|---|
+| **Hearth & Co** (furniture) | catalogue → product → cart → Pay | light, black button |
+| **Roast Lane** (coffee) | menu → order → Pay. "Order again" fills the cart with the last paid order and pays at once | dark, cream button |
+| **Stage Pass** (tickets) | event → seats → checkout, where the seats are held for a while → Pay | light, orange button |
+
+1. **Pay** registers an order for the cart total and gets its `mdOrder` (see [Your server](#your-server)).
+2. The SDK sheet opens in the store's colours, through `PaymentTheme.Custom`.
+3. When the sheet closes, the store shows its own result screen. What happens next is up to the app; the SDK only
+   reports how the payment ended.
+
+Next to Pay, **Scenario** opens a demo panel:
+
+- **Buyer**: *Guest*, or *With cards*. With cards, the order carries a demo `clientId`, so a card saved in an earlier
+  payment ("Save card") shows up in the sheet. *Reset* starts over with a new buyer without cards.
+- **Payment**: Google Pay (Android) or Apple Pay (iOS), the card scanner, and the SDK's own result screen
+  (`showResultScreen`).
+
+Which payer details the sheet asks for (email, phone, billing address) depends on the merchant's settings at the
+gateway, not on the app.
+
+### Northwind Invest: AFT transfers
+
+An AFT moves money from the buyer's card into an account, so the demo shows it in an investment app instead of a
+store. Choose API V1 and the order type "AFT transfer" in the developer settings, and the start screen shows
+**Northwind Invest** instead of the three stores. Its sheet is dark.
+
+- **Top up**: choose €50, €100, €250 or €500, or type any amount from €10 to €1,000 → the SDK sheet → "+€… credited".
+  The account is credited only when the SDK reports the transfer as completed; after a decline or an unknown outcome
+  it stays as it was. The account lives on the device.
+- **Add card** (on the top-up screen): registers a transfer of 0 with the features `WITHOUT_TO_CARD`, `VERIFY` and
+  `FORCE_CREATE_BINDING`. The gateway checks the card, reverses the transfer and saves the card; the account isn't
+  credited. A banner says whether the card was added, and the next top-up offers it. (The gateway refuses `VERIFY`
+  without `FORCE_CREATE_BINDING`.)
+- **Invest** moves free cash into a fund, with no payment.
+
+Transfers are registered with the investor's details (`billingPayerData`, `billingRecipientData`, `email`), so the
+sheet asks only for the card and the phone. Northwind always sends its demo `clientId`, so its Scenario panel has no
+Buyer choice, only Reset.
 
 ### SDK Core
 
-For merchants with PCI DSS who keep their own card form: `sdk-core` encrypts the card data on the device
-into a token, the merchant's server passes it to the gateway as `seToken`. The screen covers the three
-kinds of token — *New card* (card data + mdOrder), *No order* (card data only) and *Saved card*
-(bindingId + mdOrder) — and shows sdk-core's error codes next to the fields they belong to.
+For merchants who are PCI DSS certified and keep their own card form. `sdk-core` encrypts the card data on the device
+into a token; the merchant's server sends it to the gateway as `seToken`.
 
-The card fields are grouped the way the SDK's own form groups them: number with the network logo, expiry
-and CVC, name.
+The screen makes all three kinds of token:
 
-mdOrder and the gateway's public key (PEM) are pasted by hand — e.g. the last order's mdOrder from the
-developer settings. They and the bindingId are remembered; card data are not stored. Code:
-`android-app/.../core/SdkCoreScreen.kt`, `ios-app/SampleApp/Core/SdkCoreView.swift`.
+| Token | Input |
+|---|---|
+| New card | card data + `mdOrder` |
+| No order | card data only |
+| Saved card | `bindingId` + `mdOrder` |
 
-## Where the integration is
+Validation errors from `sdk-core` appear next to their fields. Paste the `mdOrder` and the gateway's public key (PEM)
+by hand; the last order's `mdOrder` is in the developer settings. The app remembers the token kind, `mdOrder`, key and
+`bindingId`, but never the card data.
 
-All code that talks to the SDK is in one file per platform:
+## Where the integration code is
 
-- Android — `android-app/.../checkout/Checkout.kt`
-- iOS — `ios-app/SampleApp/Checkout/Checkout.swift`
+Everything that calls the SDK is in one file per app:
 
-Each starts with the four steps: create the SDK from a config → get an mdOrder → open the sheet →
-handle the result. The stores, the cart and the demo panel never call the SDK directly.
+| App | File |
+|---|---|
+| Android | `android-app/.../checkout/Checkout.kt` |
+| iOS | `ios-app/SampleApp/Checkout/Checkout.swift` |
+| Flutter | `flutter-app/lib/checkout/checkout.dart` |
+| React Native | `react-native-app/src/checkout/checkout.ts` |
 
-### "Your server"
+Each file follows the same four steps: build the config, get an order, open the sheet, handle the result. The stores,
+the cart and the demo panel never call the SDK themselves.
 
-A real app gets the order from **its own backend**, which registers it at the gateway: through API V1
-(`register.do` with the merchant login and password → an mdOrder, opened with `present(mdOrder)`) or through
-API V2 (`POST /api2/sessions` with the API key → a session id `ps_…`, opened with `presentSession(sessionId)`).
-The demo has no backend, so it registers orders itself (`merchant/OrderRegistrar.kt`,
-`Merchant/OrderRegistrar.swift`); developer settings choose the API. An API V2 session sends the buyer back to
-`sdk://done` (its `successUrl` and `failureUrl`); the SDK also recognizes the merchant's own pages. With API V1 the
-order can also be an AFT transfer (`registerP2P.do`, feature `WITHOUT_TO_CARD`): the same `present(mdOrder)` opens a
-sheet that asks for the sender's and recipient's details and says "Transfer". Never ship merchant credentials inside
-an app.
+### Your server
 
-### Northwind Invest: AFT
+In a real app the order comes from the merchant's own backend, which registers it at the gateway:
 
-An AFT moves money from the buyer's card into an account, so it is shown in an investment app rather than in a
-store. With API V1 and Order "AFT transfer" in the developer settings, the start screen swaps the three stores for
-**Northwind Invest**: the portfolio → "Top up" → an amount typed on the system keyboard (€10–€1,000) → the SDK sheet →
-"+€… credited", and the account's free cash grows. The transfer is registered with the investor's details
-(`billingPayerData`, `billingRecipientData`, `email`), so the sheet asks only for the card (and the phone). The
-account lives on the device and is credited only when the SDK reports the transfer completed; a declined or unknown
-transfer leaves it as it was. "Invest" moves free cash into a fund without a payment.
+- API V1: `register.do` with the merchant login and password returns an `mdOrder`; the app opens it with
+  `present(mdOrder)`. An order can also be an AFT transfer (`registerP2P.do`, feature `WITHOUT_TO_CARD`); the same
+  call opens a sheet that asks for the sender's and recipient's details and says "Transfer".
+- API V2: `POST /api2/sessions` with the API key returns a session ID (`ps_…`); the app opens it with
+  `presentSession(sessionId)`. The session sends the buyer back to `sdk://done` (its `successUrl` and `failureUrl`);
+  the SDK also recognises the merchant's own pages there.
+
+The demo has no backend, so it registers orders itself (`merchant/OrderRegistrar.kt` on Android,
+`Merchant/OrderRegistrar.swift` on iOS). A real app must never contain merchant credentials.
 
 ## Developer settings
 
-The gear on the start screen opens a grouped list, laid out the same way in the four apps:
+The gear on the start screen opens the same list in all four apps:
 
-- **Gateway** — base URL (default `https://dev.bpcbt.com/payment`; anything but an `https://` address is flagged under
-  the field) and the merchant API: **API V1** or **API V2** (served next to the payment page:
-  `https://dev.bpcbt.com/api2`).
-- **Credentials** — with API V1 the order type (Payment or AFT transfer), the merchant login and password; with API V2
-  the API key. Nothing ships with the app: type them in on the device; they are stored only there. The eye button
-  shows a password or key while you check it.
-- **SDK appearance** — the sheet theme (as the store / light / dark / system) and the language: System, English,
-  Русский, Română, Ελληνικά, Български, Deutsch, Français, Español or العربية (right to left). It switches the
-  demo's own screens at once and is passed to the SDK as `SdkPaymentConfig.locale`; System follows the device.
-- **Google Pay** (Android: gateway, merchant ID) / **Apple Pay** (iOS: merchant ID — the default
-  `merchant.net.payrdr.samples.test` is a placeholder; Apple Pay needs a real merchant ID).
-- **Advanced** (Android and iOS only) — the payment state stream (headless flow, registers a fresh €1 order) and an
-  intentionally failing SSL pinning check.
-- **Last order** — the mdOrder of the last registered order, with Copy.
+| Group | What it sets |
+|---|---|
+| **Gateway** | The base URL (default `https://dev.bpcbt.com/payment`; an address that isn't `https://` gets a warning) and the API: **API V1**, or **API V2** at `https://dev.bpcbt.com/api2` |
+| **Credentials** | API V1: the order type (Payment or AFT transfer), merchant login and password. API V2: the API key. Stored on the device only; the eye button shows what you typed |
+| **SDK appearance** | The sheet theme (store colours, light, dark or system) and the language: System, English, Русский, Română, Ελληνικά, Български, Deutsch, Français, Español or العربية (right to left). The language changes the demo's screens at once and goes to the SDK as `SdkPaymentConfig.locale` |
+| **Google Pay** (Android) | Gateway and merchant ID |
+| **Apple Pay** (iOS) | Merchant ID. The default `merchant.net.payrdr.samples.test` is a placeholder; Apple Pay needs a real one |
+| **Advanced** (Android and iOS) | The payment state stream (a headless payment of a new €1 order) and an SSL pinning check that fails on purpose |
+| **Last order** | The `mdOrder` of the last order, with a Copy button |
 
 ## Build and run
 
+Run Gradle with JDK 17–21; with a newer JDK it fails. Android Studio's bundled JDK works.
+
 ### Android
 
-JDK 17 or 21 (Kotlin's Gradle plugin rejects JDK 26).
+From the repository root:
 
 ```bash
-# From the repo root
-JAVA_HOME=~/.sdkman/candidates/java/21.0.2-tem ./gradlew :samples:android-app:installDebug
+JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home" ./gradlew :samples:android-app:installDebug
 ```
 
 Tests:
 
 ```bash
 ./gradlew :samples:android-app:testDebugUnitTest
-./gradlew :samples:android-app:connectedDebugAndroidTest   # needs an emulator or device
+./gradlew :samples:android-app:connectedDebugAndroidTest   # needs an emulator or a device
 ```
 
 ### iOS
 
-Xcode with an iOS 16+ SDK; JDK 17 or 21 for the Gradle Run Script phase that builds the
-XCFramework.
+Xcode with the iOS 16 SDK or newer. A Run Script phase builds the SDK framework with Gradle, and it expects JDK 21 at
+`$HOME/.sdkman/candidates/java/21.0.2-tem`; with the JDK elsewhere, change `JAVA_HOME` in that phase.
 
 ```bash
 cd samples/ios-app
@@ -134,16 +152,30 @@ xcodebuild -project SampleApp.xcodeproj -scheme SampleApp \
     -destination 'platform=iOS Simulator,name=iPhone 15 Pro,OS=17.4' build
 ```
 
-Tests (unit + UI) — use an iOS 17.4 simulator: Kotlin/Native crashes in newer xctest hosts.
+Run the tests (unit and UI) on an iOS 17.4 simulator: Kotlin/Native crashes in newer xctest hosts.
 
 ```bash
 xcodebuild -project SampleApp.xcodeproj -scheme SampleApp \
     -destination 'platform=iOS Simulator,name=iPhone 15 Pro,OS=17.4' test
 ```
 
+### Flutter and React Native
+
+See [flutter-app/README.md](flutter-app/README.md) and [react-native-app/README.md](react-native-app/README.md). Both
+need `scripts/build-bridge.sh` run from the repository root first.
+
+## Troubleshooting
+
+| Problem | What to do |
+|---|---|
+| "Merchant login and password are not set." or "The API key is not set." | Open the gear → Credentials and enter them for the API chosen under Gateway |
+| Pay spins for a long time, then fails | The device can't reach the gateway (on an emulator, check its DNS). Registration gives up after 20 seconds |
+| No Google Pay button | Update Google Play services, and check that Google Pay is set up for the merchant |
+| SSL pin mismatch | Expected only in Advanced → SSL pinning |
+
 ## Credits
 
-- Photos: [Unsplash](https://unsplash.com) (Unsplash License) —
+- Photos from [Unsplash](https://unsplash.com) (Unsplash License):
   [1555066931](https://images.unsplash.com/photo-1555066931-4365d14bab8c),
   [1586023492125](https://images.unsplash.com/photo-1586023492125-27b2c045efd7),
   [1555041469](https://images.unsplash.com/photo-1555041469-a586c61ea9bc),
@@ -158,15 +190,6 @@ xcodebuild -project SampleApp.xcodeproj -scheme SampleApp \
   [1559925393](https://images.unsplash.com/photo-1559925393-8be0ec4767c8),
   [1470229722913](https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3),
   [1501386761578](https://images.unsplash.com/photo-1501386761578-eac5c94b800a).
-- Fonts: [Google Fonts](https://fonts.google.com) (SIL Open Font License 1.1) — Cormorant,
-  Montserrat, Nunito, Inter, Playfair Display.
-
-## Troubleshooting
-
-- **"Merchant login and password are not set"** / **"The API key is not set"** — open the gear → Gateway and
-  type them in for the API chosen there.
-- **Pay spins for long and fails** — the device cannot reach the gateway (on an emulator, check
-  its DNS); registration gives up after 20 s.
-- **Google Pay button does not appear** — Play Services must be current and the merchant must
-  have Google Pay set up.
-- **SSL pin mismatch** — expected only in Advanced → SSL pinning.
+- Fonts from [Google Fonts](https://fonts.google.com) (SIL Open Font License 1.1): Cormorant, Montserrat, Nunito,
+  Inter, Playfair Display, IBM Plex Sans.
+- Material Icons (Apache License 2.0), in the React Native app.

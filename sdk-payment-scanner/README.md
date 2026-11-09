@@ -1,98 +1,76 @@
-# sdk-payment-scanner
+# Card scanner
 
-Optional camera-based card scanner for `sdk-payment`. Uses ML Kit on Android and Vision on iOS.
-Extracts PAN and expiry date; cardholder extraction is opt-in. Pure offline — no network calls.
+An optional part of the payment sheet. When it is on, a camera icon appears next to the card number field. The buyer
+points the camera at the card, and the scanner fills in the card number and expiry date. If the scan doesn't work out,
+the buyer just types the number.
 
-## Gradle
+The scanner works offline and sends nothing over the network. It uses ML Kit on Android and Apple's Vision on iOS. It
+doesn't read the cardholder name or the CVC.
+
+## Turn it on
+
+Pass the provider in the config you already give the checkout:
+
+```kotlin
+val config = SdkPaymentConfig(
+    baseUrl = "https://dev.bpcbt.com/payment",
+    cardScannerProvider = MlKitVisionCardScannerProvider(),
+)
+```
+
+```swift
+let config = SdkPaymentConfig(
+    baseUrl: "https://dev.bpcbt.com/payment",
+    cardScannerProvider: MlKitVisionCardScannerProvider(logTransport: nil)
+)
+```
+
+To see the scanner's events in your logs, pass your `LogTransport`: `MlKitVisionCardScannerProvider(logTransport = …)`.
+
+## Android
+
+Add the dependency:
 
 ```kotlin
 implementation("io.github.radarpayments:sdk-payment-scanner:<version>")
 ```
 
-## Wire it up
+Nothing else is needed. The library's manifest brings the camera permission and declares the camera as not required,
+so the app still installs on devices without one. Your app must use AndroidX Activity: the scanner asks for the camera
+permission through it.
 
-```kotlin
-val sdk = SdkPayment.create(
-    SdkPaymentConfig(
-        // …your existing config…
-        cardScannerProvider = MlKitVisionCardScannerProvider(
-            // optional: route scanner events through your existing LogTransport
-            logTransport = myLogTransport,
-        ),
-    ),
-)
-```
-
-When `cardScannerProvider` is set, a camera icon appears next to the PAN field in the card form.
-On successful scan the form is pre-filled with PAN, expiry and (if `extractCardholder = true`)
-cardholder; otherwise the user continues manually.
-
-## Android
-
-- `AndroidManifest.xml` merges in `<uses-permission android:name="android.permission.CAMERA" />`
-  automatically.
-- `<uses-feature android:name="android.hardware.camera" android:required="false" />` keeps your
-  app visible on the Play Store to users with camera-less devices.
-- Adds ≈ 2.8 MB to your APK (ML Kit bundled text-recognition model + CameraX).
-- `androidx.startup` is used to capture the application context; no manual `Application.onCreate`
-  wiring is required in a standard app.
+The scanner makes the app bigger: ML Kit ships its text recognition model inside the app, about 11 MB for each
+architecture (arm64-v8a, armeabi-v7a, x86, x86_64). A universal APK grows by about 40 MB; an app bundle delivers one
+architecture per device.
 
 ## iOS
 
-- **You MUST add `NSCameraUsageDescription`** to your app's `Info.plist`. App Store review will
-  reject builds without it. Suggested text:
+On iOS the scanner is part of the one framework you link, `sdk_payment_scanner` (the `PayrdrSDK` package product). It
+uses the system's Vision and adds no model of its own.
 
-  > The camera is used to scan your payment card so you don't have to type the number.
+Add `NSCameraUsageDescription` to your `Info.plist`. Without it App Store review rejects the build. For example:
 
-- The module ships a `PrivacyInfo.xcprivacy` declaring `NSPrivacyAccessedAPICategoryCameraUsage`.
-  Your app-level privacy manifest must still cover its own disclosures.
-- 0 MB binary cost (Vision and AVFoundation are system frameworks).
+> The camera is used to scan your payment card so you don't have to type the number.
 
-## Configuration
+## What the buyer sees
 
-```kotlin
-CardScannerConfig(
-    extractCardholder = false, // default; set true to attempt cardholder OCR (~60-70% accuracy)
-    timeoutSeconds = 30,       // default; scanner auto-returns Failed(Timeout) after this
-    enableTorchButton = true,  // default; set false to hide the torch icon
-)
-```
+- The first time, the system asks for camera access. If the buyer refuses, the scanner explains that it needs the
+  camera and offers to open Settings or to enter the card by hand.
+- In poor light the buyer can turn on the torch.
+- If nothing is read in 30 seconds, the scanner suggests better light or typing the details. Either button takes the
+  buyer back to the card form; the camera icon starts a new scan.
+- Closing the scanner leaves the card form as it was.
 
-## Logging
+## Log events
 
-Scanner emits `LogEvent`s to the `Logger` you pass in. Tag is always `"CardScanner"`; messages
-follow a stable `event=<name> key=value` shape and never contain PAN digits:
+The scanner writes to your `LogTransport` with the tag `CardScanner`. Messages look like `event=<name> key=value` and
+never contain card digits:
 
-- `event=permission_granted` / `event=permission_denied`
-- `event=started`
-- `event=success elapsed_ms=<N>`
-- `event=cancelled`
-- `event=timeout elapsed_ms=<N>`
-- `event=camera_unavailable`
-
-## Manual verification checklist
-
-Run through before shipping a change to this module:
-
-- [ ] Physical iPhone, good light — PAN + expiry recognised in < 2 s.
-- [ ] Low-end physical Android — same.
-- [ ] Low-light — torch toggle works.
-- [ ] Permission denied → tap "Open settings" → grant → reopen scanner → works.
-- [ ] Damaged / scuffed card — 30 s timeout, user can fall back to manual entry.
-- [ ] Cancelled mid-scan → returns to card form without modifying fields.
-
-## Non-goals for v1
-
-- NFC / EMV reading (distinct module if added later).
-- CVV scanning (on card back; distinct flow).
-- Distinguishing "extraction disabled" from "extraction attempted but not found" at the result
-  boundary — both collapse to `cardholder = null`.
-
-## Known follow-ups
-
-- The iOS SampleApp (`samples/ios-app`) does not yet link the scanner XCFramework; the provider
-  is therefore unwired in Swift. Wiring requires a dedicated `SdkPaymentScanner.xcframework`
-  build+embed step in the SampleApp's Xcode project.
-- UI-layer smoke tests (Compose instrumentation on Android, simulator on iOS) are tracked as a
-  follow-up; they require refactoring the platform controllers from `expect class` to
-  `interface + expect class DefaultXxx : Interface` so that fakes can be injected.
+| Event | When |
+|---|---|
+| `event=permission_granted`, `event=permission_denied` | The buyer answered the camera permission request |
+| `event=started` | The camera started |
+| `event=success elapsed_ms=<N>` | The card was read |
+| `event=cancelled` | The buyer closed the scanner |
+| `event=timeout elapsed_ms=<N>` | Nothing was read in 30 seconds |
+| `event=camera_unavailable` | The device has no usable camera |

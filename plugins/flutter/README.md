@@ -1,61 +1,76 @@
 # payrdr_sdk (Flutter)
 
-The payrdr payment sheet in a Flutter app: card payment with 3-D Secure, saved cards, Google Pay, Apple Pay and the card
-scanner — the native SDK's own screens, opened over your app. Plus SDK Core: card encryption for a merchant with PCI DSS
-who keeps its own card form.
+Opens the PAYRDR payment sheet in a Flutter app. These are the native SDK's own screens: card payment with 3-D Secure,
+saved cards, Google Pay, Apple Pay and the card scanner. The plugin also gives you SDK Core, which encrypts card data
+for merchants who are PCI DSS certified and keep their own card form.
+
+## Requirements
+
+Android minSdk 24, iOS 15.
 
 ## Install
 
-The plugin is not on pub.dev yet: each [GitHub release](https://github.com/Radarpayments/mobile-sdk/releases) has it as
-`payrdr_sdk-<version>.tar.gz`, with the iOS framework inside. Unpack it next to your app and depend on it by path:
+The plugin is not on pub.dev yet. Each [GitHub release](https://github.com/Radarpayments/mobile-sdk/releases) has it
+as `payrdr_sdk-<version>.tar.gz`, with the iOS framework inside. Unpack it next to your app and add it by path:
 
 ```yaml
 dependencies:
   payrdr_sdk:
-    path: ../payrdr_sdk   # in this repository: ../plugins/flutter, see "From this repository" below
+    path: ../payrdr_sdk
 ```
 
-On Android the plugin takes the SDK from Maven Central. An alpha is not there: its release has
-`payrdr-sdk-maven-<version>.zip`; unpack it and set `payrdrMavenUrl` in `android/gradle.properties` to that folder.
+On Android the plugin downloads the SDK from Maven Central. Alpha versions aren't there: an alpha release has
+`payrdr-sdk-maven-<sdk-version>.zip` instead. Unpack it and set `payrdrMavenUrl` in `android/gradle.properties` to the
+unpacked folder. (The plugin's version is 1.x; the SDK's is 4.x.)
 
-Nothing else is required: `MainActivity` stays a `FlutterActivity`, the Android manifest needs no entries (Google Pay
-and the camera permission come with the SDK), and iOS works with Swift Package Manager (Flutter's default) as well as
-CocoaPods. Android minSdk 24, iOS 15.
+You don't need to change anything else:
 
-On iOS, per feature: Apple Pay needs the Apple Pay capability with your merchant id (Runner → Signing & Capabilities),
-the card scanner needs `NSCameraUsageDescription` in `Info.plist`.
+- `MainActivity` stays a plain `FlutterActivity`.
+- The Android manifest needs no entries: Google Pay and the camera permission come with the SDK.
+- On iOS the plugin works with Swift Package Manager (Flutter's default from 3.44) and with CocoaPods.
 
-## Pay
+Two iOS features need setup:
+
+- Apple Pay: add the Apple Pay capability with your merchant ID (Runner → Signing & Capabilities).
+- Card scanner: add `NSCameraUsageDescription` to `Info.plist`.
+
+## Take a payment
+
+Your server registers the order at the gateway and gives the app its `mdOrder`. Never put the merchant's login,
+password or API key in the app.
 
 ```dart
 import 'package:payrdr_sdk/payrdr_sdk.dart';
 
-// 1. Describe the sheet once.
 const checkout = PayrdrCheckout(PayrdrConfig(
   baseUrl: 'https://pay.example.com/payment',
   theme: PayrdrTheme.custom(colors: PayrdrColors(primary: Color(0xFF1C1917)), cornerRadius: 12),
-  googlePay: GooglePayOptions(),                            // everything from the gateway
+  googlePay: GooglePayOptions(), // everything else comes from the gateway
   applePay: ApplePayOptions(merchantId: 'merchant.com.example'),
   cardScanner: true,
 ));
 
-// 2. Your server registers the order at the gateway and gives the app its mdOrder.
 final mdOrder = await myBackend.registerOrder(cart);
 
-// 3. Open the sheet. 4. Handle the result.
 switch (await checkout.present(mdOrder)) {
   case CheckoutCompleted():
     showPaid();
   case CheckoutCanceled():
     break;
   case CheckoutFailed(:final error):
-    showError(error.message);   // error.code: CheckoutErrorCode.declined, .network, ...
+    showError(error.message); // error.code: CheckoutErrorCode.declined, .network, …
   case CheckoutUnknown(:final orderId):
-    checkOnServer(orderId);      // sent, outcome not known yet: never offer to pay again meanwhile
+    checkOnServer(orderId);
 }
 ```
 
-Never put the merchant's API login and password in the app: registering orders is your server's job.
+For an API V2 session, call `checkout.presentSession(sessionId)` with the `ps_…` ID your server created.
+
+`CheckoutUnknown` means the payment was sent but its outcome isn't known. Ask your server how the order ended, and
+don't offer to pay again until it knows.
+
+`PayrdrConfig` also takes `locale`, `showResultScreen`, `keyProviderUrl`, `sslPins` and `debugLogging`. They mean the
+same as in the native SDK; see the [root README](../../README.md#configuration).
 
 ## SDK Core
 
@@ -63,23 +78,29 @@ Never put the merchant's API login and password in the app: registering orders i
 final result = await PayrdrCore.generateToken(const CoreTokenRequest.card(
   mdOrder: mdOrder, pan: '4111111111111111', expiry: '12/30', cvc: '123', pubKey: gatewayPublicKeyPem,
 ));
-if (result.isSuccessful) sendToServer(result.token!);   // the server pays with it as seToken
-else showFieldErrors(result.errors);                    // {CoreField.pan: 'required', ...}
+if (result.isSuccessful) {
+  sendToServer(result.token!); // the server pays with it as seToken
+} else {
+  showFieldErrors(result.errors); // {CoreField.pan: 'required', …}
+}
 ```
 
-Also `CoreTokenRequest.cardWithoutOrder`, `.savedCard` (bindingId) and `.savedCardWithoutOrder`.
+Other requests: `CoreTokenRequest.cardWithoutOrder`, `.savedCard` (by `bindingId`) and `.savedCardWithoutOrder`.
+`generateToken` throws `ArgumentError` if the request itself is malformed.
 
 ## How it works
 
-The Dart API turns the config into JSON and sends it over one method channel; the native side (`sdk-bridge`, the SDK's
-Kotlin module for cross-platform apps) opens the sheet and answers with the result as JSON. The contract is in
-[`sdk-bridge/README.md`](../../sdk-bridge/README.md).
+The Dart code turns the config into JSON and sends it over one method channel. On the native side `sdk-bridge` opens
+the sheet and sends the result back as JSON. The JSON format is described in
+[sdk-bridge/README.md](../../sdk-bridge/README.md).
 
-## From this repository
+## Working on the plugin in this repository
 
-The plugin takes the SDK from this repository's build: run `scripts/build-bridge.sh` from the repository root once (and
-after SDK changes). It publishes the Android libraries to `build/maven` and copies `PayrdrSdkBridge.xcframework` into
-`ios/payrdr_sdk/Frameworks`. An app that gets the plugin from elsewhere sets `payrdrMavenUrl` (and optionally
-`payrdrSdkVersion`) in its `android/gradle.properties` to the repository that serves the SDK.
+The plugin uses the SDK built from this repository. Run `scripts/build-bridge.sh` from the repository root once, and
+again after changing the SDK. It publishes the Android libraries to `build/maven` and copies
+`PayrdrSdkBridge.xcframework` into `ios/payrdr_sdk/Frameworks`.
 
-Tests: `flutter test` (the Dart side); the JSON contract is tested in `sdk-bridge`.
+An app that gets the plugin some other way sets `payrdrMavenUrl` (and, if needed, `payrdrSdkVersion`) in its
+`android/gradle.properties` to the Maven repository with the SDK.
+
+Tests: `flutter test`. It covers the Dart API and the shared contract files in `sdk-bridge/contract`.
