@@ -56,6 +56,9 @@ ICONS = {
     "error_outline": 0xE238,
     "check_circle_outline": 0xE15A,
     "credit_card": 0xE19F,
+    "chevron_right": 0xE15F,
+    "visibility_outlined": 0xF4A1,
+    "visibility_off_outlined": 0xF4A0,
 }
 
 

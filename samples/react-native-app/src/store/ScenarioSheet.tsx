@@ -3,6 +3,7 @@ import { Animated, Modal, Platform, Pressable, StyleSheet, Switch, Text, View } 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useL10n, usePrefs } from '../AppScope';
+import { toCaps } from '../ui/caps';
 import { Tap } from '../ui/Tap';
 import { font, StartColors } from './theme/coverStyle';
 
@@ -118,7 +119,7 @@ function SheetBody({ onClose, buyerChoice }: { onClose: () => void; buyerChoice:
 
 /** Caption of a group of settings, in capitals. */
 export function GroupHeader({ title }: { title: string }) {
-  return <Text style={styles.groupHeader}>{title.toLocaleUpperCase()}</Text>;
+  return <Text style={styles.groupHeader}>{toCaps(title)}</Text>;
 }
 
 interface ToggleRowProps {
