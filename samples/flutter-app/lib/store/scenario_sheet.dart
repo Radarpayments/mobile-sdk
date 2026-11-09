@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../app_scope.dart';
+import '../caps.dart';
 import 'start_screen.dart';
 import 'theme/cover_style.dart';
 
@@ -116,7 +117,7 @@ class GroupHeader extends StatelessWidget {
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.only(top: 20, bottom: 8),
     child: Text(
-      title.toUpperCase(),
+      toCaps(title),
       style: font(StoreFonts.inter, 12, weight: FontWeight.w700, color: StartColors.muted, letterSpacing: 0.5),
     ),
   );

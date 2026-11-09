@@ -119,6 +119,11 @@
   "devAdvancedSub": "State stream, SSL pinning",
   "devLastOrder": "Last order",
   "devCopy": "Copy",
+  "devCredentials": "Credentials",
+  "devShowSecret": "Show",
+  "devHideSecret": "Hide",
+  "devCopied": "Copied",
+  "devBaseUrlError": "Enter an address that starts with https://",
   "devNone": "—",
   "resultSuccessFurniture": "Thank you for your order",
   "resultSuccessFurnitureBody": "We will be in touch to arrange delivery.",
@@ -369,8 +374,6 @@
     }
   },
   "doneToPortfolio": "To portfolio",
-  "devInvestReset": "Reset Northwind demo account",
-  "devInvestResetDone": "Demo account reset",
   "scenarioWalletApple": "Apple Pay",
   "devApplePay": "Apple Pay"
 }

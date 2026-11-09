@@ -256,6 +256,21 @@ class AppLocalizationsBg extends AppLocalizations {
   String get devCopy => 'Копирай';
 
   @override
+  String get devCredentials => 'Данни за достъп';
+
+  @override
+  String get devShowSecret => 'Покажи';
+
+  @override
+  String get devHideSecret => 'Скрий';
+
+  @override
+  String get devCopied => 'Копирано';
+
+  @override
+  String get devBaseUrlError => 'Адресът трябва да започва с https://';
+
+  @override
   String get devNone => '—';
 
   @override
@@ -741,12 +756,6 @@ class AppLocalizationsBg extends AppLocalizations {
 
   @override
   String get doneToPortfolio => 'Към портфейла';
-
-  @override
-  String get devInvestReset => 'Нулирай демо сметката на Northwind';
-
-  @override
-  String get devInvestResetDone => 'Демо сметката е нулирана';
 
   @override
   String get scenarioWalletApple => 'Apple Pay';

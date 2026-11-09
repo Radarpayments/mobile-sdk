@@ -77,6 +77,11 @@
   "devAdvancedSub": "Поток от състояния, SSL pinning",
   "devLastOrder": "Последна поръчка",
   "devCopy": "Копирай",
+  "devCredentials": "Данни за достъп",
+  "devShowSecret": "Покажи",
+  "devHideSecret": "Скрий",
+  "devCopied": "Копирано",
+  "devBaseUrlError": "Адресът трябва да започва с https://",
   "devNone": "—",
   "resultSuccessFurniture": "Благодарим ви за поръчката",
   "resultSuccessFurnitureBody": "Ще се свържем с вас, за да уговорим доставката.",
@@ -230,8 +235,6 @@
   "doneTime": "Час",
   "doneInvest": "Инвестирай {amount}",
   "doneToPortfolio": "Към портфейла",
-  "devInvestReset": "Нулирай демо сметката на Northwind",
-  "devInvestResetDone": "Демо сметката е нулирана",
   "scenarioWalletApple": "Apple Pay",
   "devApplePay": "Apple Pay"
 }

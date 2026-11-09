@@ -77,6 +77,11 @@
   "devAdvancedSub": "Zustandsstream, SSL-Pinning",
   "devLastOrder": "Letzte Bestellung",
   "devCopy": "Kopieren",
+  "devCredentials": "Zugangsdaten",
+  "devShowSecret": "Anzeigen",
+  "devHideSecret": "Ausblenden",
+  "devCopied": "Kopiert",
+  "devBaseUrlError": "Die Adresse muss mit https:// beginnen",
   "devNone": "—",
   "resultSuccessFurniture": "Vielen Dank für Ihre Bestellung",
   "resultSuccessFurnitureBody": "Wir melden uns, um die Lieferung abzustimmen.",
@@ -230,8 +235,6 @@
   "doneTime": "Zeit",
   "doneInvest": "{amount} investieren",
   "doneToPortfolio": "Zum Depot",
-  "devInvestReset": "Northwind-Demokonto zurücksetzen",
-  "devInvestResetDone": "Demokonto zurückgesetzt",
   "scenarioWalletApple": "Apple Pay",
   "devApplePay": "Apple Pay"
 }

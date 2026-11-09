@@ -198,7 +198,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get devOrderAftHint =>
-      'Переводы регистрируются через registerP2P.do (AFT в одну сторону): лист попросит данные отправителя и получателя.';
+      'Переводы регистрируются через registerP2P.do (AFT в одну сторону): шторка попросит данные отправителя и получателя.';
 
   @override
   String get devCredentialsNote =>
@@ -254,6 +254,21 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get devCopy => 'Копировать';
+
+  @override
+  String get devCredentials => 'Учётные данные';
+
+  @override
+  String get devShowSecret => 'Показать';
+
+  @override
+  String get devHideSecret => 'Скрыть';
+
+  @override
+  String get devCopied => 'Скопировано';
+
+  @override
+  String get devBaseUrlError => 'Адрес должен начинаться с https://';
 
   @override
   String get devNone => '—';
@@ -740,12 +755,6 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get doneToPortfolio => 'В портфель';
-
-  @override
-  String get devInvestReset => 'Сбросить демо-счёт Northwind';
-
-  @override
-  String get devInvestResetDone => 'Демо-счёт сброшен';
 
   @override
   String get scenarioWalletApple => 'Apple Pay';

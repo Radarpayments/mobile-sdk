@@ -257,6 +257,21 @@ class AppLocalizationsEl extends AppLocalizations {
   String get devCopy => 'Αντιγραφή';
 
   @override
+  String get devCredentials => 'Διαπιστευτήρια';
+
+  @override
+  String get devShowSecret => 'Εμφάνιση';
+
+  @override
+  String get devHideSecret => 'Απόκρυψη';
+
+  @override
+  String get devCopied => 'Αντιγράφηκε';
+
+  @override
+  String get devBaseUrlError => 'Η διεύθυνση πρέπει να ξεκινά με https://';
+
+  @override
   String get devNone => '—';
 
   @override
@@ -746,12 +761,6 @@ class AppLocalizationsEl extends AppLocalizations {
 
   @override
   String get doneToPortfolio => 'Στο χαρτοφυλάκιο';
-
-  @override
-  String get devInvestReset => 'Επαναφορά δοκιμαστικού λογαριασμού Northwind';
-
-  @override
-  String get devInvestResetDone => 'Ο δοκιμαστικός λογαριασμός επαναφέρθηκε';
 
   @override
   String get scenarioWalletApple => 'Apple Pay';

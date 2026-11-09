@@ -254,6 +254,21 @@ class AppLocalizationsAr extends AppLocalizations {
   String get devCopy => 'نسخ';
 
   @override
+  String get devCredentials => 'بيانات الاعتماد';
+
+  @override
+  String get devShowSecret => 'إظهار';
+
+  @override
+  String get devHideSecret => 'إخفاء';
+
+  @override
+  String get devCopied => 'تم النسخ';
+
+  @override
+  String get devBaseUrlError => 'يجب أن يبدأ العنوان بـ https://';
+
+  @override
   String get devNone => '—';
 
   @override
@@ -737,12 +752,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get doneToPortfolio => 'إلى المحفظة';
-
-  @override
-  String get devInvestReset => 'إعادة ضبط حساب Northwind التجريبي';
-
-  @override
-  String get devInvestResetDone => 'تمت إعادة ضبط الحساب التجريبي';
 
   @override
   String get scenarioWalletApple => 'Apple Pay';

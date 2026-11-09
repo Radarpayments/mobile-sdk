@@ -571,6 +571,36 @@ abstract class AppLocalizations {
   /// **'Copy'**
   String get devCopy;
 
+  /// No description provided for @devCredentials.
+  ///
+  /// In en, this message translates to:
+  /// **'Credentials'**
+  String get devCredentials;
+
+  /// No description provided for @devShowSecret.
+  ///
+  /// In en, this message translates to:
+  /// **'Show'**
+  String get devShowSecret;
+
+  /// No description provided for @devHideSecret.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide'**
+  String get devHideSecret;
+
+  /// No description provided for @devCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied'**
+  String get devCopied;
+
+  /// No description provided for @devBaseUrlError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter an address that starts with https://'**
+  String get devBaseUrlError;
+
   /// No description provided for @devNone.
   ///
   /// In en, this message translates to:
@@ -1488,18 +1518,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'To portfolio'**
   String get doneToPortfolio;
-
-  /// No description provided for @devInvestReset.
-  ///
-  /// In en, this message translates to:
-  /// **'Reset Northwind demo account'**
-  String get devInvestReset;
-
-  /// No description provided for @devInvestResetDone.
-  ///
-  /// In en, this message translates to:
-  /// **'Demo account reset'**
-  String get devInvestResetDone;
 
   /// No description provided for @scenarioWalletApple.
   ///

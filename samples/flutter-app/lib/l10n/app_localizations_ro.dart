@@ -256,6 +256,21 @@ class AppLocalizationsRo extends AppLocalizations {
   String get devCopy => 'Copiați';
 
   @override
+  String get devCredentials => 'Date de acces';
+
+  @override
+  String get devShowSecret => 'Afișează';
+
+  @override
+  String get devHideSecret => 'Ascunde';
+
+  @override
+  String get devCopied => 'Copiat';
+
+  @override
+  String get devBaseUrlError => 'Adresa trebuie să înceapă cu https://';
+
+  @override
   String get devNone => '—';
 
   @override
@@ -743,12 +758,6 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get doneToPortfolio => 'La portofoliu';
-
-  @override
-  String get devInvestReset => 'Resetează contul demo Northwind';
-
-  @override
-  String get devInvestResetDone => 'Cont demo resetat';
 
   @override
   String get scenarioWalletApple => 'Apple Pay';

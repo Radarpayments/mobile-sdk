@@ -77,6 +77,11 @@
   "devAdvancedSub": "Flux de stări, SSL pinning",
   "devLastOrder": "Ultima comandă",
   "devCopy": "Copiați",
+  "devCredentials": "Date de acces",
+  "devShowSecret": "Afișează",
+  "devHideSecret": "Ascunde",
+  "devCopied": "Copiat",
+  "devBaseUrlError": "Adresa trebuie să înceapă cu https://",
   "devNone": "—",
   "resultSuccessFurniture": "Vă mulțumim pentru comandă",
   "resultSuccessFurnitureBody": "Vă vom contacta pentru a stabili livrarea.",
@@ -230,8 +235,6 @@
   "doneTime": "Ora",
   "doneInvest": "Investește {amount}",
   "doneToPortfolio": "La portofoliu",
-  "devInvestReset": "Resetează contul demo Northwind",
-  "devInvestResetDone": "Cont demo resetat",
   "scenarioWalletApple": "Apple Pay",
   "devApplePay": "Apple Pay"
 }

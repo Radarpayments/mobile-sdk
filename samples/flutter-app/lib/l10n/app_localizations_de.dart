@@ -255,6 +255,21 @@ class AppLocalizationsDe extends AppLocalizations {
   String get devCopy => 'Kopieren';
 
   @override
+  String get devCredentials => 'Zugangsdaten';
+
+  @override
+  String get devShowSecret => 'Anzeigen';
+
+  @override
+  String get devHideSecret => 'Ausblenden';
+
+  @override
+  String get devCopied => 'Kopiert';
+
+  @override
+  String get devBaseUrlError => 'Die Adresse muss mit https:// beginnen';
+
+  @override
   String get devNone => '—';
 
   @override
@@ -742,12 +757,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get doneToPortfolio => 'Zum Depot';
-
-  @override
-  String get devInvestReset => 'Northwind-Demokonto zurücksetzen';
-
-  @override
-  String get devInvestResetDone => 'Demokonto zurückgesetzt';
 
   @override
   String get scenarioWalletApple => 'Apple Pay';

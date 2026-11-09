@@ -77,6 +77,11 @@
   "devAdvancedSub": "تدفق الحالات، SSL pinning",
   "devLastOrder": "آخر طلب",
   "devCopy": "نسخ",
+  "devCredentials": "بيانات الاعتماد",
+  "devShowSecret": "إظهار",
+  "devHideSecret": "إخفاء",
+  "devCopied": "تم النسخ",
+  "devBaseUrlError": "يجب أن يبدأ العنوان بـ https://",
   "devNone": "—",
   "resultSuccessFurniture": "شكرًا لطلبك",
   "resultSuccessFurnitureBody": "سنتواصل معك لترتيب التوصيل.",
@@ -230,8 +235,6 @@
   "doneTime": "الوقت",
   "doneInvest": "استثمار {amount}",
   "doneToPortfolio": "إلى المحفظة",
-  "devInvestReset": "إعادة ضبط حساب Northwind التجريبي",
-  "devInvestResetDone": "تمت إعادة ضبط الحساب التجريبي",
   "scenarioWalletApple": "Apple Pay",
   "devApplePay": "Apple Pay"
 }

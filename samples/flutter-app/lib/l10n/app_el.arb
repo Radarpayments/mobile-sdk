@@ -77,6 +77,11 @@
   "devAdvancedSub": "Ροή καταστάσεων, SSL pinning",
   "devLastOrder": "Τελευταία παραγγελία",
   "devCopy": "Αντιγραφή",
+  "devCredentials": "Διαπιστευτήρια",
+  "devShowSecret": "Εμφάνιση",
+  "devHideSecret": "Απόκρυψη",
+  "devCopied": "Αντιγράφηκε",
+  "devBaseUrlError": "Η διεύθυνση πρέπει να ξεκινά με https://",
   "devNone": "—",
   "resultSuccessFurniture": "Ευχαριστούμε για την παραγγελία σας",
   "resultSuccessFurnitureBody": "Θα επικοινωνήσουμε μαζί σας για να κανονίσουμε την παράδοση.",
@@ -230,8 +235,6 @@
   "doneTime": "Ώρα",
   "doneInvest": "Επένδυση {amount}",
   "doneToPortfolio": "Στο χαρτοφυλάκιο",
-  "devInvestReset": "Επαναφορά δοκιμαστικού λογαριασμού Northwind",
-  "devInvestResetDone": "Ο δοκιμαστικός λογαριασμός επαναφέρθηκε",
   "scenarioWalletApple": "Apple Pay",
   "devApplePay": "Apple Pay"
 }

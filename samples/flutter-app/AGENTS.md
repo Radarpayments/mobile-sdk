@@ -52,7 +52,7 @@ flutter analyze    # flutter_lints 6; formatter page_width 120
 Tests fake the registrar and `presentSheet` through `AppScope`; HTTP goes through `package:http/testing` `MockClient`;
 prefs through `SharedPreferences.setMockInitialValues`. The widget test runs at a 1170×2532 view. Test names are
 lowercase behaviour sentences, groups named after the type (`group('StoreCheckout')`). Keys are snake_case
-(`store_pay`, `dev_invest_reset`) and shared with the RN sample's `testID`s.
+(`store_pay`, `dev_login`) and shared with the RN sample's `testID`s.
 
 ## Conventions
 
