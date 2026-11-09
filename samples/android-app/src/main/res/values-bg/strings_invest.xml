@@ -51,6 +51,4 @@
     <string name="done_time">Час</string>
     <string name="done_invest">Инвестирай %1$s</string>
     <string name="done_to_portfolio">Към портфейла</string>
-    <string name="dev_invest_reset">Нулирай демо сметката на Northwind</string>
-    <string name="dev_invest_reset_done">Демо сметката е нулирана</string>
 </resources>

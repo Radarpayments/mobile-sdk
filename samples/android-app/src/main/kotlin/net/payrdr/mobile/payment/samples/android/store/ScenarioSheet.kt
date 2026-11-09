@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import net.payrdr.mobile.payment.samples.android.R
 import net.payrdr.mobile.payment.samples.android.store.model.Scenario
 import net.payrdr.mobile.payment.samples.android.store.theme.StoreFonts
+import net.payrdr.mobile.payment.samples.android.ui.toCaps
 
 internal const val SCENARIO_CARDS_TAG = "scenario_with_cards"
 
@@ -107,7 +108,7 @@ private fun BuyerChoice(
 @Composable
 internal fun GroupHeader(title: Int) {
     Text(
-        stringResource(title).uppercase(),
+        stringResource(title).toCaps(),
         modifier = Modifier.padding(top = 20.dp, bottom = 8.dp),
         style = TextStyle(fontFamily = StoreFonts.inter, fontWeight = FontWeight.Bold, fontSize = 12.sp, letterSpacing = 0.5.sp),
         color = StartColors.muted,

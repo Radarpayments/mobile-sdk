@@ -57,7 +57,7 @@
     <string name="dev_order_type">Заказ</string>
     <string name="dev_order_purchase">Оплата</string>
     <string name="dev_order_aft">AFT-перевод</string>
-    <string name="dev_order_aft_hint">Переводы регистрируются через registerP2P.do (AFT в одну сторону): лист попросит данные отправителя и получателя.</string>
+    <string name="dev_order_aft_hint">Переводы регистрируются через registerP2P.do (AFT в одну сторону): шторка попросит данные отправителя и получателя.</string>
     <string name="dev_credentials_note">Хранятся только на этом устройстве. В вашем приложении заказ регистрирует ваш бэкенд.</string>
     <string name="dev_sdk_look">Оформление SDK</string>
     <string name="dev_sheet_theme">Тема шторки</string>
@@ -76,6 +76,11 @@
     <string name="dev_advanced_sub">Поток состояний, SSL pinning</string>
     <string name="dev_last_order">Последний заказ</string>
     <string name="dev_copy">Копировать</string>
+    <string name="dev_credentials">Учётные данные</string>
+    <string name="dev_show_secret">Показать</string>
+    <string name="dev_hide_secret">Скрыть</string>
+    <string name="dev_copied">Скопировано</string>
+    <string name="dev_base_url_error">Адрес должен начинаться с https://</string>
     <string name="dev_none">—</string>
     <string name="result_success_furniture">Спасибо за заказ</string>
     <string name="result_success_furniture_body">Мы свяжемся, чтобы согласовать доставку.</string>

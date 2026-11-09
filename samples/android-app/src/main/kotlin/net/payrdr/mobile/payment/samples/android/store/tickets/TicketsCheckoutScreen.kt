@@ -52,6 +52,7 @@ import net.payrdr.mobile.payment.samples.android.store.model.CoverId
 import net.payrdr.mobile.payment.samples.android.store.model.formatEur
 import net.payrdr.mobile.payment.samples.android.store.theme.SystemBarIcons
 import net.payrdr.mobile.payment.samples.android.store.theme.coverStyle
+import net.payrdr.mobile.payment.samples.android.ui.mirrorInRtl
 
 /** Checkout: the event, the bill, a seat hold that runs out, and the shared payment bar. */
 @Composable
@@ -84,7 +85,7 @@ fun TicketsCheckoutScreen(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 4.dp)) {
             IconButton(onClick = onBack) {
-                Icon(TablerIcons.ChevronLeft, contentDescription = stringResource(R.string.store_back), tint = style.text)
+                Icon(TablerIcons.ChevronLeft, stringResource(R.string.store_back), Modifier.mirrorInRtl(), tint = style.text)
             }
             Text(
                 stringResource(R.string.tickets_checkout),

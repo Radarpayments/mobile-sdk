@@ -81,6 +81,11 @@
     <string name="dev_advanced_sub">Поток от състояния, SSL pinning</string>
     <string name="dev_last_order">Последна поръчка</string>
     <string name="dev_copy">Копирай</string>
+    <string name="dev_credentials">Данни за достъп</string>
+    <string name="dev_show_secret">Покажи</string>
+    <string name="dev_hide_secret">Скрий</string>
+    <string name="dev_copied">Копирано</string>
+    <string name="dev_base_url_error">Адресът трябва да започва с https://</string>
     <string name="dev_none">—</string>
     <string name="result_success_furniture">Благодарим ви за поръчката</string>
     <string name="result_success_furniture_body">Ще се свържем с вас, за да уговорим доставката.</string>

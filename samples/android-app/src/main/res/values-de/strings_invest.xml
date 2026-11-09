@@ -51,6 +51,4 @@
     <string name="done_time">Zeit</string>
     <string name="done_invest">%1$s investieren</string>
     <string name="done_to_portfolio">Zum Depot</string>
-    <string name="dev_invest_reset">Northwind-Demokonto zurücksetzen</string>
-    <string name="dev_invest_reset_done">Demokonto zurückgesetzt</string>
 </resources>

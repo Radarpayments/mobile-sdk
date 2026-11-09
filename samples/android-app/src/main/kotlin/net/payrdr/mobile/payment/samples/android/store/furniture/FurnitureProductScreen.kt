@@ -45,6 +45,7 @@ import net.payrdr.mobile.payment.samples.android.store.model.CoverId
 import net.payrdr.mobile.payment.samples.android.store.model.Product
 import net.payrdr.mobile.payment.samples.android.store.model.formatEur
 import net.payrdr.mobile.payment.samples.android.store.theme.coverStyle
+import net.payrdr.mobile.payment.samples.android.ui.mirrorInRtl
 
 /** One product: a large photo, the name, colours, delivery terms and "Add to cart". */
 @Composable
@@ -71,7 +72,7 @@ fun FurnitureProductScreen(
                 colors = IconButtonDefaults.iconButtonColors(containerColor = Color.White.copy(alpha = 0.92f)),
                 modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars).padding(12.dp),
             ) {
-                Icon(TablerIcons.ChevronLeft, contentDescription = stringResource(R.string.store_back), tint = style.text)
+                Icon(TablerIcons.ChevronLeft, stringResource(R.string.store_back), Modifier.mirrorInRtl(), tint = style.text)
             }
         }
         Column(Modifier.weight(1f).padding(horizontal = 20.dp, vertical = 16.dp)) {

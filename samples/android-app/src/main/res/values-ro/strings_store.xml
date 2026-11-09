@@ -81,6 +81,11 @@
     <string name="dev_advanced_sub">Flux de stări, SSL pinning</string>
     <string name="dev_last_order">Ultima comandă</string>
     <string name="dev_copy">Copiați</string>
+    <string name="dev_credentials">Date de acces</string>
+    <string name="dev_show_secret">Afișează</string>
+    <string name="dev_hide_secret">Ascunde</string>
+    <string name="dev_copied">Copiat</string>
+    <string name="dev_base_url_error">Adresa trebuie să înceapă cu https://</string>
     <string name="dev_none">—</string>
     <string name="result_success_furniture">Vă mulțumim pentru comandă</string>
     <string name="result_success_furniture_body">Vă vom contacta pentru a stabili livrarea.</string>

@@ -81,6 +81,11 @@
     <string name="dev_advanced_sub">Zustandsstream, SSL-Pinning</string>
     <string name="dev_last_order">Letzte Bestellung</string>
     <string name="dev_copy">Kopieren</string>
+    <string name="dev_credentials">Zugangsdaten</string>
+    <string name="dev_show_secret">Anzeigen</string>
+    <string name="dev_hide_secret">Ausblenden</string>
+    <string name="dev_copied">Kopiert</string>
+    <string name="dev_base_url_error">Die Adresse muss mit https:// beginnen</string>
     <string name="dev_none">—</string>
     <string name="result_success_furniture">Vielen Dank für Ihre Bestellung</string>
     <string name="result_success_furniture_body">Wir melden uns, um die Lieferung abzustimmen.</string>

@@ -86,6 +86,11 @@
     <string name="dev_advanced_sub">State stream, SSL pinning</string>
     <string name="dev_last_order">Last order</string>
     <string name="dev_copy">Copy</string>
+    <string name="dev_credentials">Credentials</string>
+    <string name="dev_show_secret">Show</string>
+    <string name="dev_hide_secret">Hide</string>
+    <string name="dev_copied">Copied</string>
+    <string name="dev_base_url_error">Enter an address that starts with https://</string>
     <string name="dev_none">—</string>
     <string name="result_success_furniture">Thank you for your order</string>
     <string name="result_success_furniture_body">We will be in touch to arrange delivery.</string>

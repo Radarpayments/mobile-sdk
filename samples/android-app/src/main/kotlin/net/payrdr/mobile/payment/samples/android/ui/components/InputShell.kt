@@ -23,6 +23,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import net.payrdr.mobile.payment.samples.android.ui.toCaps
 
 /**
  * Labeled input shell with floating UPPERCASE label above the value. Emulates the polished
@@ -56,7 +57,7 @@ fun InputShell(
         ) {
             Column {
                 Text(
-                    label.uppercase(),
+                    label.toCaps(),
                     color = Color(0xFF8A95B0),
                     fontSize = 9.sp,
                     fontWeight = FontWeight.SemiBold,

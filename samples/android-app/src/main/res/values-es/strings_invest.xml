@@ -51,6 +51,4 @@
     <string name="done_time">Hora</string>
     <string name="done_invest">Invertir %1$s</string>
     <string name="done_to_portfolio">A la cartera</string>
-    <string name="dev_invest_reset">Restablecer la cuenta demo de Northwind</string>
-    <string name="dev_invest_reset_done">Cuenta demo restablecida</string>
 </resources>

@@ -81,6 +81,11 @@
     <string name="dev_advanced_sub">Flux d’états, SSL pinning</string>
     <string name="dev_last_order">Dernière commande</string>
     <string name="dev_copy">Copier</string>
+    <string name="dev_credentials">Identifiants</string>
+    <string name="dev_show_secret">Afficher</string>
+    <string name="dev_hide_secret">Masquer</string>
+    <string name="dev_copied">Copié</string>
+    <string name="dev_base_url_error">L\'adresse doit commencer par https://</string>
     <string name="dev_none">—</string>
     <string name="result_success_furniture">Merci pour votre commande</string>
     <string name="result_success_furniture_body">Nous vous contacterons pour organiser la livraison.</string>

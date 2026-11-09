@@ -81,6 +81,11 @@
     <string name="dev_advanced_sub">Ροή καταστάσεων, SSL pinning</string>
     <string name="dev_last_order">Τελευταία παραγγελία</string>
     <string name="dev_copy">Αντιγραφή</string>
+    <string name="dev_credentials">Διαπιστευτήρια</string>
+    <string name="dev_show_secret">Εμφάνιση</string>
+    <string name="dev_hide_secret">Απόκρυψη</string>
+    <string name="dev_copied">Αντιγράφηκε</string>
+    <string name="dev_base_url_error">Η διεύθυνση πρέπει να ξεκινά με https://</string>
     <string name="dev_none">—</string>
     <string name="result_success_furniture">Ευχαριστούμε για την παραγγελία σας</string>
     <string name="result_success_furniture_body">Θα επικοινωνήσουμε μαζί σας για να κανονίσουμε την παράδοση.</string>

@@ -51,6 +51,4 @@
     <string name="done_time">Ora</string>
     <string name="done_invest">Investește %1$s</string>
     <string name="done_to_portfolio">La portofoliu</string>
-    <string name="dev_invest_reset">Resetează contul demo Northwind</string>
-    <string name="dev_invest_reset_done">Cont demo resetat</string>
 </resources>

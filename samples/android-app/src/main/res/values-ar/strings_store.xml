@@ -81,6 +81,11 @@
     <string name="dev_advanced_sub">تدفق الحالات، SSL pinning</string>
     <string name="dev_last_order">آخر طلب</string>
     <string name="dev_copy">نسخ</string>
+    <string name="dev_credentials">بيانات الاعتماد</string>
+    <string name="dev_show_secret">إظهار</string>
+    <string name="dev_hide_secret">إخفاء</string>
+    <string name="dev_copied">تم النسخ</string>
+    <string name="dev_base_url_error">يجب أن يبدأ العنوان بـ https://</string>
     <string name="dev_none">—</string>
     <string name="result_success_furniture">شكرًا لطلبك</string>
     <string name="result_success_furniture_body">سنتواصل معك لترتيب التوصيل.</string>

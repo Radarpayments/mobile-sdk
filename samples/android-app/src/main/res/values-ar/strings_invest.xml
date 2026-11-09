@@ -51,6 +51,4 @@
     <string name="done_time">الوقت</string>
     <string name="done_invest">استثمار %1$s</string>
     <string name="done_to_portfolio">إلى المحفظة</string>
-    <string name="dev_invest_reset">إعادة ضبط حساب Northwind التجريبي</string>
-    <string name="dev_invest_reset_done">تمت إعادة ضبط الحساب التجريبي</string>
 </resources>

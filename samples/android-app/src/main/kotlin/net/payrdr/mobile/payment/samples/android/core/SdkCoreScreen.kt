@@ -65,6 +65,7 @@ import net.payrdr.mobile.payment.samples.android.R
 import net.payrdr.mobile.payment.samples.android.prefs.rememberPrefs
 import net.payrdr.mobile.payment.samples.android.store.theme.StoreFonts
 import net.payrdr.mobile.payment.samples.android.store.theme.SystemBarIcons
+import net.payrdr.mobile.payment.samples.android.ui.mirrorInRtl
 import net.payrdr.mobile.payment.sdk.core.validation.ValidationCodes
 
 /** Test tag of the "Get token" button. */
@@ -156,7 +157,7 @@ private fun Header(
 ) {
     Row(Modifier.padding(top = 4.dp, bottom = 12.dp), verticalAlignment = Alignment.CenterVertically) {
         IconButton(onClick = onBack, modifier = Modifier.padding(end = 4.dp)) {
-            Icon(TablerIcons.ChevronLeft, contentDescription = stringResource(R.string.store_back), tint = colors.text)
+            Icon(TablerIcons.ChevronLeft, stringResource(R.string.store_back), Modifier.mirrorInRtl(), tint = colors.text)
         }
         Column {
             Text(

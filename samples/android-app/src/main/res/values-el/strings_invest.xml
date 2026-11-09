@@ -51,6 +51,4 @@
     <string name="done_time">Ώρα</string>
     <string name="done_invest">Επένδυση %1$s</string>
     <string name="done_to_portfolio">Στο χαρτοφυλάκιο</string>
-    <string name="dev_invest_reset">Επαναφορά δοκιμαστικού λογαριασμού Northwind</string>
-    <string name="dev_invest_reset_done">Ο δοκιμαστικός λογαριασμός επαναφέρθηκε</string>
 </resources>

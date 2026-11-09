@@ -51,6 +51,4 @@
     <string name="done_time">Время</string>
     <string name="done_invest">Инвестировать %1$s</string>
     <string name="done_to_portfolio">В портфель</string>
-    <string name="dev_invest_reset">Сбросить демо-счёт Northwind</string>
-    <string name="dev_invest_reset_done">Демо-счёт сброшен</string>
 </resources>
