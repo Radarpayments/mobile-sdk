@@ -25,7 +25,7 @@ struct StoreResultView: View {
                 Text(successBody).font(style.body(15)).foregroundColor(style.muted).multilineTextAlignment(.center).padding(.top, 8)
                 VStack(spacing: 6) {
                     row(String(localized: "Amount", bundle: AppLanguage.bundle), formatEur(receipt.amountMinor), style: style, mono: false)
-                    row(String(localized: "Payment", bundle: AppLanguage.bundle), paymentId, style: style, mono: true)
+                    row(String(localized: "result_payment_id", defaultValue: "Payment", bundle: AppLanguage.bundle), paymentId, style: style, mono: true)
                 }
                 .padding(14)
                 .overlay(RoundedRectangle(cornerRadius: style.radius).strokeBorder(style.border))

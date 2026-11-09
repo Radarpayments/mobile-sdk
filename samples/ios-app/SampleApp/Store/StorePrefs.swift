@@ -92,9 +92,6 @@ final class StorePrefs {
         set { defaults.set(newValue.toJson(), forKey: Keys.investAccount) }
     }
 
-    /// Puts the Northwind Invest demo account back as a fresh install has it.
-    func resetInvestAccount() { defaults.removeObject(forKey: Keys.investAccount) }
-
     private enum Keys {
         static let login = "store_login"
         static let password = "store_password"

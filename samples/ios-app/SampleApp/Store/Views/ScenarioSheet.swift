@@ -40,6 +40,8 @@ struct ScenarioSheet: View {
             .navigationBarTitleDisplayMode(.inline)
         }
         .presentationDetents([.medium, .large])
-        .environment(\.colorScheme, .light)
+        // Not .environment(\.colorScheme): that darkens only the text, while the sheet's container
+        // keeps the dark style of a dark store or of the system.
+        .preferredColorScheme(.light)
     }
 }

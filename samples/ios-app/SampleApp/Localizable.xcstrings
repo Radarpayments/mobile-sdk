@@ -3207,10 +3207,22 @@
     "Copied": {
       "extractionState": "manual",
       "localizations": {
-        "ar": {
+        "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "تم النسخ"
+            "value": "Скопировано"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copiat"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Αντιγράφηκε"
           }
         },
         "bg": {
@@ -3225,10 +3237,10 @@
             "value": "Kopiert"
           }
         },
-        "el": {
+        "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Αντιγράφηκε"
+            "value": "Copié"
           }
         },
         "es": {
@@ -3237,22 +3249,10 @@
             "value": "Copiado"
           }
         },
-        "fr": {
+        "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "Copié"
-          }
-        },
-        "ro": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Copiat"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Скопировано"
+            "value": "تم النسخ"
           }
         }
       }
@@ -3416,6 +3416,59 @@
         }
       }
     },
+    "Credentials": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Учётные данные"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Date de acces"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Διαπιστευτήρια"
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Данни за достъп"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zugangsdaten"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Identifiants"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Credenciales"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "بيانات الاعتماد"
+          }
+        }
+      }
+    },
     "Dark": {
       "extractionState": "manual",
       "localizations": {
@@ -3518,59 +3571,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Доставка"
-          }
-        }
-      }
-    },
-    "Demo account reset": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "تمت إعادة ضبط الحساب التجريبي"
-          }
-        },
-        "bg": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Демо сметката е нулирана"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Demokonto zurückgesetzt"
-          }
-        },
-        "el": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ο δοκιμαστικός λογαριασμός επαναφέρθηκε"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cuenta demo restablecida"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Compte démo réinitialisé"
-          }
-        },
-        "ro": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cont demo resetat"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Демо-счёт сброшен"
           }
         }
       }
@@ -3836,6 +3836,59 @@
           "stringUnit": {
             "state": "translated",
             "value": "Изумрудный велюр, дубовые ножки"
+          }
+        }
+      }
+    },
+    "Enter an address that starts with https://": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Адрес должен начинаться с https://"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adresa trebuie să înceapă cu https://"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Η διεύθυνση πρέπει να ξεκινά με https://"
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Адресът трябва да започва с https://"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Adresse muss mit https:// beginnen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'adresse doit commencer par https://"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La dirección debe empezar por https://"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يجب أن يبدأ العنوان بـ https://"
           }
         }
       }
@@ -4255,40 +4308,10 @@
     "Gateway": {
       "extractionState": "manual",
       "localizations": {
-        "ar": {
+        "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Gateway"
-          }
-        },
-        "bg": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gateway"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gateway"
-          }
-        },
-        "el": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gateway"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gateway"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gateway"
+            "value": "Шлюз"
           }
         },
         "ro": {
@@ -4297,10 +4320,40 @@
             "value": "Gateway"
           }
         },
-        "ru": {
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Πύλη πληρωμών"
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Шлюз"
+          }
+        },
+        "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Gateway"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passerelle"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pasarela"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "بوابة الدفع"
           }
         }
       }
@@ -4666,6 +4719,59 @@
           "stringUnit": {
             "state": "translated",
             "value": "Hearth & Co"
+          }
+        }
+      }
+    },
+    "Hide": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Скрыть"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ascunde"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Απόκρυψη"
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Скрий"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ausblenden"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Masquer"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ocultar"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إخفاء"
           }
         }
       }
@@ -6855,7 +6961,7 @@
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Платёж"
+            "value": "Оплата"
           }
         }
       }
@@ -7545,59 +7651,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Сбросить"
-          }
-        }
-      }
-    },
-    "Reset Northwind demo account": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "إعادة ضبط حساب Northwind التجريبي"
-          }
-        },
-        "bg": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Нулирай демо сметката на Northwind"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Northwind-Demokonto zurücksetzen"
-          }
-        },
-        "el": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Επαναφορά δοκιμαστικού λογαριασμού Northwind"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Restablecer la cuenta demo de Northwind"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Réinitialiser le compte démo Northwind"
-          }
-        },
-        "ro": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Resetează contul demo Northwind"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Сбросить демо-счёт Northwind"
           }
         }
       }
@@ -8338,6 +8391,59 @@
         }
       }
     },
+    "Show": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Показать"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afișează"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Εμφάνιση"
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Покажи"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anzeigen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إظهار"
+          }
+        }
+      }
+    },
     "Show this number to the barista.": {
       "extractionState": "manual",
       "localizations": {
@@ -8821,7 +8927,7 @@
         "bg": {
           "stringUnit": {
             "state": "translated",
-            "value": "Според системата"
+            "value": "Системен"
           }
         },
         "de": {
@@ -10129,7 +10235,7 @@
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Переводы регистрируются через registerP2P.do (AFT в одну сторону): лист попросит данные отправителя и получателя."
+            "value": "Переводы регистрируются через registerP2P.do (AFT в одну сторону): шторка попросит данные отправителя и получателя."
           }
         }
       }
@@ -10760,6 +10866,186 @@
           "stringUnit": {
             "state": "translated",
             "value": "от %@ до %@"
+          }
+        }
+      }
+    },
+    "result_payment_id": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الدفعة"
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Плащане"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zahlung"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Πληρωμή"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pago"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paiement"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plată"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Платёж"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Payment"
+          }
+        }
+      },
+      "comment": "The payment id row on the store result screen."
+    },
+    "theme_light": {
+      "comment": "Sheet theme option in the developer settings; \"Light\" alone is the furniture category.",
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "فاتح"
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Светла"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hell"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ανοιχτό"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Light"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claro"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clair"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Luminoasă"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Светлая"
+          }
+        }
+      }
+    },
+    "theme_system": {
+      "comment": "Sheet theme option in the developer settings; \"System\" is the language option.",
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حسب النظام"
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Системна"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "System"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Συστήματος"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "System"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sistema"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Système"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sistem"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Системная"
           }
         }
       }

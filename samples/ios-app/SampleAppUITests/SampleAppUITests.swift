@@ -7,8 +7,12 @@ final class SampleAppUITests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false
         app = XCUIApplication()
-        // Launch arguments override UserDefaults: empty credentials, start screen first.
-        app.launchArguments += ["-store_login", "", "-store_password", "", "-store_last_cover", "", "-AppleLanguages", "(en)"]
+        // Launch arguments override UserDefaults: empty credentials, start screen first, the three stores
+        // (an AFT order type left on the simulator shows Northwind instead).
+        app.launchArguments += [
+            "-store_login", "", "-store_password", "", "-store_last_cover", "", "-store_order_type", "PURCHASE",
+            "-AppleLanguages", "(en)",
+        ]
         app.launch()
     }
 
