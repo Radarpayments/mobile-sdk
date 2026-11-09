@@ -22,6 +22,7 @@ xcuserdata/
 DerivedData/
 Package.resolved
 .swiftpm/
+.build/
 
 # Local config
 local.properties
@@ -31,6 +32,7 @@ local.properties
 
 # Misc
 *.log
+__pycache__/
 
 # Brainstorming session artifacts
 .superpowers/

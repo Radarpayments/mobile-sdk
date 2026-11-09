@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Start -->
+    <string name="start_title">Demo de plată</string>
+    <string name="start_settings">Setări pentru dezvoltatori</string>
+    <string name="cover_furniture_tagline">Mobilă · catalog și coș</string>
+    <string name="cover_coffee_tagline">Cafenea · comandă în avans</string>
+    <string name="cover_tickets_tagline">Bilete · concerte și spectacole</string>
+
+    <!-- Shared store -->
+    <string name="store_back">Înapoi</string>
+    <string name="store_cart">Coș</string>
+    <string name="store_cart_count">Coș · %1$d</string>
+    <string name="store_items">Produse</string>
+    <string name="store_total">Total</string>
+    <string name="store_pay">Plătiți %1$s</string>
+    <string name="store_increase">Mai mult</string>
+    <string name="store_decrease">Mai puțin</string>
+    <string name="store_add_to_cart">Adăugați în coș · %1$s</string>
+    <string name="store_add">Adăugați</string>
+    <string name="store_registering">Se creează comanda…</string>
+    <string name="store_error_credentials">Loginul și parola comerciantului nu sunt setate.</string>
+    <string name="store_error_api_key">Cheia API nu este setată.</string>
+    <string name="store_error_failed">Comanda nu a fost creată: %1$s</string>
+    <string name="store_open_settings">Deschideți setările</string>
+
+    <!-- Scenario panel -->
+    <string name="scenario_row">Scenariu: %1$s</string>
+    <string name="scenario_title">Scenariu de plată</string>
+    <string name="scenario_buyer">Cumpărător</string>
+    <string name="scenario_guest">Vizitator</string>
+    <string name="scenario_with_cards">Cu carduri</string>
+    <string name="scenario_with_cards_hint">Cardurile apar după o plată cu „Salvați cardul”</string>
+    <string name="scenario_reset">Resetați</string>
+    <string name="scenario_payment">Plată</string>
+    <string name="scenario_wallet">Google Pay</string>
+    <string name="scenario_scanner">Scaner de card</string>
+    <string name="scenario_sdk_result">Ecranul de rezultat SDK</string>
+
+    <!-- Results -->
+    <string name="result_paid_amount">Plătit: %1$s</string>
+    <string name="result_payment_id">Plată</string>
+    <string name="result_amount">Sumă</string>
+    <string name="result_declined_title">Plată refuzată</string>
+    <string name="result_declined_body">Banca nu a confirmat plata.</string>
+    <string name="result_unconfirmed_title">Verificăm plata</string>
+    <string name="result_unconfirmed_body">Banca nu a răspuns încă. Nu plătiți din nou — vă anunțăm imediat ce plata este confirmată.</string>
+    <string name="result_try_again">Încercați din nou</string>
+    <string name="result_back_to_store">Înapoi la magazin</string>
+    <string name="result_done">Gata</string>
+
+    <!-- Developer -->
+    <string name="dev_title">Setări pentru dezvoltatori</string>
+    <string name="dev_gateway">Gateway</string>
+    <string name="dev_base_url">URL de bază</string>
+    <string name="dev_login">Login comerciant</string>
+    <string name="dev_password">Parolă</string>
+    <string name="dev_api_version">API comerciant</string>
+    <string name="dev_api_v1_hint">Comenzile se înregistrează prin register.do cu loginul și parola comerciantului.</string>
+    <string name="dev_api_v2_hint">Sesiunile se creează prin POST /api2/sessions cu cheia API.</string>
+    <string name="dev_api_key">Cheie API</string>
+    <string name="dev_order_type">Comandă</string>
+    <string name="dev_order_purchase">Plată</string>
+    <string name="dev_order_aft">Transfer AFT</string>
+    <string name="dev_order_aft_hint">Transferurile se înregistrează prin registerP2P.do (AFT într-un singur sens): fereastra cere datele expeditorului și ale destinatarului.</string>
+    <string name="dev_credentials_note">Se păstrează doar pe acest dispozitiv. În aplicația dvs., comanda este înregistrată de backend.</string>
+    <string name="dev_sdk_look">Aspectul SDK</string>
+    <string name="dev_sheet_theme">Tema ferestrei de plată</string>
+    <string name="dev_theme_cover">Ca magazinul</string>
+    <string name="dev_theme_light">Luminoasă</string>
+    <string name="dev_theme_dark">Întunecată</string>
+    <string name="dev_theme_system">Sistem</string>
+    <string name="dev_language">Limbă</string>
+    <string name="dev_language_system">Sistem</string>
+    <string name="dev_wallets">Google Pay</string>
+    <string name="dev_gpay_gateway">Gateway</string>
+    <string name="dev_gpay_merchant">Merchant ID</string>
+    <string name="dev_gpay_from_gateway">De la gateway-ul de plată</string>
+    <string name="dev_more">Mai multe</string>
+    <string name="dev_advanced">Avansat</string>
+    <string name="dev_advanced_sub">Flux de stări, SSL pinning</string>
+    <string name="dev_last_order">Ultima comandă</string>
+    <string name="dev_copy">Copiați</string>
+    <string name="dev_credentials">Date de acces</string>
+    <string name="dev_show_secret">Afișează</string>
+    <string name="dev_hide_secret">Ascunde</string>
+    <string name="dev_copied">Copiat</string>
+    <string name="dev_base_url_error">Adresa trebuie să înceapă cu https://</string>
+    <string name="dev_none">—</string>
+    <string name="result_success_furniture">Vă mulțumim pentru comandă</string>
+    <string name="result_success_furniture_body">Vă vom contacta pentru a stabili livrarea.</string>
+    <string name="result_success_coffee">Comanda dvs. se pregătește</string>
+    <string name="result_success_coffee_body">Arătați acest număr la bar.</string>
+    <string name="result_success_tickets">Ne vedem la concert!</string>
+    <string name="result_success_tickets_body">Biletele sunt deja în contul dvs.</string>
+    <string name="furniture_collection">Colecția\nde toamnă</string>
+    <string name="furniture_all">Toate</string>
+    <string name="furniture_chairs">Scaune</string>
+    <string name="furniture_sofas">Canapele</string>
+    <string name="furniture_light">Iluminat</string>
+    <string name="furniture_delivery">Livrare gratuită în 3–5 zile. 30 de zile pentru retur.</string>
+    <string name="furniture_delivery_label">Livrare</string>
+    <string name="furniture_delivery_free">Gratuit</string>
+    <string name="furniture_colours">Culoare</string>
+    <string name="coffee_again">Ca data trecută</string>
+    <string name="coffee_repeat">Comandați din nou</string>
+    <string name="coffee_tab_coffee">Cafea</string>
+    <string name="coffee_tab_cold">Reci</string>
+    <string name="coffee_tab_bakery">Patiserie</string>
+    <string name="coffee_order_title">Comanda dvs.</string>
+    <string name="coffee_pickup">Ridicare</string>
+    <string name="coffee_pickup_value">King St. · în 10 min</string>
+    <string name="coffee_add_item">Adăugați %1$s</string>
+    <string name="coffee_order_number_hint">Gata în aproximativ 6 minute.</string>
+    <string name="tickets_date">Sâm., 14 nov. · 20:00 · Hall A</string>
+    <string name="tickets_section">Bilete</string>
+    <string name="tickets_to_payment">Spre plată · %1$s</string>
+    <string name="tickets_checkout">Finalizarea comenzii</string>
+    <string name="tickets_event_line">14 nov. · %1$s</string>
+    <string name="tickets_hold">Locurile sunt rezervate încă %1$s</string>
+    <string name="tickets_hold_expired">Rezervarea a expirat. Alegeți din nou locurile.</string>
+    <string name="tickets_seats">Bilete</string>
+</resources>

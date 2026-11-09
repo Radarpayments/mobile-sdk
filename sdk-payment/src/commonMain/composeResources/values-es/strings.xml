@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Payment sheet -->
+    <string name="sheet_or_pay_by_card">o paga con tarjeta</string>
+    <string name="sheet_saved_cards">Tarjetas guardadas</string>
+    <string name="sheet_all_cards">Todas las tarjetas</string>
+    <string name="sheet_new_card_hint">Tarjeta de débito o crédito</string>
+    <string name="sheet_pay_by_card">Pagar con tarjeta</string>
+    <string name="sheet_pay_with_card">Pagar con la tarjeta %1$s</string>
+    <string name="pay_amount">Pagar %1$s</string>
+
+    <!-- CardFormScreen -->
+    <string name="checkout_title">Pago</string>
+    <string name="card_form_title">Nueva tarjeta</string>
+    <string name="card_form_pan_label">Número de tarjeta</string>
+    <string name="card_form_expiry_label">Fecha de caducidad</string>
+    <string name="card_form_expiry_placeholder">MM/AA</string>
+    <string name="card_form_cvv_label">CVC/CVV</string>
+    <string name="cvv_hint_open">¿Dónde está el CVV?</string>
+    <string name="cvv_hint_back">3 dígitos en el reverso de la tarjeta</string>
+    <string name="cvv_hint_front">4 dígitos en el anverso de la tarjeta</string>
+    <string name="card_form_holder_label">Titular de la tarjeta</string>
+    <string name="card_form_card_details_label">Datos de la tarjeta</string>
+    <string name="card_form_holder_placeholder">Nombre en la tarjeta</string>
+    <string name="card_form_save_card">Guardar tarjeta para próximos pagos</string>
+    <string name="card_form_save_card_hint">Los datos de la tarjeta se cifran de forma segura</string>
+    <string name="card_form_pay">Pagar</string>
+    <string name="card_form_scan">Escanear tarjeta</string>
+    <string name="card_form_email_label">Email</string>
+    <string name="card_form_phone_label">Teléfono</string>
+    <string name="payer_optional">%1$s (opcional)</string>
+    <string name="payer_remove_address_line">Eliminar línea de dirección</string>
+    <string name="payer_optional_note">opcional</string>
+    <string name="payer_summary_title">Tus datos</string>
+    <string name="payer_summary_collapse">Ocultar</string>
+    <string name="payer_billing_title">Datos de facturación</string>
+    <string name="payer_billing_add">Añadir datos de facturación</string>
+    <string name="payer_billing_help">Rellene con letras latinas</string>
+    <string name="payer_country_label">País</string>
+    <string name="payer_country_search">Buscar país</string>
+    <string name="payer_country_not_found">No se ha encontrado ningún país</string>
+    <string name="phone_code_title">Prefijo de país</string>
+    <string name="phone_code_search">País o prefijo</string>
+    <string name="phone_code_choose">Prefijo</string>
+    <string name="phone_code_cd">Prefijo de país %1$s</string>
+    <string name="picker_suggested">Sugeridos</string>
+    <string name="picker_all">Todos los países</string>
+    <string name="payer_address_line1_label">Dirección</string>
+    <string name="payer_address_line2_label">Dirección, línea 2</string>
+    <string name="payer_address_line3_label">Dirección, línea 3</string>
+    <string name="payer_add_address_line">Piso, oficina…</string>
+    <string name="payer_city_label">Ciudad</string>
+    <string name="payer_state_label">Provincia / región</string>
+    <string name="payer_postal_code_label">Código postal</string>
+
+    <!-- Field messages -->
+    <string name="error_pan_empty">Introduce el número de tarjeta</string>
+    <string name="error_pan_short">El número de tarjeta es demasiado corto</string>
+    <string name="error_pan_invalid">Revisa el número de tarjeta, puede que algún dígito esté mal</string>
+    <string name="error_expiry_format">Introduce la fecha en formato MM/&#8288;AA</string>
+    <string name="error_expiry_month">El mes debe estar entre 01 y 12</string>
+    <string name="error_expiry_past">Esta tarjeta ha caducado</string>
+    <string name="error_cvv_3">Introduce los 3 dígitos del reverso</string>
+    <string name="error_cvv_4">Introduce los 4 dígitos del anverso</string>
+    <string name="error_holder_empty">Introduce el nombre tal como aparece en la tarjeta</string>
+    <string name="error_holder_format">Solo letras latinas, como en la tarjeta</string>
+    <string name="error_holder_short">El nombre es demasiado corto</string>
+    <string name="error_email_empty">Introduce tu email</string>
+    <string name="error_email_invalid">Revisa el email, debe tener el formato name@example.com</string>
+    <string name="error_phone_empty">Introduce tu número de teléfono</string>
+    <string name="error_phone_short">El número de teléfono es demasiado corto</string>
+    <string name="error_phone_long">El número de teléfono es demasiado largo</string>
+    <string name="error_phone_no_code">Selecciona un prefijo de país</string>
+    <string name="error_field_required">Rellena este campo</string>
+    <string name="error_country_empty">Selecciona un país</string>
+    <string name="error_latin_only">Usa letras latinas</string>
+    <string name="error_postal_code_invalid">Usa solo letras latinas y números</string>
+
+    <!-- Card scan -->
+    <string name="scan_title">Escanea tu tarjeta</string>
+    <string name="scan_body">La cámara lee el número y la fecha de caducidad de la tarjeta. Las fotos no se guardan ni se envían a ningún sitio.</string>
+    <string name="scan_turn_on">Activar la cámara</string>
+    <string name="scan_manual">Introducir manualmente</string>
+
+    <!-- Saved card -->
+    <string name="saved_card_title">Pago con tarjeta</string>
+
+    <!-- CardListScreen -->
+    <string name="card_list_title">Mis tarjetas</string>
+    <string name="card_list_edit_title">Editar tarjetas</string>
+    <string name="card_list_add_new">Nueva tarjeta</string>
+    <string name="card_list_delete">Eliminar tarjeta</string>
+    <string name="card_list_empty">No tienes tarjetas guardadas</string>
+    <string name="card_list_remove_title">¿Eliminar %1$s?</string>
+    <string name="card_list_remove_body">Para volver a pagar con esta tarjeta, tendrás que introducir sus datos.</string>
+    <string name="card_list_keep">Conservar tarjeta</string>
+
+    <!-- Pay buttons -->
+    <string name="pay_with_google_pay">Pagar con Google Pay</string>
+    <string name="pay_with_apple_pay">Pagar con Apple Pay</string>
+
+    <!-- ThreeDsChallenge -->
+    <string name="threeds_title">Verificación con tu banco</string>
+    <string name="threeds_hint">Completa la verificación en la ventana de tu banco. Volverás aquí automáticamente.</string>
+    <string name="threeds_cancel">Cancelar pago</string>
+
+    <!-- Processing -->
+    <string name="processing_title">Procesando el pago</string>
+    <string name="processing_hint">Suele tardar unos segundos. No cierres la app.</string>
+    <string name="processing_loading_session">Cargando sesión…</string>
+    <string name="processing_loading_public_key">Preparando el cifrado…</string>
+    <string name="a11y_loading">Cargando…</string>
+    <string name="processing_tokenizing_card">Cifrando la tarjeta…</string>
+    <string name="processing_submitting_payment">Enviando el pago…</string>
+    <string name="processing_finalizing">Finalizando…</string>
+
+    <!-- Result -->
+    <string name="result_success_title">Pago realizado</string>
+    <string name="result_card_saved_title">Tarjeta guardada</string>
+    <string name="result_failure_title">Pago rechazado</string>
+    <string name="result_failure_hint">Prueba con otra tarjeta o contacta con tu banco.</string>
+    <string name="result_session_expired">Se agotó el tiempo para pagar. No se ha cobrado nada. Vuelve y haz el pedido de nuevo.</string>
+    <string name="result_try_again">Pagar con otra tarjeta</string>
+    <string name="result_close">Cerrar</string>
+    <string name="result_done">Listo</string>
+    <string name="receipt_order">Pedido</string>
+    <string name="receipt_card">Tarjeta</string>
+    <string name="receipt_date">Fecha</string>
+    <string name="receipt_order_number">N.º %1$s</string>
+
+    <!-- Common -->
+    <string name="action_cancel">Cancelar</string>
+    <string name="action_close">Cerrar</string>
+    <string name="action_back">Atrás</string>
+    <string name="action_edit">Editar</string>
+    <string name="action_done">Listo</string>
+    <string name="error_network">Error de red. Comprueba tu conexión.</string>
+    <string name="error_generic">Algo ha salido mal. Inténtalo de nuevo.</string>
+    <string name="error_invalid_card">Datos de tarjeta no válidos</string>
+    <string name="error_3ds_failed">No se ha podido completar la autenticación 3-D Secure</string>
+    <string name="error_3ds_timeout">Se ha agotado el tiempo de la autenticación 3-D Secure</string>
+    <string name="error_cancelled">Pago cancelado</string>
+    <!-- Transfers (AFT) -->
+    <string name="transfer_amount">Transferir %1$s</string>
+    <string name="card_form_transfer">Transferir</string>
+    <string name="card_form_save_card_only">Guardar tarjeta</string>
+    <string name="transfer_sender_title">Remitente</string>
+    <string name="transfer_recipient_title">Destinatario</string>
+    <string name="transfer_first_name">Nombre</string>
+    <string name="transfer_middle_name">Segundo nombre</string>
+    <string name="transfer_last_name">Apellido</string>
+    <string name="transfer_birthday">Fecha de nacimiento</string>
+    <string name="transfer_date_hint">DD.MM.AAAA</string>
+    <string name="transfer_account">Número de cuenta</string>
+    <string name="transfer_account_type">Tipo de cuenta</string>
+    <string name="transfer_id_type">Documento de identidad</string>
+    <string name="transfer_id_number">Número de documento</string>
+    <string name="transfer_address">Dirección</string>
+    <string name="error_date_invalid">Introduce la fecha como DD.MM.AAAA</string>
+    <string name="transfer_account_type_1">RTN + cuenta bancaria</string>
+    <string name="transfer_account_type_2">IBAN</string>
+    <string name="transfer_account_type_3">Cuenta de tarjeta</string>
+    <string name="transfer_account_type_4">Correo electrónico</string>
+    <string name="transfer_account_type_5">Número de teléfono</string>
+    <string name="transfer_account_type_6">BIC + BAN</string>
+    <string name="transfer_account_type_7">ID de monedero</string>
+    <string name="transfer_account_type_8">ID de red social</string>
+    <string name="transfer_account_type_100">Otro</string>
+    <string name="transfer_id_type_1">Pasaporte</string>
+    <string name="transfer_id_type_2">Permiso de conducir</string>
+    <string name="transfer_id_type_3">Tarjeta social</string>
+    <string name="transfer_id_type_4">Documento nacional de identidad</string>
+    <string name="transfer_id_type_5">Certificado de empresa (IVA)</string>
+    <string name="transfer_id_type_6">Certificado de refugiado</string>
+    <string name="transfer_id_type_7">Permiso de residencia</string>
+    <string name="transfer_id_type_8">Pasaporte extranjero</string>
+    <string name="transfer_id_type_9">Pasaporte oficial</string>
+    <string name="transfer_id_type_10">Pasaporte temporal</string>
+    <string name="transfer_id_type_11">Libreta de marino</string>
+</resources>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Start -->
+    <string name="start_title">Zahlungs-Demo</string>
+    <string name="start_settings">Entwicklereinstellungen</string>
+    <string name="cover_furniture_tagline">Möbel · Katalog und Warenkorb</string>
+    <string name="cover_coffee_tagline">Café · online vorbestellen</string>
+    <string name="cover_tickets_tagline">Tickets · Konzerte und Shows</string>
+
+    <!-- Shared store -->
+    <string name="store_back">Zurück</string>
+    <string name="store_cart">Warenkorb</string>
+    <string name="store_cart_count">Warenkorb · %1$d</string>
+    <string name="store_items">Artikel</string>
+    <string name="store_total">Gesamt</string>
+    <string name="store_pay">%1$s bezahlen</string>
+    <string name="store_increase">Mehr</string>
+    <string name="store_decrease">Weniger</string>
+    <string name="store_add_to_cart">In den Warenkorb · %1$s</string>
+    <string name="store_add">Hinzufügen</string>
+    <string name="store_registering">Bestellung wird angelegt…</string>
+    <string name="store_error_credentials">Händler-Login und Passwort sind nicht festgelegt.</string>
+    <string name="store_error_api_key">Der API-Schlüssel ist nicht festgelegt.</string>
+    <string name="store_error_failed">Die Bestellung wurde nicht angelegt: %1$s</string>
+    <string name="store_open_settings">Einstellungen öffnen</string>
+
+    <!-- Scenario panel -->
+    <string name="scenario_row">Szenario: %1$s</string>
+    <string name="scenario_title">Zahlungsszenario</string>
+    <string name="scenario_buyer">Käufer</string>
+    <string name="scenario_guest">Gast</string>
+    <string name="scenario_with_cards">Mit Karten</string>
+    <string name="scenario_with_cards_hint">Karten erscheinen nach einer Zahlung mit „Karte speichern“</string>
+    <string name="scenario_reset">Zurücksetzen</string>
+    <string name="scenario_payment">Zahlung</string>
+    <string name="scenario_wallet">Google Pay</string>
+    <string name="scenario_scanner">Kartenscanner</string>
+    <string name="scenario_sdk_result">SDK-Ergebnisbildschirm</string>
+
+    <!-- Results -->
+    <string name="result_paid_amount">%1$s bezahlt</string>
+    <string name="result_payment_id">Zahlung</string>
+    <string name="result_amount">Betrag</string>
+    <string name="result_declined_title">Zahlung abgelehnt</string>
+    <string name="result_declined_body">Die Bank hat die Zahlung nicht bestätigt.</string>
+    <string name="result_unconfirmed_title">Wir prüfen Ihre Zahlung</string>
+    <string name="result_unconfirmed_body">Die Bank hat noch nicht geantwortet. Bitte zahlen Sie nicht erneut – wir melden uns, sobald die Zahlung bestätigt ist.</string>
+    <string name="result_try_again">Erneut versuchen</string>
+    <string name="result_back_to_store">Zurück zum Shop</string>
+    <string name="result_done">Fertig</string>
+
+    <!-- Developer -->
+    <string name="dev_title">Entwicklereinstellungen</string>
+    <string name="dev_gateway">Gateway</string>
+    <string name="dev_base_url">Base URL</string>
+    <string name="dev_login">Händler-Login</string>
+    <string name="dev_password">Passwort</string>
+    <string name="dev_api_version">Händler-API</string>
+    <string name="dev_api_v1_hint">Bestellungen werden über register.do mit Händler-Login und Passwort angelegt.</string>
+    <string name="dev_api_v2_hint">Sessions werden über POST /api2/sessions mit dem API-Schlüssel erstellt.</string>
+    <string name="dev_api_key">API-Schlüssel</string>
+    <string name="dev_order_type">Bestellung</string>
+    <string name="dev_order_purchase">Zahlung</string>
+    <string name="dev_order_aft">AFT-Überweisung</string>
+    <string name="dev_order_aft_hint">Überweisungen werden über registerP2P.do angelegt (einseitiges AFT): Das Fenster fragt nach den Daten von Absender und Empfänger.</string>
+    <string name="dev_credentials_note">Nur auf diesem Gerät gespeichert. In Ihrer App legt Ihr Backend die Bestellung an.</string>
+    <string name="dev_sdk_look">SDK-Darstellung</string>
+    <string name="dev_sheet_theme">Design des Zahlungsfensters</string>
+    <string name="dev_theme_cover">Wie der Shop</string>
+    <string name="dev_theme_light">Hell</string>
+    <string name="dev_theme_dark">Dunkel</string>
+    <string name="dev_theme_system">System</string>
+    <string name="dev_language">Sprache</string>
+    <string name="dev_language_system">System</string>
+    <string name="dev_wallets">Google Pay</string>
+    <string name="dev_gpay_gateway">Gateway</string>
+    <string name="dev_gpay_merchant">Merchant ID</string>
+    <string name="dev_gpay_from_gateway">Vom Zahlungs-Gateway</string>
+    <string name="dev_more">Mehr</string>
+    <string name="dev_advanced">Advanced</string>
+    <string name="dev_advanced_sub">Zustandsstream, SSL-Pinning</string>
+    <string name="dev_last_order">Letzte Bestellung</string>
+    <string name="dev_copy">Kopieren</string>
+    <string name="dev_credentials">Zugangsdaten</string>
+    <string name="dev_show_secret">Anzeigen</string>
+    <string name="dev_hide_secret">Ausblenden</string>
+    <string name="dev_copied">Kopiert</string>
+    <string name="dev_base_url_error">Die Adresse muss mit https:// beginnen</string>
+    <string name="dev_none">—</string>
+    <string name="result_success_furniture">Vielen Dank für Ihre Bestellung</string>
+    <string name="result_success_furniture_body">Wir melden uns, um die Lieferung abzustimmen.</string>
+    <string name="result_success_coffee">Ihre Bestellung wird zubereitet</string>
+    <string name="result_success_coffee_body">Zeigen Sie diese Nummer dem Barista.</string>
+    <string name="result_success_tickets">Sie sind dabei!</string>
+    <string name="result_success_tickets_body">Die Tickets finden Sie in Ihrem Konto.</string>
+    <string name="furniture_collection">Herbst-\nkollektion</string>
+    <string name="furniture_all">Alle</string>
+    <string name="furniture_chairs">Stühle</string>
+    <string name="furniture_sofas">Sofas</string>
+    <string name="furniture_light">Leuchten</string>
+    <string name="furniture_delivery">Kostenlose Lieferung in 3–5 Tagen. 30 Tage Rückgaberecht.</string>
+    <string name="furniture_delivery_label">Lieferung</string>
+    <string name="furniture_delivery_free">Kostenlos</string>
+    <string name="furniture_colours">Farbe</string>
+    <string name="coffee_again">Wie beim letzten Mal</string>
+    <string name="coffee_repeat">Erneut bestellen</string>
+    <string name="coffee_tab_coffee">Kaffee</string>
+    <string name="coffee_tab_cold">Kalt</string>
+    <string name="coffee_tab_bakery">Gebäck</string>
+    <string name="coffee_order_title">Ihre Bestellung</string>
+    <string name="coffee_pickup">Abholung</string>
+    <string name="coffee_pickup_value">King St. · in 10 Min.</string>
+    <string name="coffee_add_item">%1$s hinzufügen</string>
+    <string name="coffee_order_number_hint">In etwa 6 Minuten fertig.</string>
+    <string name="tickets_date">Sa, 14. Nov. · 20:00 · Hall A</string>
+    <string name="tickets_section">Tickets</string>
+    <string name="tickets_to_payment">Zur Kasse · %1$s</string>
+    <string name="tickets_checkout">Kasse</string>
+    <string name="tickets_event_line">14. Nov. · %1$s</string>
+    <string name="tickets_hold">Plätze noch %1$s reserviert</string>
+    <string name="tickets_hold_expired">Die Reservierung ist abgelaufen. Wählen Sie Ihre Plätze erneut.</string>
+    <string name="tickets_seats">Tickets</string>
+</resources>

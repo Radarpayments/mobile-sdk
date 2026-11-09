@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="product_velvet_sofa_sub">Σμαραγδί βελούδο, δρύινα πόδια</string>
+    <string name="product_cloud_chair_sub">Γαλακτερό λευκό μπουκλέ</string>
+    <string name="product_ono_chair_sub">Χυτό κέλυφος, πόδια από οξιά</string>
+    <string name="product_birch_stool_sub">Μασίφ σημύδα</string>
+    <string name="product_arc_lamp_sub">Ματ ατσάλι σε χρώμα γραφίτη</string>
+    <string name="product_lume_armchair_sub">Μάλλινο ύφασμα σε μουσταρδί</string>
+    <string name="product_flat_white_sub">Διπλός espresso, ζεστό γάλα</string>
+    <string name="product_cappuccino_sub">Κλασικός, με αφρόγαλα</string>
+    <string name="product_espresso_sub">Μίας προέλευσης</string>
+    <string name="product_iced_latte_sub">Κρύο γάλα, πάγος</string>
+    <string name="product_croissant_sub">Ψημένο σήμερα το πρωί</string>
+    <string name="ticket_floor">Αρένα</string>
+    <string name="ticket_floor_sub">Γενική είσοδος</string>
+    <string name="ticket_balcony">Εξώστης</string>
+    <string name="ticket_balcony_sub">Σειρά 2 · καθήμενοι</string>
+    <string name="ticket_fee">Χρέωση υπηρεσίας</string>
+</resources>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="scan_hint">Apunta la cámara a tu tarjeta</string>
+    <string name="scan_detected">Tarjeta detectada, mantenla quieta</string>
+    <string name="scan_close">Cerrar escáner</string>
+    <string name="scan_torch">Encender/apagar linterna</string>
+    <string name="scan_manual_entry">Introducir manualmente</string>
+    <string name="scan_retry">Reintentar</string>
+
+    <string name="scan_permission_required_title">Se necesita acceso a la cámara</string>
+    <string name="scan_permission_required_body">Para escanear tu tarjeta, necesitamos permiso para usar la cámara.</string>
+    <string name="scan_permission_denied_open_settings">Abrir ajustes</string>
+
+    <string name="scan_timeout_title">No se ha podido leer la tarjeta</string>
+    <string name="scan_timeout_body">Inténtalo de nuevo con mejor luz o introduce los datos manualmente.</string>
+
+    <string name="scan_camera_unavailable_title">Cámara no disponible</string>
+    <string name="scan_camera_unavailable_body">No se ha podido iniciar la cámara del dispositivo. Introduce los datos manualmente.</string>
+</resources>

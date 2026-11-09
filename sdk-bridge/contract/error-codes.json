@@ -1,0 +1,20 @@
+[
+  "declined",
+  "api",
+  "network",
+  "transaction",
+  "session_not_found",
+  "order_not_found",
+  "session_expired",
+  "invalid_session_id",
+  "cryptogram",
+  "not_configured",
+  "three_ds_failed",
+  "three_ds_timeout",
+  "google_pay",
+  "apple_pay",
+  "invalid_request",
+  "busy",
+  "no_screen",
+  "unknown"
+]

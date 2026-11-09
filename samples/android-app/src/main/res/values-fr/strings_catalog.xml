@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="product_velvet_sofa_sub">Velours émeraude, pieds en chêne</string>
+    <string name="product_cloud_chair_sub">Bouclette blanc lait</string>
+    <string name="product_ono_chair_sub">Coque moulée, pieds en hêtre</string>
+    <string name="product_birch_stool_sub">Bouleau massif</string>
+    <string name="product_arc_lamp_sub">Acier graphite mat</string>
+    <string name="product_lume_armchair_sub">Laine moutarde</string>
+    <string name="product_flat_white_sub">Double espresso, lait chaud</string>
+    <string name="product_cappuccino_sub">Classique, avec mousse de lait</string>
+    <string name="product_espresso_sub">Pure origine</string>
+    <string name="product_iced_latte_sub">Lait froid, glaçons</string>
+    <string name="product_croissant_sub">Sorti du four ce matin</string>
+    <string name="ticket_floor">Fosse</string>
+    <string name="ticket_floor_sub">Places debout</string>
+    <string name="ticket_balcony">Balcon</string>
+    <string name="ticket_balcony_sub">Rang 2 · places assises</string>
+    <string name="ticket_fee">Frais de service</string>
+</resources>

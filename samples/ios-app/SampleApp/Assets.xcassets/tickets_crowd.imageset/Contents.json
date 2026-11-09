@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "tickets_crowd.jpg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

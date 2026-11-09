@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="scan_hint">Point the camera at your card</string>
+    <string name="scan_detected">Card found, hold still</string>
+    <string name="scan_close">Close scanner</string>
+    <string name="scan_torch">Toggle flashlight</string>
+    <string name="scan_manual_entry">Enter manually</string>
+    <string name="scan_retry">Try again</string>
+
+    <string name="scan_permission_required_title">Camera access required</string>
+    <string name="scan_permission_required_body">To scan your card we need permission to use the camera.</string>
+    <string name="scan_permission_denied_open_settings">Open settings</string>
+
+    <string name="scan_timeout_title">Couldn't read your card</string>
+    <string name="scan_timeout_body">Please try again in better light, or enter the details manually.</string>
+
+    <string name="scan_camera_unavailable_title">Camera unavailable</string>
+    <string name="scan_camera_unavailable_body">Your device camera couldn't start. Please enter the details manually.</string>
+</resources>

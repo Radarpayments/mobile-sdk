@@ -1,0 +1,78 @@
+{
+  "minimal": {
+    "config": {
+      "baseUrl": "https://pay.example.com",
+      "theme": { "mode": "system" },
+      "cardScanner": false,
+      "showResultScreen": false,
+      "debugLogging": false
+    },
+    "mdOrder": "md-1"
+  },
+  "session": {
+    "config": {
+      "baseUrl": "https://pay.example.com",
+      "theme": { "mode": "system" },
+      "cardScanner": false,
+      "showResultScreen": false,
+      "debugLogging": false
+    },
+    "sessionId": "ps_1"
+  },
+  "allOptions": {
+    "config": {
+      "baseUrl": "https://pay.example.com",
+      "locale": "de",
+      "theme": { "mode": "dark" },
+      "cardScanner": true,
+      "showResultScreen": true,
+      "keyProviderUrl": "https://keys.example.com",
+      "sslPins": [{ "host": "pay.example.com", "sha256": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=" }],
+      "debugLogging": true
+    },
+    "mdOrder": "md-1"
+  },
+  "customTheme": {
+    "config": {
+      "baseUrl": "https://pay.example.com",
+      "theme": {
+        "mode": "custom",
+        "base": "dark",
+        "colors": { "primary": "#FFF3D9B1", "onPrimary": "#FFFFFFFF", "scrim": "#80000000" },
+        "cornerRadius": 18,
+        "buttonCornerRadius": 999
+      },
+      "cardScanner": false,
+      "showResultScreen": false,
+      "debugLogging": false
+    },
+    "mdOrder": "md-1"
+  },
+  "wallets": {
+    "config": {
+      "baseUrl": "https://pay.example.com",
+      "theme": { "mode": "system" },
+      "googlePay": {
+        "merchantId": "BCR2",
+        "merchantName": "Hearth & Co",
+        "gateway": "bpcpay",
+        "gatewayMerchantId": "shop",
+        "environment": "TEST",
+        "countryCode": "DE",
+        "cardNetworks": ["VISA", "MASTERCARD"],
+        "authMethods": ["PAN_ONLY", "CRYPTOGRAM_3DS"],
+        "billingAddressRequired": true
+      },
+      "applePay": {
+        "merchantId": "merchant.shop",
+        "countryCode": "DE",
+        "networks": ["VISA", "AMEX"],
+        "capabilities": ["THREE_D_SECURE", "DEBIT"]
+      },
+      "cardScanner": false,
+      "showResultScreen": false,
+      "debugLogging": false
+    },
+    "mdOrder": "md-1"
+  }
+}

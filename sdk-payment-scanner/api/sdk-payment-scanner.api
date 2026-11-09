@@ -1,0 +1,8 @@
+public final class net/payrdr/mobile/payment/sdk/payment/scanner/provider/MlKitVisionCardScannerProvider : net/payrdr/mobile/payment/sdk/payment/scanner/CardScannerProvider {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (Lnet/payrdr/mobile/payment/sdk/payment/logger/LogTransport;)V
+	public synthetic fun <init> (Lnet/payrdr/mobile/payment/sdk/payment/logger/LogTransport;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun CardScannerScreen (Lnet/payrdr/mobile/payment/sdk/payment/scanner/CardScannerConfig;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
+}
+

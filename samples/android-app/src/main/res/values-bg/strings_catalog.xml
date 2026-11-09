@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="product_velvet_sofa_sub">Изумрудено кадифе, дъбови крака</string>
+    <string name="product_cloud_chair_sub">Млечнобяло букле</string>
+    <string name="product_ono_chair_sub">Формована седалка, крака от бук</string>
+    <string name="product_birch_stool_sub">Масивна бреза</string>
+    <string name="product_arc_lamp_sub">Матова графитена стомана</string>
+    <string name="product_lume_armchair_sub">Вълна в горчичен цвят</string>
+    <string name="product_flat_white_sub">Двойно еспресо, мляко на пара</string>
+    <string name="product_cappuccino_sub">Класическо, с млечна пяна</string>
+    <string name="product_espresso_sub">Кафе от един произход</string>
+    <string name="product_iced_latte_sub">Студено мляко, лед</string>
+    <string name="product_croissant_sub">Изпечен тази сутрин</string>
+    <string name="ticket_floor">Партер</string>
+    <string name="ticket_floor_sub">Правостоящи места</string>
+    <string name="ticket_balcony">Балкон</string>
+    <string name="ticket_balcony_sub">Ред 2 · седящи места</string>
+    <string name="ticket_fee">Такса за обслужване</string>
+</resources>

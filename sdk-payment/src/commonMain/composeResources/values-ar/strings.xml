@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Payment sheet -->
+    <string name="sheet_or_pay_by_card">أو ادفع بالبطاقة</string>
+    <string name="sheet_saved_cards">البطاقات المحفوظة</string>
+    <string name="sheet_all_cards">كل البطاقات</string>
+    <string name="sheet_new_card_hint">بطاقة خصم أو بطاقة ائتمان</string>
+    <string name="sheet_pay_by_card">الدفع بالبطاقة</string>
+    <string name="sheet_pay_with_card">الدفع بالبطاقة %1$s</string>
+    <string name="pay_amount">ادفع %1$s</string>
+
+    <!-- CardFormScreen -->
+    <string name="checkout_title">الدفع</string>
+    <string name="card_form_title">بطاقة جديدة</string>
+    <string name="card_form_pan_label">رقم البطاقة</string>
+    <string name="card_form_expiry_label">تاريخ الانتهاء</string>
+    <string name="card_form_expiry_placeholder">MM/YY</string>
+    <string name="card_form_cvv_label">CVC/CVV</string>
+    <string name="cvv_hint_open">أين أجد رمز CVV؟</string>
+    <string name="cvv_hint_back">3 أرقام على ظهر البطاقة</string>
+    <string name="cvv_hint_front">4 أرقام على وجه البطاقة</string>
+    <string name="card_form_holder_label">اسم حامل البطاقة</string>
+    <string name="card_form_card_details_label">بيانات البطاقة</string>
+    <string name="card_form_holder_placeholder">الاسم على البطاقة</string>
+    <string name="card_form_save_card">حفظ البطاقة للمدفوعات القادمة</string>
+    <string name="card_form_save_card_hint">بيانات البطاقة مشفّرة بأمان</string>
+    <string name="card_form_pay">ادفع</string>
+    <string name="card_form_scan">مسح البطاقة</string>
+    <string name="card_form_email_label">البريد الإلكتروني</string>
+    <string name="card_form_phone_label">رقم الهاتف</string>
+    <string name="payer_optional">%1$s (اختياري)</string>
+    <string name="payer_remove_address_line">إزالة سطر العنوان</string>
+    <string name="payer_optional_note">اختياري</string>
+    <string name="payer_summary_title">بياناتك</string>
+    <string name="payer_summary_collapse">إخفاء</string>
+    <string name="payer_billing_title">بيانات الفوترة</string>
+    <string name="payer_billing_add">إضافة بيانات الفوترة</string>
+    <string name="payer_billing_help">املأ الحقول بالأحرف اللاتينية</string>
+    <string name="payer_country_label">الدولة</string>
+    <string name="payer_country_search">ابحث عن دولة</string>
+    <string name="payer_country_not_found">لم يتم العثور على أي دولة</string>
+    <string name="phone_code_title">رمز الدولة</string>
+    <string name="phone_code_search">الدولة أو الرمز</string>
+    <string name="phone_code_choose">الرمز</string>
+    <string name="phone_code_cd">رمز الدولة %1$s</string>
+    <string name="picker_suggested">مقترحة</string>
+    <string name="picker_all">كل الدول</string>
+    <string name="payer_address_line1_label">العنوان</string>
+    <string name="payer_address_line2_label">سطر العنوان 2</string>
+    <string name="payer_address_line3_label">سطر العنوان 3</string>
+    <string name="payer_add_address_line">شقة، مكتب…</string>
+    <string name="payer_city_label">المدينة</string>
+    <string name="payer_state_label">الولاية / المنطقة</string>
+    <string name="payer_postal_code_label">الرمز البريدي</string>
+
+    <!-- Field messages -->
+    <string name="error_pan_empty">أدخل رقم البطاقة</string>
+    <string name="error_pan_short">رقم البطاقة قصير جدًا</string>
+    <string name="error_pan_invalid">تحقّق من رقم البطاقة، فقد يكون أحد الأرقام خاطئًا</string>
+    <string name="error_expiry_format">أدخل التاريخ بالصيغة MM/&#8288;YY</string>
+    <string name="error_expiry_month">يجب أن يكون الشهر من 01 إلى 12</string>
+    <string name="error_expiry_past">انتهت صلاحية هذه البطاقة</string>
+    <string name="error_cvv_3">أدخل الرمز المكوّن من 3 أرقام على ظهر البطاقة</string>
+    <string name="error_cvv_4">أدخل الرمز المكوّن من 4 أرقام على وجه البطاقة</string>
+    <string name="error_holder_empty">أدخل الاسم كما يظهر على البطاقة</string>
+    <string name="error_holder_format">أحرف لاتينية فقط، كما على البطاقة</string>
+    <string name="error_holder_short">الاسم قصير جدًا</string>
+    <string name="error_email_empty">أدخل بريدك الإلكتروني</string>
+    <string name="error_email_invalid">تحقّق من البريد الإلكتروني، يجب أن يكون بالشكل name@example.com</string>
+    <string name="error_phone_empty">أدخل رقم هاتفك</string>
+    <string name="error_phone_short">رقم الهاتف قصير جدًا</string>
+    <string name="error_phone_long">رقم الهاتف طويل جدًا</string>
+    <string name="error_phone_no_code">اختر رمز الدولة</string>
+    <string name="error_field_required">هذا الحقل مطلوب</string>
+    <string name="error_country_empty">اختر الدولة</string>
+    <string name="error_latin_only">استخدم الأحرف الإنجليزية</string>
+    <string name="error_postal_code_invalid">استخدم الأحرف اللاتينية والأرقام فقط</string>
+
+    <!-- Card scan -->
+    <string name="scan_title">امسح بطاقتك</string>
+    <string name="scan_body">تقرأ الكاميرا رقم البطاقة وتاريخ الانتهاء. لا يتم حفظ الصور أو إرسالها إلى أي جهة.</string>
+    <string name="scan_turn_on">تشغيل الكاميرا</string>
+    <string name="scan_manual">الإدخال يدويًا</string>
+
+    <!-- Saved card -->
+    <string name="saved_card_title">الدفع بالبطاقة</string>
+
+    <!-- CardListScreen -->
+    <string name="card_list_title">بطاقاتي</string>
+    <string name="card_list_edit_title">تعديل البطاقات</string>
+    <string name="card_list_add_new">بطاقة جديدة</string>
+    <string name="card_list_delete">إزالة البطاقة</string>
+    <string name="card_list_empty">ليست لديك بطاقات محفوظة</string>
+    <string name="card_list_remove_title">هل تريد إزالة %1$s؟</string>
+    <string name="card_list_remove_body">للدفع بهذه البطاقة مرة أخرى، ستحتاج إلى إدخال بياناتها من جديد.</string>
+    <string name="card_list_keep">الاحتفاظ بالبطاقة</string>
+
+    <!-- Pay buttons -->
+    <string name="pay_with_google_pay">الدفع عبر Google Pay</string>
+    <string name="pay_with_apple_pay">الدفع عبر Apple Pay</string>
+
+    <!-- ThreeDsChallenge -->
+    <string name="threeds_title">جارٍ التحقق لدى بنكك</string>
+    <string name="threeds_hint">أكمل التحقق في نافذة البنك. ستعود إلى هنا تلقائيًا.</string>
+    <string name="threeds_cancel">إلغاء الدفع</string>
+
+    <!-- Processing -->
+    <string name="processing_title">جارٍ معالجة الدفع</string>
+    <string name="processing_hint">يستغرق ذلك عادةً بضع ثوانٍ. يُرجى إبقاء التطبيق مفتوحًا.</string>
+    <string name="processing_loading_session">جارٍ تحميل الجلسة…</string>
+    <string name="processing_loading_public_key">جارٍ تجهيز التشفير…</string>
+    <string name="a11y_loading">جارٍ التحميل…</string>
+    <string name="processing_tokenizing_card">جارٍ تشفير البطاقة…</string>
+    <string name="processing_submitting_payment">جارٍ إرسال الدفعة…</string>
+    <string name="processing_finalizing">جارٍ الإنهاء…</string>
+
+    <!-- Result -->
+    <string name="result_success_title">تم الدفع بنجاح</string>
+    <string name="result_card_saved_title">تم حفظ البطاقة</string>
+    <string name="result_failure_title">تم رفض الدفع</string>
+    <string name="result_failure_hint">جرّب بطاقة أخرى أو تواصل مع بنكك.</string>
+    <string name="result_session_expired">انتهت مهلة الدفع. لم يُخصم أي مبلغ. ارجع وأعد تقديم الطلب.</string>
+    <string name="result_try_again">الدفع ببطاقة أخرى</string>
+    <string name="result_close">إغلاق</string>
+    <string name="result_done">تم</string>
+    <string name="receipt_order">الطلب</string>
+    <string name="receipt_card">البطاقة</string>
+    <string name="receipt_date">التاريخ</string>
+    <string name="receipt_order_number">رقم %1$s</string>
+
+    <!-- Common -->
+    <string name="action_cancel">إلغاء</string>
+    <string name="action_close">إغلاق</string>
+    <string name="action_back">رجوع</string>
+    <string name="action_edit">تعديل</string>
+    <string name="action_done">تم</string>
+    <string name="error_network">خطأ في الشبكة. يُرجى التحقق من اتصالك.</string>
+    <string name="error_generic">حدث خطأ ما. يُرجى المحاولة مرة أخرى.</string>
+    <string name="error_invalid_card">بيانات البطاقة غير صحيحة</string>
+    <string name="error_3ds_failed">فشلت مصادقة 3-D Secure</string>
+    <string name="error_3ds_timeout">انتهت مهلة مصادقة 3-D Secure</string>
+    <string name="error_cancelled">تم إلغاء الدفع</string>
+    <!-- Transfers (AFT) -->
+    <string name="transfer_amount">تحويل %1$s</string>
+    <string name="card_form_transfer">تحويل</string>
+    <string name="card_form_save_card_only">حفظ البطاقة</string>
+    <string name="transfer_sender_title">المرسل</string>
+    <string name="transfer_recipient_title">المستلم</string>
+    <string name="transfer_first_name">الاسم الأول</string>
+    <string name="transfer_middle_name">الاسم الأوسط</string>
+    <string name="transfer_last_name">اسم العائلة</string>
+    <string name="transfer_birthday">تاريخ الميلاد</string>
+    <string name="transfer_date_hint">DD.MM.YYYY</string>
+    <string name="transfer_account">رقم الحساب</string>
+    <string name="transfer_account_type">نوع الحساب</string>
+    <string name="transfer_id_type">وثيقة الهوية</string>
+    <string name="transfer_id_number">رقم الوثيقة</string>
+    <string name="transfer_address">العنوان</string>
+    <string name="error_date_invalid">أدخل التاريخ بالصيغة DD.MM.YYYY</string>
+    <string name="transfer_account_type_1">RTN + حساب مصرفي</string>
+    <string name="transfer_account_type_2">IBAN</string>
+    <string name="transfer_account_type_3">حساب البطاقة</string>
+    <string name="transfer_account_type_4">البريد الإلكتروني</string>
+    <string name="transfer_account_type_5">رقم الهاتف</string>
+    <string name="transfer_account_type_6">BIC + BAN</string>
+    <string name="transfer_account_type_7">معرّف المحفظة</string>
+    <string name="transfer_account_type_8">معرّف الشبكة الاجتماعية</string>
+    <string name="transfer_account_type_100">أخرى</string>
+    <string name="transfer_id_type_1">جواز سفر</string>
+    <string name="transfer_id_type_2">رخصة قيادة</string>
+    <string name="transfer_id_type_3">بطاقة اجتماعية</string>
+    <string name="transfer_id_type_4">بطاقة هوية وطنية</string>
+    <string name="transfer_id_type_5">شهادة نشاط تجاري (ضريبة القيمة المضافة)</string>
+    <string name="transfer_id_type_6">شهادة لاجئ</string>
+    <string name="transfer_id_type_7">تصريح إقامة</string>
+    <string name="transfer_id_type_8">جواز سفر أجنبي</string>
+    <string name="transfer_id_type_9">جواز سفر رسمي</string>
+    <string name="transfer_id_type_10">جواز سفر مؤقت</string>
+    <string name="transfer_id_type_11">جواز سفر بحّار</string>
+</resources>

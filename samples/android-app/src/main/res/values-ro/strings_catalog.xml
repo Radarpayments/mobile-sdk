@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="product_velvet_sofa_sub">Catifea verde smarald, picioare din stejar</string>
+    <string name="product_cloud_chair_sub">Bouclé alb-lăptos</string>
+    <string name="product_ono_chair_sub">Carcasă turnată, picioare din fag</string>
+    <string name="product_birch_stool_sub">Lemn masiv de mesteacăn</string>
+    <string name="product_arc_lamp_sub">Oțel mat, culoare grafit</string>
+    <string name="product_lume_armchair_sub">Lână culoarea muștarului</string>
+    <string name="product_flat_white_sub">Espresso dublu, lapte spumat</string>
+    <string name="product_cappuccino_sub">Clasic, cu spumă</string>
+    <string name="product_espresso_sub">Origine unică</string>
+    <string name="product_iced_latte_sub">Lapte rece, gheață</string>
+    <string name="product_croissant_sub">Copt azi-dimineață</string>
+    <string name="ticket_floor">Zona în picioare</string>
+    <string name="ticket_floor_sub">Acces general</string>
+    <string name="ticket_balcony">Balcon</string>
+    <string name="ticket_balcony_sub">Rândul 2 · locuri pe scaun</string>
+    <string name="ticket_fee">Taxă de serviciu</string>
+</resources>

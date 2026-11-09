@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Product names are brand-like and stay in English in every language. -->
+    <string name="product_velvet_sofa" translatable="false">Velvet sofa</string>
+    <string name="product_cloud_chair" translatable="false">Cloud chair</string>
+    <string name="product_ono_chair" translatable="false">Ono chair</string>
+    <string name="product_birch_stool" translatable="false">Birch stool</string>
+    <string name="product_arc_lamp" translatable="false">Arc floor lamp</string>
+    <string name="product_lume_armchair" translatable="false">Lume armchair</string>
+    <string name="product_flat_white" translatable="false">Flat white</string>
+    <string name="product_cappuccino" translatable="false">Cappuccino</string>
+    <string name="product_espresso" translatable="false">Espresso</string>
+    <string name="product_iced_latte" translatable="false">Iced latte</string>
+    <string name="product_croissant" translatable="false">Butter croissant</string>
+
+    <string name="product_velvet_sofa_sub">Emerald velvet, oak legs</string>
+    <string name="product_cloud_chair_sub">Milk-white bouclé</string>
+    <string name="product_ono_chair_sub">Moulded shell, beech legs</string>
+    <string name="product_birch_stool_sub">Solid birch</string>
+    <string name="product_arc_lamp_sub">Matte graphite steel</string>
+    <string name="product_lume_armchair_sub">Mustard wool</string>
+    <string name="product_flat_white_sub">Double shot, steamed milk</string>
+    <string name="product_cappuccino_sub">Classic, with foam</string>
+    <string name="product_espresso_sub">Single origin</string>
+    <string name="product_iced_latte_sub">Cold milk, ice</string>
+    <string name="product_croissant_sub">Baked this morning</string>
+    <string name="ticket_floor">Standing floor</string>
+    <string name="ticket_floor_sub">General admission</string>
+    <string name="ticket_balcony">Balcony</string>
+    <string name="ticket_balcony_sub">Row 2 · seated</string>
+    <string name="ticket_fee">Service fee</string>
+</resources>

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Payment sheet -->
+    <string name="sheet_or_pay_by_card">ή πληρωμή με κάρτα</string>
+    <string name="sheet_saved_cards">Αποθηκευμένες κάρτες</string>
+    <string name="sheet_all_cards">Όλες οι κάρτες</string>
+    <string name="sheet_new_card_hint">Χρεωστική ή πιστωτική κάρτα</string>
+    <string name="sheet_pay_by_card">Πληρωμή με κάρτα</string>
+    <string name="sheet_pay_with_card">Πληρωμή με κάρτα %1$s</string>
+    <string name="pay_amount">Πληρωμή %1$s</string>
+
+    <!-- CardFormScreen -->
+    <string name="checkout_title">Πληρωμή</string>
+    <string name="card_form_title">Νέα κάρτα</string>
+    <string name="card_form_pan_label">Αριθμός κάρτας</string>
+    <string name="card_form_expiry_label">Ημερομηνία λήξης</string>
+    <string name="card_form_expiry_placeholder">ΜΜ/ΕΕ</string>
+    <string name="card_form_cvv_label">CVC/CVV</string>
+    <string name="cvv_hint_open">Πού θα βρείτε το CVV</string>
+    <string name="cvv_hint_back">3 ψηφία στο πίσω μέρος της κάρτας</string>
+    <string name="cvv_hint_front">4 ψηφία στο μπροστινό μέρος της κάρτας</string>
+    <string name="card_form_holder_label">Κάτοχος κάρτας</string>
+    <string name="card_form_card_details_label">Στοιχεία κάρτας</string>
+    <string name="card_form_holder_placeholder">Όνομα στην κάρτα</string>
+    <string name="card_form_save_card">Αποθήκευση κάρτας για μελλοντικές πληρωμές</string>
+    <string name="card_form_save_card_hint">Τα στοιχεία της κάρτας κρυπτογραφούνται με ασφάλεια</string>
+    <string name="card_form_pay">Πληρωμή</string>
+    <string name="card_form_scan">Σάρωση κάρτας</string>
+    <string name="card_form_email_label">Email</string>
+    <string name="card_form_phone_label">Αριθμός τηλεφώνου</string>
+    <string name="payer_optional">%1$s (προαιρετικό)</string>
+    <string name="payer_remove_address_line">Αφαίρεση γραμμής διεύθυνσης</string>
+    <string name="payer_optional_note">προαιρετικό</string>
+    <string name="payer_summary_title">Τα στοιχεία σας</string>
+    <string name="payer_summary_collapse">Απόκρυψη</string>
+    <string name="payer_billing_title">Στοιχεία χρέωσης</string>
+    <string name="payer_billing_add">Προσθήκη στοιχείων χρέωσης</string>
+    <string name="payer_billing_help">Συμπληρώστε με λατινικούς χαρακτήρες</string>
+    <string name="payer_country_label">Χώρα</string>
+    <string name="payer_country_search">Αναζήτηση χώρας</string>
+    <string name="payer_country_not_found">Δεν βρέθηκε χώρα</string>
+    <string name="phone_code_title">Κωδικός χώρας</string>
+    <string name="phone_code_search">Χώρα ή κωδικός</string>
+    <string name="phone_code_choose">Κωδικός</string>
+    <string name="phone_code_cd">Κωδικός χώρας %1$s</string>
+    <string name="picker_suggested">Προτεινόμενες</string>
+    <string name="picker_all">Όλες οι χώρες</string>
+    <string name="payer_address_line1_label">Διεύθυνση</string>
+    <string name="payer_address_line2_label">Διεύθυνση, γραμμή 2</string>
+    <string name="payer_address_line3_label">Διεύθυνση, γραμμή 3</string>
+    <string name="payer_add_address_line">Όροφος, διαμέρισμα…</string>
+    <string name="payer_city_label">Πόλη</string>
+    <string name="payer_state_label">Πολιτεία / περιοχή</string>
+    <string name="payer_postal_code_label">Ταχυδρομικός κώδικας</string>
+
+    <!-- Field messages -->
+    <string name="error_pan_empty">Εισαγάγετε τον αριθμό κάρτας</string>
+    <string name="error_pan_short">Ο αριθμός κάρτας είναι πολύ σύντομος</string>
+    <string name="error_pan_invalid">Ελέγξτε τον αριθμό κάρτας, ίσως κάποιο ψηφίο είναι λάθος</string>
+    <string name="error_expiry_format">Εισαγάγετε την ημερομηνία ως ΜΜ/&#8288;ΕΕ</string>
+    <string name="error_expiry_month">Ο μήνας πρέπει να είναι από 01 έως 12</string>
+    <string name="error_expiry_past">Η κάρτα έχει λήξει</string>
+    <string name="error_cvv_3">Εισαγάγετε τον τριψήφιο κωδικό από το πίσω μέρος</string>
+    <string name="error_cvv_4">Εισαγάγετε τον τετραψήφιο κωδικό από το μπροστινό μέρος</string>
+    <string name="error_holder_empty">Εισαγάγετε το όνομα όπως αναγράφεται στην κάρτα</string>
+    <string name="error_holder_format">Μόνο λατινικοί χαρακτήρες, όπως στην κάρτα</string>
+    <string name="error_holder_short">Το όνομα είναι πολύ σύντομο</string>
+    <string name="error_email_empty">Εισαγάγετε το email σας</string>
+    <string name="error_email_invalid">Ελέγξτε το email, πρέπει να έχει τη μορφή name@example.com</string>
+    <string name="error_phone_empty">Εισαγάγετε τον αριθμό τηλεφώνου σας</string>
+    <string name="error_phone_short">Ο αριθμός τηλεφώνου είναι πολύ σύντομος</string>
+    <string name="error_phone_long">Ο αριθμός τηλεφώνου είναι πολύ μεγάλος</string>
+    <string name="error_phone_no_code">Επιλέξτε κωδικό χώρας</string>
+    <string name="error_field_required">Συμπληρώστε αυτό το πεδίο</string>
+    <string name="error_country_empty">Επιλέξτε χώρα</string>
+    <string name="error_latin_only">Χρησιμοποιήστε λατινικούς χαρακτήρες</string>
+    <string name="error_postal_code_invalid">Μόνο λατινικοί χαρακτήρες και ψηφία</string>
+
+    <!-- Card scan -->
+    <string name="scan_title">Σάρωση κάρτας</string>
+    <string name="scan_body">Η κάμερα διαβάζει τον αριθμό και την ημερομηνία λήξης της κάρτας. Οι φωτογραφίες δεν αποθηκεύονται ούτε αποστέλλονται πουθενά.</string>
+    <string name="scan_turn_on">Ενεργοποίηση κάμερας</string>
+    <string name="scan_manual">Χειροκίνητη εισαγωγή</string>
+
+    <!-- Saved card -->
+    <string name="saved_card_title">Πληρωμή με κάρτα</string>
+
+    <!-- CardListScreen -->
+    <string name="card_list_title">Οι κάρτες μου</string>
+    <string name="card_list_edit_title">Επεξεργασία καρτών</string>
+    <string name="card_list_add_new">Νέα κάρτα</string>
+    <string name="card_list_delete">Αφαίρεση κάρτας</string>
+    <string name="card_list_empty">Δεν έχετε αποθηκευμένες κάρτες</string>
+    <string name="card_list_remove_title">Αφαίρεση %1$s;</string>
+    <string name="card_list_remove_body">Για να πληρώσετε ξανά με αυτήν την κάρτα, θα χρειαστεί να εισαγάγετε ξανά τα στοιχεία της.</string>
+    <string name="card_list_keep">Διατήρηση κάρτας</string>
+
+    <!-- Pay buttons -->
+    <string name="pay_with_google_pay">Πληρωμή με Google Pay</string>
+    <string name="pay_with_apple_pay">Πληρωμή με Apple Pay</string>
+
+    <!-- ThreeDsChallenge -->
+    <string name="threeds_title">Επαλήθευση από την τράπεζά σας</string>
+    <string name="threeds_hint">Ολοκληρώστε τον έλεγχο στο παράθυρο της τράπεζάς σας. Θα επιστρέψετε εδώ αυτόματα.</string>
+    <string name="threeds_cancel">Ακύρωση πληρωμής</string>
+
+    <!-- Processing -->
+    <string name="processing_title">Επεξεργασία πληρωμής</string>
+    <string name="processing_hint">Συνήθως διαρκεί λίγα δευτερόλεπτα. Μην κλείσετε την εφαρμογή.</string>
+    <string name="processing_loading_session">Φόρτωση συνεδρίας…</string>
+    <string name="processing_loading_public_key">Προετοιμασία κρυπτογράφησης…</string>
+    <string name="a11y_loading">Φόρτωση…</string>
+    <string name="processing_tokenizing_card">Κρυπτογράφηση κάρτας…</string>
+    <string name="processing_submitting_payment">Αποστολή πληρωμής…</string>
+    <string name="processing_finalizing">Ολοκλήρωση…</string>
+
+    <!-- Result -->
+    <string name="result_success_title">Η πληρωμή ολοκληρώθηκε</string>
+    <string name="result_card_saved_title">Η κάρτα αποθηκεύτηκε</string>
+    <string name="result_failure_title">Η πληρωμή απορρίφθηκε</string>
+    <string name="result_failure_hint">Δοκιμάστε άλλη κάρτα ή επικοινωνήστε με την τράπεζά σας.</string>
+    <string name="result_session_expired">Ο χρόνος πληρωμής έληξε. Δεν έγινε καμία χρέωση. Επιστρέψτε και κάντε ξανά την παραγγελία.</string>
+    <string name="result_try_again">Πληρωμή με άλλη κάρτα</string>
+    <string name="result_close">Κλείσιμο</string>
+    <string name="result_done">Τέλος</string>
+    <string name="receipt_order">Παραγγελία</string>
+    <string name="receipt_card">Κάρτα</string>
+    <string name="receipt_date">Ημερομηνία</string>
+    <string name="receipt_order_number">Αρ. %1$s</string>
+
+    <!-- Common -->
+    <string name="action_cancel">Ακύρωση</string>
+    <string name="action_close">Κλείσιμο</string>
+    <string name="action_back">Πίσω</string>
+    <string name="action_edit">Επεξεργασία</string>
+    <string name="action_done">Τέλος</string>
+    <string name="error_network">Σφάλμα δικτύου. Ελέγξτε τη σύνδεσή σας.</string>
+    <string name="error_generic">Κάτι πήγε στραβά. Δοκιμάστε ξανά.</string>
+    <string name="error_invalid_card">Μη έγκυρα στοιχεία κάρτας</string>
+    <string name="error_3ds_failed">Η επαλήθευση 3-D Secure απέτυχε</string>
+    <string name="error_3ds_timeout">Έληξε ο χρόνος επαλήθευσης 3-D Secure</string>
+    <string name="error_cancelled">Η πληρωμή ακυρώθηκε</string>
+    <!-- Transfers (AFT) -->
+    <string name="transfer_amount">Μεταφορά %1$s</string>
+    <string name="card_form_transfer">Μεταφορά</string>
+    <string name="card_form_save_card_only">Αποθήκευση κάρτας</string>
+    <string name="transfer_sender_title">Αποστολέας</string>
+    <string name="transfer_recipient_title">Παραλήπτης</string>
+    <string name="transfer_first_name">Όνομα</string>
+    <string name="transfer_middle_name">Μεσαίο όνομα</string>
+    <string name="transfer_last_name">Επώνυμο</string>
+    <string name="transfer_birthday">Ημερομηνία γέννησης</string>
+    <string name="transfer_date_hint">ΗΗ.ΜΜ.ΕΕΕΕ</string>
+    <string name="transfer_account">Αριθμός λογαριασμού</string>
+    <string name="transfer_account_type">Τύπος λογαριασμού</string>
+    <string name="transfer_id_type">Έγγραφο ταυτότητας</string>
+    <string name="transfer_id_number">Αριθμός εγγράφου</string>
+    <string name="transfer_address">Διεύθυνση</string>
+    <string name="error_date_invalid">Εισαγάγετε την ημερομηνία ως ΗΗ.ΜΜ.ΕΕΕΕ</string>
+    <string name="transfer_account_type_1">RTN + τραπεζικός λογαριασμός</string>
+    <string name="transfer_account_type_2">IBAN</string>
+    <string name="transfer_account_type_3">Λογαριασμός κάρτας</string>
+    <string name="transfer_account_type_4">Email</string>
+    <string name="transfer_account_type_5">Αριθμός τηλεφώνου</string>
+    <string name="transfer_account_type_6">BIC + BAN</string>
+    <string name="transfer_account_type_7">ID πορτοφολιού</string>
+    <string name="transfer_account_type_8">ID κοινωνικού δικτύου</string>
+    <string name="transfer_account_type_100">Άλλο</string>
+    <string name="transfer_id_type_1">Διαβατήριο</string>
+    <string name="transfer_id_type_2">Δίπλωμα οδήγησης</string>
+    <string name="transfer_id_type_3">Κάρτα κοινωνικής ασφάλισης</string>
+    <string name="transfer_id_type_4">Δελτίο ταυτότητας</string>
+    <string name="transfer_id_type_5">Πιστοποιητικό επιχείρησης (ΦΠΑ)</string>
+    <string name="transfer_id_type_6">Πιστοποιητικό πρόσφυγα</string>
+    <string name="transfer_id_type_7">Άδεια διαμονής</string>
+    <string name="transfer_id_type_8">Διαβατήριο αλλοδαπού</string>
+    <string name="transfer_id_type_9">Υπηρεσιακό διαβατήριο</string>
+    <string name="transfer_id_type_10">Προσωρινό διαβατήριο</string>
+    <string name="transfer_id_type_11">Ναυτικό φυλλάδιο</string>
+</resources>

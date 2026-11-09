@@ -1,0 +1,35 @@
+{
+  "completed": { "status": "completed", "orderId": "md-1" },
+  "canceled": { "status": "canceled", "orderId": "md-1" },
+  "unknown": { "status": "unknown", "orderId": "md-1" },
+  "unknownAfterError": {
+    "status": "unknown",
+    "orderId": "md-1",
+    "error": { "code": "network", "message": "offline" }
+  },
+  "declined": {
+    "status": "failed",
+    "orderId": "md-1",
+    "error": { "code": "declined", "message": "Insufficient funds", "declineCode": "116" }
+  },
+  "gatewayError": {
+    "status": "failed",
+    "orderId": "md-1",
+    "error": { "code": "api", "message": "System error", "httpStatus": 500, "gatewayErrorCode": "5" }
+  },
+  "sessionExpired": {
+    "status": "failed",
+    "orderId": "md-1",
+    "error": { "code": "session_expired", "message": "The session of order md-1 expired" }
+  },
+  "invalidRequest": {
+    "status": "failed",
+    "orderId": "",
+    "error": { "code": "invalid_request", "message": "theme.colors.onPrimary must be #RRGGBB or #AARRGGBB, not white" }
+  },
+  "busy": {
+    "status": "failed",
+    "orderId": "",
+    "error": { "code": "busy", "message": "A checkout is already open" }
+  }
+}

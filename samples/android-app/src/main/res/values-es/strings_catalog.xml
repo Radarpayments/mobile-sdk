@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="product_velvet_sofa_sub">Terciopelo esmeralda, patas de roble</string>
+    <string name="product_cloud_chair_sub">Bouclé blanco roto</string>
+    <string name="product_ono_chair_sub">Carcasa moldeada, patas de haya</string>
+    <string name="product_birch_stool_sub">Abedul macizo</string>
+    <string name="product_arc_lamp_sub">Acero grafito mate</string>
+    <string name="product_lume_armchair_sub">Lana color mostaza</string>
+    <string name="product_flat_white_sub">Doble de espresso, leche vaporizada</string>
+    <string name="product_cappuccino_sub">Clásico, con espuma</string>
+    <string name="product_espresso_sub">Origen único</string>
+    <string name="product_iced_latte_sub">Leche fría, hielo</string>
+    <string name="product_croissant_sub">Horneado esta mañana</string>
+    <string name="ticket_floor">Pista</string>
+    <string name="ticket_floor_sub">Entrada general</string>
+    <string name="ticket_balcony">Anfiteatro</string>
+    <string name="ticket_balcony_sub">Fila 2 · con asiento</string>
+    <string name="ticket_fee">Gastos de gestión</string>
+</resources>

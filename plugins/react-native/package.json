@@ -1,0 +1,58 @@
+{
+  "name": "@payrdr/react-native-sdk",
+  "version": "1.0.0-SNAPSHOT",
+  "description": "payrdr payment SDK for React Native: the native payment sheet with 3-D Secure, Google Pay, Apple Pay and the card scanner, and SDK Core card encryption",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "react-native": "./src/index.ts",
+  "files": [
+    "src",
+    "android",
+    "ios",
+    "*.podspec",
+    "!ios/build",
+    "!android/build",
+    "!**/__tests__"
+  ],
+  "scripts": {
+    "test": "jest",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": ["react-native", "ios", "android", "payments"],
+  "author": "payrdr <mobile@payrdr.net> (https://payrdr.net)",
+  "license": "MIT",
+  "homepage": "https://payrdr.net",
+  "private": true,
+  "peerDependencies": {
+    "react": "*",
+    "react-native": ">=0.76.0"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.28.0",
+    "@babel/preset-typescript": "^7.27.0",
+    "@types/jest": "^30.0.0",
+    "babel-jest": "^30.0.0",
+    "jest": "^30.0.0",
+    "typescript": "^5.9.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^react-native$": "<rootDir>/src/__tests__/react-native.mock.ts"
+    },
+    "testPathIgnorePatterns": ["/node_modules/", "react-native.mock.ts"]
+  },
+  "codegenConfig": {
+    "name": "PayrdrSdkSpec",
+    "type": "modules",
+    "jsSrcsDir": "src",
+    "android": {
+      "javaPackageName": "net.payrdr.mobile.payment.reactnative"
+    },
+    "ios": {
+      "modulesProvider": {
+        "PayrdrSdk": "PayrdrSdk"
+      }
+    }
+  }
+}

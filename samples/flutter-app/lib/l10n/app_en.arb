@@ -1,0 +1,379 @@
+{
+  "@@locale": "en",
+  "startTitle": "Payment demo",
+  "startSettings": "Developer settings",
+  "coverFurnitureName": "Hearth & Co",
+  "coverCoffeeName": "Roast Lane",
+  "coverTicketsName": "Stage Pass",
+  "coverFurnitureTagline": "Furniture · catalogue and cart",
+  "coverCoffeeTagline": "Coffee shop · order ahead",
+  "coverTicketsTagline": "Tickets · concerts and shows",
+  "storeBack": "Back",
+  "storeCart": "Cart",
+  "storeCartCount": "Cart · {count}",
+  "@storeCartCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "storeItems": "Items",
+  "storeTotal": "Total",
+  "storePay": "Pay {amount}",
+  "@storePay": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "storeIncrease": "More",
+  "storeDecrease": "Less",
+  "storeAddToCart": "Add to cart · {price}",
+  "@storeAddToCart": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "storeAdd": "Add",
+  "storeRegistering": "Creating the order…",
+  "storeErrorCredentials": "Merchant login and password are not set.",
+  "storeErrorApiKey": "The API key is not set.",
+  "storeErrorFailed": "The order was not created: {message}",
+  "@storeErrorFailed": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "storeOpenSettings": "Open settings",
+  "scenarioRow": "Scenario: {buyer}",
+  "@scenarioRow": {
+    "placeholders": {
+      "buyer": {
+        "type": "String"
+      }
+    }
+  },
+  "scenarioTitle": "Payment scenario",
+  "scenarioBuyer": "Buyer",
+  "scenarioGuest": "Guest",
+  "scenarioWithCards": "With cards",
+  "scenarioWithCardsHint": "Cards appear after a payment with “Save card”",
+  "scenarioReset": "Reset",
+  "scenarioPayment": "Payment",
+  "scenarioWallet": "Google Pay",
+  "scenarioScanner": "Card scanner",
+  "scenarioSdkResult": "SDK result screen",
+  "resultPaidAmount": "Paid {amount}",
+  "@resultPaidAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "resultPaymentId": "Payment",
+  "resultAmount": "Amount",
+  "resultDeclinedTitle": "Payment declined",
+  "resultDeclinedBody": "The bank did not confirm the payment.",
+  "resultUnconfirmedTitle": "Checking your payment",
+  "resultUnconfirmedBody": "The bank has not answered yet. Please don’t pay again — we’ll let you know as soon as the payment is confirmed.",
+  "resultTryAgain": "Try again",
+  "resultBackToStore": "Back to the store",
+  "resultDone": "Done",
+  "devTitle": "Developer settings",
+  "devGateway": "Gateway",
+  "devBaseUrl": "Base URL",
+  "devLogin": "Merchant login",
+  "devPassword": "Password",
+  "devApiV1": "API V1",
+  "devApiV2": "API V2",
+  "devApiVersion": "Merchant API",
+  "devApiV1Hint": "Orders are registered with register.do using the merchant login and password.",
+  "devApiV2Hint": "Sessions are created with POST /api2/sessions using the API key.",
+  "devApiKey": "API key",
+  "devOrderType": "Order",
+  "devOrderPurchase": "Payment",
+  "devOrderAft": "AFT transfer",
+  "devOrderAftHint": "Transfers are registered with registerP2P.do (one-leg AFT): the sheet asks for the sender and recipient details.",
+  "devCredentialsNote": "Stored only on this device. In your app the order is registered by your backend.",
+  "devSdkLook": "SDK appearance",
+  "devSheetTheme": "Sheet theme",
+  "devThemeCover": "As the store",
+  "devThemeLight": "Light",
+  "devThemeDark": "Dark",
+  "devThemeSystem": "System",
+  "devLanguage": "Language",
+  "devLanguageSystem": "System",
+  "devWallets": "Google Pay",
+  "devGpayGateway": "Gateway",
+  "devGpayMerchant": "Merchant ID",
+  "devGpayFromGateway": "From the gateway",
+  "devMore": "More",
+  "devAdvanced": "Advanced",
+  "devAdvancedSub": "State stream, SSL pinning",
+  "devLastOrder": "Last order",
+  "devCopy": "Copy",
+  "devCredentials": "Credentials",
+  "devShowSecret": "Show",
+  "devHideSecret": "Hide",
+  "devCopied": "Copied",
+  "devBaseUrlError": "Enter an address that starts with https://",
+  "devNone": "—",
+  "resultSuccessFurniture": "Thank you for your order",
+  "resultSuccessFurnitureBody": "We will be in touch to arrange delivery.",
+  "resultSuccessCoffee": "Your order is being prepared",
+  "resultSuccessCoffeeBody": "Show this number to the barista.",
+  "resultSuccessTickets": "You are going!",
+  "resultSuccessTicketsBody": "Tickets are in your account.",
+  "furnitureCollection": "Autumn\ncollection",
+  "furnitureAll": "All",
+  "furnitureChairs": "Chairs",
+  "furnitureSofas": "Sofas",
+  "furnitureLight": "Light",
+  "furnitureDelivery": "Free delivery in 3–5 days. 30 days to return.",
+  "furnitureDeliveryLabel": "Delivery",
+  "furnitureDeliveryFree": "Free",
+  "furnitureColours": "Colour",
+  "coffeeLocation": "King St.",
+  "coffeeAgain": "Same as last time",
+  "coffeeRepeat": "Order again",
+  "coffeeTabCoffee": "Coffee",
+  "coffeeTabCold": "Cold",
+  "coffeeTabBakery": "Bakery",
+  "coffeeOrderTitle": "Your order",
+  "coffeePickup": "Pick up",
+  "coffeePickupValue": "King St. · in 10 min",
+  "coffeeAddItem": "Add {item}",
+  "@coffeeAddItem": {
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
+  },
+  "coffeeOrderNumberHint": "Ready in about 6 minutes.",
+  "ticketsLive": "Live in Hall A",
+  "ticketsTitle": "NORTHERN\nLIGHTS",
+  "ticketsDate": "Sat, 14 Nov · 20:00 · Hall A",
+  "ticketsSection": "Tickets",
+  "ticketsToPayment": "Checkout · {amount}",
+  "@ticketsToPayment": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "ticketsCheckout": "Checkout",
+  "ticketsEventLine": "14 Nov · {category}",
+  "@ticketsEventLine": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "ticketsHold": "Seats held for {time}",
+  "@ticketsHold": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "ticketsHoldExpired": "The hold ran out. Pick your seats again.",
+  "ticketsSeats": "Tickets",
+  "productVelvetSofa": "Velvet sofa",
+  "productCloudChair": "Cloud chair",
+  "productOnoChair": "Ono chair",
+  "productBirchStool": "Birch stool",
+  "productArcLamp": "Arc floor lamp",
+  "productLumeArmchair": "Lume armchair",
+  "productFlatWhite": "Flat white",
+  "productCappuccino": "Cappuccino",
+  "productEspresso": "Espresso",
+  "productIcedLatte": "Iced latte",
+  "productCroissant": "Butter croissant",
+  "productVelvetSofaSub": "Emerald velvet, oak legs",
+  "productCloudChairSub": "Milk-white bouclé",
+  "productOnoChairSub": "Moulded shell, beech legs",
+  "productBirchStoolSub": "Solid birch",
+  "productArcLampSub": "Matte graphite steel",
+  "productLumeArmchairSub": "Mustard wool",
+  "productFlatWhiteSub": "Double shot, steamed milk",
+  "productCappuccinoSub": "Classic, with foam",
+  "productEspressoSub": "Single origin",
+  "productIcedLatteSub": "Cold milk, ice",
+  "productCroissantSub": "Baked this morning",
+  "ticketFloor": "Standing floor",
+  "ticketFloorSub": "General admission",
+  "ticketBalcony": "Balcony",
+  "ticketBalconySub": "Row 2 · seated",
+  "ticketFee": "Service fee",
+  "startSectionPayment": "SDK Payment",
+  "startSectionPaymentSub": "A ready payment sheet in your app — every store has all scenarios",
+  "startSectionCore": "SDK Core",
+  "startSectionCoreSub": "Card encryption for your own form (PCI DSS)",
+  "coreTileTitle": "Your own card form",
+  "coreTileSub": "Card data turns into a token for your server",
+  "coreTitle": "SDK Core",
+  "coreDoneSubtitle": "Token is ready",
+  "coreVariantNew": "New card",
+  "coreVariantInstant": "No order",
+  "coreVariantStored": "Saved card",
+  "coreHintNew": "Pays an order you registered: card data plus its mdOrder.",
+  "coreHintInstant": "No order yet: your server creates it and pays in one call.",
+  "coreHintStored": "Pays an order with a saved card: its bindingId instead of card data.",
+  "coreCardGroup": "Card information",
+  "corePan": "Card number",
+  "coreExpiryPlaceholder": "MM/YY",
+  "coreExpiry": "Expiry",
+  "coreCvc": "CVC/CVV",
+  "coreCvcOptional": "CVC/CVV (optional)",
+  "coreHolder": "Name on card (optional)",
+  "coreBinding": "bindingId",
+  "coreMdOrder": "mdOrder",
+  "coreMdOrderHint": "From your backend",
+  "corePubKey": "Public key (PEM)",
+  "corePaste": "Paste",
+  "coreGenerate": "Get token",
+  "coreErrorRequired": "Required",
+  "coreErrorInvalid": "Invalid value",
+  "coreErrorFormat": "Wrong format",
+  "coreTokenOk": "Token received",
+  "coreCopy": "Copy",
+  "coreCopied": "Copied",
+  "coreStepSend": "Send the token to your server",
+  "coreStepGateway": "Your server passes it to the gateway as seToken",
+  "coreStepPay": "The gateway processes the payment",
+  "coreAgain": "Again",
+  "investName": "Northwind Invest",
+  "startSectionPaymentAftSub": "AFT: top up an account from a card",
+  "investTileSub": "Top up your investment account from a card and watch the balance grow",
+  "investAccount": "Investment account •• {account}",
+  "@investAccount": {
+    "placeholders": {
+      "account": {
+        "type": "String"
+      }
+    }
+  },
+  "investPortfolioValue": "Portfolio value",
+  "investChangeMonth": "this month",
+  "investPeriod1w": "1W",
+  "investPeriod1m": "1M",
+  "investPeriod3m": "3M",
+  "investPeriod1y": "1Y",
+  "investPeriodAll": "All",
+  "investTopUp": "Top up",
+  "investInvest": "Invest",
+  "investFreeCash": "Free cash",
+  "investFreeCashSub": "Ready to invest",
+  "investFreeCashJustNow": "+{amount} just now",
+  "@investFreeCashJustNow": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "investMyAssets": "My assets",
+  "investUnits": "{units} units · {price}",
+  "@investUnits": {
+    "placeholders": {
+      "units": {
+        "type": "String"
+      },
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "investRecent": "Recent operations",
+  "investOpTopUp": "Deposit",
+  "investOpBuy": "Buy {asset}",
+  "@investOpBuy": {
+    "placeholders": {
+      "asset": {
+        "type": "String"
+      }
+    }
+  },
+  "investAssetGlb": "Global ETF",
+  "investAssetTch": "Tech Leaders",
+  "investNotifications": "Notifications",
+  "topupTitle": "Top up",
+  "topupTo": "To",
+  "topupAvailable": "Available",
+  "topupAmount": "Amount",
+  "topupLimits": "from {min} to {max}",
+  "@topupLimits": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "topupContinue": "Continue · {amount}",
+  "@topupContinue": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "topupCreating": "Creating transfer…",
+  "topupFailedTitle": "Transfer failed",
+  "topupFailedBody": "The card's bank declined the operation. No money was taken; try another card.",
+  "topupFailedDetail": "Gateway: {message}",
+  "@topupFailedDetail": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "topupUnknownTitle": "Status unknown",
+  "topupUnknownBody": "Check the order in the merchant portal before trying again.",
+  "topupTryAgain": "Try again",
+  "topupAddCard": "Add card",
+  "topupAddingCard": "Adding card…",
+  "topupCardAddedTitle": "Card added",
+  "topupCardAddedBody": "Choose it in the payment sheet at your next top-up. No money was taken.",
+  "topupCardFailedTitle": "Card not added",
+  "topupCardFailedBody": "The card's bank did not confirm it. No money was taken; try another card.",
+  "topupCardUnknownBody": "The bank has not confirmed the card yet. If it has, the card appears at your next top-up.",
+  "doneCredited": "credited to investment account •• {account}",
+  "@doneCredited": {
+    "placeholders": {
+      "account": {
+        "type": "String"
+      }
+    }
+  },
+  "doneOperation": "Operation",
+  "doneOperationValue": "AFT · to own account",
+  "doneFreeCash": "Free cash",
+  "doneOrder": "Order",
+  "doneTime": "Time",
+  "doneInvest": "Invest {amount}",
+  "@doneInvest": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "doneToPortfolio": "To portfolio",
+  "scenarioWalletApple": "Apple Pay",
+  "devApplePay": "Apple Pay"
+}
