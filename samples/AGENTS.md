@@ -32,9 +32,18 @@ small, readable and copyable, and must only use public API.
 The four apps show the same demo: three stores (Hearth & Co, Roast Lane, Stage Pass) with the Scenario panel and result
 screens, the SDK Core screen (new card / no order / saved card), Northwind Invest (AFT, shown when API V1 + order type
 AFT), and the developer settings (gateway, API V1/V2 credentials, order type, sheet theme, 9 languages, Google Pay or
-Apple Pay, last order with Copy, invest reset). A user-visible change to one app is made in all four, or the commit says
+Apple Pay, last order with Copy). A user-visible change to one app is made in all four, or the commit says
 why not. Exceptions: Advanced (headless flow, SSL pinning, classic Activity) exists only in the native apps, because the
 plugins expose only the checkout and SDK Core.
+
+The developer settings are an inset grouped list in all four apps (grey page, white cards): fields with their name
+above the value, a segmented control for two choices, a row with a list (menu on iOS, bottom sheet elsewhere) for four
+or more, done states shown in place for 2 s. Android's `dev/SettingsRows.kt` is the reference for sizes and colours.
+Headings in capitals go through `toCaps` (Android `ui/Caps.kt`, Flutter `lib/caps.dart`, RN `src/ui/caps.ts`): Greek
+capitals drop the stress mark, which the platforms' upper case keeps. Android's Tabler icons are not auto-mirrored;
+directional ones (back, chevrons) take `Modifier.mirrorInRtl()`. On iOS a text that means different things in different
+places gets its own key with an English value in the catalog (`result_payment_id`, `theme_light`): one key has one
+translation, and "Light" there is the furniture category.
 
 Shared across apps, keep them identical:
 - persistence key names (`store_login`, `store_api_version`, `store_order_type`, `store_client_id`, `store_last_cover`,

@@ -84,22 +84,24 @@ store. With API V1 and Order "AFT transfer" in the developer settings, the start
 "+€… credited", and the account's free cash grows. The transfer is registered with the investor's details
 (`billingPayerData`, `billingRecipientData`, `email`), so the sheet asks only for the card (and the phone). The
 account lives on the device and is credited only when the SDK reports the transfer completed; a declined or unknown
-transfer leaves it as it was. "Invest" moves free cash into a fund without a payment. The developer settings reset the
-demo account.
+transfer leaves it as it was. "Invest" moves free cash into a fund without a payment.
 
 ## Developer settings
 
-The gear on the start screen opens:
+The gear on the start screen opens a grouped list, laid out the same way in the four apps:
 
-- **Gateway** — base URL (default `https://dev.bpcbt.com/payment`) and the merchant API: **API V1** with the
-  merchant login and password, or **API V2** with the API key (served next to the payment page:
-  `https://dev.bpcbt.com/api2`). Nothing ships with the app: type them in on the device; they are stored only there.
+- **Gateway** — base URL (default `https://dev.bpcbt.com/payment`; anything but an `https://` address is flagged under
+  the field) and the merchant API: **API V1** or **API V2** (served next to the payment page:
+  `https://dev.bpcbt.com/api2`).
+- **Credentials** — with API V1 the order type (Payment or AFT transfer), the merchant login and password; with API V2
+  the API key. Nothing ships with the app: type them in on the device; they are stored only there. The eye button
+  shows a password or key while you check it.
 - **SDK appearance** — the sheet theme (as the store / light / dark / system) and the language: System, English,
   Русский, Română, Ελληνικά, Български, Deutsch, Français, Español or العربية (right to left). It switches the
   demo's own screens at once and is passed to the SDK as `SdkPaymentConfig.locale`; System follows the device.
 - **Google Pay** (Android: gateway, merchant ID) / **Apple Pay** (iOS: merchant ID — the default
   `merchant.net.payrdr.samples.test` is a placeholder; Apple Pay needs a real merchant ID).
-- **Advanced** — the payment state stream (headless flow, registers a fresh €1 order) and an
+- **Advanced** (Android and iOS only) — the payment state stream (headless flow, registers a fresh €1 order) and an
   intentionally failing SSL pinning check.
 - **Last order** — the mdOrder of the last registered order, with Copy.
 
