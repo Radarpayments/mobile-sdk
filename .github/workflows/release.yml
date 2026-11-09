@@ -111,7 +111,7 @@ jobs:
   release:
     needs: [version, build]
     if: ${{ !cancelled() && needs.version.result == 'success' && needs.build.result != 'failure' }}
-    runs-on: macos-14
+    runs-on: macos-15
     timeout-minutes: 150
     env:
       SDK: ${{ needs.version.outputs.sdk }}
