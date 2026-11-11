@@ -70,9 +70,7 @@ kotlin {
             // CFBundleIdentifier must not contain underscores; override so Xcode codesign
             // + validate accept the framework when embedded into an app bundle.
             binaryOption("bundleId", "net.payrdr.mobile.payment.sdk.sdkpayment")
-            // Kotlin/Native builds for iOS 12.0 by default. Below 12.2 (before Swift shipped with iOS) the
-            // linker binds CoreMedia functions to the libswiftCoreMedia overlay instead of CoreMedia, and
-            // on devices whose overlay lacks them the first camera frame crashed. 14.0 is the SDK minimum.
+            // Kotlin/Native builds for iOS 12.0 by default; 14.0 is the SDK minimum.
             freeCompilerArgs +=
                 "-Xoverride-konan-properties=osVersionMin.ios_arm64=14.0;osVersionMin.ios_simulator_arm64=14.0;osVersionMin.ios_x64=14.0"
             xcf.add(this)

@@ -11,7 +11,8 @@ Android minSdk 24, iOS 15.
 ## Install
 
 The plugin is not on pub.dev yet. Each [GitHub release](https://github.com/Radarpayments/mobile-sdk/releases) has it
-as `payrdr_sdk-<version>.tar.gz`, with the iOS framework inside. Unpack it next to your app and add it by path:
+as `payrdr-flutter-sdk-<version>.tar.gz`, with the iOS framework inside. It unpacks into a `payrdr_sdk` folder; put it
+next to your app and add it by path:
 
 ```yaml
 dependencies:

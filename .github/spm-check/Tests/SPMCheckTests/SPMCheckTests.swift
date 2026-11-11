@@ -1,4 +1,5 @@
-import sdk_payment_scanner
+import RadarpaymentsSDKPayment
+import RadarpaymentsSDKScanner
 import XCTest
 
 final class SPMCheckTests: XCTestCase {
@@ -18,5 +19,17 @@ final class SPMCheckTests: XCTestCase {
     func testSwiftConveniencesAreInTheFramework() {
         XCTAssertEqual(SdkPaymentConfig(baseUrl: "https://dev.bpcbt.com/payment").baseUrl, "https://dev.bpcbt.com/payment")
         XCTAssertEqual(ApplePayConfig(merchantId: "merchant.com.example").merchantId, "merchant.com.example")
+    }
+
+    // SDK Core is exported by the payment framework under its own names.
+    func testCoreIsInTheFramework() {
+        XCTAssertEqual(SdkCore().version(), SdkPayment.companion.VERSION)
+    }
+
+    func testScannerPlugsIntoTheCheckout() {
+        let config = SdkPaymentConfig(baseUrl: "https://dev.bpcbt.com/payment")
+        XCTAssertNil(config.cardScannerProvider)
+        let scanner: CardScannerProvider = MlKitVisionCardScannerProvider()
+        XCTAssertNotNil(scanner)
     }
 }

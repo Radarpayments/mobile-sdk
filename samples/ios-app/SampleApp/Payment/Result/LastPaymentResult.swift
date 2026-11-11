@@ -1,5 +1,5 @@
 import Foundation
-import sdk_payment_scanner
+import RadarpaymentsSDKPayment
 
 /// Process-scoped capture of the most recent payment outcome, consumed once by PaymentResultView.
 enum LastPaymentResult {

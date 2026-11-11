@@ -33,11 +33,11 @@ fi
 
 mkdir -p "$WORK"
 # Xcode resolves the XCFramework before the app's Gradle build phase runs, so a fresh tree needs it built once.
-if [ ! -d "$TREE/sdk-payment-scanner/build/XCFrameworks/debug/sdk_payment_scanner.xcframework" ]; then
+if [ ! -d "$TREE/sdk-payment-scanner/build/XCFrameworks/debug/RadarpaymentsSDKPayment.xcframework" ]; then
   echo "Building the debug XCFramework (first run in this tree, a few minutes)…"
   # The JDK of the app's own build phase: Gradle here runs on 17–21 only.
   JAVA_HOME="${VISUAL_JAVA_HOME:-$HOME/.sdkman/candidates/java/21.0.2-tem}" "$TREE/gradlew" -p "$TREE" \
-    :sdk-payment-scanner:assembleSdk_payment_scannerDebugXCFramework > "$WORK/gradle-$SET.log" 2>&1 \
+    :sdk-payment-scanner:assembleRadarpaymentsSDKPaymentDebugXCFramework > "$WORK/gradle-$SET.log" 2>&1 \
     || { echo "Gradle failed, see $WORK/gradle-$SET.log"; exit 1; }
 fi
 rm -rf "$OUT"

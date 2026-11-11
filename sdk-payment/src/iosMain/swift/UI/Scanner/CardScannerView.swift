@@ -1,4 +1,3 @@
-import AVFoundation
 import SwiftUI
 import UIKit
 
@@ -34,7 +33,7 @@ struct CardScannerView: View {
         let phase = run.state?.phase ?? .starting
         ZStack {
             if phase == .scanning || phase == .detected {
-                ScannerCameraPreview(session: run.session.captureSession)
+                ScannerCameraPreview(preview: run.session.preview)
                     .accessibilityHidden(true)
             }
             ScannerFrameOverlay(highlight: phase == .detected || phase == .success)
@@ -206,24 +205,15 @@ private struct DimmedAround: Shape {
     }
 }
 
-/// The camera's picture, filling the screen; black until the first frame.
+/// The camera's picture, filling the screen; black until the first frame. The view is the scanner's own, so no
+/// capture API is linked here.
 private struct ScannerCameraPreview: UIViewRepresentable {
-    let session: AVCaptureSession
+    let preview: UIView
 
-    func makeUIView(context: Context) -> PreviewView {
-        let view = PreviewView()
-        view.backgroundColor = .black
-        view.previewLayer.session = session
-        view.previewLayer.videoGravity = .resizeAspectFill
-        return view
+    func makeUIView(context: Context) -> UIView {
+        preview.backgroundColor = .black
+        return preview
     }
 
-    func updateUIView(_ view: PreviewView, context: Context) {}
-
-    final class PreviewView: UIView {
-        override class var layerClass: AnyClass { AVCaptureVideoPreviewLayer.self }
-
-        // swiftlint:disable:next force_cast
-        var previewLayer: AVCaptureVideoPreviewLayer { layer as! AVCaptureVideoPreviewLayer }
-    }
+    func updateUIView(_ view: UIView, context: Context) {}
 }

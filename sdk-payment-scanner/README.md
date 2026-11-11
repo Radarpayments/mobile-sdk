@@ -19,13 +19,17 @@ val config = SdkPaymentConfig(
 ```
 
 ```swift
+import RadarpaymentsSDKPayment
+import RadarpaymentsSDKScanner
+
 let config = SdkPaymentConfig(
     baseUrl: "https://dev.bpcbt.com/payment",
-    cardScannerProvider: MlKitVisionCardScannerProvider(logTransport: nil)
+    cardScannerProvider: MlKitVisionCardScannerProvider()
 )
 ```
 
-To see the scanner's events in your logs, pass your `LogTransport`: `MlKitVisionCardScannerProvider(logTransport = …)`.
+To see the scanner's events in your logs, pass your `LogTransport`: `MlKitVisionCardScannerProvider(logTransport = …)`
+(`logTransport:` in Swift).
 
 ## Android
 
@@ -45,8 +49,12 @@ architecture per device.
 
 ## iOS
 
-On iOS the scanner is part of the one framework you link, `sdk_payment_scanner` (the `PayrdrSDK` package product). It
-uses the system's Vision and adds no model of its own.
+Add the `RadarpaymentsSDKScanner` product of the package next to `RadarpaymentsSDKPayment`. It is a small Swift module
+with the camera; an app that leaves it out has no camera code at all. It uses the system's Vision and adds no model of
+its own.
+
+Without Swift Package Manager, add the Swift files from `RadarpaymentsSDKScanner-<version>.zip` (in each release) to
+your app target; then there is no `import RadarpaymentsSDKScanner`.
 
 Add `NSCameraUsageDescription` to your `Info.plist`. Without it App Store review rejects the build. For example:
 

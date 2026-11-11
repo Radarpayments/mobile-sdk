@@ -53,33 +53,21 @@ kotlin {
 }
 
 kotlin {
-    val xcf = XCFramework("sdk_payment_scanner")
+    val xcf = XCFramework("RadarpaymentsSDKPayment")
     listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach { target ->
-        target.compilations.getByName("main").cinterops.create("scannervision") {
-            defFile(project.file("src/nativeInterop/cinterop/scannervision.def"))
-            packageName("net.payrdr.mobile.payment.sdk.payment.scanner.vision")
-        }
         target.binaries.framework {
-            baseName = "sdk_payment_scanner"
+            baseName = "RadarpaymentsSDKPayment"
             isStatic = false
-            binaryOption("bundleId", "net.payrdr.mobile.payment.sdk.sdkpaymentscanner")
-            // Kotlin/Native builds for iOS 12.0 by default. Below 12.2 (before Swift shipped with iOS) the
-            // linker binds CoreMedia functions to the libswiftCoreMedia overlay instead of CoreMedia, and
-            // on devices whose overlay lacks them the first camera frame crashed. 14.0 is the SDK minimum.
+            binaryOption("bundleId", "net.payrdr.mobile.payment.sdk.payment")
+            // Kotlin/Native builds for iOS 12.0 by default; 14.0 is the SDK minimum.
             freeCompilerArgs +=
                 "-Xoverride-konan-properties=osVersionMin.ios_arm64=14.0;osVersionMin.ios_simulator_arm64=14.0;osVersionMin.ios_x64=14.0"
-            // Re-export sdk-payment + sdk-core so merchants who use the scanner framework get a
-            // single-module Swift import surface (`import sdk_payment_scanner` brings every
-            // public type into scope). Consumers MUST NOT also link `sdk_payment.xcframework`
-            // alongside this framework — doing so creates dual Swift types for the same Kotlin
-            // class (`sdk_payment_scanner.SdkPayment` vs `sdk_payment.SdkPayment`) and breaks
-            // type-check. The SampleApp's Xcode project is configured accordingly: it links
-            // only this one XCFramework.
+            // This is the framework apps link for the checkout. Both modules are exported so that their types have
+            // plain Swift names, the same ones RadarpaymentsSDKCore gives sdk-core: an app moves from one framework
+            // to the other by changing the import. An app links one of the two, never both: each Kotlin/Native
+            // framework has its own runtime and its own Swift type for the same Kotlin class.
             export(project(":sdk-payment"))
-            // sdk-core intentionally NOT re-exported: leaving it as an implicit transitive
-            // module keeps its Swift names under the `Sdk_core*` prefix (matching the shape
-            // sdk_payment.xcframework exposed before scanner was added), so existing merchant
-            // code that references e.g. `Sdk_coreTokenResult` keeps compiling.
+            export(project(":sdk-core"))
             xcf.add(this)
         }
     }

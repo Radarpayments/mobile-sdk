@@ -4,6 +4,8 @@ import net.payrdr.mobile.payment.sdk.payment.config.CheckoutConfig
 import net.payrdr.mobile.payment.sdk.payment.ios.PayrdrCheckout
 import net.payrdr.mobile.payment.sdk.payment.result.CheckoutResult
 import net.payrdr.mobile.payment.sdk.payment.result.withOrderId
+import net.payrdr.mobile.payment.sdk.payment.scanner.camera.ScannerCamera
+import net.payrdr.mobile.payment.sdk.payment.scanner.provider.MlKitVisionCardScannerProvider
 import platform.UIKit.UIApplication
 import platform.UIKit.UIViewController
 import platform.UIKit.UIWindow
@@ -12,8 +14,13 @@ import platform.UIKit.UIWindowScene
 /**
  * Opens the checkout for a Flutter or React Native plugin over whatever the app shows, and closes it again. Use it on
  * the main thread; one object per plugin instance, one checkout at a time.
+ *
+ * @param scannerCamera the camera of the card scanner, which the plugin's Swift sources hold (the framework has no
+ *   camera code); without it a request with `cardScanner` on opens the checkout without the scan button.
  */
-public class PayrdrBridgeCheckout {
+public class PayrdrBridgeCheckout(
+    private val scannerCamera: ScannerCamera? = null,
+) {
     /** The checkout on screen now; null when none is. */
     private var open: PayrdrCheckout? = null
 
@@ -30,7 +37,7 @@ public class PayrdrBridgeCheckout {
         if (open?.isPresenting == true) return onResult(CheckoutResultJson.failure(NotOpened.BUSY, "A checkout is already open"))
         val request =
             try {
-                CheckoutRequest.parse(requestJson)
+                CheckoutRequest.parse(requestJson) { scannerCamera?.let { MlKitVisionCardScannerProvider(it) } }
             } catch (e: InvalidBridgeRequest) {
                 return onResult(CheckoutResultJson.invalidRequest(e.message.orEmpty()))
             }

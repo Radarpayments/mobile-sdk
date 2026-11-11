@@ -1,5 +1,5 @@
 import SwiftUI
-import sdk_payment_scanner
+import RadarpaymentsSDKPayment
 
 /// Northwind Invest, the AFT demo: portfolio → top-up amount → SDK sheet ("Transfer") → done. The transfer is
 /// registered with `registerP2P.do` and the investor's details; the account is credited only on a completed transfer

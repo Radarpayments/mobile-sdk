@@ -1,5 +1,11 @@
 #import "PayrdrSdk.h"
 #import <PayrdrSdkBridge/PayrdrSdkBridge.h>
+// After the bridge's header: the Swift header names its protocols without importing them in Objective-C++.
+#if __has_include(<PayrdrSdk/PayrdrSdk-Swift.h>)
+#import <PayrdrSdk/PayrdrSdk-Swift.h>
+#else
+#import "PayrdrSdk-Swift.h"
+#endif
 
 // Passes the JavaScript side's JSON to the SDK's bridge and its answers back; all mapping lives in sdk-bridge. The sheet
 // opens over whatever the app's key window shows.
@@ -10,7 +16,7 @@
 - (instancetype)init
 {
   if (self = [super init]) {
-    _checkout = [PSBPayrdrBridgeCheckout new];
+    _checkout = [[PSBPayrdrBridgeCheckout alloc] initWithScannerCamera:[VisionScannerCamera new]];
   }
   return self;
 }

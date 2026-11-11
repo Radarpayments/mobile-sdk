@@ -1,7 +1,7 @@
 import Foundation
 import Combine
 import SwiftUI
-import sdk_payment_scanner
+import RadarpaymentsSDKPayment
 
 enum SdkCoreVariant: String, CaseIterable {
     case newCard = "new"
@@ -41,7 +41,7 @@ final class SdkCoreFormModel: ObservableObject {
     /// sdk-core's error codes from the last [submit], by the field they belong to.
     @Published var errors: [CoreField: String] = [:]
 
-    func buildParams() -> Sdk_corePaymentCardParams {
+    func buildParams() -> PaymentCardParams {
         switch variant {
         case .newCard:
             return IosSdkCoreSurfaceKt.iosCardParams(
@@ -70,7 +70,7 @@ final class SdkCoreFormModel: ObservableObject {
         }
     }
 
-    func generate() -> Sdk_coreTokenResult {
+    func generate() -> TokenResult {
         let cfg = IosSdkCoreSurfaceKt.iosSdkCoreConfig(
             cardParams: buildParams(),
             timestamp: Int64(Date().timeIntervalSince1970 * 1000)

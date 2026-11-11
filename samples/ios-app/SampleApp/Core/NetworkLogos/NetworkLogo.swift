@@ -1,5 +1,5 @@
 import SwiftUI
-import sdk_payment_scanner
+import RadarpaymentsSDKPayment
 
 /// Card network logo in its brand colours, as the SDK's card number field shows it; on a dark background the
 /// colours that would vanish switch to light ones (Visa, Amex and Discover turn white).

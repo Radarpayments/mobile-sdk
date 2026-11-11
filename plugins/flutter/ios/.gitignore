@@ -39,3 +39,5 @@ Icon?
 
 # The SDK framework, built by scripts/build-bridge.sh
 payrdr_sdk/Frameworks/
+# The card scanner camera sources, copied by scripts/build-bridge.sh
+payrdr_sdk/Sources/payrdr_sdk/Scanner/

@@ -2,7 +2,6 @@ package net.payrdr.mobile.payment.sdk.bridge
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
@@ -36,7 +35,6 @@ import net.payrdr.mobile.payment.sdk.payment.gpay.GooglePayCardNetwork
 import net.payrdr.mobile.payment.sdk.payment.gpay.GooglePayEnvironment
 import net.payrdr.mobile.payment.sdk.payment.logger.ConsoleLogTransport
 import net.payrdr.mobile.payment.sdk.payment.result.CheckoutResult
-import net.payrdr.mobile.payment.sdk.payment.scanner.provider.MlKitVisionCardScannerProvider
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.DefaultDarkColors
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentColor
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentCorners
@@ -54,7 +52,14 @@ class ContractTest {
     private fun json(text: String): JsonObject = Json.parseToJsonElement(text).jsonObject
 
     @Test fun `every checkout request the plugins send is read as meant`() {
-        val parsed = cases(ContractFixtures.CHECKOUT_REQUESTS).mapValues { (_, request) -> CheckoutRequest.parse(request.toString()) }
+        val scannerAsked = mutableSetOf<String>()
+        val parsed =
+            cases(ContractFixtures.CHECKOUT_REQUESTS).mapValues { (name, request) ->
+                CheckoutRequest.parse(request.toString()) {
+                    scannerAsked += name
+                    null
+                }
+            }
         val expected =
             mapOf<String, (CheckoutRequest) -> Unit>(
                 "minimal" to {
@@ -66,7 +71,7 @@ class ContractTest {
                     it.config.locale shouldBe "de"
                     it.config.theme shouldBe PaymentTheme.Dark
                     it.config.showResultScreen shouldBe true
-                    it.config.cardScannerProvider.shouldBeInstanceOf<MlKitVisionCardScannerProvider>()
+                    scannerAsked shouldBe setOf("allOptions")
                     it.config.keyProviderUrl shouldBe "https://keys.example.com"
                     it.config.sslPinning!!
                         .entries
@@ -121,7 +126,11 @@ class ContractTest {
     @Test fun `every checkout result the plugins read is what the bridge sends`() {
         val badTheme = """{"mode":"custom","colors":{"onPrimary":"white"}}"""
         val badColour =
-            shouldThrow<InvalidBridgeRequest> { CheckoutRequest.parse("""{"config":{"baseUrl":"u","theme":$badTheme},"mdOrder":"md-1"}""") }
+            shouldThrow<InvalidBridgeRequest> {
+                CheckoutRequest.parse(
+                    """{"config":{"baseUrl":"u","theme":$badTheme},"mdOrder":"md-1"}""",
+                ) { null }
+            }
         val sent =
             mapOf(
                 "completed" to CheckoutResultJson.encode(CheckoutResult.Completed("md-1")),

@@ -45,14 +45,27 @@ For tokenization only, depend on `io.github.radarpayments:sdk-core`. Each GitHub
 ### iOS
 
 Add the package with Swift Package Manager: File → Add Package Dependencies →
-`https://github.com/Radarpayments/mobile-sdk`, product `PayrdrSDK`. Then:
+`https://github.com/Radarpayments/mobile-sdk`. It has three products:
+
+| Product | What it is |
+|---|---|
+| `RadarpaymentsSDKPayment` | the payment sheet, with SDK Core inside |
+| `RadarpaymentsSDKScanner` | the card scanner for the sheet; add it next to `RadarpaymentsSDKPayment` |
+| `RadarpaymentsSDKCore` | SDK Core alone, for an app with its own payment form |
+
+Take `RadarpaymentsSDKPayment`, plus `RadarpaymentsSDKScanner` if you want the scanner. Then:
 
 ```swift
-import sdk_payment_scanner
+import RadarpaymentsSDKPayment
+import RadarpaymentsSDKScanner // only with the scanner
 ```
 
-This one module has everything: the payment sheet, SDK Core and the card scanner. If you don't use SPM, each release
-has `sdk_payment_scanner.xcframework.zip` to embed by hand.
+Don't add `RadarpaymentsSDKCore` to an app that has `RadarpaymentsSDKPayment`: SDK Core is already in it, and an app
+can hold only one of the two frameworks.
+
+If you don't use SPM, each release has `RadarpaymentsSDKPayment.xcframework.zip` and
+`RadarpaymentsSDKCore.xcframework.zip` to embed by hand, and `RadarpaymentsSDKScanner-<version>.zip` with the scanner's
+Swift sources to add to your app target.
 
 Two features need setup in Xcode:
 
@@ -107,12 +120,13 @@ start `PayrdrCheckoutIntent` with `startActivityForResult`.
 Call it on the main thread, and keep a reference to `PayrdrCheckout` while the sheet is open.
 
 ```swift
-import sdk_payment_scanner
+import RadarpaymentsSDKPayment
+import RadarpaymentsSDKScanner // only with the scanner
 
 let config = SdkPaymentConfig(
     baseUrl: "https://dev.bpcbt.com/payment",
     applePay: ApplePayConfig(merchantId: "merchant.com.example"), // optional
-    cardScannerProvider: MlKitVisionCardScannerProvider(logTransport: nil) // optional
+    cardScannerProvider: MlKitVisionCardScannerProvider() // optional; needs RadarpaymentsSDKScanner
 )
 let checkout = PayrdrCheckout(config: config)
 

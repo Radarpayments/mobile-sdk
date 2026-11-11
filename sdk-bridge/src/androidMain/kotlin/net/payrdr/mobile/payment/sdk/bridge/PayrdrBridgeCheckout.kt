@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.annotation.MainThread
 import net.payrdr.mobile.payment.sdk.payment.android.PayrdrCheckoutIntent
 import net.payrdr.mobile.payment.sdk.payment.config.CheckoutConfig
+import net.payrdr.mobile.payment.sdk.payment.scanner.provider.MlKitVisionCardScannerProvider
 
 /**
  * Opens the checkout for a Flutter or React Native plugin over the app's current activity, whatever kind it is: the
@@ -35,7 +36,7 @@ public class PayrdrBridgeCheckout {
         if (waiting != null) return onResult(CheckoutResultJson.failure(NotOpened.BUSY, "A checkout is already open"))
         val request =
             try {
-                CheckoutRequest.parse(requestJson)
+                CheckoutRequest.parse(requestJson) { MlKitVisionCardScannerProvider() }
             } catch (e: InvalidBridgeRequest) {
                 return onResult(CheckoutResultJson.invalidRequest(e.message.orEmpty()))
             }

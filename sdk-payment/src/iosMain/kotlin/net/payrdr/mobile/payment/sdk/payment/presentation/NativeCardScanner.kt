@@ -2,11 +2,11 @@ package net.payrdr.mobile.payment.sdk.payment.presentation
 
 import net.payrdr.mobile.payment.sdk.payment.scanner.CardScannerConfig
 import net.payrdr.mobile.payment.sdk.payment.scanner.CardScannerResult
-import platform.AVFoundation.AVCaptureSession
+import platform.UIKit.UIView
 
 /**
  * A card scanner the SwiftUI checkout shows without Compose: the provider of `SdkPaymentConfig.cardScannerProvider`
- * conforms to it (the one of sdk-payment-scanner does, in Swift). A provider that does not gets no scan button.
+ * conforms to it (the one of sdk-payment-scanner does). A provider that does not gets no scan button.
  */
 @PayrdrUiApi
 public interface NativeCardScanner {
@@ -24,8 +24,8 @@ public interface NativeCardScanner {
 /** One scanner run as the SwiftUI scanner screen drives it. Every call comes on the main thread. */
 @PayrdrUiApi
 public interface NativeScannerSession {
-    /** The session the camera preview shows; it runs only while the phase is scanning or detected. */
-    public val captureSession: AVCaptureSession
+    /** The view with the camera's picture; the screen shows it only while the phase is scanning or detected. */
+    public val preview: UIView
 
     /** The scanner's text for [key] in the run's language. */
     public fun text(key: String): String

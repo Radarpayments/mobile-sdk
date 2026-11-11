@@ -15,51 +15,60 @@ import net.payrdr.mobile.payment.sdk.payment.presentation.NativeScannerSession
 import net.payrdr.mobile.payment.sdk.payment.presentation.NativeScannerState
 import net.payrdr.mobile.payment.sdk.payment.scanner.CardScannerConfig
 import net.payrdr.mobile.payment.sdk.payment.scanner.CardScannerResult
-import net.payrdr.mobile.payment.sdk.payment.scanner.camera.CameraFeed
-import net.payrdr.mobile.payment.sdk.payment.scanner.camera.CameraPermissionController
-import net.payrdr.mobile.payment.sdk.payment.scanner.camera.CameraPermissionStatus
+import net.payrdr.mobile.payment.sdk.payment.scanner.camera.NormalisedRect
+import net.payrdr.mobile.payment.sdk.payment.scanner.camera.RecognizedLine
+import net.payrdr.mobile.payment.sdk.payment.scanner.camera.ScannerCamera
+import net.payrdr.mobile.payment.sdk.payment.scanner.camera.ScannerCameraAccess
+import net.payrdr.mobile.payment.sdk.payment.scanner.camera.ScannerTextLine
 import net.payrdr.mobile.payment.sdk.payment.scanner.parser.CardParser
 import net.payrdr.mobile.payment.sdk.payment.scanner.state.ScannerUiState
 import net.payrdr.mobile.payment.sdk.payment.scanner.state.ScannerViewModel
-import platform.AVFoundation.AVCaptureSession
+import platform.Foundation.NSURL
+import platform.UIKit.UIApplication
+import platform.UIKit.UIApplicationOpenSettingsURLString
+import platform.UIKit.UIView
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 /**
- * The Compose scanner screen's logic without Compose: the same view model, permission flow, parser and camera feed,
- * started in the same order, so both screens behave alike.
+ * The Android scanner screen's logic without Compose: the same view model, permission flow and parser, started in
+ * the same order, so both screens behave alike. The camera itself comes from Swift as a [ScannerCamera].
  */
 internal class VisionScannerSession(
+    private val camera: ScannerCamera,
     private val config: CardScannerConfig,
     language: String,
     logger: Logger?,
     onResult: (CardScannerResult) -> Unit,
 ) : NativeScannerSession {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
-    private val permissions = CameraPermissionController()
     private val parser = CardParser()
     private val viewModel = ScannerViewModel(scope = scope, config = config, logger = logger)
     private val torchOn = MutableStateFlow(false)
     private val texts = ScannerTexts(language)
     private val feed =
-        CameraFeed(
-            onRecognized = { lines -> parser.parse(lines, config.extractCardholder)?.let(viewModel::onParseResult) },
-            onError = viewModel::onCameraError,
+        camera.open(
+            onText = { lines ->
+                parser.parse(lines.map { it.recognized() }, config.extractCardholder)?.let(viewModel::onParseResult)
+            },
+            onError = { scope.launch { viewModel.onCameraError() } },
         )
 
-    override val captureSession: AVCaptureSession get() = feed.session
+    override val preview: UIView get() = feed.preview
 
     init {
         // Subscribed before anything can emit: the view model's result flow does not replay.
         scope.launch(start = CoroutineStart.UNDISPATCHED) { onResult(viewModel.result.first()) }
         scope.launch {
             val granted =
-                when (permissions.status()) {
-                    CameraPermissionStatus.Granted -> true
-                    CameraPermissionStatus.Denied, CameraPermissionStatus.NotDetermined ->
-                        permissions.request() == CameraPermissionStatus.Granted
+                when (camera.access()) {
+                    ScannerCameraAccess.Granted -> true
+                    ScannerCameraAccess.Denied -> false
+                    ScannerCameraAccess.NotAsked -> suspendCoroutine { answer -> camera.requestAccess { answer.resume(it) } }
                 }
             viewModel.onPermissionResult(granted)
         }
-        // The Compose screen keeps the preview, and with it the camera, only while scanning. The feed starts once and
+        // The Android screen keeps the preview, and with it the camera, only while scanning. The feed starts once and
         // stops for good, so the state before the permission answer must not stop it.
         scope.launch {
             viewModel.state.collect { state ->
@@ -95,13 +104,17 @@ internal class VisionScannerSession(
     }
 
     override fun openSettings() {
-        permissions.openSettings()
+        val url = NSURL.URLWithString(UIApplicationOpenSettingsURLString) ?: return
+        UIApplication.sharedApplication.openURL(url, emptyMap<Any?, Any>()) {}
     }
 
     override fun close() {
         feed.stop()
         scope.cancel()
     }
+
+    private fun ScannerTextLine.recognized(): RecognizedLine =
+        RecognizedLine(text = text, boundingBox = NormalisedRect(left = left, top = top, right = right, bottom = bottom))
 
     private fun ScannerUiState.isLive(): Boolean = this is ScannerUiState.Scanning || this is ScannerUiState.Detecting
 

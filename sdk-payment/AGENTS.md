@@ -31,7 +31,7 @@ Swift-shaped details: `@ObjCName(swiftName = "__baseUrl" / "__merchantId")` on c
 Swift convenience inits in `src/iosMain/swift/`; SKIE turns suspend interface methods into
 `__`-prefixed ones with a completion handler. That Swift code (the inits, async `PayrdrCheckout.present`, the SwiftUI
 `.payrdrCheckout` modifier) goes into this module's klib, and SKIE compiles it into every framework that holds
-`sdk-payment`, `sdk_payment_scanner` included. Change a public signature → check the Swift side and the sample apps.
+`sdk-payment`, `RadarpaymentsSDKPayment` included. Change a public signature → check the Swift side and the sample apps.
 
 ## Map (commonMain)
 

@@ -7,7 +7,7 @@
 
 // Library unique name: <io.github.radarpayments:sdk-payment-scanner>
 final class net.payrdr.mobile.payment.sdk.payment.scanner.provider/MlKitVisionCardScannerProvider : net.payrdr.mobile.payment.sdk.payment.presentation/NativeCardScanner, net.payrdr.mobile.payment.sdk.payment.scanner/CardScannerProvider { // net.payrdr.mobile.payment.sdk.payment.scanner.provider/MlKitVisionCardScannerProvider|null[0]
-    constructor <init>(net.payrdr.mobile.payment.sdk.payment.logger/LogTransport? = ...) // net.payrdr.mobile.payment.sdk.payment.scanner.provider/MlKitVisionCardScannerProvider.<init>|<init>(net.payrdr.mobile.payment.sdk.payment.logger.LogTransport?){}[0]
+    constructor <init>(net.payrdr.mobile.payment.sdk.payment.scanner.camera/ScannerCamera, net.payrdr.mobile.payment.sdk.payment.logger/LogTransport? = ...) // net.payrdr.mobile.payment.sdk.payment.scanner.provider/MlKitVisionCardScannerProvider.<init>|<init>(net.payrdr.mobile.payment.sdk.payment.scanner.camera.ScannerCamera;net.payrdr.mobile.payment.sdk.payment.logger.LogTransport?){}[0]
 
     final fun openScanner(net.payrdr.mobile.payment.sdk.payment.scanner/CardScannerConfig, kotlin/String, kotlin/Function1<net.payrdr.mobile.payment.sdk.payment.scanner/CardScannerResult, kotlin/Unit>): net.payrdr.mobile.payment.sdk.payment.presentation/NativeScannerSession // net.payrdr.mobile.payment.sdk.payment.scanner.provider/MlKitVisionCardScannerProvider.openScanner|openScanner(net.payrdr.mobile.payment.sdk.payment.scanner.CardScannerConfig;kotlin.String;kotlin.Function1<net.payrdr.mobile.payment.sdk.payment.scanner.CardScannerResult,kotlin.Unit>){}[0]
 }

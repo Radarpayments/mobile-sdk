@@ -48,6 +48,11 @@ the bridge, before running a plugin or a sample:
 - iOS: the script rsyncs `PayrdrSdkBridge.xcframework` into `flutter/ios/payrdr_sdk/Frameworks/` and
   `react-native/ios/Frameworks/`. Both folders are gitignored; a missing or stale framework is the usual cause of
   "symbol not found" or old behaviour.
+- iOS, the scanner's camera: the script also copies the Swift sources of `RadarpaymentsSDKScanner` into
+  `flutter/ios/payrdr_sdk/Sources/payrdr_sdk/Scanner/` and `react-native/ios/Scanner/` (gitignored too; edit them in
+  `sdk-payment-scanner/ios/Sources/`). The plugin compiles them and passes `VisionScannerCamera()` to
+  `PayrdrBridgeCheckout`. In React Native that makes the pod mixed: `PayrdrSdk.mm` imports the generated
+  `PayrdrSdk-Swift.h` after the bridge's header.
 
 The plugins' Android builds use their own toolchain (Flutter's: AGP 9.1 / Kotlin 2.4, compileSdk 36), not the root
 version catalog. That is deliberate: they build inside the host app's Gradle, not this one.

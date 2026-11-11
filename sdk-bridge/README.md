@@ -12,7 +12,7 @@ You need this page if you work on a plugin or write your own. Apps using a plugi
 | Platform | Call | Shipped as |
 |---|---|---|
 | Android | `PayrdrBridgeCheckout.start(activity, requestJson, onResult)`, then forward activity results to `handleActivityResult(requestCode, resultCode, data)` | `io.github.radarpayments:sdk-bridge-android` (AAR) |
-| iOS | `PayrdrBridgeCheckout().present(requestJson:from:onResult:)`; `dismiss()` closes the sheet, and its result still arrives | `PayrdrSdkBridge.xcframework` |
+| iOS | `PayrdrBridgeCheckout(scannerCamera:).present(requestJson:from:onResult:)`; `dismiss()` closes the sheet, and its result still arrives | `PayrdrSdkBridge.xcframework` |
 | Both | `PayrdrBridge.coreToken(requestJson)` returns the result JSON at once | |
 
 On Android, call `start` on the main thread. The sheet opens with `startActivityForResult` and request code
@@ -24,7 +24,10 @@ each plugin's iOS folder. Run it before building a plugin or a Flutter / React N
 ## Why it is built this way
 
 - **One framework on iOS.** `PayrdrSdkBridge.xcframework` contains the whole SDK: core, payment and scanner. An app
-  can hold only one Kotlin/Native runtime, so the SDK can't come as several frameworks. The sheet's texts and images
+  can hold only one Kotlin/Native runtime, so the SDK can't come as several frameworks. Only the scanner's camera is
+  outside it: a few Swift files (`sdk-payment-scanner/ios/Sources/RadarpaymentsSDKScanner`) that the plugin compiles
+  and passes in as `PayrdrBridgeCheckout(scannerCamera: VisionScannerCamera())`. Without a camera, `cardScanner` in a
+  request shows no scan button. The sheet's texts and images
   are inside the framework, so the app needs no extra build phase, whether it uses Swift Package Manager, CocoaPods or
   plain Xcode.
 - **The app's activity stays as it is.** Because the sheet starts with `startActivityForResult`, a plain

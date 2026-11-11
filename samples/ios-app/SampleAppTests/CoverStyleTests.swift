@@ -1,6 +1,6 @@
 import XCTest
 import UIKit
-import sdk_payment_scanner
+import RadarpaymentsSDKPayment
 @testable import SampleApp
 
 final class CoverStyleTests: XCTestCase {

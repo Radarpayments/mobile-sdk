@@ -4,7 +4,6 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldNotContain
-import io.kotest.matchers.types.shouldBeInstanceOf
 import net.payrdr.mobile.payment.sdk.payment.applepay.ApplePayMerchantCapability
 import net.payrdr.mobile.payment.sdk.payment.applepay.ApplePayNetwork
 import net.payrdr.mobile.payment.sdk.payment.config.ApplePayConfig
@@ -15,7 +14,6 @@ import net.payrdr.mobile.payment.sdk.payment.gpay.GooglePayAuthMethod
 import net.payrdr.mobile.payment.sdk.payment.gpay.GooglePayCardNetwork
 import net.payrdr.mobile.payment.sdk.payment.gpay.GooglePayEnvironment
 import net.payrdr.mobile.payment.sdk.payment.logger.ConsoleLogTransport
-import net.payrdr.mobile.payment.sdk.payment.scanner.provider.MlKitVisionCardScannerProvider
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.DefaultDarkColors
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.DefaultLightColors
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentColor
@@ -25,10 +23,15 @@ import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentTheme
 import kotlin.test.Test
 
 class CheckoutRequestTest {
+    private var scannerAsked = false
+
     private fun request(
         config: String,
         order: String = """"mdOrder":"md-1"""",
-    ) = CheckoutRequest.parse("""{"config":$config,$order}""")
+    ) = CheckoutRequest.parse("""{"config":$config,$order}""") {
+        scannerAsked = true
+        null
+    }
 
     @Test fun `only the gateway is needed and everything else keeps the SDK defaults`() {
         val parsed = request("""{"baseUrl":"https://pay.example.com"}""")
@@ -46,14 +49,15 @@ class CheckoutRequestTest {
     }
 
     @Test fun `a request without an order says what is missing`() {
-        val error = shouldThrow<InvalidBridgeRequest> { CheckoutRequest.parse("""{"config":{"baseUrl":"https://pay.example.com"}}""") }
+        val error =
+            shouldThrow<InvalidBridgeRequest> { CheckoutRequest.parse("""{"config":{"baseUrl":"https://pay.example.com"}}""") { null } }
 
         error.message shouldContain "mdOrder"
     }
 
     @Test fun `text that is not the contract is an invalid request and no crash`() {
-        shouldThrow<InvalidBridgeRequest> { CheckoutRequest.parse("not json") }
-        shouldThrow<InvalidBridgeRequest> { CheckoutRequest.parse("""{"mdOrder":"md-1"}""") }
+        shouldThrow<InvalidBridgeRequest> { CheckoutRequest.parse("not json") { null } }
+        shouldThrow<InvalidBridgeRequest> { CheckoutRequest.parse("""{"mdOrder":"md-1"}""") { null } }
     }
 
     @Test fun `fields the native side does not know yet are ignored`() {
@@ -71,7 +75,7 @@ class CheckoutRequestTest {
         config.keyProviderUrl shouldBe "https://keys.example.com"
         config.locale shouldBe "de"
         config.showResultScreen shouldBe true
-        config.cardScannerProvider.shouldBeInstanceOf<MlKitVisionCardScannerProvider>()
+        scannerAsked shouldBe true
         config.logTransport shouldBe ConsoleLogTransport
         config.sslPinning!!
             .entries

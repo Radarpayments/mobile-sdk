@@ -1,5 +1,5 @@
 import SwiftUI
-import sdk_payment_scanner
+import RadarpaymentsSDKPayment
 
 /// "Your server" with the merchant API and credentials currently chosen in the developer settings.
 struct PrefsRegistrar: OrderRegistrar {

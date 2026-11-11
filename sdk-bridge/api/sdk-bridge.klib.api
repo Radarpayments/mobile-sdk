@@ -7,7 +7,7 @@
 
 // Library unique name: <io.github.radarpayments:sdk-bridge>
 final class net.payrdr.mobile.payment.sdk.bridge/PayrdrBridgeCheckout { // net.payrdr.mobile.payment.sdk.bridge/PayrdrBridgeCheckout|null[0]
-    constructor <init>() // net.payrdr.mobile.payment.sdk.bridge/PayrdrBridgeCheckout.<init>|<init>(){}[0]
+    constructor <init>(net.payrdr.mobile.payment.sdk.payment.scanner.camera/ScannerCamera? = ...) // net.payrdr.mobile.payment.sdk.bridge/PayrdrBridgeCheckout.<init>|<init>(net.payrdr.mobile.payment.sdk.payment.scanner.camera.ScannerCamera?){}[0]
 
     final fun dismiss() // net.payrdr.mobile.payment.sdk.bridge/PayrdrBridgeCheckout.dismiss|dismiss(){}[0]
     final fun present(kotlin/String, platform.UIKit/UIViewController?, kotlin/Function1<kotlin/String, kotlin/Unit>) // net.payrdr.mobile.payment.sdk.bridge/PayrdrBridgeCheckout.present|present(kotlin.String;platform.UIKit.UIViewController?;kotlin.Function1<kotlin.String,kotlin.Unit>){}[0]

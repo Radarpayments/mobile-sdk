@@ -1,6 +1,6 @@
 import SwiftUI
 import UIKit
-import sdk_payment_scanner
+import RadarpaymentsSDKPayment
 
 /// SDK Core: a card form of the merchant's own, encrypted on the device into the token the merchant's
 /// server sends to the gateway. Card data stay in memory; mdOrder, key, bindingId and the variant are

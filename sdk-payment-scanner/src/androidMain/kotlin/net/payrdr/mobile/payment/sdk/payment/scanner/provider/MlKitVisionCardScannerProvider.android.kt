@@ -13,16 +13,16 @@ import net.payrdr.mobile.payment.sdk.payment.scanner.camera.TextRecognizer
 import net.payrdr.mobile.payment.sdk.payment.scanner.ui.CardScannerScreen
 
 /**
- * Default [CardScannerProvider] shipping ML Kit camera OCR; see the common declaration.
+ * Default [CardScannerProvider] shipping ML Kit camera OCR.
  * Instantiated by merchants who want camera scanning and passed to `SdkPaymentConfig.cardScannerProvider`.
  *
  * @param logTransport optional sink for scanner events (`event=...`, tag `"CardScanner"`), usually the one of
  *   `SdkPaymentConfig.logTransport`, so scanner events flow through the same sink.
  */
-public actual class MlKitVisionCardScannerProvider actual constructor(
-    logTransport: LogTransport?,
+public class MlKitVisionCardScannerProvider(
+    logTransport: LogTransport? = null,
 ) : CardScannerProvider {
-    internal actual val logger: Logger? = logTransport?.let { Logger(transports = listOf(it)) }
+    internal val logger: Logger? = logTransport?.let { Logger(transports = listOf(it)) }
 
     @Composable
     public override fun CardScannerScreen(
