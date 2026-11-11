@@ -20,7 +20,7 @@ kotlin {
 dependencies {
     compileOnly(libs.android.gradle.plugin)
     compileOnly(libs.kotlin.gradle.plugin)
-    compileOnly(libs.compose.mp.gradle.plugin)
+    compileOnly(libs.compose.compiler.gradle.plugin)
 }
 
 gradlePlugin {
@@ -33,9 +33,9 @@ gradlePlugin {
             id = "payrdr.android.library"
             implementationClass = "AndroidLibraryConventionPlugin"
         }
-        register("kmpComposeLibrary") {
-            id = "payrdr.kmp.compose.library"
-            implementationClass = "KmpComposeLibraryConventionPlugin"
+        register("kmpComposeAndroid") {
+            id = "payrdr.kmp.compose.android"
+            implementationClass = "KmpComposeAndroidConventionPlugin"
         }
     }
 }

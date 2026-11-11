@@ -19,8 +19,12 @@ import net.payrdr.mobile.payment.sdk.payment.gpay.GooglePayRequestBuilder
 /** Google Play services answer within a second; a stuck check must not hold the checkout. */
 private const val READY_TO_PAY_TIMEOUT_MS = 3_000L
 
+/**
+ * Which wallets of [config] the device can pay with, or null while the platform check runs.
+ * A button for an unavailable wallet only ends the checkout with an error, so it is not shown.
+ */
 @Composable
-internal actual fun rememberWalletAvailability(config: SdkPaymentConfig): WalletAvailability? {
+internal fun rememberWalletAvailability(config: SdkPaymentConfig): WalletAvailability? {
     val googlePay = config.googlePay?.takeIf { GooglePayAvailability.isAvailable } ?: return WalletAvailability.None
     val context = LocalContext.current
     return produceState<WalletAvailability?>(null, googlePay) {

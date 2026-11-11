@@ -7,8 +7,9 @@ import androidx.compose.ui.platform.LocalContext
 
 private const val PREFS = "net.payrdr.mobile.payment.sdk"
 
+/** The app's own on-device store, in shared preferences. */
 @Composable
-internal actual fun rememberKeyValueStore(): KeyValueStore {
+internal fun rememberKeyValueStore(): KeyValueStore {
     val context = LocalContext.current.applicationContext
     return remember(context) {
         val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)

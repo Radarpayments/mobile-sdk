@@ -82,7 +82,8 @@ scripts/build-bridge.sh [debug|release]   # Android libs → build/maven, XCFram
   object for commonTest, because iOS tests cannot read project files. The constant is the file name upper-cased with `-`
   → `_` (`CHECKOUT_REQUESTS`).
 - `ContractTest` swaps the fixtures' `pubKey: "PEM"` for a real test key.
-- The XCFramework task copies Compose resources into each `.framework/composeResources` (the
-  `payrdr.kmp.compose.library` convention does it), so the app needs no build phase for them.
+- The bridge has no UI of its own and no Compose. On iOS the checkout it opens is the SDK's SwiftUI sheet: SKIE
+  bundles that Swift code into `PayrdrSdkBridge.framework`, which is why the module applies SKIE and the framework
+  exports sdk-payment (the Swift code names sdk-payment's types without a prefix). No resources ship next to it.
 - CI runs the Kotlin side only; after changing the contract run `flutter test` in `plugins/flutter` and `npm test` in
   `plugins/react-native` yourself.

@@ -2,9 +2,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
     id("payrdr.kmp.library")
-    id("payrdr.kmp.compose.library")
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.bcv)
+    // Bundles the SDK's SwiftUI checkout into the framework; without it the plugins' checkout cannot open on iOS.
+    alias(libs.plugins.skie)
 }
 
 // The SDK for apps that are not written in Kotlin or Swift: the Flutter and React Native plugins take the checkout and
@@ -62,6 +63,10 @@ kotlin {
             // sdk-payment leaves Google Pay to the app (compileOnly); a plugin user gets it without touching Gradle.
             implementation(libs.play.services.wallet)
         }
+        iosMain.dependencies {
+            // Exported below.
+            api(project(":sdk-payment"))
+        }
     }
 
     // One framework with all of the SDK inside: an app can hold only one Kotlin/Native runtime that shares objects.
@@ -71,6 +76,8 @@ kotlin {
             baseName = "PayrdrSdkBridge"
             isStatic = false
             binaryOption("bundleId", "net.payrdr.mobile.payment.sdk.bridge")
+            // The bundled SwiftUI checkout refers to sdk-payment's types by their own names, as in sdk_payment_scanner.
+            export(project(":sdk-payment"))
             // 14.0 is the SDK minimum; see sdk-payment.
             freeCompilerArgs +=
                 "-Xoverride-konan-properties=osVersionMin.ios_arm64=14.0;osVersionMin.ios_simulator_arm64=14.0;osVersionMin.ios_x64=14.0"

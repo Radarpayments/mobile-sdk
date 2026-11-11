@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.kotlin.serialization) apply false
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.android.application) apply false
-    alias(libs.plugins.compose.mp) apply false
     alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.ktlint) apply false
     alias(libs.plugins.detekt) apply false
@@ -34,6 +33,9 @@ subprojects {
         allRules = false
         // Known findings a module has not fixed yet (./gradlew :<module>:detektBaseline); new ones still fail.
         baseline = file("detekt-baseline.xml")
+    }
+    tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+        exclude { it.file.invariantSeparatorsPath.contains("/build/generated/") }
     }
 }
 

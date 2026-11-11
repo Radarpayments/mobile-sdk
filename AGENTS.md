@@ -15,12 +15,12 @@ sdk-core ◄── sdk-payment ◄── sdk-payment-scanner          (iOS: the 
 | Path | What it is | Notes |
 |---|---|---|
 | `sdk-core/` | headless tokenization: card validation, RSA cryptogram → `seToken` | `sdk-core/AGENTS.md` |
-| `sdk-payment/` | the checkout: gateway client, payment flow, 3DS, Google Pay / Apple Pay, Compose Multiplatform UI | `sdk-payment/AGENTS.md` |
+| `sdk-payment/` | the checkout: gateway client, payment flow, 3DS, Google Pay / Apple Pay, UI in Compose (Android) and SwiftUI (iOS) | `sdk-payment/AGENTS.md` |
 | `sdk-payment-scanner/` | optional camera card scanner; on iOS also the umbrella framework re-exporting `sdk-payment` | `sdk-payment-scanner/AGENTS.md` |
 | `sdk-bridge/` | the SDK as a JSON contract for Flutter / React Native; `PayrdrSdkBridge.xcframework` | `sdk-bridge/AGENTS.md` |
 | `plugins/` | `payrdr_sdk` (Flutter), `@payrdr/react-native-sdk` (TurboModule) | `plugins/AGENTS.md` |
 | `samples/` | demo stores on Android, iOS, Flutter, React Native | `samples/AGENTS.md` |
-| `build-logic/convention/` | convention plugins `payrdr.kmp.library`, `payrdr.kmp.compose.library` | below |
+| `build-logic/convention/` | convention plugins `payrdr.kmp.library`, `payrdr.kmp.compose.android` | below |
 | `scripts/build-bridge.sh` | builds what the plugins consume (`build/maven` + the XCFramework) | |
 
 Package root: `net.payrdr.mobile.payment.sdk.<module>`. Android namespace is derived from the module name. Maven
@@ -47,10 +47,12 @@ not the package name. Source repository: https://github.com/Radarpayments/mobile
   kotlin-test in commonTest, release-only Android publication. commonTest runs as Android unit tests, not on devices;
   instrumented tests live only in `androidInstrumentedTest`, whose APK targets compileSdk (with minSdk as target,
   recent Android puts a permission screen over the test activity and Compose finds no hierarchy).
-- `payrdr.kmp.compose.library`: Compose Multiplatform on top; the generated `Res` lives in
-  `net.payrdr.mobile.payment.sdk.<module.with.dots>.generated.resources` (hence `…sdk.sdk.payment…`). Its
-  XCFramework tasks copy the Compose resources into each `.framework/composeResources`, so an app needs no build phase
-  for them.
+- `payrdr.kmp.compose.android`: Compose on the Android target only — the Compose compiler is limited to `androidJvm`
+  and the Compose libraries are androidMain dependencies, so the iOS frameworks carry no Compose or Skia. The UI
+  texts are `src/commonMain/strings/values*/strings.xml`; `GeneratePaymentStringsTask` turns them into
+  Kotlin tables for both platforms and, on Android, `Res.string.<name>` keys in
+  `net.payrdr.mobile.payment.sdk.<module.with.dots>.generated.resources` (hence `…sdk.sdk.payment…`). No resources
+  ship next to the frameworks.
 - Each module declares its own XCFramework and applies BCV (`klib` enabled) and, for the iOS-facing ones, SKIE.
 - The root `build.gradle.kts` applies ktlint and detekt to every subproject and publishes the four SDK libraries to
   `build/maven` (`./gradlew publishAndroidToRepo`) for the plugins. It also gives every publication the POM, a javadoc
@@ -79,8 +81,8 @@ tests. Release frameworks are linked only by `release.yml`: three modules linkin
 exhaust the 4 GB heap on the 7 GB macOS runner (`OutOfMemoryError: GC overhead limit exceeded`).
 
 **Do not start heavy runs without being asked**: `iosSimulatorArm64MainBinaries`, release XCFrameworks
-(`build-bridge.sh release`), whole-repo `./gradlew build`, a fresh-clone CI replay. Release linking of Compose frameworks
-takes tens of minutes and loads the machine. Never run two Gradle builds in parallel; stop emulators and background
+(`build-bridge.sh release`), whole-repo `./gradlew build`, a fresh-clone CI replay. Release linking of the iOS frameworks
+takes minutes and loads the machine. Never run two Gradle builds in parallel; stop emulators and background
 tasks you no longer need.
 
 ## Rules that apply everywhere
@@ -92,7 +94,7 @@ tasks you no longer need.
   (`sdk-core/.../InternalPayrdrApi.kt`: opt-in at error level, hidden from Swift).
 - The public surface is guarded by binary-compatibility dumps `<module>/api/<module>.api` (Android) and
   `<module>.klib.api` (iOS). Any change to them is a public API change: run `apiDump`, commit the dumps, and (once
-  4.0.0 is out) add a `CHANGELOG.md` entry. Compose compiler output (`ComposableSingletons…`, `$stableprop`) and
+  4.0.0 is out) add a `CHANGELOG.md` entry. Compose compiler output (`ComposableSingletons…`, Android only) and
   serializers also show up in the klib dump after moving code between files — that is expected and goes in the same
   commit.
 - detekt requires KDoc on public classes and functions. KDoc states the contract (what the caller gets, when), not the
@@ -116,9 +118,8 @@ tasks you no longer need.
 
 - No new `@Experimental…` Compose API in the SDK's UI: the integrator's app resolves its own Compose version, and an
   experimental API that changed there fails at run time with `NoSuchMethodError` (it happened with
-  `SharedTransitionLayout`). The existing opt-ins are deliberate and confined to one file each (iOS-only
-  `PlatformImeOptions` in `ComposeTextField.ios.kt`, `opaque` of the iOS view controller, Compose resources' locale in
-  `PaymentLocale.kt`, a few foundation/material ones); a new one needs a reason the user agreed to.
+  `SharedTransitionLayout`). The existing opt-ins are deliberate and confined to one file each (a few
+  foundation/material ones); a new one needs a reason the user agreed to.
 - An order `REVERSED` with feature `VERIFY` and `actionCode 0` is a success (zero-amount payment plus reversal when a card
   is saved). Without VERIFY, REVERSED is a failure. Keep this when touching outcome classification.
 - AFT (one-leg P2P transfer, `registerP2P.do`, feature `WITHOUT_TO_CARD`): wallets pay one-off only
@@ -144,7 +145,7 @@ by hand from the branch to release with a stage, an optional bump and a mode:
   `build/staging-deploy` (`publishAllPublicationsToStagingRepository`; POM and signing in the root
   `build.gradle.kts`), `scripts/package-release.sh` (the Central bundle, `Package.swift` with the zip's checksum, AARs,
   plugin packages, notes), and `.github/spm-check` — a Swift package that links the XCFramework like an integrator and
-  checks the version, the Compose resources and the Swift conveniences.
+  checks the version, the SwiftUI checkout and the Swift conveniences.
 - `publish`: Maven Central (`.github/scripts/central-upload.sh`, Central Portal API; not for alphas, cannot be undone),
   then the release commit and its tag; the commit stays off the branches, only the tag is pushed. Then the GitHub
   release (XCFramework zip, AARs, the Flutter and React Native packages; an alpha also the Maven repository as a zip)

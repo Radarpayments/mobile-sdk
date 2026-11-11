@@ -1,14 +1,5 @@
 package net.payrdr.mobile.payment.sdk.payment.ios
 
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.withFrameNanos
-import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.window.ComposeUIViewController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -17,19 +8,12 @@ import net.payrdr.mobile.payment.sdk.payment.SdkPayment
 import net.payrdr.mobile.payment.sdk.payment.applepay.IosApplePayTokenProvider
 import net.payrdr.mobile.payment.sdk.payment.config.CheckoutConfig
 import net.payrdr.mobile.payment.sdk.payment.gpay.NoOpGooglePayTokenProvider
+import net.payrdr.mobile.payment.sdk.payment.presentation.CheckoutRenderers
+import net.payrdr.mobile.payment.sdk.payment.presentation.CheckoutSession
 import net.payrdr.mobile.payment.sdk.payment.result.CheckoutResult
 import net.payrdr.mobile.payment.sdk.payment.result.PaymentIntent
-import net.payrdr.mobile.payment.sdk.payment.ui.CheckoutPresentation
-import net.payrdr.mobile.payment.sdk.payment.ui.PaymentCheckout
 import platform.UIKit.UIApplication
-import platform.UIKit.UIColor
-import platform.UIKit.UIModalPresentationOverFullScreen
-import platform.UIKit.UIModalTransitionStyleCrossDissolve
-import platform.UIKit.UIView
 import platform.UIKit.UIViewController
-import platform.UIKit.accessibilityElementsHidden
-import platform.UIKit.setAccessibilityElementsHidden
-import platform.UIKit.setAccessibilityViewIsModal
 
 /**
  * Builds the `UIViewController` of the turnkey checkout. Merchants open it through [PayrdrCheckout] (UIKit) or the
@@ -42,9 +26,8 @@ internal class SdkPaymentViewControllerFactory {
      * @param sdk SDK instance; it brings its own network layer
      * @param checkout order/session to check out
      * @param onResult terminal callback (invoked on the main thread); the checkout's work stops after it returns
-     * @return a `UIViewController` wrapping the Compose tree
+     * @return the SwiftUI checkout's controller, transparent around its sheet
      */
-    @OptIn(ExperimentalComposeUiApi::class) // ComposeUIViewControllerConfiguration.opaque
     fun make(
         sdk: SdkPayment,
         checkout: CheckoutConfig,
@@ -64,8 +47,7 @@ internal class SdkPaymentViewControllerFactory {
                 }
             }
         }
-        // We need a reference to the resulting VC to use as the presenter for WKWebView challenges.
-        // Kotlin lets us capture it after construction by using a late-bound holder.
+        // The bank's page is presented from the checkout's controller, which exists only after the flow is made.
         var presentedVc: UIViewController? = null
         val webChallengeHost =
             IosWebChallengeHost(
@@ -80,60 +62,14 @@ internal class SdkPaymentViewControllerFactory {
                 googlePayTokenProvider = NoOpGooglePayTokenProvider,
                 applePayTokenProvider = IosApplePayTokenProvider(),
             )
-
-        val vc =
-            ComposeUIViewController(configure = { opaque = false }) {
-                // Presented directly (`present(vc)`) the controller covers the merchant screen
-                // transparently and the checkout draws its own sheet; embedded in another controller
-                // (e.g. a SwiftUI `.sheet`) the container is already a sheet, so steps fill it.
-                // The hierarchy is only settled once the view is on screen — decide on the first frame.
-                var presentation by remember { mutableStateOf<CheckoutPresentation?>(null) }
-                var hidden by remember { mutableStateOf<List<UIView>>(emptyList()) }
-                DisposableEffect(Unit) { onDispose { hidden.forEach { it.setAccessibilityElementsHidden(false) } } }
-                LaunchedEffect(Unit) {
-                    withFrameNanos { }
-                    presentation =
-                        if (presentedVc?.parentViewController == null) CheckoutPresentation.Sheet else CheckoutPresentation.Page
-                    hidden = presentedVc?.let(::hideWhatLiesUnder).orEmpty()
-                }
-                // Taken off screen without a result (the merchant dismissed it): the merchant still gets an outcome,
-                // and the work stops.
-                DisposableEffect(Unit) {
-                    onDispose {
-                        deliver(controller.resultIfClosedNow())
-                        scope.cancel()
-                    }
-                }
-                presentation?.let {
-                    PaymentCheckout(
-                        config = sdk.config,
-                        controller = controller,
-                        onResult = deliver,
-                        presentation = it,
-                    )
-                }
-            }
-        vc.view.backgroundColor = UIColor.clearColor
-        // The merchant screen stays visible under the transparent sheet; VoiceOver must not reach it.
-        vc.view.setAccessibilityViewIsModal(true)
-        vc.modalPresentationStyle = UIModalPresentationOverFullScreen
-        vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve
+        val renderer = checkNotNull(CheckoutRenderers.resolve()) { "The SwiftUI checkout is missing from the framework" }
+        val vc = renderer.viewController(CheckoutSession(sdk.config, controller, scope, deliver))
         presentedVc = vc
         scope.launch(Dispatchers.Main) {
             controller.handle(PaymentIntent.Start(checkout))
         }
         return MadeCheckout(viewController = vc, closeWithoutResult = { deliver(controller.resultIfClosedNow()) })
     }
-
-    /**
-     * Keeps VoiceOver off the merchant screen under the transparent checkout: presented over the full screen, the
-     * presenting controller's view stays on screen, and a modal view hides only its own siblings, not it. Returns the
-     * views hidden, to show again when the checkout goes.
-     */
-    private fun hideWhatLiesUnder(vc: UIViewController): List<UIView> =
-        listOfNotNull(vc.presentingViewController?.view)
-            .filter { !it.accessibilityElementsHidden }
-            .onEach { it.setAccessibilityElementsHidden(true) }
 
     /**
      * Fallback presenter resolver — the foreground key-window's root VC chain descended to the

@@ -2,7 +2,7 @@
 
 Read the root `AGENTS.md` first. This is the largest module: the checkout an integrator opens with an mdOrder (API V1)
 or a session id (API V2), the gateway client, the payment state machine, 3-D Secure, Google Pay / Apple Pay, and the
-Compose Multiplatform UI of the payment sheet.
+payment sheet: Compose on Android, SwiftUI on iOS. No Compose reaches the iOS frameworks (see "UI").
 
 Paths below are relative to `src/<sourceSet>/kotlin/net/payrdr/mobile/payment/sdk/payment/`.
 
@@ -40,7 +40,7 @@ Swift convenience inits in `src/iosMain/swift/`; SKIE turns suspend interface me
 | `SdkPayment.kt` | entry point; builds the API client and key provider lazily on a shared HTTP client. `SdkPaymentNetwork` (internal) lets tests inject them |
 | `api/` | `PaymentApi` (internal) / `PaymentApiImpl` (Ktor), `Endpoints.kt` (every gateway path), `PayerDataFormParams`; `dto/request`, `dto/response` wire models |
 | `flow/` | `PaymentFlowController` (the state machine), `OrderOutcome` (what an order status means), `CardForm.kt` (form + order summary from a session), `WalletPayments` / `WalletResolver`, `Transfer.kt` (AFT), `PayerDataMapper`, `Countries.kt` |
-| `config/` | the configs; `RestorableCheckout` (config + checkout as a string for Android process-death restore; theme fonts, log transport and scanner are not restored) |
+| `config/` | the configs; `RestorableCheckout` (config + checkout as a string for Android process-death restore; theme typography and corners, log transport and scanner are not restored) |
 | `result/` | `CheckoutResult`, `CheckoutResultCodec` (result ↔ Intent extras, `cause` dropped), `PaymentState`, `PaymentIntent`, `PaymentEffect`, `PayerData` |
 | `threeds/` | `ThreeDsChallenge`, `ThreeDsResult`, `WebChallengeHost`, `ThreeDsRedirect` (return URL), `AcsForm` (POST body encoding) |
 | `gpay/`, `applepay/` | token provider interfaces + no-ops, `GooglePayRequestBuilder`, enums |
@@ -59,7 +59,8 @@ Platform code:
   `GooglePayAvailability` — reflection, because `play-services-wallet` is `compileOnly`; `consumer-rules.pro` lets R8
   in an app without Google Pay leave those references unresolved), `http/OkHttpClientFactory`
   (CertificatePinner; connect 15 s, request/socket 60 s).
-- iosMain `ios/` (`PayrdrCheckout`, `SdkPaymentViewControllerFactory`, `IosWebChallengeHost` — WKWebView),
+- iosMain `ios/` (`PayrdrCheckout`, `SdkPaymentViewControllerFactory` — runs the flow and asks the Swift
+  `CheckoutRenderer` for the view controller, `IosWebChallengeHost` — WKWebView),
   `applepay/IosApplePayTokenProvider` (keeps a strong reference to its delegate: PassKit holds it weakly and the sheet
   hangs without it), `http/DarwinPinningDelegate` (system chain validation first, then any certificate in the chain may
   match, as OkHttp does).
@@ -114,10 +115,20 @@ Invariants:
 - SSL pinning is opt-in; pins are raw 44-char base64 SHA-256 of the SPKI (no `sha256/` prefix); unpinned hosts use the
   system trust store.
 
-## UI (`ui/`)
+## UI
+
+Two UIs over one model. commonMain `presentation/` (`CheckoutModel` — sheet, steps, result hand-over; `StringCatalog`)
+and the pure parts of `ui/` (`CheckoutStep`, `PayerFieldsState`, formatters, validation, `LoadingPhases`) are shared.
+The Compose UI is androidMain `ui/`; the SwiftUI UI is `src/iosMain/swift/UI` (SKIE compiles it into the frameworks),
+reading iosMain `presentation/` (`@PayrdrUiApi`: `CheckoutSession`, `PaymentStrings`, `ThemeSpec`, `CardEntrySpec`,
+`NativeCardScanner`, …; kept out of the API dumps). iosMain code must not use Compose: the build applies the Compose
+compiler to Android only, so it would not compile. Platform hooks a shared file needs are `expect`s in commonMain with
+an Android and an iOS actual (`deviceLanguage`, `observableValueOf`, `hasPlatformWallet`, …).
+
+### Android (Compose, androidMain `ui/`)
 
 Entry: internal `ui/PaymentCheckout.kt` `PaymentCheckout(config, controller, onResult, presentation)`, hosted by
-`SdkPaymentActivity` (Android) and `SdkPaymentViewControllerFactory` (iOS). It wraps `PaymentLocaleProvider` →
+`SdkPaymentActivity`. It wraps `PaymentLocaleProvider` →
 `PaymentThemeProvider` → system bars, collects `controller.state` / `order`, and delivers the result on
 `PaymentEffect.Dismiss`. Card-step navigation is local to the UI; the state machine only sees submitted intents.
 
@@ -127,12 +138,12 @@ Entry: internal `ui/PaymentCheckout.kt` `PaymentCheckout(config, controller, onR
 | `SheetSteps.kt`, `CheckoutStep.kt`, `CheckoutStepContent.kt` | step transitions; the step stack (pure, tested); step bodies and the first step's skeleton |
 | `ResultDelivery.kt` | one result per run; in sheet mode the sheet slides away first |
 | `PaymentLocale.kt` | `PaymentLocaleProvider`, `SupportedPaymentLanguages`, RTL for ar/fa/he/ur |
-| `components/` | buttons (`PrimaryButtonLayer`, `CascadeLabel`, `WalletButtonLayer`, Google/Apple Pay buttons), fields (`NativeTextField`, `ComposeTextField`, `FieldChrome`, `FieldGroup`, `CardDetailsGroup`), sheet chrome, logos, platform hooks (haptics, reduce motion, screen-change announcements) |
+| `components/` | buttons (`PrimaryButtonLayer`, `CascadeLabel`, the Google Pay button; `ApplePayButton` is an empty stub), fields (`NativeTextField`, `ComposeTextField`, `FieldChrome`, `FieldGroup`, `CardDetailsGroup`), sheet chrome, logos, platform hooks (haptics, reduce motion, screen-change announcements) |
 | `screens/` | `PaymentMethodsSheet`, `CardFormScreen`, `SavedCardScreen`, `CardListScreen`, `ProcessingScreen`, `ThreeDsChallengeScreen` (waiting only — the WebView is outside Compose), `ResultScreen`, `CheckoutSkeleton`, `PageScaffold` |
 | `payer/`, `payer/phone/` | payer and AFT transfer fields, pickers, phone parsing/formatting |
 | `loading/` | loading phases; `SavedCardCountCache` so the skeleton matches the last session |
-| `motion/SheetMotion.kt` | all motion specs, `stepAlpha` |
-| `theme/` | `PaymentTheme` (System / Light / Dark / Custom), `PaymentColors` (+ derived tints), typography, shapes, `PaymentThemeProvider` |
+| `motion/SheetMotion.kt` | all motion specs, `stepAlpha` (the SwiftUI copy is `swift/UI/Foundation/SheetMotion.swift`) |
+| `theme/` | `PaymentTheme` (System / Light / Dark / Custom), `PaymentColors` of `PaymentColor`, `PaymentTypography` of `PaymentTextStyle`, `PaymentShapes` of `PaymentCorners` — all Compose-free, one API for both platforms; androidMain `ComposeTheme.kt` resolves them to Compose types (`ThemeColors` + derived tints) for `PaymentThemeProvider`, `ComposeThemeInterop.kt` takes Compose colours and text styles; iOS reads them through `ThemeSpec`; `PaymentFontFamily` is expect/actual (Android `FontFamily`, iOS family name) |
 | `util/` | `ltr()` (Bidi), card formatting / validation / network resolver, payer field validation, gateway dates |
 
 ### UI rules
@@ -142,18 +153,11 @@ Entry: internal `ui/PaymentCheckout.kt` `PaymentCheckout(config, controller, onR
   flips as a whole on a screen change and cascades only the changed words on the same screen (`CascadeLabel`), never per
   character. All screens share one side padding (`SIDE_PADDING`, 20dp) so the button keeps its width. Skeletons copy
   the real screen's layout and pulse (no shimmer).
-- **Apple Pay button on iOS**: a `UIKitView` inside an `AnimatedContent` is hidden for the whole transition, and
-  `PKPaymentButton` draws its face late, out of process. So one button lives for the whole checkout in
-  `WalletButtonLayer` under the steps; the step only registers an empty slot, and the layer follows the slot's position
-  and zoom and takes its alpha from `stepAlpha()`. **If you change the step fade specs, keep `stepAlpha` in sync.** No
-  snapshot stand-ins.
-- **No UIKit view is created during the sheet's rise** (it costs a long frame): native fields and the wallet button wait
-  for `LocalSheetEntered`; autofocus waits for `LocalStepSettled`.
-- iOS card fields (PAN, expiry, CVC, holder) are native `UITextField`s (`NativeTextField.ios.kt`); while the step moves a
-  Compose look-alike stands in, because a UIKit view ignores Compose alpha/scale. Interop views sit in a hole of the
-  Compose canvas: give them opaque backdrops and keep them off cell edges. Payer fields are Compose on both platforms.
-- iOS keyboard: Compose's ime inset updates only after the keyboard stops, so the sheet follows UIKit keyboard
-  notifications (`KeyboardVisibility.ios.kt`, `SheetInsets.ios.kt`).
+- Both UIs follow the same rules and the same numbers; a change of look or motion goes into both (the iOS screenshots
+  in `tools/visual` compare against `golden/compose`).
+- The main button, drawn outside the steps by `PrimaryButtonLayer`, takes its alpha from `stepAlpha()`
+  (`LocalStepAlpha`). **If you change the step fade specs, keep `stepAlpha` in sync.** Autofocus waits for
+  `LocalStepSettled`.
 - **Autofill**: every field sets a content type. A masked field without one reads as a password, and Google Password
   Manager offered to save the CVC as one.
 - Accessibility: `tapsOnly` instead of `clickable` for scrim/handle/sheet; `OverlayCover` hides content under pickers;
@@ -168,11 +172,13 @@ Entry: internal `ui/PaymentCheckout.kt` `PaymentCheckout(config, controller, onR
 
 ### Strings
 
-`src/commonMain/composeResources/values{,-ar,-bg,-de,-el,-es,-fr,-ro,-ru}/strings.xml`, accessed as `Res.string.<name>`
-from `net.payrdr.mobile.payment.sdk.sdk.payment.generated.resources` (the doubled `sdk` is real). **A new string goes
-into all nine files** in the same section; nothing checks this automatically, so compare the key counts. Placeholders
-are `%1$s`. `PaymentLocaleProvider` overrides Compose resources' language (they pick the device language only), so
-there must be one provider call site.
+`src/commonMain/strings/values{,-ar,-bg,-de,-el,-es,-fr,-ro,-ru}/strings.xml`. `generatePaymentStrings`
+(`GeneratePaymentStringsTask` in build-logic) writes them as Kotlin tables (`presentation/PaymentStringTables`, common)
+and, for Android, `Res.string.<name>` keys in `net.payrdr.mobile.payment.sdk.sdk.payment.generated.resources` (the
+doubled `sdk` is real) read by that package's `stringResource` in the language of `LocalSdkLanguage`
+(`PaymentLocaleProvider`). iOS reads them through `PaymentStrings`. **A new string goes into all nine files** in the same
+section; nothing checks this automatically, so compare the key counts. Placeholders are `%1$s`; a missing translation
+falls back to English.
 
 ## Tests
 
@@ -184,16 +190,19 @@ there must be one provider call site.
 ```
 
 - commonTest: api, config, flow (`PaymentFlowControllerTest`, `AftFlowTest`, `OrderOutcomeTest`, …), threeds, ssl,
-  result, utils, and pure UI logic (steps, motion, skeleton, payer fields, formatters). Helpers in `support/`:
+  result, utils, and pure UI logic (steps, skeleton, payer fields, formatters). Helpers in `support/`:
   `FakePaymentApi` (programmable `next…` answers and errors, gates, recorded calls), `FakeKeyProvider`,
   `FakeWebChallengeHost`, fake wallet token providers, `Fixtures` (test RSA key, mdOrder, PAN), `mockJsonClient` for
   Ktor `MockEngine`. Add to these rather than writing new fakes.
-- androidUnitTest: `PayrdrCheckoutTest`, `PayrdrCheckoutIntentTest` (no Robolectric). `CertificatePinningTest` checks the OkHttp pinner
+- androidUnitTest: `PayrdrCheckoutTest`, `PayrdrCheckoutIntentTest` (no Robolectric); the Compose-typed UI helpers
+  (`LocalizationSmokeTest`, `ResultTitleTest`, `FailureChipTest`, `PaymentThemeTypesTest`, `PaymentNetworkLogosTest`,
+  `SheetMotionTest`, `ComposeThemeInteropTest`). `CertificatePinningTest` checks the OkHttp pinner
   against `ssl/TestCertificates` (each key type, a CA-issued chain, pins as `openssl` computes them). `live/` talks to a real gateway and
   is skipped unless environment variables are set (`PAYRDR_API2_KEY`; `PAYRDR_AFT_BASE_URL`, `PAYRDR_AFT_LOGIN`,
   `PAYRDR_AFT_PASSWORD`, …). Credentials only ever come from the environment.
-- iosTest: `AccessibilityTest` (Compose UI test without a device: names, live regions, announcements, hidden overlay
-  content), `ResultDeliverySheetTest`, `ApplePayRequestBuilderTest`, `DarwinPinningDelegateTest`. The simulator test
+- iosTest: `ThemeSpecTest`, `ApplePayRequestBuilderTest`, `ApplePayNetworkMappingTest`, `DarwinPinningDelegateTest`.
+  The SwiftUI screens are checked by the sample app's XCUITests (`CheckoutVisualTests`, `CheckoutAccessibilityTests`
+  through `tools/visual`); the result hand-over is `CheckoutModelTest` (commonTest). The simulator test
   process cannot reach the trust daemon (`SecTrustEvaluateWithError` fails with errSecInternal, -26276), so the pinning
   test checks the SPKI pins and the chain matching, not the system chain check. snake_case test names.
 - androidInstrumentedTest: `CardFormScreenTest`, `CheckoutSkeletonTest`, `ProcessingScreenTest`, `ResultScreenTest`;

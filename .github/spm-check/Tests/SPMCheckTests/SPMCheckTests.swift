@@ -10,9 +10,9 @@ final class SPMCheckTests: XCTestCase {
         }
     }
 
-    // Without them the first checkout screen throws MissingResourceException.
-    func testComposeResourcesAreInTheFramework() {
-        XCTAssertNotNil(Bundle(for: SdkPayment.self).url(forResource: "composeResources", withExtension: nil))
+    // The checkout is drawn by the framework's Swift code; without it presenting the checkout fails.
+    func testSwiftUICheckoutIsInTheFramework() {
+        XCTAssertNotNil(NSClassFromString("PayrdrSwiftUICheckoutRenderer"))
     }
 
     func testSwiftConveniencesAreInTheFramework() {

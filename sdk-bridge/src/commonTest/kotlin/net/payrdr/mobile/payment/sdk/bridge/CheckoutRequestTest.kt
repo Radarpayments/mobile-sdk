@@ -1,8 +1,5 @@
 package net.payrdr.mobile.payment.sdk.bridge
 
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
@@ -21,6 +18,8 @@ import net.payrdr.mobile.payment.sdk.payment.logger.ConsoleLogTransport
 import net.payrdr.mobile.payment.sdk.payment.scanner.provider.MlKitVisionCardScannerProvider
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.DefaultDarkColors
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.DefaultLightColors
+import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentColor
+import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentCorners
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentShapes
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentTheme
 import kotlin.test.Test
@@ -95,12 +94,12 @@ class CheckoutRequestTest {
 
         theme shouldBe
             PaymentTheme.Custom(
-                colors = DefaultDarkColors.copy(primary = Color(0xFFF3D9B1), scrim = Color(0x80000000)),
+                colors = DefaultDarkColors.copy(primary = PaymentColor(0xFFF3D9B1), scrim = PaymentColor(0x80000000)),
                 shapes =
                     PaymentShapes.Default.copy(
-                        field = RoundedCornerShape(18.dp),
-                        button = RoundedCornerShape(999.dp),
-                        card = RoundedCornerShape(18.dp),
+                        field = PaymentCorners.Radius(18f),
+                        button = PaymentCorners.Radius(999f),
+                        card = PaymentCorners.Radius(18f),
                     ),
             )
     }
@@ -163,7 +162,7 @@ class CheckoutRequestTest {
                 .config.theme
                 .let { (it as PaymentTheme.Custom).shapes }
 
-        shapes.button shouldBe RoundedCornerShape(12.dp)
+        shapes.button shouldBe PaymentCorners.Radius(12f)
         request("""{"baseUrl":"u","theme":{"mode":"custom"}}""").config.theme shouldBe
             PaymentTheme.Custom(colors = DefaultLightColors, shapes = PaymentShapes.Default)
     }

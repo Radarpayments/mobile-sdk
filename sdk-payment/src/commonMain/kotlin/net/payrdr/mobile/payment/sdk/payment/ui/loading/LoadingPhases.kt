@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withTimeoutOrNull
-import net.payrdr.mobile.payment.sdk.payment.ui.motion.SheetMotion
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -31,8 +30,8 @@ internal enum class LoadingPhase {
  */
 internal fun loadingPhases(
     ready: Flow<Boolean>,
-    skeletonDelay: Duration = SheetMotion.SKELETON_DELAY_MS.milliseconds,
-    minSkeleton: Duration = SheetMotion.SKELETON_MIN_MS.milliseconds,
+    skeletonDelay: Duration = SkeletonTiming.DELAY_MS.milliseconds,
+    minSkeleton: Duration = SkeletonTiming.MIN_MS.milliseconds,
 ): Flow<LoadingPhase> =
     flow {
         emit(LoadingPhase.Blank)
@@ -48,3 +47,9 @@ internal fun loadingPhases(
         }
         emit(LoadingPhase.Content)
     }
+
+/** When the skeleton appears, and how long it stays once shown. */
+internal object SkeletonTiming {
+    const val DELAY_MS = 300
+    const val MIN_MS = 400
+}

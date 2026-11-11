@@ -1,9 +1,5 @@
 package net.payrdr.mobile.payment.sdk.payment.ui.theme
 
-import androidx.compose.runtime.Immutable
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.lerp
-
 /**
  * Colour palette for the SDK checkout UI. Mirrors a subset of Material 3 `ColorScheme` but
  * exposes only the knobs that the merchant can usefully override.
@@ -18,40 +14,41 @@ import androidx.compose.ui.graphics.lerp
  * @property onError foreground on [error]
  * @property outline hairline dividers, unfocused field borders
  * @property success success-state tint (used by ResultScreen)
- * @property onSurfaceVariant secondary text — field labels, helper text, merchant name
- * @property placeholder placeholder text and tertiary icons
- * @property outlineStrong hover/pressed borders, radio rings, switch track when off
- * @property scrim dimming layer behind the payment sheet
+ * @property onSurfaceVariant secondary text — field labels, helper text, merchant name; [onBackground] at 70 % by default
+ * @property placeholder placeholder text and tertiary icons; [onBackground] at 50 % by default
+ * @property outlineStrong hover/pressed borders, radio rings, switch track when off; [outline] by default
+ * @property scrim dimming layer behind the payment sheet; black at 45 % by default
  */
-@Immutable
 public data class PaymentColors(
-    val primary: Color,
-    val onPrimary: Color,
-    val background: Color,
-    val onBackground: Color,
-    val surface: Color,
-    val onSurface: Color,
-    val error: Color,
-    val onError: Color,
-    val outline: Color,
-    val success: Color,
-    val onSurfaceVariant: Color = onBackground.copy(alpha = 0.7f),
-    val placeholder: Color = onBackground.copy(alpha = 0.5f),
-    val outlineStrong: Color = outline,
-    val scrim: Color = Color.Black.copy(alpha = 0.45f),
+    val primary: PaymentColor,
+    val onPrimary: PaymentColor,
+    val background: PaymentColor,
+    val onBackground: PaymentColor,
+    val surface: PaymentColor,
+    val onSurface: PaymentColor,
+    val error: PaymentColor,
+    val onError: PaymentColor,
+    val outline: PaymentColor,
+    val success: PaymentColor,
+    val onSurfaceVariant: PaymentColor = onBackground.withAlpha(SECONDARY_TEXT_ALPHA),
+    val placeholder: PaymentColor = onBackground.withAlpha(PLACEHOLDER_ALPHA),
+    val outlineStrong: PaymentColor = outline,
+    val scrim: PaymentColor = PaymentColor.Black.withAlpha(SCRIM_ALPHA),
 )
 
-/** [PaymentColors.primary] tinted onto the background — selected payment-method fill, icon plates. */
-internal val PaymentColors.primarySoft: Color get() = lerp(background, primary, 0.11f)
+/** A palette is dark when its background's luma is below one half: picks the system bar icons and wallet buttons. */
+internal val PaymentColors.isDark: Boolean
+    get() {
+        val c = background
+        val luma = (LUMA_RED * c.red + LUMA_GREEN * c.green + LUMA_BLUE * c.blue) / CHANNEL_MAX
+        return luma < DARK_LUMA
+    }
 
-/**
- * Fill of secondary buttons: the text colour tinted onto the background, so the button stands out from the sheet in any
- * merchant palette (a [PaymentColors.surface] close to the background would leave it all but invisible).
- */
-internal val PaymentColors.secondaryFill: Color get() = lerp(background, onBackground, 0.09f)
-
-/** Success tint for the result icon plate. */
-internal val PaymentColors.successSoft: Color get() = lerp(background, success, 0.14f)
-
-/** Error tint for the result icon plate and the action-code chip. */
-internal val PaymentColors.errorSoft: Color get() = lerp(background, error, 0.12f)
+private const val SECONDARY_TEXT_ALPHA = 0.7f
+private const val PLACEHOLDER_ALPHA = 0.5f
+private const val SCRIM_ALPHA = 0.45f
+private const val LUMA_RED = 0.299f
+private const val LUMA_GREEN = 0.587f
+private const val LUMA_BLUE = 0.114f
+private const val CHANNEL_MAX = 255f
+private const val DARK_LUMA = 0.5f

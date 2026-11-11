@@ -1,7 +1,6 @@
 package net.payrdr.mobile.payment.sdk.payment.ui.loading
 
-import androidx.compose.runtime.Composable
-import net.payrdr.mobile.payment.sdk.payment.ui.screens.SHEET_CARD_LIMIT
+import net.payrdr.mobile.payment.sdk.payment.presentation.SHEET_CARD_LIMIT
 
 /** A small on-device store of numbers. */
 internal interface KeyValueStore {
@@ -12,10 +11,6 @@ internal interface KeyValueStore {
         value: Int,
     )
 }
-
-/** The app's own on-device store (shared preferences on Android, user defaults on iOS). */
-@Composable
-internal expect fun rememberKeyValueStore(): KeyValueStore
 
 /**
  * How many saved cards the last session on this device had, and whether it offered the wallet, so the skeleton can draw

@@ -4,6 +4,7 @@ import io.kotest.matchers.shouldBe
 import net.payrdr.mobile.payment.sdk.payment.config.ApplePayConfig
 import net.payrdr.mobile.payment.sdk.payment.config.GooglePayConfig
 import net.payrdr.mobile.payment.sdk.payment.config.SdkPaymentConfig
+import net.payrdr.mobile.payment.sdk.payment.presentation.skeletonLayout
 import kotlin.test.Test
 
 class CheckoutSkeletonTest {

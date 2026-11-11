@@ -1,13 +1,8 @@
 package net.payrdr.mobile.payment.sdk.payment.ui.theme
 
-import androidx.compose.runtime.Immutable
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
-
 /**
- * Text styles used across the checkout UI. Fonts stay system (SF Pro on iOS, Roboto on Android);
- * amounts and card numbers use tabular figures so digits line up.
+ * Text styles used across the checkout UI. Fonts are the system ones unless a style sets
+ * [PaymentTextStyle.fontFamily]; amounts and card numbers use tabular figures so digits line up.
  *
  * - [title] — app-bar titles, sheet dialog titles
  * - [body] — row titles, body copy
@@ -18,39 +13,28 @@ import androidx.compose.ui.unit.sp
  * - [amount] — order amount in the payment-sheet header and on the result screen
  * - [caption] — helper / error text under fields, security footnote
  */
-@Immutable
 public data class PaymentTypography(
-    val title: TextStyle,
-    val body: TextStyle,
-    val label: TextStyle,
-    val button: TextStyle,
-    val input: TextStyle,
-    val headline: TextStyle = TextStyle(fontSize = 21.sp, fontWeight = FontWeight.SemiBold, lineHeight = 26.sp),
-    val amount: TextStyle =
-        TextStyle(
-            fontSize = 30.sp,
-            fontWeight = FontWeight.SemiBold,
-            lineHeight = 34.sp,
-            letterSpacing = (-0.5).sp,
-            fontFeatureSettings = TABULAR,
-        ),
-    val caption: TextStyle = TextStyle(fontSize = 12.5.sp, lineHeight = 16.sp),
+    val title: PaymentTextStyle,
+    val body: PaymentTextStyle,
+    val label: PaymentTextStyle,
+    val button: PaymentTextStyle,
+    val input: PaymentTextStyle,
+    val headline: PaymentTextStyle =
+        PaymentTextStyle(size = 21f, weight = PaymentTextStyle.SEMI_BOLD, lineHeight = 26f),
+    val amount: PaymentTextStyle =
+        PaymentTextStyle(size = 30f, weight = PaymentTextStyle.SEMI_BOLD, lineHeight = 34f, letterSpacing = -0.5f, tabularFigures = true),
+    val caption: PaymentTextStyle = PaymentTextStyle(size = 12.5f, lineHeight = 16f),
 ) {
+    /** The SDK's default text styles. */
     public companion object {
-        /** Default typography used when the merchant does not provide overrides. */
+        /** The SDK's own text styles. */
         public val Default: PaymentTypography =
             PaymentTypography(
-                title = TextStyle(fontSize = 17.sp, fontWeight = FontWeight.SemiBold, lineHeight = 22.sp),
-                body = TextStyle(fontSize = 15.sp, fontWeight = FontWeight.Normal, lineHeight = 20.sp),
-                label = TextStyle(fontSize = 13.sp, fontWeight = FontWeight.Medium, lineHeight = 18.sp),
-                button = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold),
-                input = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Normal),
+                title = PaymentTextStyle(size = 17f, weight = PaymentTextStyle.SEMI_BOLD, lineHeight = 22f),
+                body = PaymentTextStyle(size = 15f, lineHeight = 20f),
+                label = PaymentTextStyle(size = 13f, weight = PaymentTextStyle.MEDIUM, lineHeight = 18f),
+                button = PaymentTextStyle(size = 16f, weight = PaymentTextStyle.SEMI_BOLD),
+                input = PaymentTextStyle(size = 16f),
             )
     }
 }
-
-/** OpenType feature string for tabular (fixed-width) figures. */
-internal const val TABULAR: String = "tnum"
-
-/** Same style with tabular figures — card numbers, masks, amounts, codes. */
-internal fun TextStyle.tabular(): TextStyle = copy(fontFeatureSettings = TABULAR)

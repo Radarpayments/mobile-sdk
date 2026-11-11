@@ -1,6 +1,5 @@
 package net.payrdr.mobile.payment.sdk.payment.config
 
-import androidx.compose.ui.graphics.Color
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import net.payrdr.mobile.payment.sdk.payment.applepay.ApplePayMerchantCapability
@@ -9,6 +8,7 @@ import net.payrdr.mobile.payment.sdk.payment.gpay.GooglePayAuthMethod
 import net.payrdr.mobile.payment.sdk.payment.gpay.GooglePayCardNetwork
 import net.payrdr.mobile.payment.sdk.payment.gpay.GooglePayEnvironment
 import net.payrdr.mobile.payment.sdk.payment.ssl.SslPinningConfig
+import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentColor
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentColors
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentTheme
 
@@ -133,11 +133,11 @@ internal object RestorableCheckout {
             placeholder,
             outlineStrong,
             scrim,
-        ).map { it.value.toLong() }
+        ).map { it.argb shl COMPOSE_SHIFT }
 
     private fun List<Long>.toPaymentColors(): PaymentColors? {
-        if (size != COLOR_COUNT) return null
-        val c = map { Color(it.toULong()) }
+        if (size != COLOR_COUNT || any { it and COMPOSE_SRGB_TAIL != 0L }) return null
+        val c = map { PaymentColor(it ushr COMPOSE_SHIFT) }
         return PaymentColors(
             primary = c[0],
             onPrimary = c[1],
@@ -157,6 +157,10 @@ internal object RestorableCheckout {
     }
 
     private const val COLOR_COUNT = 14
+
+    // Colours are stored the way Compose packs an sRGB `Color`, as the SDK stored them before the theme was Compose-free.
+    private const val COMPOSE_SHIFT = 32
+    private const val COMPOSE_SRGB_TAIL = 0xFFFFFFFFL
 
     @Serializable
     private data class Saved(

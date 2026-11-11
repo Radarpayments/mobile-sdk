@@ -1,6 +1,5 @@
 package net.payrdr.mobile.payment.sdk.payment
 
-import androidx.compose.ui.text.intl.Locale
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.async
@@ -28,6 +27,7 @@ import net.payrdr.mobile.payment.sdk.payment.result.CheckoutResult
 import net.payrdr.mobile.payment.sdk.payment.result.PaymentIntent
 import net.payrdr.mobile.payment.sdk.payment.result.PaymentState
 import net.payrdr.mobile.payment.sdk.payment.threeds.WebChallengeHost
+import net.payrdr.mobile.payment.sdk.payment.ui.util.deviceLanguage
 
 /**
  * Public entry point of the sdk-payment module, created from a [SdkPaymentConfig]. It builds its own network layer
@@ -90,7 +90,7 @@ public class SdkPayment internal constructor(
             googlePayTokenProvider = googlePayTokenProvider,
             applePayTokenProvider = applePayTokenProvider,
             // The checkout's language, or the device's when the merchant leaves it to the system.
-            language = config.locale?.takeIf { it.isNotBlank() } ?: Locale.current.language,
+            language = config.locale?.takeIf { it.isNotBlank() } ?: deviceLanguage(),
             googlePay = config.googlePay,
             applePay = config.applePay,
         )

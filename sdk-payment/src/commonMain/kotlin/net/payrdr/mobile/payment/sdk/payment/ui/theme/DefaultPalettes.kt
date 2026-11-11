@@ -1,26 +1,24 @@
 package net.payrdr.mobile.payment.sdk.payment.ui.theme
 
-import androidx.compose.ui.graphics.Color
-
 /**
  * Default light palette — cobalt accent on white, WCAG AA contrast on all text/background pairs.
  */
 public val DefaultLightColors: PaymentColors =
     PaymentColors(
-        primary = Color(0xFF1F4FD8),
-        onPrimary = Color(0xFFFFFFFF),
-        background = Color(0xFFFFFFFF),
-        onBackground = Color(0xFF0D1726),
-        surface = Color(0xFFF3F5F9),
-        onSurface = Color(0xFF0D1726),
-        error = Color(0xFFC42F27),
-        onError = Color(0xFFFFFFFF),
-        outline = Color(0xFFD9DFE8),
-        success = Color(0xFF0B7F57),
-        onSurfaceVariant = Color(0xFF4A5870),
-        placeholder = Color(0xFF6F7C91),
-        outlineStrong = Color(0xFFB9C2D0),
-        scrim = Color(0x6B0D1726),
+        primary = PaymentColor(0xFF1F4FD8),
+        onPrimary = PaymentColor(0xFFFFFFFF),
+        background = PaymentColor(0xFFFFFFFF),
+        onBackground = PaymentColor(0xFF0D1726),
+        surface = PaymentColor(0xFFF3F5F9),
+        onSurface = PaymentColor(0xFF0D1726),
+        error = PaymentColor(0xFFC42F27),
+        onError = PaymentColor(0xFFFFFFFF),
+        outline = PaymentColor(0xFFD9DFE8),
+        success = PaymentColor(0xFF0B7F57),
+        onSurfaceVariant = PaymentColor(0xFF4A5870),
+        placeholder = PaymentColor(0xFF6F7C91),
+        outlineStrong = PaymentColor(0xFFB9C2D0),
+        scrim = PaymentColor(0x6B0D1726),
     )
 
 /**
@@ -28,18 +26,18 @@ public val DefaultLightColors: PaymentColors =
  */
 public val DefaultDarkColors: PaymentColors =
     PaymentColors(
-        primary = Color(0xFF7D98FF),
-        onPrimary = Color(0xFF0A1020),
-        background = Color(0xFF111925),
-        onBackground = Color(0xFFE7ECF4),
-        surface = Color(0xFF192332),
-        onSurface = Color(0xFFE7ECF4),
-        error = Color(0xFFFF6F66),
-        onError = Color(0xFF1A0605),
-        outline = Color(0xFF263246),
-        success = Color(0xFF3DC48F),
-        onSurfaceVariant = Color(0xFFA3AEC0),
-        placeholder = Color(0xFF7D899D),
-        outlineStrong = Color(0xFF3A475D),
-        scrim = Color(0x8C000000),
+        primary = PaymentColor(0xFF7D98FF),
+        onPrimary = PaymentColor(0xFF0A1020),
+        background = PaymentColor(0xFF111925),
+        onBackground = PaymentColor(0xFFE7ECF4),
+        surface = PaymentColor(0xFF192332),
+        onSurface = PaymentColor(0xFFE7ECF4),
+        error = PaymentColor(0xFFFF6F66),
+        onError = PaymentColor(0xFF1A0605),
+        outline = PaymentColor(0xFF263246),
+        success = PaymentColor(0xFF3DC48F),
+        onSurfaceVariant = PaymentColor(0xFFA3AEC0),
+        placeholder = PaymentColor(0xFF7D899D),
+        outlineStrong = PaymentColor(0xFF3A475D),
+        scrim = PaymentColor(0x8C000000),
     )

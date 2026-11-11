@@ -1,10 +1,10 @@
 package net.payrdr.mobile.payment.sdk.payment.config
 
-import androidx.compose.ui.graphics.Color
 import io.kotest.matchers.shouldBe
 import net.payrdr.mobile.payment.sdk.payment.gpay.GooglePayEnvironment
 import net.payrdr.mobile.payment.sdk.payment.logger.NoopLogTransport
 import net.payrdr.mobile.payment.sdk.payment.ssl.SslPinningConfig
+import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentColor
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentColors
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentTheme
 import kotlin.test.Test
@@ -36,17 +36,17 @@ class RestorableCheckoutTest {
     @Test fun `a custom theme keeps its colors`() {
         val colors =
             PaymentColors(
-                primary = Color(0xFF112233),
-                onPrimary = Color.White,
-                background = Color(0xFFFAFAFA),
-                onBackground = Color.Black,
-                surface = Color.White,
-                onSurface = Color.Black,
-                error = Color.Red,
-                onError = Color.White,
-                outline = Color.Gray,
-                success = Color.Green,
-                scrim = Color(0x80000000),
+                primary = PaymentColor(0xFF112233),
+                onPrimary = PaymentColor.White,
+                background = PaymentColor(0xFFFAFAFA),
+                onBackground = PaymentColor.Black,
+                surface = PaymentColor.White,
+                onSurface = PaymentColor.Black,
+                error = PaymentColor(0xFFFF0000),
+                onError = PaymentColor.White,
+                outline = PaymentColor(0xFF888888),
+                success = PaymentColor(0xFF00FF00),
+                scrim = PaymentColor(0x80000000),
             )
         val restored = roundTrip(SdkPaymentConfig(baseUrl = "https://pay.example.com", theme = PaymentTheme.Custom(colors))).first
 

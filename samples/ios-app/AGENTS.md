@@ -30,8 +30,6 @@ Read `../AGENTS.md` (all samples) first. SwiftUI app, deployment target iOS 16.0
 The first build phase of the app target is a shell script that runs Gradle:
 - one architecture with an existing XCFramework slice → `:sdk-payment-scanner:linkDebugFramework<Target>`, then rsync
   into the slice; otherwise the whole `assembleSdk_payment_scannerDebugXCFramework` (~4 min);
-- copies both modules' `composeResources` into the app bundle (without them the first Compose screen throws
-  `MissingResourceException`);
 - re-syncs and re-signs the embedded framework, because Xcode otherwise embeds a stale copy.
 
 Gotchas:
@@ -73,4 +71,16 @@ xcodebuild -project SampleApp.xcodeproj -scheme SampleApp \
 - `SampleAppUITests`: launched with `-store_login "" -store_password "" -store_last_cover "" -AppleLanguages (en)`;
   some assertions match English text. Accessibility identifiers are snake_case and shared with the other samples
   (`cover_<id>`, `store_pay`, `core_field_<FIELD>`, `dev_login`, …).
+- The SDK's SwiftUI checkout is checked here, not in the SDK: `SampleAppUITests/CheckoutVisualTests` (screenshots per
+  screen, `testNN…`) and `CheckoutAccessibilityTests` (VoiceOver labels and traits; `VISUAL_DUMP=1` writes each
+  screen's element tree). Both run against `tools/visual/fake_gateway.py` (scenario = the merchant login, e.g.
+  `cards3.wallet.cvc`), never a real gateway, so they are not part of the plain `xcodebuild test` above:
+  ```bash
+  tools/visual/locked.sh tools/visual/capture.sh <set> [testName]          # → tools/visual/out/<set>/
+  VISUAL_CLASS=CheckoutAccessibilityTests tools/visual/locked.sh tools/visual/capture.sh <set>
+  python3 tools/visual/compare.py tools/visual/golden/compose <set>           # diffs in tools/visual/out/diff/
+  ```
+  `capture.sh` starts the gateway, pins the status bar and picks the simulator (`SIMULATOR_UDID`); `locked.sh` keeps
+  two agents from running Gradle, xcodebuild or the simulator at once. `golden/compose` are the screens of the old
+  Compose checkout, the reference the SwiftUI port is measured against; `tools/visual/out/` is not committed.
 - No SwiftLint/SwiftFormat: follow the file around you (4 spaces, ~120 columns, `///` doc comment per type).
