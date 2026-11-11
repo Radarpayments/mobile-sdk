@@ -40,3 +40,7 @@ Notable changes to the PAYRDR Mobile SDK. Versions follow [Semantic Versioning](
   saved cards a moment later: the add-card session overwrote the remembered card count used for the skeleton. It no
   longer does.
 - iOS: a step whose content had not been measured yet no longer makes the sheet jump up for one frame.
+- SDK Core reports a card whose expiry month has passed: `generate` returns `ParamField.EXPIRY` with `invalid`, and
+  the bridge `{"errors": {"expiry": "invalid"}}`. Before, only the payment sheet's form checked the date, so an app
+  with its own form got a token for an expired card and the buyer saw the gateway's decline instead. The date is that
+  of `SdkCoreConfig.timestamp` in the device's time zone: pass the current time in milliseconds.

@@ -1,6 +1,8 @@
 package net.payrdr.mobile.payment.sdk.core
 
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import net.payrdr.mobile.payment.sdk.core.crypto.CryptogramCipher
 import net.payrdr.mobile.payment.sdk.core.crypto.RsaCryptogramCipher
 import net.payrdr.mobile.payment.sdk.core.model.BindingInstantParams
@@ -24,11 +26,13 @@ import net.payrdr.mobile.payment.sdk.core.utils.toExpDate
 import net.payrdr.mobile.payment.sdk.core.validation.BaseValidator
 import net.payrdr.mobile.payment.sdk.core.validation.CardBindingIdValidator
 import net.payrdr.mobile.payment.sdk.core.validation.CardCodeValidator
+import net.payrdr.mobile.payment.sdk.core.validation.CardExpiryNotPastValidator
 import net.payrdr.mobile.payment.sdk.core.validation.CardExpiryValidator
 import net.payrdr.mobile.payment.sdk.core.validation.CardHolderValidator
 import net.payrdr.mobile.payment.sdk.core.validation.CardNumberValidator
 import net.payrdr.mobile.payment.sdk.core.validation.OrderNumberValidator
 import net.payrdr.mobile.payment.sdk.core.validation.PubKeyValidator
+import kotlin.time.Instant
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -42,6 +46,7 @@ import kotlin.uuid.Uuid
 public class SdkCore internal constructor(
     private val paymentStringProcessor: PaymentStringProcessor,
     private val cryptogramCipher: CryptogramCipher,
+    private val timeZone: TimeZone = TimeZone.currentSystemDefault(),
 ) {
     public constructor() : this(DefaultPaymentStringProcessor(TimeZone.currentSystemDefault()), RsaCryptogramCipher())
 
@@ -56,7 +61,9 @@ public class SdkCore internal constructor(
     /**
      * Generates a payment token for the given [config].
      *
-     * Validates all fields before encryption; returns errors on the first invalid field.
+     * Validates all fields before encryption; returns errors on the first invalid field. A new card whose expiry
+     * month is before the month of [SdkCoreConfig.timestamp] (device time zone) is reported as [ParamField.EXPIRY]
+     * with `invalid`.
      * On success, returns a non-null [TokenResult.token] with empty [TokenResult.errors].
      */
     public fun generate(config: SdkCoreConfig): TokenResult {
@@ -64,7 +71,7 @@ public class SdkCore internal constructor(
         val checks =
             when (params) {
                 is PaymentCardParams.StoredCardPaymentParams -> checksForStored(params)
-                is PaymentCardParams.NewCardPaymentParams -> checksForNew(params)
+                is PaymentCardParams.NewCardPaymentParams -> checksForNew(params, paymentDate(config.timestamp))
             }
 
         for (check in checks) {
@@ -110,6 +117,8 @@ public class SdkCore internal constructor(
         return CardInfo(identifier = CardBindingIdIdentifier(bindingId), cvv = p.cvc, cardHolder = null)
     }
 
+    private fun paymentDate(timestamp: Long): LocalDate = Instant.fromEpochMilliseconds(timestamp).toLocalDateTime(timeZone).date
+
     /** One field to validate; null [value]s (optional fields left out) are skipped. */
     private class Check(
         val value: String?,
@@ -121,10 +130,15 @@ public class SdkCore internal constructor(
      * Checks in the order a card form shows its fields. A list, not a map keyed by value: fields that
      * share a value (several empty ones) must each be checked by their own validator.
      */
-    private fun checksForNew(p: PaymentCardParams.NewCardPaymentParams): List<Check> =
+    private fun checksForNew(
+        p: PaymentCardParams.NewCardPaymentParams,
+        today: LocalDate,
+    ): List<Check> =
         buildList {
             add(Check(p.pan, numberValidator, ParamField.PAN))
             add(Check(p.expiryMMYY, expiryValidator, ParamField.EXPIRY))
+            // The loop stops at the first failure, so this one sees only a well-formed MM/YY.
+            add(Check(p.expiryMMYY, CardExpiryNotPastValidator(today), ParamField.EXPIRY))
             add(Check(p.cvc, codeValidator, ParamField.CVC))
             add(Check(p.cardHolder, holderValidator, ParamField.CARDHOLDER))
             if (p is CardParams) add(Check(p.mdOrder, orderValidator, ParamField.MD_ORDER))

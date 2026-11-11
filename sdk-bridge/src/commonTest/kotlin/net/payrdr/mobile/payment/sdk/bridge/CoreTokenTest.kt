@@ -16,7 +16,7 @@ class CoreTokenTest {
 
     private val key = Json.encodeToString(JsonPrimitive.serializer(), JsonPrimitive(TEST_PUBLIC_KEY_PEM))
 
-    private val card = """"pan":"4532896701439077","expiry":"12/28","cvc":"444","cardholder":"JOHN DOE""""
+    private val card = """"pan":"4532896701439077","expiry":"12/49","cvc":"444","cardholder":"JOHN DOE""""
 
     @Test fun `a new card for an order gives a token`() {
         val result = token("""{"type":"card","mdOrder":"md-1",$card,"pubKey":$key}""")
@@ -38,9 +38,9 @@ class CoreTokenTest {
         val badShapes =
             listOf(
                 // A number where a string goes, a field of the wrong type, broken JSON after the card data.
-                """{"type":"card","pan":4532896701439077,"expiry":"12/28","cvc":"444","pubKey":$key}""",
-                """{"type":"card","pan":"4532896701439077","expiry":"12/28","cvc":{"v":"444"},"pubKey":$key}""",
-                """{"type":"card","pan":"4532896701439077","expiry":"12/28","cvc":"444","pubKey":$key""",
+                """{"type":"card","pan":4532896701439077,"expiry":"12/49","cvc":"444","pubKey":$key}""",
+                """{"type":"card","pan":"4532896701439077","expiry":"12/49","cvc":{"v":"444"},"pubKey":$key}""",
+                """{"type":"card","pan":"4532896701439077","expiry":"12/49","cvc":"444","pubKey":$key""",
             )
         for (request in badShapes) {
             val response = PayrdrBridge.coreToken(request)
@@ -58,10 +58,17 @@ class CoreTokenTest {
     }
 
     @Test fun `missing fields come back as sdk-core codes keyed by field`() {
-        val result = token("""{"type":"card","mdOrder":"md-1","pan":"","expiry":"12/28","cvc":"444","pubKey":$key}""")
+        val result = token("""{"type":"card","mdOrder":"md-1","pan":"","expiry":"12/49","cvc":"444","pubKey":$key}""")
 
         result["token"] shouldBe null
         result["errors"]!!.jsonObject["pan"]!!.jsonPrimitive.content shouldBe "required"
+    }
+
+    @Test fun `an expired card comes back as an invalid expiry`() {
+        val result = token("""{"type":"cardInstant","pan":"4532896701439077","expiry":"01/20","cvc":"444","pubKey":$key}""")
+
+        result["token"] shouldBe null
+        result["errors"]!!.jsonObject["expiry"]!!.jsonPrimitive.content shouldBe "invalid"
     }
 
     @Test fun `an order left empty for a card that needs one is reported instead of dropped`() {
@@ -74,9 +81,9 @@ class CoreTokenTest {
         fun errorKeys(request: String) = token(request)["errors"]!!.jsonObject.keys
 
         errorKeys("""{"type":"cardInstant","pan":"4532896701439077","expiry":"13/28","cvc":"444","pubKey":$key}""") shouldBe setOf("expiry")
-        errorKeys("""{"type":"cardInstant","pan":"4532896701439077","expiry":"12/28","cvc":"4","pubKey":$key}""") shouldBe setOf("cvc")
+        errorKeys("""{"type":"cardInstant","pan":"4532896701439077","expiry":"12/49","cvc":"4","pubKey":$key}""") shouldBe setOf("cvc")
         errorKeys(
-            """{"type":"cardInstant","pan":"4532896701439077","expiry":"12/28","cvc":"444","cardholder":"J0HN","pubKey":$key}""",
+            """{"type":"cardInstant","pan":"4532896701439077","expiry":"12/49","cvc":"444","cardholder":"J0HN","pubKey":$key}""",
         ) shouldBe setOf("cardholder")
         errorKeys("""{"type":"cardInstant",$card,"pubKey":"not a key"}""") shouldBe setOf("pubKey")
         errorKeys("""{"type":"bindingInstant","bindingId":"","pubKey":$key}""") shouldBe setOf("bindingId")
