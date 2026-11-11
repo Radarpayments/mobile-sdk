@@ -36,6 +36,7 @@ Notable changes to the PAYRDR Mobile SDK. Versions follow [Semantic Versioning](
   `TextStyle.toPaymentTextStyle()` convert single values; iOS apps build the theme from `PaymentColor` values.
 - `CardParams.mdOrder` and `BindingParams.mdOrder` have no default any more. The empty default always failed with
   `ParamField.MD_ORDER` `required`; pass the order, or use `CardInstantParams` / `BindingInstantParams` without one.
+- `sdk-payment` exposes `androidx.activity` to the app's compile classpath, since `PayrdrCheckout` takes its types.
 
 ### Fixed
 

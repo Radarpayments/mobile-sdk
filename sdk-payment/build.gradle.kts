@@ -27,7 +27,8 @@ kotlin {
             implementation(kotlin("test"))
         }
         androidMain.dependencies {
-            implementation(libs.androidx.activity.compose)
+            // api: PayrdrCheckout takes ComponentActivity and ActivityResultCaller in its public signatures.
+            api(libs.androidx.activity.compose)
             implementation(libs.androidx.navigation.compose)
             implementation(libs.androidx.webkit)
             // Ktor OkHttp engine + OkHttp for SSL pinning via CertificatePinner.
