@@ -1,6 +1,6 @@
 {
   "name": "@payrdr/react-native-sdk",
-  "version": "1.0.0-SNAPSHOT",
+  "version": "1.0.0-beta.3",
   "description": "payrdr payment SDK for React Native: the native payment sheet with 3-D Secure, Google Pay, Apple Pay and the card scanner, and SDK Core card encryption",
   "main": "./src/index.ts",
   "types": "./src/index.ts",

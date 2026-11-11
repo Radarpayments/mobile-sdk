@@ -19,7 +19,7 @@ buildscript {
 // that takes the plugin from elsewhere points payrdrMavenUrl (gradle.properties) at the repository that serves them.
 val payrdrMavenUrl: String =
     (findProperty("payrdrMavenUrl") as String?) ?: file("../../../build/maven").toURI().toString()
-val payrdrSdkVersion: String = (findProperty("payrdrSdkVersion") as String?) ?: "4.0.0-SNAPSHOT"
+val payrdrSdkVersion: String = (findProperty("payrdrSdkVersion") as String?) ?: "4.0.0-beta.3"
 
 // The app resolves the SDK as well (the plugin's dependency is part of its build), so it needs the repository too.
 rootProject.allprojects {
