@@ -12,7 +12,7 @@ from version 4.0.0. Flutter and React Native apps use it through [plugins](#flut
 | Module | What it does | When you need it |
 |---|---|---|
 | `sdk-payment` | The payment sheet: card form, 3-D Secure, saved cards, Google Pay, Apple Pay | Always |
-| `sdk-payment-scanner` | Reads the card number and expiry with the camera ([details](sdk-payment-scanner/README.md)) | Optional on Android; on iOS it is the framework you link |
+| `sdk-payment-scanner` | Reads the card number and expiry with the camera ([details](sdk-payment-scanner/README.md)) | Optional |
 | `sdk-core` | Checks card data and encrypts it into a token (`seToken`), without any UI | Only if you are PCI DSS certified and keep your own card form |
 
 ## Requirements
@@ -22,7 +22,7 @@ from version 4.0.0. Flutter and React Native apps use it through [plugins](#flut
 
 ## Install
 
-The first release is `4.0.0-beta.1`. All versions are listed on
+The current release is `4.0.0-beta.3`. All versions are listed on
 [GitHub releases](https://github.com/Radarpayments/mobile-sdk/releases).
 
 ### Android
@@ -31,8 +31,8 @@ The libraries are on Maven Central:
 
 ```kotlin
 dependencies {
-    implementation("io.github.radarpayments:sdk-payment:4.0.0-beta.1")
-    implementation("io.github.radarpayments:sdk-payment-scanner:4.0.0-beta.1") // optional: card scanner
+    implementation("io.github.radarpayments:sdk-payment:4.0.0-beta.3")
+    implementation("io.github.radarpayments:sdk-payment-scanner:4.0.0-beta.3") // optional: card scanner
     implementation("com.google.android.gms:play-services-wallet:19.4.0") // optional: Google Pay
 }
 ```
@@ -60,8 +60,8 @@ import RadarpaymentsSDKPayment
 import RadarpaymentsSDKScanner // only with the scanner
 ```
 
-Don't add `RadarpaymentsSDKCore` to an app that has `RadarpaymentsSDKPayment`: SDK Core is already in it, and an app
-can hold only one of the two frameworks.
+For tokenization only, take `RadarpaymentsSDKCore` alone and `import RadarpaymentsSDKCore`. Don't add it to an app
+that has `RadarpaymentsSDKPayment`: SDK Core is already in it, and an app can hold only one of the two frameworks.
 
 If you don't use SPM, each release has `RadarpaymentsSDKPayment.xcframework.zip` and
 `RadarpaymentsSDKCore.xcframework.zip` to embed by hand, and `RadarpaymentsSDKScanner-<version>.zip` with the scanner's

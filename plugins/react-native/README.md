@@ -101,7 +101,7 @@ sheet and sends the result back as JSON. The JSON format is described in
 
 The module uses the SDK built from this repository. Run `scripts/build-bridge.sh` from the repository root once, and
 again after changing the SDK. It publishes the Android libraries to `build/maven` and copies
-`PayrdrSdkBridge.xcframework` into `ios/Frameworks`.
+`PayrdrSdkBridge.xcframework` into `ios/Frameworks` and the scanner's camera sources into `ios/Scanner`.
 
 An app that gets the module some other way sets `payrdrMavenUrl` (and, if needed, `payrdrSdkVersion`) in its
 `android/gradle.properties` to the Maven repository with the SDK. An app that installs the module with a `file:` path
