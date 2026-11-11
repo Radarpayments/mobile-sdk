@@ -12,4 +12,8 @@ public data class SdkCoreConfig(
     val cardParams: PaymentCardParams,
     val timestamp: Long,
     val registeredFrom: MsdkRegisteredFrom = MsdkRegisteredFrom.MSDK_CORE,
-)
+) {
+    /** For Swift, which doesn't see the default of [registeredFrom]. */
+    public constructor(cardParams: PaymentCardParams, timestamp: Long) :
+        this(cardParams, timestamp, MsdkRegisteredFrom.MSDK_CORE)
+}

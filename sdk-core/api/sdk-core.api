@@ -193,6 +193,7 @@ public abstract class net/payrdr/mobile/payment/sdk/core/model/PaymentCardParams
 }
 
 public final class net/payrdr/mobile/payment/sdk/core/model/SdkCoreConfig {
+	public fun <init> (Lnet/payrdr/mobile/payment/sdk/core/model/PaymentCardParams;J)V
 	public fun <init> (Lnet/payrdr/mobile/payment/sdk/core/model/PaymentCardParams;JLnet/payrdr/mobile/payment/sdk/core/model/MsdkRegisteredFrom;)V
 	public synthetic fun <init> (Lnet/payrdr/mobile/payment/sdk/core/model/PaymentCardParams;JLnet/payrdr/mobile/payment/sdk/core/model/MsdkRegisteredFrom;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lnet/payrdr/mobile/payment/sdk/core/model/PaymentCardParams;

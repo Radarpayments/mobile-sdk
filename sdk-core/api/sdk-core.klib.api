@@ -200,6 +200,7 @@ final class net.payrdr.mobile.payment.sdk.core.model/NewPaymentMethodStoredCardP
 }
 
 final class net.payrdr.mobile.payment.sdk.core.model/SdkCoreConfig { // net.payrdr.mobile.payment.sdk.core.model/SdkCoreConfig|null[0]
+    constructor <init>(net.payrdr.mobile.payment.sdk.core.model/PaymentCardParams, kotlin/Long) // net.payrdr.mobile.payment.sdk.core.model/SdkCoreConfig.<init>|<init>(net.payrdr.mobile.payment.sdk.core.model.PaymentCardParams;kotlin.Long){}[0]
     constructor <init>(net.payrdr.mobile.payment.sdk.core.model/PaymentCardParams, kotlin/Long, net.payrdr.mobile.payment.sdk.core.model/MsdkRegisteredFrom = ...) // net.payrdr.mobile.payment.sdk.core.model/SdkCoreConfig.<init>|<init>(net.payrdr.mobile.payment.sdk.core.model.PaymentCardParams;kotlin.Long;net.payrdr.mobile.payment.sdk.core.model.MsdkRegisteredFrom){}[0]
 
     final val cardParams // net.payrdr.mobile.payment.sdk.core.model/SdkCoreConfig.cardParams|{}cardParams[0]

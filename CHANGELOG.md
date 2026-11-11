@@ -8,6 +8,7 @@ Notable changes to the PAYRDR Mobile SDK. Versions follow [Semantic Versioning](
 ### Added
 
 - `PaymentTextStyle.fontFamily` takes a font the app ships (`PaymentFontFamily`); `null` keeps the system font.
+- iOS: `SdkCoreConfig(cardParams:timestamp:)` without `registeredFrom:`.
 
 ### Changed
 
