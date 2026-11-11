@@ -4,10 +4,11 @@
 # :sdk-payment-scanner:assembleRadarpaymentsSDKPaymentReleaseXCFramework and publishAllPublicationsToStagingRepository):
 #   - build/central-bundle.zip, the Maven Central upload (build/staging-deploy without Maven's metadata files);
 #   - into build/release, for the GitHub release:
-#     - the iOS SDK: RadarpaymentsSDKPayment.xcframework.zip (the checkout, with SDK Core inside) and
-#       RadarpaymentsSDKCore.xcframework.zip (SDK Core alone; an app takes one of the two), which Package.swift (written
-#       here) points Swift Package Manager at, and RadarpaymentsSDKScanner-<sdk-version>.zip, the Swift sources of the
-#       card scanner's camera for an app that embeds the frameworks by hand (the package builds them from the tag);
+#     - the iOS SDK: RadarpaymentsSDKPayment-<sdk-version>.xcframework.zip (the checkout, with SDK Core inside) and
+#       RadarpaymentsSDKCore-<sdk-version>.xcframework.zip (SDK Core alone; an app takes one of the two), which
+#       Package.swift (written here) points Swift Package Manager at, and RadarpaymentsSDKScanner-<sdk-version>.zip,
+#       the Swift sources of the card scanner's camera for an app that embeds the frameworks by hand (the package
+#       builds them from the tag);
 #     - the Android libraries as AARs, to download; an alpha, which does not go to Maven Central, also gets the Maven
 #       repository itself (payrdr-sdk-maven-<sdk-version>.zip);
 #     - the Flutter and React Native plugins with PayrdrSdkBridge.xcframework inside;
@@ -31,13 +32,13 @@ rm -rf "$dist" build/central-bundle.zip
 mkdir -p "$dist"
 
 ditto -c -k --keepParent sdk-payment-scanner/build/XCFrameworks/release/RadarpaymentsSDKPayment.xcframework \
-  "$dist/RadarpaymentsSDKPayment.xcframework.zip"
+  "$dist/RadarpaymentsSDKPayment-$sdk.xcframework.zip"
 ditto -c -k --keepParent sdk-core/build/XCFrameworks/release/RadarpaymentsSDKCore.xcframework \
-  "$dist/RadarpaymentsSDKCore.xcframework.zip"
+  "$dist/RadarpaymentsSDKCore-$sdk.xcframework.zip"
 ditto -c -k --keepParent sdk-payment-scanner/ios/Sources/RadarpaymentsSDKScanner \
   "$dist/RadarpaymentsSDKScanner-$sdk.zip"
-payment_checksum="$(swift package compute-checksum "$dist/RadarpaymentsSDKPayment.xcframework.zip")"
-core_checksum="$(swift package compute-checksum "$dist/RadarpaymentsSDKCore.xcframework.zip")"
+payment_checksum="$(swift package compute-checksum "$dist/RadarpaymentsSDKPayment-$sdk.xcframework.zip")"
+core_checksum="$(swift package compute-checksum "$dist/RadarpaymentsSDKCore-$sdk.xcframework.zip")"
 cat > Package.swift <<EOF
 // swift-tools-version:5.9
 
@@ -60,12 +61,12 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "RadarpaymentsSDKPayment",
-            url: "https://github.com/$repository/releases/download/$sdk/RadarpaymentsSDKPayment.xcframework.zip",
+            url: "https://github.com/$repository/releases/download/$sdk/RadarpaymentsSDKPayment-$sdk.xcframework.zip",
             checksum: "$payment_checksum"
         ),
         .binaryTarget(
             name: "RadarpaymentsSDKCore",
-            url: "https://github.com/$repository/releases/download/$sdk/RadarpaymentsSDKCore.xcframework.zip",
+            url: "https://github.com/$repository/releases/download/$sdk/RadarpaymentsSDKCore-$sdk.xcframework.zip",
             checksum: "$core_checksum"
         ),
         .target(

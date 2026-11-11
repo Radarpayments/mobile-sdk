@@ -101,7 +101,7 @@ class ApiV2LiveTest {
             controller.handle(
                 PaymentIntent.SubmitNewCard(
                     pan = "5555555555555599",
-                    expiryMMYY = "12/34",
+                    expiryMMYY = "12/49",
                     cvc = "123",
                     cardHolder = "TEST",
                     saveCard = false,

@@ -40,7 +40,19 @@ dependencies {
 You don't need to edit the manifest. The SDK brings the internet permission and its activities, and the scanner brings
 the camera permission, marked as not required, so devices without a camera can still install your app.
 
-For tokenization only, depend on `io.github.radarpayments:sdk-core`. Each GitHub release also has the AARs.
+With Android Gradle Plugin 8.7, lint crashes in release builds on a check of AndroidX Lifecycle 2.9, which the SDK
+brings (`Found class …KaCallableMemberCall, but interface was expected`). Turn that one check off:
+
+```kotlin
+android {
+    lint {
+        disable += "NullSafeMutableLiveData"
+    }
+}
+```
+
+For tokenization only, depend on `io.github.radarpayments:sdk-core:4.0.0-beta.3` instead, see
+[Your own card form](#your-own-card-form-sdk-core). Each GitHub release also has the AARs.
 
 ### iOS
 
@@ -60,12 +72,15 @@ import RadarpaymentsSDKPayment
 import RadarpaymentsSDKScanner // only with the scanner
 ```
 
-For tokenization only, take `RadarpaymentsSDKCore` alone and `import RadarpaymentsSDKCore`. Don't add it to an app
-that has `RadarpaymentsSDKPayment`: SDK Core is already in it, and an app can hold only one of the two frameworks.
+For tokenization only, take `RadarpaymentsSDKCore` alone and `import RadarpaymentsSDKCore`, see
+[Your own card form](#your-own-card-form-sdk-core). Don't add it to an app that has `RadarpaymentsSDKPayment`: SDK Core
+is already in it, and an app can hold only one of the two frameworks. Swift Package Manager downloads every binary of
+a package, so it fetches the payment framework too (about 22 MB, once per machine), but only SDK Core goes into your
+app.
 
-If you don't use SPM, each release has `RadarpaymentsSDKPayment.xcframework.zip` and
-`RadarpaymentsSDKCore.xcframework.zip` to embed by hand, and `RadarpaymentsSDKScanner-<version>.zip` with the scanner's
-Swift sources to add to your app target.
+If you don't use SPM, each release has `RadarpaymentsSDKPayment-<version>.xcframework.zip` and
+`RadarpaymentsSDKCore-<version>.xcframework.zip` to embed by hand, and `RadarpaymentsSDKScanner-<version>.zip` with the
+scanner's Swift sources to add to your app target.
 
 Two features need setup in Xcode:
 
@@ -156,6 +171,94 @@ In Swift: `switch onEnum(of: result) { case .completed(let paid): … }`.
 
 Don't release the goods on the result alone: ask your server for the order status. After `Unknown`, don't offer to pay
 again until the server knows how the order ended.
+
+## Your own card form (SDK Core)
+
+If you are PCI DSS certified and collect card data in your own form, SDK Core checks the data and encrypts it into a
+token (`seToken`). Your server sends the token to the gateway in place of the card. SDK Core has no UI and makes no
+network calls. Add `io.github.radarpayments:sdk-core` on Android or the `RadarpaymentsSDKCore` product on iOS
+([Install](#install)).
+
+On Android:
+
+```kotlin
+import net.payrdr.mobile.payment.sdk.core.SdkCore
+import net.payrdr.mobile.payment.sdk.core.model.CardParams
+import net.payrdr.mobile.payment.sdk.core.model.SdkCoreConfig
+
+val result = SdkCore().generate(
+    SdkCoreConfig(
+        cardParams = CardParams(
+            mdOrder = mdOrder,
+            pan = "4111111111111111",
+            cvc = "123",
+            expiryMMYY = "12/30",
+            cardHolder = "JOHN DOE", // or null if your form doesn't ask for it
+            pubKey = publicKey,
+        ),
+        timestamp = System.currentTimeMillis(),
+    ),
+)
+val token = result.token
+if (token != null) {
+    sendToYourServer(token)
+} else {
+    result.errors.forEach { (field, code) -> showError(field, code) } // e.g. ParamField.PAN to "invalid"
+}
+```
+
+On iOS:
+
+```swift
+import RadarpaymentsSDKCore
+
+let params = CardParams(
+    mdOrder: mdOrder,
+    pan: "4111111111111111",
+    cvc: "123",
+    expiryMMYY: "12/30",
+    cardHolder: "JOHN DOE", // or nil if your form doesn't ask for it
+    pubKey: publicKey
+)
+let config = SdkCoreConfig(
+    cardParams: params,
+    timestamp: Int64(Date().timeIntervalSince1970 * 1000)
+)
+let result = SdkCore().generate(config: config)
+if let token = result.token {
+    sendToYourServer(token)
+} else {
+    for (field, code) in result.errors { showError(field, code) } // e.g. .pan: "invalid"
+}
+```
+
+`timestamp` is the current time in milliseconds. It goes into the token, and the card's expiry is checked against it.
+
+**The public key.** Get it from `{baseUrl}/se/keys.do`, for the sandbox `https://dev.bpcbt.com/payment/se/keys.do`.
+The answer is `{"keys": [{"keyValue": "-----BEGIN PUBLIC KEY-----…", "protocolVersion": "RSA", "keyExpiration": …}]}`;
+pass `keyValue` as it is. The key has an expiry date (`keyExpiration`, milliseconds), so fetch it rather than build
+it into the app.
+
+**Which parameters.** Each class is one kind of payment:
+
+| Class | Use it for |
+|---|---|
+| `CardParams` | a new card, for an order (`mdOrder` from `register.do`) |
+| `BindingParams` | a saved card (`bindingID`), for an order; `cvc` may be `null` when the gateway doesn't ask for it |
+| `CardInstantParams`, `BindingInstantParams` | the same without an order (instant payment) |
+| `NewPaymentMethodCardParams`, `NewPaymentMethodStoredCardParams` | creating a payment method; a stored one is `pm_…` |
+
+**Errors.** `generate` checks the fields in the order a form shows them — card number, expiry, CVC, cardholder, order,
+key — and stops at the first wrong one, so `errors` holds one entry: the field (`ParamField`) and a code
+(`ValidationCodes`):
+
+| Code | Means |
+|---|---|
+| `required` | the field is empty |
+| `invalid-format` | wrong characters or shape: letters in the card number, expiry not `MM/YY`, cardholder not Latin letters |
+| `invalid` | the value is wrong: card number length or checksum, month 13 or a month that has passed, CVC not 3–4 digits, a key that can't be read |
+
+`ParamField.UNKNOWN` with `unknown` means the encryption failed for another reason.
 
 ## Configuration
 

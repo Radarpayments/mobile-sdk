@@ -8,6 +8,7 @@ Notable changes to the PAYRDR Mobile SDK. Versions follow [Semantic Versioning](
 ### Added
 
 - `PaymentTextStyle.fontFamily` takes a font the app ships (`PaymentFontFamily`); `null` keeps the system font.
+- iOS: `SdkCoreConfig(cardParams:timestamp:)` without `registeredFrom:`.
 
 ### Changed
 
@@ -16,8 +17,9 @@ Notable changes to the PAYRDR Mobile SDK. Versions follow [Semantic Versioning](
   `RadarpaymentsSDKCore` (SDK Core alone, for an app with its own payment form). Replace `import sdk_payment_scanner`
   with `import RadarpaymentsSDKPayment`; an app that passes `MlKitVisionCardScannerProvider` also adds the
   `RadarpaymentsSDKScanner` product and imports it. An app takes either `RadarpaymentsSDKPayment` or
-  `RadarpaymentsSDKCore`, never both. The release assets are `RadarpaymentsSDKPayment.xcframework.zip`,
-  `RadarpaymentsSDKCore.xcframework.zip` and `RadarpaymentsSDKScanner-<version>.zip` (Swift sources).
+  `RadarpaymentsSDKCore`, never both. The release assets are `RadarpaymentsSDKPayment-<version>.xcframework.zip`,
+  `RadarpaymentsSDKCore-<version>.xcframework.zip` and `RadarpaymentsSDKScanner-<version>.zip` (Swift sources); in
+  `4.0.0-beta.3` the two framework zips had no version in the name.
 - iOS: the payment framework no longer contains camera code, so an app without the scanner product links no capture
   API. `MlKitVisionCardScannerProvider(logTransport:)` now comes from `RadarpaymentsSDKScanner`, and `logTransport` may
   be left out.
@@ -33,6 +35,9 @@ Notable changes to the PAYRDR Mobile SDK. Versions follow [Semantic Versioning](
   and corners `PaymentCorners` (`Radius` or `Pill`). On Android, `PaymentColors(...)` and `PaymentTypography(...)`
   overloads take Compose `Color` and `TextStyle`, and `Color.toPaymentColor()`, `PaymentColor.toColor()` and
   `TextStyle.toPaymentTextStyle()` convert single values; iOS apps build the theme from `PaymentColor` values.
+- `CardParams.mdOrder` and `BindingParams.mdOrder` have no default any more. The empty default always failed with
+  `ParamField.MD_ORDER` `required`; pass the order, or use `CardInstantParams` / `BindingInstantParams` without one.
+- `sdk-payment` exposes `androidx.activity` to the app's compile classpath, since `PayrdrCheckout` takes its types.
 
 ### Fixed
 
@@ -40,3 +45,7 @@ Notable changes to the PAYRDR Mobile SDK. Versions follow [Semantic Versioning](
   saved cards a moment later: the add-card session overwrote the remembered card count used for the skeleton. It no
   longer does.
 - iOS: a step whose content had not been measured yet no longer makes the sheet jump up for one frame.
+- SDK Core reports a card whose expiry month has passed: `generate` returns `ParamField.EXPIRY` with `invalid`, and
+  the bridge `{"errors": {"expiry": "invalid"}}`. Before, only the payment sheet's form checked the date, so an app
+  with its own form got a token for an expired card and the buyer saw the gateway's decline instead. The date is that
+  of `SdkCoreConfig.timestamp` in the device's time zone: pass the current time in milliseconds.

@@ -141,7 +141,8 @@ by hand from the branch to release with a stage, an optional bump and a mode:
   and suffix (SDK `4.1.0-rc.2` ↔ plugins `1.1.0-rc.2`).
 - Modes: `dry-run` (default) builds, signs and packs everything into the workflow artifacts; `validate` also has
   Maven Central validate the bundle and drops it; `publish` releases. Pull requests touching the pipeline run a dry run.
-- The workflow runs `build.yml` on the commit, then on macOS: release XCFrameworks (`RadarpaymentsSDKPayment`,
+- The workflow runs `build.yml` on the commit, and `release` starts only after it passed: if the macOS runner never
+  came and the build was cancelled, re-run the workflow. Then on macOS: release XCFrameworks (`RadarpaymentsSDKPayment`,
   `RadarpaymentsSDKCore`, the bridge), every publication signed into `build/staging-deploy`
   (`publishAllPublicationsToStagingRepository`; POM and signing in the root `build.gradle.kts`),
   `scripts/package-release.sh` (the Central bundle, `Package.swift` with the three products and the two zips'

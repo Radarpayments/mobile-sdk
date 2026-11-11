@@ -151,7 +151,50 @@ class SdkCoreTest {
         result.errors shouldBe mapOf(ParamField.PAN to "required")
     }
 
+    @Test
+    fun `an expired card is an invalid expiry`() {
+        val result = sdk.generate(newCard(expiry = "06/20", timestamp = JULY_2020))
+
+        result.token.shouldBeNull()
+        result.errors shouldBe mapOf(ParamField.EXPIRY to "invalid")
+    }
+
+    @Test
+    fun `a card is valid through its expiry month`() {
+        sdk.generate(newCard(expiry = "07/20", timestamp = JULY_2020)).token.shouldNotBeNull()
+    }
+
+    @Test
+    fun `the expiry is checked against the timestamp instead of the clock`() {
+        sdk.generate(newCard(expiry = "06/20", timestamp = MAY_2020)).token.shouldNotBeNull()
+    }
+
+    @Test
+    fun `a malformed expiry is a format error instead of an expired card`() {
+        sdk.generate(newCard(expiry = "1320", timestamp = JULY_2020)).errors shouldBe mapOf(ParamField.EXPIRY to "invalid-format")
+    }
+
+    private fun newCard(
+        expiry: String,
+        timestamp: Long,
+    ) = SdkCoreConfig(
+        cardParams =
+            CardParams(
+                mdOrder = "order-abc",
+                pan = "4532896701439077",
+                cvc = "444",
+                expiryMMYY = expiry,
+                cardHolder = "JOHN SMITH",
+                pubKey = TEST_PUBLIC_KEY_PEM,
+            ),
+        timestamp = timestamp,
+    )
+
     private companion object {
+        // Mid-month, so the device's time zone does not move the date into another month.
+        const val JULY_2020 = 1594009580806L
+        const val MAY_2020 = 1589544000000L
+
         // Same fixture RSA-2048 public key used in RsaCryptogramCipherTest — keep in sync.
         // Generated via: openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out /tmp/test_rsa.pem
         //               openssl rsa -pubout -in /tmp/test_rsa.pem -out /tmp/test_rsa_pub.pem

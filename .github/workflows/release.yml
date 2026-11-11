@@ -110,7 +110,11 @@ jobs:
 
   release:
     needs: [version, build]
-    if: ${{ !cancelled() && needs.version.result == 'success' && needs.build.result != 'failure' }}
+    # build is skipped on pull requests (the dry run checks the pipeline, build.yml runs there anyway); on a real
+    # release it must have passed: a cancelled build (no macOS runner) is not a passed one.
+    if: >-
+      ${{ !cancelled() && needs.version.result == 'success' &&
+      (needs.build.result == 'success' || github.event_name == 'pull_request') }}
     runs-on: macos-15
     timeout-minutes: 150
     env:
