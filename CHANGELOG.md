@@ -33,6 +33,8 @@ Notable changes to the PAYRDR Mobile SDK. Versions follow [Semantic Versioning](
   and corners `PaymentCorners` (`Radius` or `Pill`). On Android, `PaymentColors(...)` and `PaymentTypography(...)`
   overloads take Compose `Color` and `TextStyle`, and `Color.toPaymentColor()`, `PaymentColor.toColor()` and
   `TextStyle.toPaymentTextStyle()` convert single values; iOS apps build the theme from `PaymentColor` values.
+- `CardParams.mdOrder` and `BindingParams.mdOrder` have no default any more. The empty default always failed with
+  `ParamField.MD_ORDER` `required`; pass the order, or use `CardInstantParams` / `BindingInstantParams` without one.
 
 ### Fixed
 
