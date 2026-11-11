@@ -92,7 +92,8 @@ class CoreTokenRequest {
 }
 
 /// A token, or sdk-core's error code (`required`, `invalid`,
-/// `invalid-format`) for each field that is wrong.
+/// `invalid-format`) for each field that is wrong. The key `unknown` with the
+/// code `unknown` means the encryption failed.
 class CoreTokenResult {
   const CoreTokenResult({this.token, this.errors = const {}});
 

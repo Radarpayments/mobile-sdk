@@ -136,7 +136,8 @@ The result is one of three:
 
 - `{"token": "…"}` — the token for the gateway.
 - `{"errors": {"pan": "required", …}}` — the data didn't pass validation. Keys: `pan`, `expiry`, `cvc`, `cardholder`,
-  `bindingId`, `mdOrder`, `pubKey`, `storedPaymentId`, `unknown`. Values: `required`, `invalid`, `invalid-format`.
+  `bindingId`, `mdOrder`, `pubKey`, `storedPaymentId`, `unknown`. Values: `required`, `invalid`, `invalid-format`;
+  `unknown` comes only with the key `unknown` (encryption failed).
 - `{"error": {"code": "invalid_request", "message": "…"}}` — the request breaks this contract.
 
 ## Contract files
