@@ -21,17 +21,3 @@ internal data class RecognizedLine(
     val text: String,
     val boundingBox: NormalisedRect,
 )
-
-/**
- * Suspending OCR adapter. `recognize` takes an opaque platform-supplied frame handle
- * (CameraX `ImageProxy` on Android, `CMSampleBuffer` on iOS) and returns lines with
- * normalised boxes.
- *
- * Implementations dispatch onto a background thread internally; callers may invoke
- * from any coroutine context.
- */
-internal expect class TextRecognizer() {
-    suspend fun recognize(frame: Any): List<RecognizedLine>
-
-    fun close()
-}

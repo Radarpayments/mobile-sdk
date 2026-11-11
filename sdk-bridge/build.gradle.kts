@@ -46,6 +46,8 @@ val contractFixtures =
     }
 
 kotlin {
+    // The camera contract of the scanner, which the plugins' Swift sources implement.
+    sourceSets.all { languageSettings.optIn("net.payrdr.mobile.payment.sdk.payment.presentation.PayrdrUiApi") }
     sourceSets {
         commonTest.get().kotlin.srcDir(contractFixtures)
         commonMain.dependencies {
@@ -66,6 +68,7 @@ kotlin {
         iosMain.dependencies {
             // Exported below.
             api(project(":sdk-payment"))
+            api(project(":sdk-payment-scanner"))
         }
     }
 
@@ -76,8 +79,10 @@ kotlin {
             baseName = "PayrdrSdkBridge"
             isStatic = false
             binaryOption("bundleId", "net.payrdr.mobile.payment.sdk.bridge")
-            // The bundled SwiftUI checkout refers to sdk-payment's types by their own names, as in sdk_payment_scanner.
+            // The bundled SwiftUI checkout and the plugins' scanner sources refer to the SDK's types by their own names,
+            // as in RadarpaymentsSDKPayment.
             export(project(":sdk-payment"))
+            export(project(":sdk-payment-scanner"))
             // 14.0 is the SDK minimum; see sdk-payment.
             freeCompilerArgs +=
                 "-Xoverride-konan-properties=osVersionMin.ios_arm64=14.0;osVersionMin.ios_simulator_arm64=14.0;osVersionMin.ios_x64=14.0"

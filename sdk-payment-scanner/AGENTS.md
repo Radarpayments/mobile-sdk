@@ -7,13 +7,30 @@ Read the root `AGENTS.md` first, and `README.md` here (what the integrator and t
 The optional camera card scanner: CameraX + ML Kit text recognition on Android, AVFoundation + Vision on iOS. Offline;
 it reads the PAN and expiry, the cardholder only on request. The merchant turns it on by passing
 `MlKitVisionCardScannerProvider(logTransport)` as `SdkPaymentConfig.cardScannerProvider`. That class is the module's
-whole public API (`api/sdk-payment-scanner.api`).
+whole public API for integrators (`api/sdk-payment-scanner.api`).
 
-On iOS this module is also **the framework merchants link**: `sdk_payment_scanner.xcframework` re-exports
-`sdk-payment`, so `import sdk_payment_scanner` brings the whole SDK. An app must not link `sdk_payment.xcframework`
-next to it (two Swift types for one Kotlin class). `sdk-core` is deliberately not exported, so its Swift names keep the
-`Sdk_core*` prefix. This XCFramework, release build, is what a release ships through Swift Package Manager
-(`Package.swift` in the repository root, written by `scripts/package-release.sh`).
+## iOS: three modules from two Gradle modules
+
+| Swift module | Built from | What is inside |
+|---|---|---|
+| `RadarpaymentsSDKPayment` | this module's XCFramework | `sdk-payment` and `sdk-core` (both exported, so no `Sdk_core*` prefixes), the scanner's parser, state and SwiftUI screen — everything but the camera |
+| `RadarpaymentsSDKScanner` | `ios/Sources/RadarpaymentsSDKScanner/` (Swift sources, an SPM target) | the camera: `VisionScannerCamera`, `VisionCameraFeed`, and `MlKitVisionCardScannerProvider.init(logTransport:)` |
+| `RadarpaymentsSDKCore` | `sdk-core`'s XCFramework | SDK Core alone |
+
+- Two Kotlin/Native frameworks cannot live in one app (two runtimes, two Swift types for one Kotlin class). So Core and
+  Payment are either-or, and the scanner cannot be a Kotlin framework of its own: it is Swift on top of Payment.
+- The payment binary must reference no capture API (`AVCapture…`, Vision): an app without the scanner product ships no
+  camera code. The camera reaches Kotlin through `camera/ScannerCamera.kt` in iosMain (`@PayrdrUiApi`: public for the
+  Swift module, hidden from the API dumps). The Kotlin `MlKitVisionCardScannerProvider(camera, logTransport)` takes
+  it; the Swift module adds the `init(logTransport:)` integrators call.
+- The Swift sources are not in `src/iosMain/swift`: SKIE would compile them into the framework. Each file starts with
+  `#if canImport(RadarpaymentsSDKPayment) … #else import PayrdrSdkBridge #endif`, because the same files are compiled
+  in three places: the SPM target (root `Package.swift`, written by `scripts/package-release.sh`), inside the Flutter
+  and React Native plugins (`scripts/build-bridge.sh` copies them; both copies are gitignored), and in the iOS sample
+  (one symlink per file in `samples/ios-app/SampleApp/Scanner/` — Xcode does not compile a symlinked folder, so a new
+  source file needs a new symlink).
+- `sdk-payment` keeps a framework of its own (`sdk_payment`) that is never shipped: CI links it to check that module's
+  Swift alone.
 
 The Swift conveniences for `sdk-payment` types live in `sdk-payment/src/iosMain/swift/`: SKIE packs them into that
 module's klib and they reach this framework with the export.
@@ -34,10 +51,10 @@ and always passes the default `CardScannerConfig()`.
 
 | Part | What it does |
 |---|---|
-| `provider/MlKitVisionCardScannerProvider.kt` | the public entry point (`expect class`; the Android actual draws the Compose screen, the iOS actual is a `NativeCardScanner` opening `VisionScannerSession`) |
+| `provider/MlKitVisionCardScannerProvider.{android,ios}.kt` | the public entry point, one class per platform (not `expect`: the iOS one takes the camera). Android draws the Compose screen; iOS is a `NativeCardScanner` opening `VisionScannerSession` |
 | `state/ScannerViewModel.kt` | 3 matching frames in a row before `Success`; timeout; on denied / timeout / no camera it parks the result and emits it on cancel, so the message card stays up |
 | parser (`CardParser`) | PAN 13–19 digits with Luhn (longest wins), expiry `MM/YY(YY)` on or below the PAN line and not in the past, issuer-word blocklist for the cardholder |
-| `camera/` | `expect` `TextRecognizer`, `CameraPermissionController`, `TorchController`; coordinates are top-left 0..1 (`NormalisedRect`). The preview is platform code: androidMain `CameraPreview` (Compose), iosMain `CameraFeed` (AVFoundation) |
+| `camera/` | common: `RecognizedLine`, `NormalisedRect` (top-left 0..1), `CameraPermissionStatus`. androidMain: `TextRecognizer`, `CameraPermissionController`, `TorchController`, `CameraPreview` (Compose). iosMain: `ScannerCamera`, the contract the Swift camera implements |
 | `presentation/ScannerTexts.kt` | the scanner's texts by language, from the generated tables |
 | UI | Android: androidMain `ui/CardScannerScreen` + overlay (Compose). iOS: SwiftUI in `sdk-payment/src/iosMain/swift/UI/Scanner`, driven by iosMain `presentation/VisionScannerSession.kt` |
 | strings | `src/commonMain/strings/values*/strings.xml` (9 languages) → generated `PaymentStringTables` in `presentation` (common) and Android `Res.string` keys in `…sdk.sdk.payment.scanner.generated.resources` (the doubled `sdk` is real) |
@@ -49,13 +66,14 @@ Platform files are named `X.android.kt` / `X.ios.kt`.
 - Android: the manifest merges `CAMERA`, `uses-feature camera required=false` and an androidx.startup
   `ScannerInitializer`. `ContextHolder` keeps the app context and, weakly, the last resumed `ComponentActivity` for the
   permission dialog — the host app must use androidx.activity.
-- iOS: `src/nativeInterop/cinterop/scannervision.def` defines an Objective-C (ARC) `payrdr_recognize_text`. It exists
-  because Vision objects created from Kotlin hold the camera pixel buffer until the Kotlin GC runs, which freezes the
-  preview. Do not move recognition back into Kotlin.
-- iOS `CameraFeed`: `CFRetain`/`CFRelease` around the sample buffer, one frame at a time behind a `Mutex`,
-  `startRunning`/`stopRunning` on a serial queue. The framework's iOS minimum is overridden to 14.0 — the comment in
-  `build.gradle.kts` explains the CoreMedia crash below 12.2.
-- `PrivacyInfo.xcprivacy` declares the camera reason; the host app adds `NSCameraUsageDescription`.
+- iOS `VisionCameraFeed.swift`: frames are read one at a time on a serial queue with late frames dropped, and
+  everything holding a frame is released before the callback returns — the capture output has few buffers, and a held
+  one freezes the preview (the reason recognition was never done from Kotlin, whose GC releases Vision objects late).
+  `startRunning`/`stopRunning` run on a serial queue; a feed starts once and stops for good. `onText` arrives on a
+  background thread with Vision's bottom-left boxes already flipped to top-left.
+- The frameworks' iOS minimum is overridden to 14.0 (Kotlin/Native defaults to 12.0).
+- The host app adds `NSCameraUsageDescription`. `src/iosMain/resources/PrivacyInfo.xcprivacy` is not packaged into
+  any artifact yet.
 - **No PAN digits in logs**, ever: log events are `event=…` with tag `CardScanner`, as listed in the README.
 - `CardScannerConfig` (`extractCardholder`, `timeoutSeconds`, `enableTorchButton`) is public, but no integrator can set
   it: the provider takes no config and the card form passes the default. So the cardholder is never read through the
@@ -77,8 +95,10 @@ Platform files are named `X.android.kt` / `X.ios.kt`.
   - permission denied → "Open settings" → grant → reopen the scanner: it scans;
   - a scuffed card: the 30 s timeout appears and the buyer can type the card instead;
   - closing mid-scan returns to the card form with the fields untouched.
-- Not covered by tests yet: the camera controllers (`TextRecognizer`, `TorchController`, `CameraPermissionController`)
-  are `internal expect class`, so no fake can be injected. Testing them needs `interface` + `expect class DefaultX`.
+- Not covered by tests yet: the Android camera controllers (`TextRecognizer`, `TorchController`,
+  `CameraPermissionController`) are plain classes, so no fake can be injected; on iOS `ScannerCamera` is an interface
+  and `VisionScannerSession` could be tested with a fake one. The Swift camera has no tests of its own; the release's
+  SPM check (`.github/spm-check`) only proves it compiles and plugs into the config.
 
 ## Out of scope
 

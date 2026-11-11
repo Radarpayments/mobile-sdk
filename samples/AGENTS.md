@@ -6,7 +6,7 @@ has its own `AGENTS.md`.
 | App | Stack | SDK through | State |
 |---|---|---|---|
 | `android-app/` | Jetpack Compose, Gradle module `:samples:android-app` | project deps on the SDK modules | DataStore |
-| `ios-app/` | SwiftUI, `SampleApp.xcodeproj` | `sdk_payment_scanner.xcframework` (debug), built by an Xcode script phase | UserDefaults + Keychain |
+| `ios-app/` | SwiftUI, `SampleApp.xcodeproj` | `RadarpaymentsSDKPayment.xcframework` (debug), built by an Xcode script phase, plus the scanner's Swift sources | UserDefaults + Keychain |
 | `flutter-app/` | Flutter | `plugins/flutter` (path dependency) → `sdk-bridge` | `ChangeNotifier` + shared_preferences |
 | `react-native-app/` | React Native 0.88 | `plugins/react-native` (`file:` dependency) → `sdk-bridge` | `Listenable` + AsyncStorage |
 

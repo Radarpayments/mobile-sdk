@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
 # Packs a release that has been built (scripts/set-version.sh, scripts/build-bridge.sh release,
-# :sdk-payment-scanner:assembleSdk_payment_scannerReleaseXCFramework and publishAllPublicationsToStagingRepository):
+# :sdk-core:assembleRadarpaymentsSDKCoreReleaseXCFramework,
+# :sdk-payment-scanner:assembleRadarpaymentsSDKPaymentReleaseXCFramework and publishAllPublicationsToStagingRepository):
 #   - build/central-bundle.zip, the Maven Central upload (build/staging-deploy without Maven's metadata files);
 #   - into build/release, for the GitHub release:
-#     - sdk_payment_scanner.xcframework.zip, the iOS SDK, which Package.swift (written here) points Swift Package
-#       Manager at, and which an app can also embed by hand;
+#     - the iOS SDK: RadarpaymentsSDKPayment.xcframework.zip (the checkout, with SDK Core inside) and
+#       RadarpaymentsSDKCore.xcframework.zip (SDK Core alone; an app takes one of the two), which Package.swift (written
+#       here) points Swift Package Manager at, and RadarpaymentsSDKScanner-<sdk-version>.zip, the Swift sources of the
+#       card scanner's camera for an app that embeds the frameworks by hand (the package builds them from the tag);
 #     - the Android libraries as AARs, to download; an alpha, which does not go to Maven Central, also gets the Maven
 #       repository itself (payrdr-sdk-maven-<sdk-version>.zip);
 #     - the Flutter and React Native plugins with PayrdrSdkBridge.xcframework inside;
@@ -27,29 +30,49 @@ dist="$root/build/release"
 rm -rf "$dist" build/central-bundle.zip
 mkdir -p "$dist"
 
-ditto -c -k --keepParent sdk-payment-scanner/build/XCFrameworks/release/sdk_payment_scanner.xcframework \
-  "$dist/sdk_payment_scanner.xcframework.zip"
-checksum="$(swift package compute-checksum "$dist/sdk_payment_scanner.xcframework.zip")"
+ditto -c -k --keepParent sdk-payment-scanner/build/XCFrameworks/release/RadarpaymentsSDKPayment.xcframework \
+  "$dist/RadarpaymentsSDKPayment.xcframework.zip"
+ditto -c -k --keepParent sdk-core/build/XCFrameworks/release/RadarpaymentsSDKCore.xcframework \
+  "$dist/RadarpaymentsSDKCore.xcframework.zip"
+ditto -c -k --keepParent sdk-payment-scanner/ios/Sources/RadarpaymentsSDKScanner \
+  "$dist/RadarpaymentsSDKScanner-$sdk.zip"
+payment_checksum="$(swift package compute-checksum "$dist/RadarpaymentsSDKPayment.xcframework.zip")"
+core_checksum="$(swift package compute-checksum "$dist/RadarpaymentsSDKCore.xcframework.zip")"
 cat > Package.swift <<EOF
 // swift-tools-version:5.9
 
 // Root manifest for integrators: File → Add Package Dependencies → https://github.com/$repository
-// Written by scripts/package-release.sh for each release: the SDK is the XCFramework attached to the GitHub release.
+// Written by scripts/package-release.sh for each release: the frameworks are attached to the GitHub release.
 
 import PackageDescription
 
 let package = Package(
-    name: "PayrdrSDK",
+    name: "RadarpaymentsSDK",
     platforms: [.iOS(.v14)],
     products: [
-        .library(name: "PayrdrSDK", targets: ["sdk_payment_scanner"])
+        // The checkout, with SDK Core inside.
+        .library(name: "RadarpaymentsSDKPayment", targets: ["RadarpaymentsSDKPayment"]),
+        // The camera of the checkout's card scanner; add it next to RadarpaymentsSDKPayment.
+        .library(name: "RadarpaymentsSDKScanner", targets: ["RadarpaymentsSDKScanner"]),
+        // SDK Core alone, for an app with its own payment form. Not together with RadarpaymentsSDKPayment.
+        .library(name: "RadarpaymentsSDKCore", targets: ["RadarpaymentsSDKCore"]),
     ],
     targets: [
         .binaryTarget(
-            name: "sdk_payment_scanner",
-            url: "https://github.com/$repository/releases/download/$sdk/sdk_payment_scanner.xcframework.zip",
-            checksum: "$checksum"
-        )
+            name: "RadarpaymentsSDKPayment",
+            url: "https://github.com/$repository/releases/download/$sdk/RadarpaymentsSDKPayment.xcframework.zip",
+            checksum: "$payment_checksum"
+        ),
+        .binaryTarget(
+            name: "RadarpaymentsSDKCore",
+            url: "https://github.com/$repository/releases/download/$sdk/RadarpaymentsSDKCore.xcframework.zip",
+            checksum: "$core_checksum"
+        ),
+        .target(
+            name: "RadarpaymentsSDKScanner",
+            dependencies: ["RadarpaymentsSDKPayment"],
+            path: "sdk-payment-scanner/ios/Sources/RadarpaymentsSDKScanner"
+        ),
     ]
 )
 EOF
@@ -62,8 +85,9 @@ if [[ "$sdk" == *-alpha.* ]]; then
   cp build/central-bundle.zip "$dist/payrdr-sdk-maven-$sdk.zip"
 fi
 
-(cd plugins && git ls-files flutter && find flutter/ios/payrdr_sdk/Frameworks -type f) |
-  tar -czf "$dist/payrdr_sdk-$plugin.tar.gz" -C plugins -s '/^flutter/payrdr_sdk/' -T -
+(cd plugins && git ls-files flutter &&
+  find flutter/ios/payrdr_sdk/Frameworks flutter/ios/payrdr_sdk/Sources/payrdr_sdk/Scanner -type f) |
+  tar -czf "$dist/payrdr-flutter-sdk-$plugin.tar.gz" -C plugins -s '/^flutter/payrdr_sdk/' -T -
 (cd plugins/react-native && npm pack --silent --pack-destination "$dist" > /dev/null)
 
 changes="$(awk '$0 == "## [Unreleased]" { found = 1; next } found && /^## / { exit } found' CHANGELOG.md | sed '/./,$!d')"
@@ -92,10 +116,12 @@ fi
 
 ## Install
 
-- **iOS**: Swift Package Manager, \`https://github.com/$repository\`, exact version \`$sdk\`, product \`PayrdrSDK\`
-  (\`import sdk_payment_scanner\`); or embed \`sdk_payment_scanner.xcframework\` from the zip below.
+- **iOS**: Swift Package Manager, \`https://github.com/$repository\`, exact version \`$sdk\`, products
+  \`RadarpaymentsSDKPayment\` (the checkout) and, for the card scanner, \`RadarpaymentsSDKScanner\`; an app with its own
+  payment form takes \`RadarpaymentsSDKCore\` instead of the two. Or embed the XCFrameworks from the zips below
+  and add the sources of \`RadarpaymentsSDKScanner-$sdk.zip\` to the app.
 - **Android**: $android.
-- **Flutter** \`$plugin\`: unpack \`payrdr_sdk-$plugin.tar.gz\` and depend on it by \`path\`.
+- **Flutter** \`$plugin\`: unpack \`payrdr-flutter-sdk-$plugin.tar.gz\` (a \`payrdr_sdk\` folder) and depend on it by \`path\`.
 - **React Native** \`$plugin\`: \`npm install ./payrdr-react-native-sdk-$plugin.tgz\`.
 
 $plugins_android

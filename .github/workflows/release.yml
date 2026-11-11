@@ -159,8 +159,8 @@ jobs:
         run: |
           scripts/set-version.sh "$SDK" "$PLUGIN"
           scripts/build-bridge.sh release
-          ./gradlew --console=plain :sdk-payment-scanner:assembleSdk_payment_scannerReleaseXCFramework \
-            publishAllPublicationsToStagingRepository
+          ./gradlew --console=plain :sdk-payment-scanner:assembleRadarpaymentsSDKPaymentReleaseXCFramework \
+            :sdk-core:assembleRadarpaymentsSDKCoreReleaseXCFramework publishAllPublicationsToStagingRepository
 
       - name: Package
         run: |
@@ -171,13 +171,15 @@ jobs:
             [[ -z "$missing" ]] || { echo "::error::Not signed: $missing"; exit 1; }
           fi
 
-      - name: Integrator check (the XCFramework just built)
+      - name: Integrator check (the XCFrameworks just built)
         working-directory: .github/spm-check
         env:
           TEST_RUNNER_EXPECTED_SDK_VERSION: ${{ env.SDK }}
         run: |
-          mkdir -p Frameworks
-          cp -R ../../sdk-payment-scanner/build/XCFrameworks/release/sdk_payment_scanner.xcframework Frameworks/
+          mkdir -p Frameworks Sources
+          cp -R ../../sdk-payment-scanner/build/XCFrameworks/release/RadarpaymentsSDKPayment.xcframework \
+            ../../sdk-core/build/XCFrameworks/release/RadarpaymentsSDKCore.xcframework Frameworks/
+          cp -R ../../sdk-payment-scanner/ios/Sources/RadarpaymentsSDKScanner Sources/
           xcodebuild test -scheme SPMCheck-Package -destination "$(../scripts/simulator.sh)" |
             grep -E "Test Case .*(passed|failed|skipped)|Executed|error:"
 
@@ -236,7 +238,7 @@ jobs:
           PAYRDR_SDK_VERSION: ${{ env.SDK }}
           TEST_RUNNER_EXPECTED_SDK_VERSION: ${{ env.SDK }}
         run: |
-          rm -rf Frameworks
+          rm -rf Frameworks Sources
           xcodebuild test -scheme SPMCheck-Package -destination "$(../scripts/simulator.sh)" |
             grep -E "Test Case .*(passed|failed|skipped)|Executed|error:"
 
@@ -261,7 +263,7 @@ jobs:
               publish)
                 [[ "$SDK" == *-alpha.* ]] || echo "Maven Central: \`implementation(\"io.github.radarpayments:sdk-payment:$SDK\")\`"
                 echo ""
-                echo "SPM: \`$GITHUB_SERVER_URL/$GITHUB_REPOSITORY\`, version \`$SDK\`, product \`PayrdrSDK\`"
+                echo "SPM: \`$GITHUB_SERVER_URL/$GITHUB_REPOSITORY\`, version \`$SDK\`, products \`RadarpaymentsSDKPayment\`, \`RadarpaymentsSDKScanner\`, \`RadarpaymentsSDKCore\`"
                 echo ""
                 echo "GitHub release: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/releases/tag/$SDK" ;;
             esac

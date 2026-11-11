@@ -1,5 +1,5 @@
 import XCTest
-import sdk_payment_scanner
+import RadarpaymentsSDKPayment
 @testable import SampleApp
 
 /// A registrar that answers only when the test says so.

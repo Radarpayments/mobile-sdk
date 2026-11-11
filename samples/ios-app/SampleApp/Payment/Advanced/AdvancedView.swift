@@ -1,5 +1,5 @@
 import SwiftUI
-import sdk_payment_scanner
+import RadarpaymentsSDKPayment
 
 struct AdvancedView: View {
     @EnvironmentObject var store: SampleStore

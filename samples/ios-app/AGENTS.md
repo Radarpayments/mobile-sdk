@@ -19,9 +19,13 @@ Read `../AGENTS.md` (all samples) first. SwiftUI app, deployment target iOS 16.0
 
 ## The SDK from Swift
 
-- One module: `import sdk_payment_scanner` (it re-exports `sdk-payment`). Never link `sdk_payment.xcframework` as well.
-- sdk-core types keep the `Sdk_core` prefix (`Sdk_coreTokenResult`); Kotlin top-level functions come through `…Kt`
-  classes (`IosSdkCoreSurfaceKt`); sealed results are matched with SKIE's `onEnum(of:)`.
+- One module: `import RadarpaymentsSDKPayment` (`sdk-payment` and `sdk-core` are in it). Never link `sdk_payment` or
+  `RadarpaymentsSDKCore` as well.
+- The scanner's camera (`RadarpaymentsSDKScanner` for integrators) is compiled into the app: `SampleApp/Scanner/` holds
+  one symlink per file of `sdk-payment-scanner/ios/Sources/RadarpaymentsSDKScanner/`. Xcode does not compile a
+  symlinked folder, so a new source file there needs a new symlink here.
+- Kotlin top-level functions come through `…Kt` classes (`IosSdkCoreSurfaceKt`); sealed results are matched with
+  SKIE's `onEnum(of:)`.
 - Swift conveniences (async `present`, `.payrdrCheckout` modifier, config inits) live in
   `sdk-payment/src/iosMain/swift/`.
 
@@ -29,7 +33,7 @@ Read `../AGENTS.md` (all samples) first. SwiftUI app, deployment target iOS 16.0
 
 The first build phase of the app target is a shell script that runs Gradle:
 - one architecture with an existing XCFramework slice → `:sdk-payment-scanner:linkDebugFramework<Target>`, then rsync
-  into the slice; otherwise the whole `assembleSdk_payment_scannerDebugXCFramework` (~4 min);
+  into the slice; otherwise the whole `assembleRadarpaymentsSDKPaymentDebugXCFramework` (~4 min);
 - re-syncs and re-signs the embedded framework, because Xcode otherwise embeds a stale copy.
 
 Gotchas:

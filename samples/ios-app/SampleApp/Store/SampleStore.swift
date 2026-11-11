@@ -1,6 +1,6 @@
 import Combine
 import Foundation
-import sdk_payment_scanner
+import RadarpaymentsSDKPayment
 
 /// The SDK configuration of the developer settings' gateway. Read on every payment, so a gateway changed there applies
 /// to the next one.

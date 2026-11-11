@@ -14,7 +14,8 @@ Pod::Spec.new do |s|
   s.platforms    = { :ios => min_ios_version_supported }
   s.source       = { :path => "." }
 
-  s.source_files = "ios/**/*.{h,m,mm}"
+  # ios/Scanner holds the card scanner's camera in Swift; scripts/build-bridge.sh puts it here.
+  s.source_files = "ios/**/*.{h,m,mm,swift}"
   s.private_header_files = "ios/**/*.h"
   # The whole SDK as one Kotlin framework; scripts/build-bridge.sh puts it here. It carries the checkout's strings and
   # images inside, so the app needs no build phase.

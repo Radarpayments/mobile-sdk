@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2B7D77D51A1AF99C4427B2EE /* sdk_payment_scanner.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB697B63BC1B25B7BEC4E07A /* sdk_payment_scanner.xcframework */; };
-		B000337D76F41CB41CF58E1C /* sdk_payment_scanner.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CB697B63BC1B25B7BEC4E07A /* sdk_payment_scanner.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		2B7D77D51A1AF99C4427B2EE /* RadarpaymentsSDKPayment.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB697B63BC1B25B7BEC4E07A /* RadarpaymentsSDKPayment.xcframework */; };
+		B000337D76F41CB41CF58E1C /* RadarpaymentsSDKPayment.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CB697B63BC1B25B7BEC4E07A /* RadarpaymentsSDKPayment.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,7 +35,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				B000337D76F41CB41CF58E1C /* sdk_payment_scanner.xcframework in Embed Frameworks */,
+				B000337D76F41CB41CF58E1C /* RadarpaymentsSDKPayment.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -46,7 +46,7 @@
 		33A25CEF2F9A8AFB000D8AAE /* SampleApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SampleApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		33A25CFC2F9A8AFF000D8AAE /* SampleAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SampleAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		33A25D062F9A8AFF000D8AAE /* SampleAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SampleAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		CB697B63BC1B25B7BEC4E07A /* sdk_payment_scanner.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = sdk_payment_scanner.xcframework; path = "../../sdk-payment-scanner/build/XCFrameworks/debug/sdk_payment_scanner.xcframework"; sourceTree = SOURCE_ROOT; };
+		CB697B63BC1B25B7BEC4E07A /* RadarpaymentsSDKPayment.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = RadarpaymentsSDKPayment.xcframework; path = "../../sdk-payment-scanner/build/XCFrameworks/debug/RadarpaymentsSDKPayment.xcframework"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -72,7 +72,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2B7D77D51A1AF99C4427B2EE /* sdk_payment_scanner.xcframework in Frameworks */,
+				2B7D77D51A1AF99C4427B2EE /* RadarpaymentsSDKPayment.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -100,7 +100,7 @@
 				33A25CFF2F9A8AFF000D8AAE /* SampleAppTests */,
 				33A25D092F9A8AFF000D8AAE /* SampleAppUITests */,
 				33A25CF02F9A8AFB000D8AAE /* Products */,
-				CB697B63BC1B25B7BEC4E07A /* sdk_payment_scanner.xcframework */,
+				CB697B63BC1B25B7BEC4E07A /* RadarpaymentsSDKPayment.xcframework */,
 			);
 			sourceTree = "<group>";
 		};
@@ -275,7 +275,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Stop the build when Gradle fails, or Xcode embeds the previous framework.\nset -e\nexport JAVA_HOME=\"$HOME/.sdkman/candidates/java/21.0.2-tem\"\nREPO=\"$SRCROOT/../..\"\nXCF=\"$REPO/sdk-payment-scanner/build/XCFrameworks/debug/sdk_payment_scanner.xcframework\"\n\n# The app links only sdk_payment_scanner (it exports sdk-payment).\n# Link just the architecture being built: the full XCFramework compiles and links three of them (~4 min).\ncase \"$PLATFORM_NAME:$ARCHS\" in\n  iphonesimulator:arm64) TARGET=iosSimulatorArm64; SLICE=ios-arm64_x86_64-simulator ;;\n  iphonesimulator:x86_64) TARGET=iosX64; SLICE=ios-arm64_x86_64-simulator ;;\n  iphoneos:arm64) TARGET=iosArm64; SLICE=ios-arm64 ;;\n  *) TARGET=\"\"; case \"$PLATFORM_NAME\" in iphonesimulator) SLICE=ios-arm64_x86_64-simulator ;; *) SLICE=ios-arm64 ;; esac ;;\nesac\nif [ -n \"$TARGET\" ] && [ -d \"$XCF/$SLICE\" ]; then\n  LINK_TASK=\":sdk-payment-scanner:linkDebugFramework$(echo \"$TARGET\" | cut -c1 | tr a-z A-Z)$(echo \"$TARGET\" | cut -c2-)\"\n  \"$REPO/gradlew\" -p \"$REPO\" $LINK_TASK\n  FRESH=\"$REPO/sdk-payment-scanner/build/bin/$TARGET/debugFramework/sdk_payment_scanner.framework\"\n  # Keep the XCFramework slice current too, so Xcode's own copy of it is never stale.\n  rsync -a --delete \"$FRESH/\" \"$XCF/$SLICE/sdk_payment_scanner.framework/\"\nelse\n  # First build (no XCFramework yet) or several architectures at once.\n  \"$REPO/gradlew\" -p \"$REPO\" :sdk-payment-scanner:assembleSdk_payment_scannerDebugXCFramework\n  FRESH=\"$XCF/$SLICE/sdk_payment_scanner.framework\"\nfi\n\n# Xcode copies the XCFramework slice into BUILT_PRODUCTS_DIR before this phase runs, and its embed step\n# does not notice the framework changing afterwards: the app would link and run the previous build.\n# Put the fresh framework in both places (the embedded copy without headers, signed like the embed step does).\nrsync -a --delete \"$FRESH/\" \"$BUILT_PRODUCTS_DIR/sdk_payment_scanner.framework/\"\nEMBEDDED=\"$TARGET_BUILD_DIR/$FRAMEWORKS_FOLDER_PATH/sdk_payment_scanner.framework\"\nif [ -d \"$EMBEDDED\" ]; then\n  rsync -a --delete --exclude Headers --exclude Modules \"$FRESH/\" \"$EMBEDDED/\"\n  codesign --force --sign \"${EXPANDED_CODE_SIGN_IDENTITY:--}\" \"$EMBEDDED\"\nfi\n";
+			shellScript = "# Stop the build when Gradle fails, or Xcode embeds the previous framework.\nset -e\nexport JAVA_HOME=\"$HOME/.sdkman/candidates/java/21.0.2-tem\"\nREPO=\"$SRCROOT/../..\"\nXCF=\"$REPO/sdk-payment-scanner/build/XCFrameworks/debug/RadarpaymentsSDKPayment.xcframework\"\n\n# The app links only RadarpaymentsSDKPayment (it exports sdk-payment).\n# Link just the architecture being built: the full XCFramework compiles and links three of them (~4 min).\ncase \"$PLATFORM_NAME:$ARCHS\" in\n  iphonesimulator:arm64) TARGET=iosSimulatorArm64; SLICE=ios-arm64_x86_64-simulator ;;\n  iphonesimulator:x86_64) TARGET=iosX64; SLICE=ios-arm64_x86_64-simulator ;;\n  iphoneos:arm64) TARGET=iosArm64; SLICE=ios-arm64 ;;\n  *) TARGET=\"\"; case \"$PLATFORM_NAME\" in iphonesimulator) SLICE=ios-arm64_x86_64-simulator ;; *) SLICE=ios-arm64 ;; esac ;;\nesac\nif [ -n \"$TARGET\" ] && [ -d \"$XCF/$SLICE\" ]; then\n  LINK_TASK=\":sdk-payment-scanner:linkDebugFramework$(echo \"$TARGET\" | cut -c1 | tr a-z A-Z)$(echo \"$TARGET\" | cut -c2-)\"\n  \"$REPO/gradlew\" -p \"$REPO\" $LINK_TASK\n  FRESH=\"$REPO/sdk-payment-scanner/build/bin/$TARGET/debugFramework/RadarpaymentsSDKPayment.framework\"\n  # Keep the XCFramework slice current too, so Xcode's own copy of it is never stale.\n  rsync -a --delete \"$FRESH/\" \"$XCF/$SLICE/RadarpaymentsSDKPayment.framework/\"\nelse\n  # First build (no XCFramework yet) or several architectures at once.\n  \"$REPO/gradlew\" -p \"$REPO\" :sdk-payment-scanner:assembleRadarpaymentsSDKPaymentDebugXCFramework\n  FRESH=\"$XCF/$SLICE/RadarpaymentsSDKPayment.framework\"\nfi\n\n# Xcode copies the XCFramework slice into BUILT_PRODUCTS_DIR before this phase runs, and its embed step\n# does not notice the framework changing afterwards: the app would link and run the previous build.\n# Put the fresh framework in both places (the embedded copy without headers, signed like the embed step does).\nrsync -a --delete \"$FRESH/\" \"$BUILT_PRODUCTS_DIR/RadarpaymentsSDKPayment.framework/\"\nEMBEDDED=\"$TARGET_BUILD_DIR/$FRAMEWORKS_FOLDER_PATH/RadarpaymentsSDKPayment.framework\"\nif [ -d \"$EMBEDDED\" ]; then\n  rsync -a --delete --exclude Headers --exclude Modules \"$FRESH/\" \"$EMBEDDED/\"\n  codesign --force --sign \"${EXPANDED_CODE_SIGN_IDENTITY:--}\" \"$EMBEDDED\"\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */

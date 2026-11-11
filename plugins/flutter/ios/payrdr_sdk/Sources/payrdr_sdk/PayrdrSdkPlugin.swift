@@ -5,7 +5,7 @@ import UIKit
 /// Passes the Dart side's JSON to the SDK's bridge and its answers back; all mapping lives in sdk-bridge. The sheet opens
 /// over whatever the app's key window shows.
 public final class PayrdrSdkPlugin: NSObject, FlutterPlugin {
-    private let checkout = PayrdrBridgeCheckout()
+    private let checkout = PayrdrBridgeCheckout(scannerCamera: VisionScannerCamera())
 
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "net.payrdr.sdk", binaryMessenger: registrar.messenger())

@@ -1,5 +1,5 @@
 import SwiftUI
-import sdk_payment_scanner
+import RadarpaymentsSDKPayment
 
 /// The card fields as one group, the way the SDK's own form shows them: the number across the top with the
 /// network logo, expiry and CVC side by side, the name below, split by hairlines in one frame. The focused cell

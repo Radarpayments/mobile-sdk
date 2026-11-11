@@ -1,5 +1,5 @@
 import SwiftUI
-import sdk_payment_scanner
+import RadarpaymentsSDKPayment
 
 /// The brand of a demo business: its colours, corner radius and fonts. The store screens use all of it;
 /// the SDK sheet takes the colours and corners through `paymentTheme()`.

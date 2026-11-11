@@ -1,0 +1,1 @@
+../../../../sdk-payment-scanner/ios/Sources/RadarpaymentsSDKScanner/VisionScannerCamera.swift

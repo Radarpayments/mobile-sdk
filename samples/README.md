@@ -5,7 +5,7 @@ Demo stores that take payments with the PAYRDR SDK. The same demo is built four 
 | App | Built with | Folder |
 |---|---|---|
 | Android | Jetpack Compose, `sdk-payment` | `android-app/` |
-| iOS | SwiftUI, `sdk-payment` | `ios-app/` |
+| iOS | SwiftUI, `RadarpaymentsSDKPayment` and the scanner | `ios-app/` |
 | Flutter | the `payrdr_sdk` plugin | `flutter-app/` ([README](flutter-app/README.md)) |
 | React Native | the `@payrdr/react-native-sdk` module | `react-native-app/` ([README](react-native-app/README.md)) |
 

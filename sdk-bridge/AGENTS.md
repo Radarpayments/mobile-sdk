@@ -9,8 +9,10 @@ strings back; every mapping between JSON and the SDK's Kotlin types lives here, 
 mapping of their own, and their native glue only forwards strings.
 
 It depends on `:sdk-core`, `:sdk-payment` and `:sdk-payment-scanner`. On iOS it is the one framework an app embeds
-(`PayrdrSdkBridge.xcframework`, all of the SDK inside, so the app has a single Kotlin/Native runtime). On Android it is
-published as `sdk-bridge-android`, and it brings `play-services-wallet` and the Google Pay manifest entry with it, so
+(`PayrdrSdkBridge.xcframework`, all of the SDK's Kotlin inside, so the app has a single Kotlin/Native runtime). The
+scanner's camera is Swift and not in it: the framework exports `sdk-payment-scanner`'s `ScannerCamera` contract, and
+each plugin compiles the camera sources and passes `VisionScannerCamera()` in (see `sdk-payment-scanner/AGENTS.md`).
+On Android it is published as `sdk-bridge-android`, and it brings `play-services-wallet` and the Google Pay manifest entry with it, so
 plugin users touch neither Gradle nor the manifest.
 
 ## Map
@@ -27,7 +29,9 @@ plugin users touch neither Gradle nor the manifest.
 Platform entry points, `PayrdrBridgeCheckout.kt`:
 - androidMain: `start(activity, requestJson, onResult)` (`@MainThread`, `startActivityForResult` with request code
   `0x7A01`) and `handleActivityResult(...)`, which the plugin calls from its activity-result hook. No `dismiss`.
-- iosMain: `present(requestJson, from, onResult)` (falls back to the key window's root view controller) and `dismiss()`.
+- iosMain: `PayrdrBridgeCheckout(scannerCamera)`, `present(requestJson, from, onResult)` (falls back to the key window's
+  root view controller) and `dismiss()`. Without a camera a request with `cardScanner` opens the sheet with no scan
+  button.
 
 One checkout at a time on both platforms; a second one gets `busy`, a missing activity or window gets `no_screen`.
 

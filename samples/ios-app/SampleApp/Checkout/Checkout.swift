@@ -1,7 +1,7 @@
 import Combine
 import SwiftUI
 import UIKit
-import sdk_payment_scanner
+import RadarpaymentsSDKPayment
 
 // Everything this demo does with the payment SDK lives in this file. To take payments in your app:
 //

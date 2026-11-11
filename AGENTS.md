@@ -7,7 +7,7 @@ module and sample has its own `AGENTS.md` — read the one for the directory you
 ## Modules
 
 ```
-sdk-core ◄── sdk-payment ◄── sdk-payment-scanner          (iOS: the framework merchants link)
+sdk-core ◄── sdk-payment ◄── sdk-payment-scanner          (iOS: RadarpaymentsSDKPayment + the Swift scanner)
    ▲              ▲                  ▲
    └──────────────┴──── sdk-bridge ──┘ ◄── plugins/flutter, plugins/react-native  (JSON strings)
 ```
@@ -16,12 +16,12 @@ sdk-core ◄── sdk-payment ◄── sdk-payment-scanner          (iOS: the 
 |---|---|---|
 | `sdk-core/` | headless tokenization: card validation, RSA cryptogram → `seToken` | `sdk-core/AGENTS.md` |
 | `sdk-payment/` | the checkout: gateway client, payment flow, 3DS, Google Pay / Apple Pay, UI in Compose (Android) and SwiftUI (iOS) | `sdk-payment/AGENTS.md` |
-| `sdk-payment-scanner/` | optional camera card scanner; on iOS also the umbrella framework re-exporting `sdk-payment` | `sdk-payment-scanner/AGENTS.md` |
+| `sdk-payment-scanner/` | optional camera card scanner; on iOS it builds `RadarpaymentsSDKPayment` (re-exporting `sdk-payment` and `sdk-core`) and holds the Swift sources of `RadarpaymentsSDKScanner` | `sdk-payment-scanner/AGENTS.md` |
 | `sdk-bridge/` | the SDK as a JSON contract for Flutter / React Native; `PayrdrSdkBridge.xcframework` | `sdk-bridge/AGENTS.md` |
 | `plugins/` | `payrdr_sdk` (Flutter), `@payrdr/react-native-sdk` (TurboModule) | `plugins/AGENTS.md` |
 | `samples/` | demo stores on Android, iOS, Flutter, React Native | `samples/AGENTS.md` |
 | `build-logic/convention/` | convention plugins `payrdr.kmp.library`, `payrdr.kmp.compose.android` | below |
-| `scripts/build-bridge.sh` | builds what the plugins consume (`build/maven` + the XCFramework) | |
+| `scripts/build-bridge.sh` | builds what the plugins consume (`build/maven`, the XCFramework, the scanner's Swift sources) | |
 
 Package root: `net.payrdr.mobile.payment.sdk.<module>`. Android namespace is derived from the module name. Maven
 coordinates are `io.github.radarpayments:<module>` (Android artifact `<module>-android`), as in SDK 3.x — the group is
@@ -141,15 +141,18 @@ by hand from the branch to release with a stage, an optional bump and a mode:
   and suffix (SDK `4.1.0-rc.2` ↔ plugins `1.1.0-rc.2`).
 - Modes: `dry-run` (default) builds, signs and packs everything into the workflow artifacts; `validate` also has
   Maven Central validate the bundle and drops it; `publish` releases. Pull requests touching the pipeline run a dry run.
-- The workflow runs `build.yml` on the commit, then on macOS: release XCFrameworks, every publication signed into
-  `build/staging-deploy` (`publishAllPublicationsToStagingRepository`; POM and signing in the root
-  `build.gradle.kts`), `scripts/package-release.sh` (the Central bundle, `Package.swift` with the zip's checksum, AARs,
-  plugin packages, notes), and `.github/spm-check` — a Swift package that links the XCFramework like an integrator and
-  checks the version, the SwiftUI checkout and the Swift conveniences.
+- The workflow runs `build.yml` on the commit, then on macOS: release XCFrameworks (`RadarpaymentsSDKPayment`,
+  `RadarpaymentsSDKCore`, the bridge), every publication signed into `build/staging-deploy`
+  (`publishAllPublicationsToStagingRepository`; POM and signing in the root `build.gradle.kts`),
+  `scripts/package-release.sh` (the Central bundle, `Package.swift` with the three products and the two zips'
+  checksums, AARs, plugin packages, notes), and `.github/spm-check` — a Swift package that links the products like an
+  integrator and checks the version, the SwiftUI checkout, the Swift conveniences and that the scanner plugs in; SDK
+  Core alone has a test bundle of its own, since an app holds one of the two frameworks.
 - `publish`: Maven Central (`.github/scripts/central-upload.sh`, Central Portal API; not for alphas, cannot be undone),
   then the release commit and its tag; the commit stays off the branches, only the tag is pushed. Then the GitHub
-  release (XCFramework zip, AARs, the Flutter and React Native packages; an alpha also the Maven repository as a zip)
-  and the SPM check against the released tag. For a stable version the workflow also opens a pull request
+  release (XCFramework zips, the scanner's sources, AARs, the Flutter and React Native packages; an alpha also the
+  Maven repository as a zip) and the SPM check against the released tag. For a stable version the workflow also opens
+  a pull request
   `release/<version>` → `main` with the release commit (the dated CHANGELOG section) and the next patch `-SNAPSHOT`
   (opened with the workflow's token, it runs no checks until someone closes and reopens it), and deletes the GitHub
   releases of the version's pre-releases (tags stay).

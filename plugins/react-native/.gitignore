@@ -3,3 +3,5 @@ android/build/
 ios/build/
 # The SDK framework, built by scripts/build-bridge.sh
 ios/Frameworks/
+# The card scanner's camera sources, copied by scripts/build-bridge.sh
+ios/Scanner/

@@ -7,21 +7,29 @@ import net.payrdr.mobile.payment.sdk.payment.presentation.NativeScannerSession
 import net.payrdr.mobile.payment.sdk.payment.scanner.CardScannerConfig
 import net.payrdr.mobile.payment.sdk.payment.scanner.CardScannerProvider
 import net.payrdr.mobile.payment.sdk.payment.scanner.CardScannerResult
+import net.payrdr.mobile.payment.sdk.payment.scanner.camera.ScannerCamera
 import net.payrdr.mobile.payment.sdk.payment.scanner.presentation.VisionScannerSession
 
 /**
- * Default [CardScannerProvider] shipping Vision camera OCR, shown by the checkout's SwiftUI scanner screen; see the
- * common declaration.
+ * The card scanner of the checkout: Vision reads the card from the camera. Pass it to
+ * `SdkPaymentConfig.cardScannerProvider`.
+ *
+ * An app creates it with `MlKitVisionCardScannerProvider(logTransport:)` from the `RadarpaymentsSDKScanner` module,
+ * which supplies the [camera]; the payment framework itself has no camera code.
+ *
+ * @param logTransport optional sink for scanner events (`event=...`, tag `"CardScanner"`), usually the one of
+ *   `SdkPaymentConfig.logTransport`, so scanner events flow through the same sink.
  */
-public actual class MlKitVisionCardScannerProvider actual constructor(
-    logTransport: LogTransport?,
+public class MlKitVisionCardScannerProvider(
+    private val camera: ScannerCamera,
+    logTransport: LogTransport? = null,
 ) : CardScannerProvider,
     NativeCardScanner {
-    internal actual val logger: Logger? = logTransport?.let { Logger(transports = listOf(it)) }
+    private val logger: Logger? = logTransport?.let { Logger(transports = listOf(it)) }
 
     override fun openScanner(
         config: CardScannerConfig,
         language: String,
         onResult: (CardScannerResult) -> Unit,
-    ): NativeScannerSession = VisionScannerSession(config, language, logger, onResult)
+    ): NativeScannerSession = VisionScannerSession(camera, config, language, logger, onResult)
 }

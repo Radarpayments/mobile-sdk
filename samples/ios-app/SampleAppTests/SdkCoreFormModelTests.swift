@@ -1,6 +1,6 @@
 import XCTest
 @testable import SampleApp
-import sdk_payment_scanner
+import RadarpaymentsSDKPayment
 
 final class SdkCoreFormModelTests: XCTestCase {
     func test_newCardVariant_buildsParams() {

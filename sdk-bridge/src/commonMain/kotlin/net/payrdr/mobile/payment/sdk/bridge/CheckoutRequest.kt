@@ -11,7 +11,7 @@ import net.payrdr.mobile.payment.sdk.payment.config.GooglePayConfig
 import net.payrdr.mobile.payment.sdk.payment.config.SdkPaymentConfig
 import net.payrdr.mobile.payment.sdk.payment.gpay.GooglePayEnvironment
 import net.payrdr.mobile.payment.sdk.payment.logger.ConsoleLogTransport
-import net.payrdr.mobile.payment.sdk.payment.scanner.provider.MlKitVisionCardScannerProvider
+import net.payrdr.mobile.payment.sdk.payment.scanner.CardScannerProvider
 import net.payrdr.mobile.payment.sdk.payment.ssl.SslPinningConfig
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.DefaultDarkColors
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.DefaultLightColors
@@ -35,14 +35,20 @@ internal class CheckoutRequest(
     val orderId: String get() = (checkout as? CheckoutConfig.MdOrder)?.value.orEmpty()
 
     companion object {
-        /** Reads `{"config": {...}, "mdOrder": "..."}` (or `"sessionId"`); throws [InvalidBridgeRequest]. */
-        fun parse(json: String): CheckoutRequest {
+        /**
+         * Reads `{"config": {...}, "mdOrder": "..."}` (or `"sessionId"`); throws [InvalidBridgeRequest]. [scanner] makes
+         * the platform's card scanner for a request with `cardScanner` on; null leaves the checkout without one.
+         */
+        fun parse(
+            json: String,
+            scanner: () -> CardScannerProvider?,
+        ): CheckoutRequest {
             val dto = BridgeJson.decode<CheckoutRequestDto>(json)
             val checkout =
                 dto.mdOrder?.let { CheckoutConfig.MdOrder(it) }
                     ?: dto.sessionId?.let { CheckoutConfig.SessionId(it) }
                     ?: throw InvalidBridgeRequest("The request names neither mdOrder nor sessionId")
-            return CheckoutRequest(dto.config.toSdkConfig(), checkout)
+            return CheckoutRequest(dto.config.toSdkConfig(scanner), checkout)
         }
     }
 }
@@ -94,7 +100,7 @@ private class ConfigDto(
     val sslPins: List<PinDto> = emptyList(),
     val debugLogging: Boolean = false,
 ) {
-    fun toSdkConfig(): SdkPaymentConfig =
+    fun toSdkConfig(scanner: () -> CardScannerProvider?): SdkPaymentConfig =
         SdkPaymentConfig(
             baseUrl = baseUrl,
             keyProviderUrl = keyProviderUrl,
@@ -104,7 +110,7 @@ private class ConfigDto(
             theme = theme?.toTheme() ?: PaymentTheme.System,
             googlePay = googlePay?.toConfig(),
             applePay = applePay?.toConfig(),
-            cardScannerProvider = MlKitVisionCardScannerProvider().takeIf { cardScanner },
+            cardScannerProvider = if (cardScanner) scanner() else null,
             showResultScreen = showResultScreen,
         )
 }
