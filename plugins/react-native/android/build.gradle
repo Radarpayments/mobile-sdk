@@ -15,7 +15,7 @@ ext.getExtOrDefault = { prop ->
 // module is linked from node_modules, hence the canonical path); an app that takes the module from elsewhere points
 // payrdrMavenUrl (gradle.properties) at the repository that serves them.
 def payrdrMavenUrl = project.findProperty("payrdrMavenUrl") ?: new File(projectDir.canonicalFile, "../../../build/maven").toURI().toString()
-def payrdrSdkVersion = project.findProperty("payrdrSdkVersion") ?: "4.0.0-SNAPSHOT"
+def payrdrSdkVersion = project.findProperty("payrdrSdkVersion") ?: "4.0.0-beta.2"
 
 // The app resolves the SDK as well (the module's dependency is part of its build), so it needs the repository too.
 rootProject.allprojects {

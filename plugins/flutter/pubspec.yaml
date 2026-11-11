@@ -1,6 +1,6 @@
 name: payrdr_sdk
 description: "payrdr payment SDK for Flutter: the native payment sheet with 3-D Secure, Google Pay, Apple Pay and the card scanner, and SDK Core card encryption."
-version: 1.0.0-SNAPSHOT
+version: 1.0.0-beta.2
 publish_to: none
 
 environment:
