@@ -6,9 +6,6 @@ app how the payment ended.
 
 ![The payment sheet in four steps: choose how to pay, enter a card, processing, paid](docs/images/checkout-flow.png)
 
-The SDK is written once in Kotlin Multiplatform and replaces the separate `android-sdk` and `ios-sdk` repositories
-from version 4.0.0. Flutter and React Native apps use it through [plugins](#flutter-and-react-native).
-
 ## Modules
 
 | Module | What it does | When you need it |
