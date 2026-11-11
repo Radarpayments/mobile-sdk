@@ -26,8 +26,8 @@ import platform.Foundation.addValue
 import platform.Foundation.dataUsingEncoding
 import platform.Foundation.setHTTPBody
 import platform.Foundation.setHTTPMethod
+import platform.Foundation.setValue
 import platform.UIKit.NSLayoutConstraint
-import platform.UIKit.UIAccessibilityIdentificationProtocol
 import platform.UIKit.UIBarButtonItem
 import platform.UIKit.UIBarButtonSystemItem
 import platform.UIKit.UIColor
@@ -88,8 +88,9 @@ public class IosWebChallengeHost(
                     // Bank pages are white: keep the bar light too, whatever the system theme is.
                     nav.overrideUserInterfaceStyle = UIUserInterfaceStyle.UIUserInterfaceStyleLight
                     // Without a title UIKit names the bar after the Kotlin class's generated Objective-C name.
-                    // UIKit adds the identifier to UIView in a category, which Kotlin does not see on the class.
-                    (nav.navigationBar as UIAccessibilityIdentificationProtocol).accessibilityIdentifier = "ThreeDsNavigationBar"
+                    // UIKit adds the identifier to UIView in a category, which Kotlin neither sees on the class nor accepts in a
+                    // cast to the protocol (that cast throws at run time); key-value coding reaches the property.
+                    nav.navigationBar.setValue("ThreeDsNavigationBar", forKey = "accessibilityIdentifier")
                     // The checkout has already opened its sheet to the whole screen: the bank page just appears over it,
                     // and goes the same way.
                     presenter.presentViewController(nav, animated = false, completion = null)

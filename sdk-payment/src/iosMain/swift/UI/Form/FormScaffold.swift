@@ -47,6 +47,7 @@ struct FormScaffold<Header: View, Content: View>: View {
                 .coordinateSpace(name: Self.scrollSpace)
                 .frame(height: min(contentHeight ?? limit, limit))
                 .preference(key: SheetContentScrollsKey.self, value: !fits)
+                .stepHeightUnmeasured(contentHeight == nil)
                 .onPreferenceChange(ContentFrameKey.self) { frame in
                     contentHeight = frame.height
                     canScrollForward = frame.maxY > min(frame.height, limit) + 0.5

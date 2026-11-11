@@ -24,6 +24,7 @@ struct StepScroll<Content: View>: View {
         }
         .frame(height: min(contentHeight ?? limit, limit))
         .preference(key: SheetContentScrollsKey.self, value: !fits)
+        .stepHeightUnmeasured(contentHeight == nil)
     }
 
     /// What `SheetHost` puts around a step: the gap above the sheet, its paddings, the grabber and the spacing under it.

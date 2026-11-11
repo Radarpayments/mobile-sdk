@@ -73,7 +73,9 @@ struct StepContainer<Item, Content: View>: View {
                         )
                     )
                     .fixedSize(horizontal: false, vertical: true)
-                    .background(StepHeightReader(key: layer.key))
+                    .backgroundPreferenceValue(StepUnmeasuredKey.self) { unmeasured in
+                        StepHeightReader(key: layer.key, unmeasured: unmeasured)
+                    }
                     .modifier(layerModifier(leaving: leaving, pending: pending))
                     .allowsHitTesting(!leaving)
                     .coveredFromVoiceOver(leaving)
@@ -293,8 +295,26 @@ private struct StepHeightKey: PreferenceKey {
 
 private struct StepHeightReader: View {
     let key: String
+    let unmeasured: Bool
 
     var body: some View {
-        GeometryReader { Color.clear.preference(key: StepHeightKey.self, value: [key: $0.size.height]) }
+        GeometryReader { Color.clear.preference(key: StepHeightKey.self, value: unmeasured ? [:] : [key: $0.size.height]) }
+    }
+}
+
+private struct StepUnmeasuredKey: PreferenceKey {
+    static let defaultValue = false
+
+    static func reduce(value: inout Bool, nextValue: () -> Bool) {
+        value = value || nextValue()
+    }
+}
+
+extension View {
+    /// Marks a step whose height is a stand-in until its scrolling content has been measured. A new step's first frame
+    /// would otherwise send the sheet's height towards the whole screen, and the fast start of the height curve made
+    /// the sheet leap up for a frame before settling.
+    func stepHeightUnmeasured(_ unmeasured: Bool) -> some View {
+        preference(key: StepUnmeasuredKey.self, value: unmeasured)
     }
 }
