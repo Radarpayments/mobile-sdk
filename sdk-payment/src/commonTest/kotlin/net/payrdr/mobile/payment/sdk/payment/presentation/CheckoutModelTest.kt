@@ -206,6 +206,23 @@ class CheckoutModelTest {
             first.ui.skeleton shouldBe SkeletonLayout(wallet = false, savedCards = 0)
         }
 
+    @Test fun `adding a card leaves the skeleton of the last payment alone`() =
+        runTest {
+            val checkout = checkout(cards = 0)
+            checkout.store.values["payrdr.savedCardCount.https://pay.test"] = 2
+            checkout.store.values["payrdr.walletOffered.https://pay.test"] = 1
+            checkout.api.nextSessionStatus =
+                checkout.api.nextSessionStatus.copy(orderPaymentWay = "P2P", orderFeatures = listOf("WITHOUT_TO_CARD", "VERIFY"))
+            checkout.start()
+            settle()
+
+            checkout.step
+                .shouldBeInstanceOf<Step.Form>()
+                .form.saveCardOnly shouldBe true
+            checkout.store.values["payrdr.savedCardCount.https://pay.test"] shouldBe 2
+            checkout.store.values["payrdr.walletOffered.https://pay.test"] shouldBe 1
+        }
+
     @Test fun `no cards and no wallet - the card form is the root`() =
         runTest {
             val checkout = started(wallets = WalletAvailability.None)

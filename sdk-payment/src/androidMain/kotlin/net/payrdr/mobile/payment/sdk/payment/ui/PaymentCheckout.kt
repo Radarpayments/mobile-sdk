@@ -126,7 +126,7 @@ internal fun PaymentCheckout(
         val transfer = transferOfForm[0]
         val saveCardOnly = transferOfForm[1]
         LaunchedEffect(state) {
-            (state as? PaymentState.CardFormShown)?.let {
+            (state as? PaymentState.CardFormShown)?.takeUnless { it.saveCardOnly }?.let {
                 cardCount.write(it.savedCards.size)
                 cardCount.writeWalletOffered(it.offersPlatformWallet())
             }

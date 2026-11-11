@@ -221,8 +221,12 @@ public class CheckoutModel internal constructor(
         if (next is PaymentState.CardFormShown) {
             lastForm = next
             frozenStep = null
-            cardCount.write(next.savedCards.size)
-            cardCount.writeWalletOffered(next.offersPlatformWallet())
+            // Adding a card shows neither saved cards nor wallets; remembering that would draw the next payment's
+            // skeleton as a bare card form, which then flips to the methods.
+            if (!next.saveCardOnly) {
+                cardCount.write(next.savedCards.size)
+                cardCount.writeWalletOffered(next.offersPlatformWallet())
+            }
         }
         if (next is PaymentState.Completed) {
             val hasScreen = next.result is CheckoutResult.Completed || next.result is CheckoutResult.Failed
