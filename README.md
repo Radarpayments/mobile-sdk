@@ -22,7 +22,7 @@ from version 4.0.0. Flutter and React Native apps use it through [plugins](#flut
 
 ## Install
 
-The current release is `4.0.0-beta.3`. All versions are listed on
+The current release is `4.0.0-beta.4`. All versions are listed on
 [GitHub releases](https://github.com/Radarpayments/mobile-sdk/releases).
 
 ### Android
@@ -31,8 +31,8 @@ The libraries are on Maven Central:
 
 ```kotlin
 dependencies {
-    implementation("io.github.radarpayments:sdk-payment:4.0.0-beta.3")
-    implementation("io.github.radarpayments:sdk-payment-scanner:4.0.0-beta.3") // optional: card scanner
+    implementation("io.github.radarpayments:sdk-payment:4.0.0-beta.4")
+    implementation("io.github.radarpayments:sdk-payment-scanner:4.0.0-beta.4") // optional: card scanner
     implementation("com.google.android.gms:play-services-wallet:19.4.0") // optional: Google Pay
 }
 ```
@@ -51,7 +51,7 @@ android {
 }
 ```
 
-For tokenization only, depend on `io.github.radarpayments:sdk-core:4.0.0-beta.3` instead, see
+For tokenization only, depend on `io.github.radarpayments:sdk-core:4.0.0-beta.4` instead, see
 [Your own card form](#your-own-card-form-sdk-core). Each GitHub release also has the AARs.
 
 ### iOS
