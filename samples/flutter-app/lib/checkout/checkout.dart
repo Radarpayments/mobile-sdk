@@ -158,6 +158,10 @@ PayrdrTheme paymentTheme(CoverStyle style) => PayrdrTheme.custom(
     onSurface: style.text,
     outline: style.border,
     onSurfaceVariant: style.muted,
+    // The bridge takes unlisted colours from the base palette, whose blue-grey clashes with warm covers; the native
+    // samples derive these two from the cover, and so does this one: the text at half strength and the border.
+    placeholder: style.text.withValues(alpha: 0.5),
+    outlineStrong: style.border,
   ),
   cornerRadius: style.radius,
   buttonCornerRadius: style.pillButtons ? 999 : style.radius,

@@ -65,6 +65,8 @@ describe('buildSdkConfig', () => {
           onSurface: '#FEF3C7',
           outline: '#5B4A40',
           onSurfaceVariant: '#D6C3A5',
+          placeholder: '#FEF3C780',
+          outlineStrong: '#5B4A40',
         },
         cornerRadius: 18,
         buttonCornerRadius: 999,

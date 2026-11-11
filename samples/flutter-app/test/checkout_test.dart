@@ -91,6 +91,8 @@ void main() {
     expect(coffee.colors.primary, const Color(0xFFF3D9B1));
     expect(coffee.colors.surface, const Color(0xFF2E231E));
     expect(coffee.colors.onBackground, const Color(0xFFFEF3C7));
+    expect(coffee.colors.outlineStrong, const Color(0xFF5B4A40), reason: 'the grabber takes the cover border');
+    expect(coffee.colors.placeholder, const Color(0xFFFEF3C7).withValues(alpha: 0.5));
     expect(coffee.colors.error, isNull, reason: 'error colours come from the base palette');
     expect(coffee.cornerRadius, 18);
     expect(coffee.buttonCornerRadius, 999);
