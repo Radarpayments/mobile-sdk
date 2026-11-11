@@ -4,6 +4,8 @@ A payment sheet for Android and iOS apps. Your app opens it over its own screen;
 Secure), with a saved card, Google Pay or Apple Pay, and can scan the card with the camera. The sheet then tells your
 app how the payment ended.
 
+![The payment sheet in four steps: choose how to pay, enter a card, processing, paid](docs/images/checkout-flow.png)
+
 The SDK is written once in Kotlin Multiplatform and replaces the separate `android-sdk` and `ios-sdk` repositories
 from version 4.0.0. Flutter and React Native apps use it through [plugins](#flutter-and-react-native).
 
