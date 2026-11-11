@@ -1,6 +1,5 @@
 package net.payrdr.mobile.payment.sdk.payment
 
-import androidx.compose.ui.text.intl.Locale
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldMatch
 import io.kotest.matchers.types.shouldBeInstanceOf
@@ -30,6 +29,7 @@ import net.payrdr.mobile.payment.sdk.payment.support.FakeWebChallengeHost
 import net.payrdr.mobile.payment.sdk.payment.support.Fixtures
 import net.payrdr.mobile.payment.sdk.payment.support.json
 import net.payrdr.mobile.payment.sdk.payment.support.mockJsonClient
+import net.payrdr.mobile.payment.sdk.payment.ui.util.deviceLanguage
 import net.payrdr.mobile.payment.sdk.payment.utils.MoneyFormatter
 import kotlin.test.Test
 
@@ -107,7 +107,7 @@ class SdkPaymentTest {
             }
 
             amountIn("de") shouldBe "49,90\u00A0€"
-            amountIn(" ") shouldBe MoneyFormatter.format("4990", "EUR", Locale.current.language)
+            amountIn(" ") shouldBe MoneyFormatter.format("4990", "EUR", deviceLanguage())
         }
 
     @Test

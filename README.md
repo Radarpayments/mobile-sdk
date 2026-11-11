@@ -150,7 +150,7 @@ Besides `baseUrl`, the wallets and the scanner, `SdkPaymentConfig` takes:
 | Parameter | What it does |
 |---|---|
 | `locale` | The sheet's language, e.g. `"de"`. By default it follows the device. |
-| `theme` | `PaymentTheme.System` (default), `Light`, `Dark`, or `Custom` with your colours. |
+| `theme` | `PaymentTheme.System` (default), `Light`, `Dark`, or `Custom` with your colours (`PaymentColor(0xFF1F4FD8)`), text styles and corners (`PaymentCorners.Radius(12f)`, `PaymentCorners.Pill`). |
 | `showResultScreen` | `true`: the SDK shows its own success or decline screen and returns the result after the buyer taps Done. Off by default. |
 | `logTransport` | Where the SDK's logs go. The SDK has no crash reporter; plug yours in here. |
 | `sslPinning` | Certificate pinning for the gateway. Off by default: the system trust store is used. |

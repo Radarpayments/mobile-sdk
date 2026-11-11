@@ -994,10 +994,14 @@ public abstract interface class net/payrdr/mobile/payment/sdk/payment/threeds/We
 	public abstract fun performChallenge (Lnet/payrdr/mobile/payment/sdk/payment/threeds/ThreeDsChallenge;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
-public final class net/payrdr/mobile/payment/sdk/payment/ui/components/ComposableSingletons$GooglePayButton_androidKt {
-	public static final field INSTANCE Lnet/payrdr/mobile/payment/sdk/payment/ui/components/ComposableSingletons$GooglePayButton_androidKt;
+public final class net/payrdr/mobile/payment/sdk/payment/ui/PaymentLocaleKt {
+	public static final fun getLocalSdkLanguage ()Landroidx/compose/runtime/ProvidableCompositionLocal;
+}
+
+public final class net/payrdr/mobile/payment/sdk/payment/ui/components/ComposableSingletons$GooglePayButtonKt {
+	public static final field INSTANCE Lnet/payrdr/mobile/payment/sdk/payment/ui/components/ComposableSingletons$GooglePayButtonKt;
 	public fun <init> ()V
-	public final fun getLambda$-215913747$sdk_payment_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda$200586254$sdk_payment_release ()Lkotlin/jvm/functions/Function3;
 }
 
 public final class net/payrdr/mobile/payment/sdk/payment/ui/components/ComposableSingletons$MethodRowKt {
@@ -1027,46 +1031,113 @@ public final class net/payrdr/mobile/payment/sdk/payment/ui/screens/ComposableSi
 	public final fun getLambda$-1898311452$sdk_payment_release ()Lkotlin/jvm/functions/Function2;
 }
 
+public final class net/payrdr/mobile/payment/sdk/payment/ui/theme/ComposeThemeInteropKt {
+	public static final fun PaymentColors-dVHXu7A (JJJJJJJJJJJJJJ)Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColors;
+	public static synthetic fun PaymentColors-dVHXu7A$default (JJJJJJJJJJJJJJILjava/lang/Object;)Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColors;
+	public static final fun PaymentTypography (Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;)Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTypography;
+	public static synthetic fun PaymentTypography$default (Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;ILjava/lang/Object;)Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTypography;
+	public static final fun toColor (Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;)J
+	public static final fun toPaymentColor-8_81llA (J)Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+	public static final fun toPaymentTextStyle (Landroidx/compose/ui/text/TextStyle;)Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;
+}
+
 public final class net/payrdr/mobile/payment/sdk/payment/ui/theme/DefaultPalettesKt {
 	public static final fun getDefaultDarkColors ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColors;
 	public static final fun getDefaultLightColors ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColors;
 }
 
+public final class net/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor {
+	public static final field $stable I
+	public static final field Companion Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor$Companion;
+	public fun <init> (J)V
+	public final fun component1 ()J
+	public final fun copy (J)Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+	public static synthetic fun copy$default (Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;JILjava/lang/Object;)Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAlpha ()I
+	public final fun getArgb ()J
+	public final fun getBlue ()I
+	public final fun getGreen ()I
+	public final fun getRed ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+	public final fun withAlpha (F)Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+}
+
+public final class net/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor$Companion {
+	public final fun getBlack ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+	public final fun getWhite ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+	public final fun rgb (IIIF)Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+	public static synthetic fun rgb$default (Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor$Companion;IIIFILjava/lang/Object;)Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+}
+
 public final class net/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColors {
 	public static final field $stable I
-	public synthetic fun <init> (JJJJJJJJJJJJJJILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public synthetic fun <init> (JJJJJJJJJJJJJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1-0d7_KjU ()J
-	public final fun component10-0d7_KjU ()J
-	public final fun component11-0d7_KjU ()J
-	public final fun component12-0d7_KjU ()J
-	public final fun component13-0d7_KjU ()J
-	public final fun component14-0d7_KjU ()J
-	public final fun component2-0d7_KjU ()J
-	public final fun component3-0d7_KjU ()J
-	public final fun component4-0d7_KjU ()J
-	public final fun component5-0d7_KjU ()J
-	public final fun component6-0d7_KjU ()J
-	public final fun component7-0d7_KjU ()J
-	public final fun component8-0d7_KjU ()J
-	public final fun component9-0d7_KjU ()J
-	public final fun copy-dVHXu7A (JJJJJJJJJJJJJJ)Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColors;
-	public static synthetic fun copy-dVHXu7A$default (Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColors;JJJJJJJJJJJJJJILjava/lang/Object;)Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColors;
+	public fun <init> (Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;)V
+	public synthetic fun <init> (Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+	public final fun component10 ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+	public final fun component11 ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+	public final fun component12 ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+	public final fun component13 ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+	public final fun component14 ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+	public final fun component2 ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+	public final fun component3 ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+	public final fun component4 ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+	public final fun component5 ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+	public final fun component6 ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+	public final fun component7 ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+	public final fun component8 ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+	public final fun component9 ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+	public final fun copy (Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;)Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColors;
+	public static synthetic fun copy$default (Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColors;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;ILjava/lang/Object;)Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColors;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getBackground-0d7_KjU ()J
-	public final fun getError-0d7_KjU ()J
-	public final fun getOnBackground-0d7_KjU ()J
-	public final fun getOnError-0d7_KjU ()J
-	public final fun getOnPrimary-0d7_KjU ()J
-	public final fun getOnSurface-0d7_KjU ()J
-	public final fun getOnSurfaceVariant-0d7_KjU ()J
-	public final fun getOutline-0d7_KjU ()J
-	public final fun getOutlineStrong-0d7_KjU ()J
-	public final fun getPlaceholder-0d7_KjU ()J
-	public final fun getPrimary-0d7_KjU ()J
-	public final fun getScrim-0d7_KjU ()J
-	public final fun getSuccess-0d7_KjU ()J
-	public final fun getSurface-0d7_KjU ()J
+	public final fun getBackground ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+	public final fun getError ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+	public final fun getOnBackground ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+	public final fun getOnError ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+	public final fun getOnPrimary ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+	public final fun getOnSurface ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+	public final fun getOnSurfaceVariant ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+	public final fun getOutline ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+	public final fun getOutlineStrong ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+	public final fun getPlaceholder ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+	public final fun getPrimary ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+	public final fun getScrim ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+	public final fun getSuccess ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+	public final fun getSurface ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColor;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class net/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentCorners {
+}
+
+public final class net/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentCorners$Pill : net/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentCorners {
+	public static final field $stable I
+	public static final field INSTANCE Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentCorners$Pill;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentCorners$Radius : net/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentCorners {
+	public static final field $stable I
+	public fun <init> (F)V
+	public final fun component1 ()F
+	public final fun copy (F)Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentCorners$Radius;
+	public static synthetic fun copy$default (Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentCorners$Radius;FILjava/lang/Object;)Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentCorners$Radius;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getPoints ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentFontFamily {
+	public static final field $stable I
+	public fun <init> (Landroidx/compose/ui/text/font/FontFamily;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFontFamily ()Landroidx/compose/ui/text/font/FontFamily;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -1074,24 +1145,55 @@ public final class net/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentColors 
 public final class net/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentShapes {
 	public static final field $stable I
 	public static final field Companion Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentShapes$Companion;
-	public fun <init> (Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;)V
-	public final fun component1 ()Landroidx/compose/ui/graphics/Shape;
-	public final fun component2 ()Landroidx/compose/ui/graphics/Shape;
-	public final fun component3 ()Landroidx/compose/ui/graphics/Shape;
-	public final fun component4 ()Landroidx/compose/ui/graphics/Shape;
-	public final fun copy (Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;)Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentShapes;
-	public static synthetic fun copy$default (Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentShapes;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;ILjava/lang/Object;)Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentShapes;
+	public fun <init> (Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentCorners;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentCorners;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentCorners;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentCorners;)V
+	public final fun component1 ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentCorners;
+	public final fun component2 ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentCorners;
+	public final fun component3 ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentCorners;
+	public final fun component4 ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentCorners;
+	public final fun copy (Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentCorners;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentCorners;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentCorners;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentCorners;)Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentShapes;
+	public static synthetic fun copy$default (Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentShapes;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentCorners;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentCorners;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentCorners;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentCorners;ILjava/lang/Object;)Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentShapes;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getButton ()Landroidx/compose/ui/graphics/Shape;
-	public final fun getCard ()Landroidx/compose/ui/graphics/Shape;
-	public final fun getField ()Landroidx/compose/ui/graphics/Shape;
-	public final fun getSheet ()Landroidx/compose/ui/graphics/Shape;
+	public final fun getButton ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentCorners;
+	public final fun getCard ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentCorners;
+	public final fun getField ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentCorners;
+	public final fun getSheet ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentCorners;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
 public final class net/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentShapes$Companion {
 	public final fun getDefault ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentShapes;
+}
+
+public final class net/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle {
+	public static final field $stable I
+	public static final field BOLD I
+	public static final field Companion Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle$Companion;
+	public static final field MEDIUM I
+	public static final field REGULAR I
+	public static final field SEMI_BOLD I
+	public fun <init> (FIFFZLnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentFontFamily;)V
+	public synthetic fun <init> (FIFFZLnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentFontFamily;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()F
+	public final fun component2 ()I
+	public final fun component3 ()F
+	public final fun component4 ()F
+	public final fun component5 ()Z
+	public final fun component6 ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentFontFamily;
+	public final fun copy (FIFFZLnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentFontFamily;)Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;
+	public static synthetic fun copy$default (Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;FIFFZLnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentFontFamily;ILjava/lang/Object;)Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFontFamily ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentFontFamily;
+	public final fun getLetterSpacing ()F
+	public final fun getLineHeight ()F
+	public final fun getSize ()F
+	public final fun getTabularFigures ()Z
+	public final fun getWeight ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle$Companion {
 }
 
 public abstract interface class net/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTheme {
@@ -1141,27 +1243,27 @@ public final class net/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTheme$S
 public final class net/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTypography {
 	public static final field $stable I
 	public static final field Companion Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTypography$Companion;
-	public fun <init> (Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;)V
-	public synthetic fun <init> (Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Landroidx/compose/ui/text/TextStyle;
-	public final fun component2 ()Landroidx/compose/ui/text/TextStyle;
-	public final fun component3 ()Landroidx/compose/ui/text/TextStyle;
-	public final fun component4 ()Landroidx/compose/ui/text/TextStyle;
-	public final fun component5 ()Landroidx/compose/ui/text/TextStyle;
-	public final fun component6 ()Landroidx/compose/ui/text/TextStyle;
-	public final fun component7 ()Landroidx/compose/ui/text/TextStyle;
-	public final fun component8 ()Landroidx/compose/ui/text/TextStyle;
-	public final fun copy (Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;)Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTypography;
-	public static synthetic fun copy$default (Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTypography;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;ILjava/lang/Object;)Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTypography;
+	public fun <init> (Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;)V
+	public synthetic fun <init> (Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;
+	public final fun component2 ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;
+	public final fun component3 ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;
+	public final fun component4 ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;
+	public final fun component5 ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;
+	public final fun component6 ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;
+	public final fun component7 ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;
+	public final fun component8 ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;
+	public final fun copy (Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;)Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTypography;
+	public static synthetic fun copy$default (Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTypography;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;ILjava/lang/Object;)Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTypography;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getAmount ()Landroidx/compose/ui/text/TextStyle;
-	public final fun getBody ()Landroidx/compose/ui/text/TextStyle;
-	public final fun getButton ()Landroidx/compose/ui/text/TextStyle;
-	public final fun getCaption ()Landroidx/compose/ui/text/TextStyle;
-	public final fun getHeadline ()Landroidx/compose/ui/text/TextStyle;
-	public final fun getInput ()Landroidx/compose/ui/text/TextStyle;
-	public final fun getLabel ()Landroidx/compose/ui/text/TextStyle;
-	public final fun getTitle ()Landroidx/compose/ui/text/TextStyle;
+	public final fun getAmount ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;
+	public final fun getBody ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;
+	public final fun getButton ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;
+	public final fun getCaption ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;
+	public final fun getHeadline ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;
+	public final fun getInput ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;
+	public final fun getLabel ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;
+	public final fun getTitle ()Lnet/payrdr/mobile/payment/sdk/payment/ui/theme/PaymentTextStyle;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

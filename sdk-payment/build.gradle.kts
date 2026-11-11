@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
     id("payrdr.kmp.library")
-    id("payrdr.kmp.compose.library")
+    id("payrdr.kmp.compose.android")
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.bcv)
     alias(libs.plugins.skie)
@@ -49,10 +49,6 @@ kotlin {
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
         }
-        // Compose UI tests run on iOS: they need no device or Robolectric, unlike the Android ones.
-        iosTest.dependencies {
-            implementation(libs.compose.mp.ui.test)
-        }
         val androidInstrumentedTest by getting {
             dependencies {
                 implementation(libs.androidx.compose.ui.test.junit4)
@@ -91,8 +87,30 @@ android {
     }
 }
 
+val generatePaymentStrings =
+    tasks.register<GeneratePaymentStringsTask>("generatePaymentStrings") {
+        stringFiles.from(fileTree("src/commonMain/strings") { include("values*/strings.xml") })
+        packageName.set("net.payrdr.mobile.payment.sdk.payment.presentation")
+        outputDir.set(layout.buildDirectory.dir("generated/paymentStrings/kotlin"))
+        resourcesPackage.set("net.payrdr.mobile.payment.sdk.sdk.payment.generated.resources")
+        resourcesOutputDir.set(layout.buildDirectory.dir("generated/paymentStrings/android"))
+    }
+
+kotlin {
+    sourceSets.all { languageSettings.optIn("net.payrdr.mobile.payment.sdk.payment.presentation.PayrdrUiApi") }
+    // Both UIs read their texts from Kotlin tables written from the XML files; Android adds the `Res.string` keys.
+    sourceSets.commonMain {
+        kotlin.srcDir(generatePaymentStrings.flatMap { it.outputDir })
+    }
+    sourceSets.androidMain {
+        kotlin.srcDir(generatePaymentStrings.flatMap { it.resourcesOutputDir })
+    }
+}
+
 @OptIn(kotlinx.validation.ExperimentalBCVApi::class)
 apiValidation {
+    nonPublicMarkers += "net.payrdr.mobile.payment.sdk.payment.presentation.PayrdrUiApi"
+    ignoredClasses += "net.payrdr.mobile.payment.sdk.payment.presentation.PayrdrUiApi"
     klib {
         enabled = true
     }

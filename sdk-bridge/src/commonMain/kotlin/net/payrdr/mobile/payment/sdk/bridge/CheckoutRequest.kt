@@ -1,8 +1,5 @@
 package net.payrdr.mobile.payment.sdk.bridge
 
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
@@ -18,7 +15,9 @@ import net.payrdr.mobile.payment.sdk.payment.scanner.provider.MlKitVisionCardSca
 import net.payrdr.mobile.payment.sdk.payment.ssl.SslPinningConfig
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.DefaultDarkColors
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.DefaultLightColors
+import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentColor
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentColors
+import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentCorners
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentShapes
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentTheme
 
@@ -154,8 +153,8 @@ private class ThemeDto(
 
         fun pick(
             name: String,
-            fallback: Color,
-        ): Color = colors[name]?.let { parseColor(name, it) } ?: fallback
+            fallback: PaymentColor,
+        ): PaymentColor = colors[name]?.let { parseColor(name, it) } ?: fallback
         colors.keys.firstOrNull { it !in COLOR_NAMES }?.let { throw InvalidBridgeRequest("theme.colors has no colour $it") }
         return PaymentColors(
             primary = pick("primary", stock.primary),
@@ -177,10 +176,10 @@ private class ThemeDto(
 
     private fun customShapes(): PaymentShapes {
         val stock = PaymentShapes.Default
-        val corners = cornerRadius?.let { RoundedCornerShape(it.dp) }
+        val corners = cornerRadius?.let { PaymentCorners.Radius(it) }
         return stock.copy(
             field = corners ?: stock.field,
-            button = buttonCornerRadius?.let { RoundedCornerShape(it.dp) } ?: corners ?: stock.button,
+            button = buttonCornerRadius?.let { PaymentCorners.Radius(it) } ?: corners ?: stock.button,
             card = corners ?: stock.card,
         )
     }
@@ -210,11 +209,11 @@ private class ThemeDto(
 private fun parseColor(
     name: String,
     hex: String,
-): Color {
+): PaymentColor {
     val digits = hex.removePrefix("#")
     val argb = digits.takeIf { it.length == 6 || it.length == 8 }?.toLongOrNull(radix = 16)
     argb ?: throw InvalidBridgeRequest("theme.colors.$name must be #RRGGBB or #AARRGGBB, not $hex")
-    return Color(if (digits.length == 6) argb or 0xFF000000 else argb)
+    return PaymentColor(if (digits.length == 6) argb or 0xFF000000 else argb)
 }
 
 /** Every field may be left out: the SDK then takes it from the gateway, as in [GooglePayConfig]. */

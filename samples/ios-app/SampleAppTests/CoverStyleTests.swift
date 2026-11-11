@@ -17,20 +17,27 @@ final class CoverStyleTests: XCTestCase {
         return max(la, lb) / min(la, lb)
     }
 
-    func test_composeColor_packs_srgb() {
-        XCTAssertEqual(composeColor(0xFF1C_1917), 0xFF1C_1917_0000_0000)
+    func test_paymentColor_keeps_the_argb_value() {
+        XCTAssertEqual(PaymentColor(0xFF1C_1917).argb, 0xFF1C_1917)
     }
 
     func test_paymentTheme_uses_cover_primary() {
         let style = coverStyle(.tickets)
-        XCTAssertEqual(style.paymentTheme().colors.primary, composeColor(0xFFEA_580C))
-        XCTAssertEqual(style.paymentTheme().colors.onPrimary, composeColor(0xFF00_0000))
+        XCTAssertEqual(style.paymentTheme().colors.primary, PaymentColor(0xFFEA_580C))
+        XCTAssertEqual(style.paymentTheme().colors.onPrimary, PaymentColor(0xFF00_0000))
+    }
+
+    func test_paymentTheme_takes_cover_corners() {
+        let shapes = coverStyle(.tickets).paymentTheme().shapes
+        XCTAssertEqual((shapes.field as? PaymentCornersRadius)?.points, 14)
+        XCTAssertEqual((shapes.button as? PaymentCornersRadius)?.points, 14)
+        XCTAssertTrue(coverStyle(.coffee).paymentTheme().shapes.button is PaymentCornersPill)
     }
 
     func test_sheet_placeholder_takes_the_cover_text_colour() {
         for cover in CoverId.allCases {
             let s = coverStyle(cover)
-            let placeholder = UInt32(truncatingIfNeeded: s.paymentTheme().colors.placeholder >> 32)
+            let placeholder = UInt32(s.paymentTheme().colors.placeholder.argb)
             XCTAssertEqual(placeholder & 0x00FF_FFFF, s.textArgb & 0x00FF_FFFF, "\(cover) placeholder hue")
             XCTAssertLessThan(placeholder >> 24, 0xFF, "\(cover) placeholder is dimmer than the text")
         }

@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
     id("payrdr.kmp.library")
-    id("payrdr.kmp.compose.library")
+    id("payrdr.kmp.compose.android")
     alias(libs.plugins.bcv)
     alias(libs.plugins.skie)
 }
@@ -20,10 +20,6 @@ kotlin {
             implementation(libs.turbine)
             implementation(libs.kotlinx.coroutines.test)
         }
-        // Compose UI tests run on iOS: they need no device or Robolectric, unlike the Android ones.
-        iosTest.dependencies {
-            implementation(libs.compose.mp.ui.test)
-        }
         androidMain.dependencies {
             implementation(libs.androidx.camera.core)
             implementation(libs.androidx.camera.camera2)
@@ -33,6 +29,26 @@ kotlin {
             implementation(libs.kotlinx.coroutines.play.services)
             implementation(libs.androidx.startup.runtime)
         }
+    }
+}
+
+val generateScannerStrings =
+    tasks.register<GeneratePaymentStringsTask>("generateScannerStrings") {
+        stringFiles.from(fileTree("src/commonMain/strings") { include("values*/strings.xml") })
+        packageName.set("net.payrdr.mobile.payment.sdk.payment.scanner.presentation")
+        outputDir.set(layout.buildDirectory.dir("generated/scannerStrings/kotlin"))
+        resourcesPackage.set("net.payrdr.mobile.payment.sdk.sdk.payment.scanner.generated.resources")
+        resourcesOutputDir.set(layout.buildDirectory.dir("generated/scannerStrings/android"))
+    }
+
+kotlin {
+    sourceSets.all { languageSettings.optIn("net.payrdr.mobile.payment.sdk.payment.presentation.PayrdrUiApi") }
+    // Both scanner screens read their texts from Kotlin tables written from the XML files; Android adds `Res.string`.
+    sourceSets.commonMain {
+        kotlin.srcDir(generateScannerStrings.flatMap { it.outputDir })
+    }
+    sourceSets.androidMain {
+        kotlin.srcDir(generateScannerStrings.flatMap { it.resourcesOutputDir })
     }
 }
 
@@ -71,6 +87,7 @@ kotlin {
 
 @OptIn(kotlinx.validation.ExperimentalBCVApi::class)
 apiValidation {
+    nonPublicMarkers += "net.payrdr.mobile.payment.sdk.payment.presentation.PayrdrUiApi"
     klib {
         enabled = true
     }

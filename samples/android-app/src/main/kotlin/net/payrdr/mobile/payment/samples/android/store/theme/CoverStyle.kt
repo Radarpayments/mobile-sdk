@@ -1,7 +1,6 @@
 package net.payrdr.mobile.payment.samples.android.store.theme
 
 import android.app.Activity
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
@@ -26,8 +25,10 @@ import net.payrdr.mobile.payment.samples.android.store.model.CoverId
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.DefaultDarkColors
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.DefaultLightColors
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentColors
+import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentCorners
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentShapes
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentTheme
+import net.payrdr.mobile.payment.sdk.payment.ui.theme.toPaymentColor
 
 /**
  * The brand of a demo business: its colours, corner radius and fonts. The store screens use all of it;
@@ -139,26 +140,26 @@ fun coverStyle(id: CoverId): CoverStyle =
 /** The SDK sheet in this brand: colours and corners; typography stays the SDK's own. */
 fun CoverStyle.paymentTheme(): PaymentTheme.Custom {
     val stock = if (dark) DefaultDarkColors else DefaultLightColors
-    val corners = RoundedCornerShape(radius)
+    val corners = PaymentCorners.Radius(radius.value)
     return PaymentTheme.Custom(
         colors =
             PaymentColors(
-                primary = primary,
-                onPrimary = onPrimary,
-                background = background,
-                onBackground = text,
-                surface = fieldSurface,
-                onSurface = text,
+                primary = primary.toPaymentColor(),
+                onPrimary = onPrimary.toPaymentColor(),
+                background = background.toPaymentColor(),
+                onBackground = text.toPaymentColor(),
+                surface = fieldSurface.toPaymentColor(),
+                onSurface = text.toPaymentColor(),
                 error = stock.error,
                 onError = stock.onError,
-                outline = border,
+                outline = border.toPaymentColor(),
                 success = stock.success,
-                onSurfaceVariant = muted,
+                onSurfaceVariant = muted.toPaymentColor(),
             ),
         shapes =
             PaymentShapes(
                 field = corners,
-                button = if (pillButtons) RoundedCornerShape(percent = 50) else corners,
+                button = if (pillButtons) PaymentCorners.Pill else corners,
                 sheet = PaymentShapes.Default.sheet,
                 card = corners,
             ),

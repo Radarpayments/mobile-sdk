@@ -33,6 +33,10 @@ struct SampleAppApp: App {
         return holder
     }()
 
+    init() {
+        VoiceOverProbe.startIfRequested()
+    }
+
     var body: some Scene {
         WindowGroup {
             NavigationStack(path: $pathHolder.path) {

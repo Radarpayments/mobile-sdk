@@ -1,13 +1,5 @@
 package net.payrdr.mobile.payment.sdk.payment.ui.payer
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import net.payrdr.mobile.payment.sdk.payment.result.PayerDataRequest
 import net.payrdr.mobile.payment.sdk.payment.result.PayerField
 import net.payrdr.mobile.payment.sdk.payment.result.PayerFieldSpec
@@ -16,7 +8,6 @@ import net.payrdr.mobile.payment.sdk.payment.ui.payer.phone.PhoneCountry
 import net.payrdr.mobile.payment.sdk.payment.ui.payer.phone.PhoneNumbers
 import net.payrdr.mobile.payment.sdk.payment.ui.util.FieldError
 import net.payrdr.mobile.payment.sdk.payment.ui.util.PayerFieldValidation
-import net.payrdr.mobile.payment.sdk.payment.ui.util.deviceRegion
 
 /**
  * Values, visibility and errors of the payer fields the gateway asks for. Which fields are shown
@@ -28,7 +19,6 @@ import net.payrdr.mobile.payment.sdk.payment.ui.util.deviceRegion
  * @param prefillOverride values remembered with a saved card; win over [PayerDataRequest.prefill]
  * @param deviceRegion region of the device (ISO alpha-2), the phone country when the gateway suggests none
  */
-@Stable
 internal class PayerFieldsState(
     private val request: PayerDataRequest,
     prefillOverride: Map<PayerField, String> = emptyMap(),
@@ -38,7 +28,7 @@ internal class PayerFieldsState(
 
     // Dates are kept as typed (DD.MM.YYYY) and turned back into the gateway's YYYYMMDD in submitValues.
     private val values =
-        mutableStateMapOf<PayerField, String>().apply {
+        observableMapOf<PayerField, String>().apply {
             putAll(prefill.mapValues { (field, value) -> if (field.isDate) TransferFields.dateForInput(value) else value })
         }
 
@@ -46,14 +36,14 @@ internal class PayerFieldsState(
     val suggestedPhoneCountries: List<PhoneCountry> =
         listOfNotNull(request.phoneRegion, deviceRegion).mapNotNull(PhoneCountries::byIso).distinctBy { it.iso }
 
-    var phoneCountry: PhoneCountry? by mutableStateOf(suggestedPhoneCountries.firstOrNull())
+    var phoneCountry: PhoneCountry? by observableValueOf(suggestedPhoneCountries.firstOrNull())
         private set
 
     /** National digits of the phone, without the calling code. */
-    var phoneNational: String by mutableStateOf("")
+    var phoneNational: String by observableValueOf("")
         private set
 
-    var phonePickerOpen: Boolean by mutableStateOf(false)
+    var phonePickerOpen: Boolean by observableValueOf(false)
 
     init {
         prefill[PayerField.MOBILE_PHONE]?.let { onPhoneInput(it) }
@@ -62,20 +52,20 @@ internal class PayerFieldsState(
     private val visited = mutableSetOf<PayerField>()
 
     /** Fields whose error may be shown: the user left them, picked a value or tried to pay. */
-    var touched: Set<PayerField> by mutableStateOf(emptySet())
+    var touched: Set<PayerField> by observableValueOf(emptySet())
         private set
 
     /** How many optional address lines after the first the user revealed with "Add address line". */
-    private var extraAddressLines by mutableIntStateOf(0)
+    private var extraAddressLines by observableValueOf(0)
 
-    var countryPickerOpen: Boolean by mutableStateOf(false)
+    var countryPickerOpen: Boolean by observableValueOf(false)
 
     /** The field the country picker fills: the billing country, or the recipient's country of a transfer. */
-    var countryPickerField: PayerField by mutableStateOf(PayerField.BILLING_COUNTRY)
+    var countryPickerField: PayerField by observableValueOf(PayerField.BILLING_COUNTRY)
         private set
 
     /** The choice field (account or document type of a transfer) whose list is open, or null. */
-    var optionPickerField: PayerField? by mutableStateOf(null)
+    var optionPickerField: PayerField? by observableValueOf(null)
 
     fun openCountryPicker(field: PayerField) {
         countryPickerField = field
@@ -257,9 +247,3 @@ internal enum class BillingView {
     /** The entered address in one line, with "Edit". */
     SUMMARY,
 }
-
-@Composable
-internal fun rememberPayerFieldsState(
-    request: PayerDataRequest,
-    prefillOverride: Map<PayerField, String> = emptyMap(),
-): PayerFieldsState = remember(request, prefillOverride) { PayerFieldsState(request, prefillOverride, deviceRegion()) }

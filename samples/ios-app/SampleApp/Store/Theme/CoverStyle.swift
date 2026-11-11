@@ -2,8 +2,7 @@ import SwiftUI
 import sdk_payment_scanner
 
 /// The brand of a demo business: its colours, corner radius and fonts. The store screens use all of it;
-/// the SDK sheet takes the colours through `paymentTheme()` (corners stay the SDK's own: Compose shapes
-/// cannot be built from Swift).
+/// the SDK sheet takes the colours and corners through `paymentTheme()`.
 struct CoverStyle {
     let id: CoverId
     let dark: Bool
@@ -67,31 +66,40 @@ func coverStyle(_ id: CoverId) -> CoverStyle {
     }
 }
 
-/// A Compose `Color` for an sRGB `argb` value, as the SDK's `PaymentColors` takes it from Swift.
-func composeColor(_ argb: UInt32) -> UInt64 { UInt64(argb) << 32 }
+extension PaymentColor {
+    /// A colour from a 0xAARRGGBB value.
+    convenience init(_ argb: UInt32) { self.init(argb: Int64(argb)) }
+}
 
 extension CoverStyle {
-    /// The SDK sheet in this brand: colours only; typography and shapes stay the SDK's own.
+    /// The SDK sheet in this brand: colours and corners; typography stays the SDK's own.
     func paymentTheme() -> PaymentThemeCustom {
         let stock = dark ? DefaultPalettesKt.DefaultDarkColors : DefaultPalettesKt.DefaultLightColors
         let colors = PaymentColors(
-            primary: composeColor(primaryArgb),
-            onPrimary: composeColor(onPrimaryArgb),
-            background: composeColor(backgroundArgb),
-            onBackground: composeColor(textArgb),
-            surface: composeColor(fieldSurfaceArgb),
-            onSurface: composeColor(textArgb),
+            primary: PaymentColor(primaryArgb),
+            onPrimary: PaymentColor(onPrimaryArgb),
+            background: PaymentColor(backgroundArgb),
+            onBackground: PaymentColor(textArgb),
+            surface: PaymentColor(fieldSurfaceArgb),
+            onSurface: PaymentColor(textArgb),
             error: stock.error,
             onError: stock.onError,
-            outline: composeColor(borderArgb),
+            outline: PaymentColor(borderArgb),
             success: stock.success,
-            onSurfaceVariant: composeColor(mutedArgb),
+            onSurfaceVariant: PaymentColor(mutedArgb),
             // The cover's text at half strength, as the SDK derives it by default; the stock one is blue-grey.
-            placeholder: composeColor(textArgb & 0x00FF_FFFF | 0x8000_0000),
-            outlineStrong: composeColor(borderArgb),
+            placeholder: PaymentColor(textArgb).withAlpha(alpha: 0.5),
+            outlineStrong: PaymentColor(borderArgb),
             scrim: stock.scrim
         )
-        return PaymentThemeCustom(colors: colors, typography: PaymentTypography.companion.Default, shapes: PaymentShapes.companion.Default)
+        let corners = PaymentCornersRadius(points: Float(radius))
+        let shapes = PaymentShapes(
+            field: corners,
+            button: pillButtons ? PaymentCornersPill.shared : corners,
+            sheet: PaymentShapes.companion.Default.sheet,
+            card: corners
+        )
+        return PaymentThemeCustom(colors: colors, typography: PaymentTypography.companion.Default, shapes: shapes)
     }
 }
 

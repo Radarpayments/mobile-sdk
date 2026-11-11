@@ -39,3 +39,6 @@ __pycache__/
 
 # Worktrees
 .worktrees/
+
+# Screenshot sets of tools/visual/capture.sh (the committed ones are in tools/visual/golden)
+tools/visual/out/

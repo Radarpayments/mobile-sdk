@@ -11,11 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.unit.dp
+import net.payrdr.mobile.payment.sdk.payment.presentation.SkeletonLayout
 import net.payrdr.mobile.payment.sdk.payment.result.SavedCardInfo
 import net.payrdr.mobile.payment.sdk.payment.ui.components.WalletAvailability
 import net.payrdr.mobile.payment.sdk.payment.ui.screens.PaymentMethodsContent
 import net.payrdr.mobile.payment.sdk.payment.ui.screens.PaymentMethodsSkeleton
-import net.payrdr.mobile.payment.sdk.payment.ui.screens.SkeletonLayout
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentTheme
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentThemeProvider
 import org.junit.Assert.assertEquals

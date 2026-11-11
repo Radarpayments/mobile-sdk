@@ -1,11 +1,12 @@
 package net.payrdr.mobile.payment.samples.android.store.theme
 
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
-import androidx.compose.ui.unit.dp
 import net.payrdr.mobile.payment.samples.android.store.invest.InvestColors
 import net.payrdr.mobile.payment.samples.android.store.model.CoverId
+import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentColor
+import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentCorners
+import net.payrdr.mobile.payment.sdk.payment.ui.theme.toPaymentColor
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.test.Test
@@ -37,9 +38,9 @@ class CoverStyleTest {
     @Test fun `paymentTheme uses cover primary and radius`() {
         val style = coverStyle(CoverId.TICKETS)
         val theme = style.paymentTheme()
-        assertEquals(Color(0xFFEA580C), theme.colors.primary)
-        assertEquals(Color(0xFF000000), theme.colors.onPrimary)
-        assertEquals(RoundedCornerShape(14.dp), theme.shapes.field)
+        assertEquals(PaymentColor(0xFFEA580C), theme.colors.primary)
+        assertEquals(PaymentColor(0xFF000000), theme.colors.onPrimary)
+        assertEquals(PaymentCorners.Radius(14f), theme.shapes.field)
     }
 
     @Test fun `text on primary and on background is readable in every cover`() {
@@ -52,14 +53,14 @@ class CoverStyleTest {
 
     @Test fun `Northwind's sheet takes the invest tokens`() {
         val theme = coverStyle(CoverId.INVEST).paymentTheme()
-        assertEquals(InvestColors.accent, theme.colors.primary)
-        assertEquals(InvestColors.onAccent, theme.colors.onPrimary)
-        assertEquals(InvestColors.surface, theme.colors.background)
-        assertEquals(InvestColors.surface2, theme.colors.surface)
-        assertEquals(InvestColors.text, theme.colors.onBackground)
-        assertEquals(InvestColors.muted, theme.colors.onSurfaceVariant)
-        assertEquals(InvestColors.fieldBorder, theme.colors.outline)
-        assertEquals(RoundedCornerShape(12.dp), theme.shapes.button)
+        assertEquals(InvestColors.accent.toPaymentColor(), theme.colors.primary)
+        assertEquals(InvestColors.onAccent.toPaymentColor(), theme.colors.onPrimary)
+        assertEquals(InvestColors.surface.toPaymentColor(), theme.colors.background)
+        assertEquals(InvestColors.surface2.toPaymentColor(), theme.colors.surface)
+        assertEquals(InvestColors.text.toPaymentColor(), theme.colors.onBackground)
+        assertEquals(InvestColors.muted.toPaymentColor(), theme.colors.onSurfaceVariant)
+        assertEquals(InvestColors.fieldBorder.toPaymentColor(), theme.colors.outline)
+        assertEquals(PaymentCorners.Radius(12f), theme.shapes.button)
         assertEquals(Color(0xFF22C55E), InvestColors.accent)
     }
 }
