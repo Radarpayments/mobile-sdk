@@ -17,8 +17,9 @@ Notable changes to the PAYRDR Mobile SDK. Versions follow [Semantic Versioning](
   `RadarpaymentsSDKCore` (SDK Core alone, for an app with its own payment form). Replace `import sdk_payment_scanner`
   with `import RadarpaymentsSDKPayment`; an app that passes `MlKitVisionCardScannerProvider` also adds the
   `RadarpaymentsSDKScanner` product and imports it. An app takes either `RadarpaymentsSDKPayment` or
-  `RadarpaymentsSDKCore`, never both. The release assets are `RadarpaymentsSDKPayment.xcframework.zip`,
-  `RadarpaymentsSDKCore.xcframework.zip` and `RadarpaymentsSDKScanner-<version>.zip` (Swift sources).
+  `RadarpaymentsSDKCore`, never both. The release assets are `RadarpaymentsSDKPayment-<version>.xcframework.zip`,
+  `RadarpaymentsSDKCore-<version>.xcframework.zip` and `RadarpaymentsSDKScanner-<version>.zip` (Swift sources); in
+  `4.0.0-beta.3` the two framework zips had no version in the name.
 - iOS: the payment framework no longer contains camera code, so an app without the scanner product links no capture
   API. `MlKitVisionCardScannerProvider(logTransport:)` now comes from `RadarpaymentsSDKScanner`, and `logTransport` may
   be left out.

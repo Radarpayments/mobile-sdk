@@ -78,9 +78,9 @@ is already in it, and an app can hold only one of the two frameworks. Swift Pack
 a package, so it fetches the payment framework too (about 22 MB, once per machine), but only SDK Core goes into your
 app.
 
-If you don't use SPM, each release has `RadarpaymentsSDKPayment.xcframework.zip` and
-`RadarpaymentsSDKCore.xcframework.zip` to embed by hand, and `RadarpaymentsSDKScanner-<version>.zip` with the scanner's
-Swift sources to add to your app target.
+If you don't use SPM, each release has `RadarpaymentsSDKPayment-<version>.xcframework.zip` and
+`RadarpaymentsSDKCore-<version>.xcframework.zip` to embed by hand, and `RadarpaymentsSDKScanner-<version>.zip` with the
+scanner's Swift sources to add to your app target.
 
 Two features need setup in Xcode:
 
