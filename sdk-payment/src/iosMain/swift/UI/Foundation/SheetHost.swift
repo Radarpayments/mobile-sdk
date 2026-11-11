@@ -83,7 +83,7 @@ struct SheetHost<Content: View>: View {
         }
         .onPreferenceChange(SheetContentScrollsKey.self) { contentScrolls = $0 }
         .offset(y: drag + (reduceMotion ? 0 : height * hidden))
-        .opacity(reduceMotion ? 1 - hidden : 1)
+        .opacity(reduceMotion ? Double(1 - hidden) : 1)
         // Rows and buttons fill the sheet. As an ordinary gesture the drag waits for them to give the touch up, so the
         // sheet stands still under the finger and then jumps; alongside them the row under the finger, which moved
         // with the sheet, is tapped on release. Taking precedence, the drag cancels the row once it moves.
