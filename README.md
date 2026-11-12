@@ -1,10 +1,10 @@
-# PAYRDR Mobile SDK
+# Mobile SDK
 
 A payment sheet for Android and iOS apps. Your app opens it over its own screen; the buyer pays by card (with 3-D
 Secure), with a saved card, Google Pay or Apple Pay, and can scan the card with the camera. The sheet then tells your
 app how the payment ended.
 
-![The payment sheet in four steps: choose how to pay, enter a card, processing, paid](docs/images/checkout-flow.png)
+![The payment sheet on iOS and Android in four steps: choose how to pay, enter a card, processing, paid](docs/images/checkout-flow.png)
 
 ## Modules
 
