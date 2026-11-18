@@ -353,7 +353,8 @@ and the configuration are the ones the run was launched with, not what the form 
 Every line is the same text on both platforms except JSON. The Configuration section holds the same document on both
 platforms as JSON, not as text: every field is present, but key order, spacing, escaping and the spelling of numbers
 are the platform's own. The same holds for a JSON request or response body quoted in a journal line. The example below
-is Android's output; the Android test `RunReportTest` compares its report with this block character for character.
+is Android's output; the Android test `RunReportTest` compares its report with this block character for character, the
+iOS test `RunReportTests` every line of it but the Configuration document, which it compares as JSON.
 
 - Lines end in `\n`, the report ends in one `\n`, sections are separated by one empty line. No line is ever left out:
   a missing value prints `-`.
@@ -370,8 +371,10 @@ is Android's output; the Android test `RunReportTest` compares its report with t
     the gateway's answer for `registration_failed`, `<SimpleClassName>: <message>` of what the sheet threw for
     `sdk_error` (`IllegalStateException: boom`). A missing or blank message prints the class name alone. A class with
     no simple name (anonymous) is named by its binary name after the last `.` on Android (e.g. `QaRunTest$run$1`), by
-    its type name on iOS. The HTTP status is the gateway's for `registration_failed` and the SDK's for an API error, `-`
-    otherwise.
+    its type name on iOS. On iOS the sheet throws nothing: `PayrdrCheckout.present` returns `false` when nothing opened
+    (no key window, or a checkout already on screen), and the run finishes `sdk_error` with the error
+    `PayrdrCheckoutError`, the type name of the SDK's own `PayrdrCheckoutError.notPresented`, which has no message. The
+    HTTP status is the gateway's for `registration_failed` and the SDK's for an API error, `-` otherwise.
   - `== Order status ==`: the `qa_result_order_status` text, except that `not queried` is followed by `: <reason>`.
     The reasons are tried in this order and the first that applies is printed:
     - `not queried: the checkout did not run` for `registration_failed` and `sdk_error`;
@@ -381,9 +384,9 @@ is Android's output; the Android test `RunReportTest` compares its report with t
   - `== Journal ==`: first `Time zone: UTC±hh:mm`, the device's offset at the first line's time (at the time of the
     report when the journal is empty), then every line of the run as `HH:mm:ss.SSS LEVEL tag: message` in that zone.
     `LEVEL` is `DEBUG`, `INFO`, `WARNING` or `ERROR`. Digits and signs are written by hand, never by a locale-dependent
-    formatter. Merchant lines are the ones of "Gateway requests", secrets already masked. When the sheet throws, the
-    journal gets `ERROR qa: The sheet threw <error>` (the error text of `sdk_error`), also when the sheet had already
-    delivered its result and the run finishes with that result.
+    formatter. Merchant lines are the ones of "Gateway requests", secrets already masked. When the sheet throws (on
+    iOS: does not open), the journal gets `ERROR qa: The sheet threw <error>` (the error text of `sdk_error`), also when
+    the sheet had already delivered its result and the run finishes with that result.
 - A message, an error or a description that contains line breaks is printed as is, so one entry can span several lines.
 - An SDK event with a cause journals `<message> (<SimpleName>: <cause message>)`, or `<message> (<SimpleName>)` when
   the cause has no message. The simple name is the Kotlin class's: Android's `simpleName` (the binary name when it is

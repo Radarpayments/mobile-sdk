@@ -17,6 +17,8 @@ enum StubReply {
     case redirect(status: Int, location: String, body: String)
     /// Reacts only after [seconds], unless the request was cancelled before.
     indirect case after(seconds: TimeInterval, StubReply)
+    /// Reacts only once [gate] is signalled, unless the request was cancelled before.
+    indirect case gated(DispatchSemaphore, StubReply)
 }
 
 /// A gateway inside the test process: records every request and answers as `reply` says.
@@ -114,6 +116,11 @@ final class StubURLProtocol: URLProtocol {
             client?.urlProtocol(self, didLoad: Data("{".utf8))
         case let .after(seconds, next):
             DispatchQueue.global().asyncAfter(deadline: .now() + seconds) { self.perform(next) }
+        case let .gated(gate, next):
+            DispatchQueue.global().async {
+                gate.wait()
+                self.perform(next)
+            }
         }
     }
 }
