@@ -95,6 +95,7 @@ dependencies {
     // Google Pay — sdk-payment declares play-services-wallet as compileOnly, so the app (the
     // "merchant") has to ship it: without it the SDK falls back to a plain button and cannot pay.
     implementation(libs.play.services.wallet)
+    implementation(libs.play.services.code.scanner)
 
     testImplementation(kotlin("test"))
     testImplementation(libs.kotlinx.coroutines.test)

@@ -16,6 +16,8 @@ androidx-webkit = "1.12.1"
 androidx-compose-ui-test = "1.11.0"
 play-services-wallet = "19.4.0"
 play-services-tasks-coroutines = "1.9.0"
+# QA app only: Google code scanner reads a QR configuration through Play services, without a camera permission.
+play-services-code-scanner = "16.1.0"
 okhttp = "4.12.0"
 coroutines = "1.9.0"
 kotlinx-datetime = "0.7.1"
@@ -100,6 +102,7 @@ kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", v
 compose-compiler-gradle-plugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 
 play-services-wallet = { module = "com.google.android.gms:play-services-wallet", version.ref = "play-services-wallet" }
+play-services-code-scanner = { module = "com.google.android.gms:play-services-code-scanner", version.ref = "play-services-code-scanner" }
 kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "play-services-tasks-coroutines" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
