@@ -15,8 +15,8 @@ private const val EXTRA = "order.extra"
 private const val GP = "sdk.googlePay"
 private const val AP = "sdk.applePay"
 
-private val LOCALES = listOf("en", "ru", "ro", "el", "bg", "de", "fr", "es", "ar")
-private val GP_ENVIRONMENTS = listOf("test", "production")
+internal val LOCALES = listOf("en", "ru", "ro", "el", "bg", "de", "fr", "es", "ar")
+internal val GP_ENVIRONMENTS = listOf("test", "production")
 private val GP_NETWORKS = listOf("AMEX", "DISCOVER", "INTERAC", "JCB", "MASTERCARD", "VISA")
 private val GP_AUTH_METHODS = listOf("PAN_ONLY", "CRYPTOGRAM_3DS")
 private val AP_NETWORKS = listOf("AMEX", "DISCOVER", "JCB", "MASTERCARD", "VISA")

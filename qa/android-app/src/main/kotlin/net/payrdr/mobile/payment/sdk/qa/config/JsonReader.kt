@@ -9,7 +9,6 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.booleanOrNull
 import java.math.BigDecimal
-import java.util.regex.Pattern
 
 internal data class Problem(
     val field: String,
@@ -26,9 +25,11 @@ internal sealed interface Decoded<out T> {
     ) : Decoded<Nothing>
 }
 
-// UNICODE_CHARACTER_CLASS makes \s match what Swift's whitespace does, so both apps judge the same links. The scheme is
-// spelled out in both cases because CASE_INSENSITIVE would also fold non-ASCII letters (U+017F into "s"), which Swift does not.
-private val URL_PATTERN = Pattern.compile("^[hH][tT][tT][pP]([sS])?://[^\\s/?#]+\\S*$", Pattern.UNICODE_CHARACTER_CLASS).toRegex()
+// WHITE_SPACE is Unicode's White_Space, the set Swift's whitespace uses, so both apps judge the same links. It is
+// spelled out because Android's regex engine rejects UNICODE_CHARACTER_CLASS and its own \s is a different set. The
+// scheme is spelled out in both cases because CASE_INSENSITIVE would also fold non-ASCII letters (U+017F into "s").
+private const val WHITE_SPACE = "\\u0009-\\u000D\\u0020\\u0085\\u00A0\\u1680\\u2000-\\u200A\\u2028\\u2029\\u202F\\u205F\\u3000"
+private val URL_PATTERN = Regex("^[hH][tT][tT][pP]([sS])?://[^$WHITE_SPACE/?#]+[^$WHITE_SPACE]*$")
 
 // The most digits an accepted integral number can have: amounts end at 999999999999.
 private const val MAX_INTEGER_DIGITS = 13
