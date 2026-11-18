@@ -2,8 +2,9 @@
 nonisolated enum StandProfileJson {
     private static let fields = ["version", "name", "gatewayUrl", "api", "login", "password", "apiKey"]
 
-    static func decode(_ text: String) -> Decoded<StandProfile> {
-        if let message = limitProblem(text) { return .invalid(Problem(field: "$", message: message)) }
+    /// [maxBytes] is raised only for the app's own stored profiles, which credentials of any length can make large.
+    static func decode(_ text: String, maxBytes: Int = DocumentLimits.maxBytes) -> Decoded<StandProfile> {
+        if let message = limitProblem(text, maxBytes: maxBytes) { return .invalid(Problem(field: "$", message: message)) }
         guard case let .object(root) = JSONValue.parse(text) else { return .invalid(.notAnObject) }
         let reader = JsonReader()
         if let version = reader.integral(root, "version", "version"), version != 1 { reader.fail("version", "must be 1") }

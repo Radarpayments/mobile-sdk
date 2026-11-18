@@ -56,8 +56,9 @@ nonisolated enum QaConfigJson {
         "\(applePay).countryCode",
     ]
 
-    static func decode(_ text: String) -> Decoded<QaConfig> {
-        if let message = limitProblem(text) { return .invalid(Problem(field: "$", message: message)) }
+    /// [maxBytes] is raised only for the app's own stored copy, which pretty printing can grow past a document's limit.
+    static func decode(_ text: String, maxBytes: Int = DocumentLimits.maxBytes) -> Decoded<QaConfig> {
+        if let message = limitProblem(text, maxBytes: maxBytes) { return .invalid(Problem(field: "$", message: message)) }
         guard case let .object(root) = JSONValue.parse(text) else { return .invalid(.notAnObject) }
         let reader = JsonReader()
         if let version = reader.integral(root, "version", "version"), version != 1 { reader.fail("version", "must be 1") }

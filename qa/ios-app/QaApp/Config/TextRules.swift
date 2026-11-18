@@ -41,6 +41,21 @@ nonisolated func equalsIgnoringCase(_ text: String, _ word: String) -> Bool {
     }
 }
 
+/// Whether [text] contains [query] ignoring case the way Kotlin's `contains(ignoreCase = true)` does on Android: each
+/// character matches itself, its upper case, or the lower case of that. An empty query is contained in any text.
+nonisolated func containsIgnoringCase(_ text: String, _ query: String) -> Bool {
+    let scalars = Array(text.unicodeScalars)
+    let wanted = Array(query.unicodeScalars)
+    guard wanted.count <= scalars.count else { return false }
+    return (0 ... scalars.count - wanted.count).contains { start in
+        zip(scalars[start...], wanted).allSatisfy { left, right in
+            let upperLeft = simpleUppercase(left)
+            let upperRight = simpleUppercase(right)
+            return left == right || upperLeft == upperRight || simpleLowercase(upperLeft) == simpleLowercase(upperRight)
+        }
+    }
+}
+
 nonisolated func stringOf(_ scalars: some Sequence<Unicode.Scalar>) -> String {
     var view = String.UnicodeScalarView()
     view.append(contentsOf: scalars)
