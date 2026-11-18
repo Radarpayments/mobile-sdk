@@ -18,6 +18,7 @@ import net.payrdr.mobile.payment.sdk.qa.merchant.OrderStatus
 import net.payrdr.mobile.payment.sdk.qa.merchant.V1
 import net.payrdr.mobile.payment.sdk.qa.merchant.V2
 import net.payrdr.mobile.payment.sdk.qa.merchant.ok
+import java.io.File
 import java.util.Locale
 import java.util.TimeZone
 import kotlin.test.Test
@@ -183,102 +184,24 @@ class RunReportTest {
                 JournalEntry(45_297_102, LogLevel.INFO, "merchant", "← 200 {\"orderId\":\"$mdOrder\"}"),
             )
 
-        runReport(app, finished, entries, utc) shouldBe GOLDEN
+        runReport(app, finished, entries, utc) shouldBe readmeExample()
     }
 
     private companion object {
         const val REGISTER = "https://dev.bpcbt.com/payment/rest/register.do"
 
-        // The example of the README's "Run report", character for character; iOS prints the same text.
-        val GOLDEN =
-            """
-            == Versions ==
-            QA app: 1.0.0-beta.1 (7)
-            SDK: 4.0.0-beta.1
+        // The tests run in qa/android-app, so the contract is one level up, as FixtureCasesTest finds the fixtures.
+        fun readmeExample(): String {
+            val readme = File("../README.md").readText()
+            val section = readme.indexOf("\n### Run report\n")
+            check(section >= 0) { "qa/README.md has no \"### Run report\" section" }
+            val start = readme.indexOf(FENCE, section)
+            check(start >= 0) { "the \"Run report\" section of qa/README.md has no ```text block" }
+            val end = readme.indexOf("\n```", start + FENCE.length)
+            check(end >= 0) { "the ```text block of the \"Run report\" section is not closed" }
+            return readme.substring(start + FENCE.length, end + 1)
+        }
 
-            == Device ==
-            Google Pixel 8
-            Android 15 (API 35)
-
-            == Profile ==
-            Name: dev
-            Gateway URL: https://dev.bpcbt.com/payment
-            API: v1
-
-            == Configuration ==
-            {
-                "version": 1,
-                "profile": "dev",
-                "order": {
-                    "source": "register",
-                    "type": "payment",
-                    "amount": 10000,
-                    "currency": "EUR",
-                    "clientId": null,
-                    "mdOrder": null,
-                    "sessionId": null,
-                    "features": [],
-                    "extra": {}
-                },
-                "sdk": {
-                    "locale": null,
-                    "theme": "system",
-                    "showResultScreen": false,
-                    "scanner": false,
-                    "keyProviderUrl": null,
-                    "sslPinning": {
-                        "enabled": false,
-                        "pins": []
-                    },
-                    "googlePay": {
-                        "enabled": false,
-                        "billingAddressRequired": false,
-                        "merchantId": null,
-                        "merchantFullName": null,
-                        "gateway": null,
-                        "gatewayMerchantId": null,
-                        "countryCode": null,
-                        "environment": null,
-                        "allowedCardNetworks": [
-                            "MASTERCARD",
-                            "VISA"
-                        ],
-                        "allowedAuthMethods": [
-                            "PAN_ONLY",
-                            "CRYPTOGRAM_3DS"
-                        ]
-                    },
-                    "applePay": {
-                        "enabled": false,
-                        "merchantId": "merchant.net.payrdr.samples.test",
-                        "supportedNetworks": [
-                            "MASTERCARD",
-                            "VISA"
-                        ],
-                        "merchantCapabilities": [
-                            "CREDIT",
-                            "DEBIT",
-                            "THREE_D_SECURE"
-                        ],
-                        "countryCode": null
-                    }
-                }
-            }
-
-            == Result ==
-            qa_result_type: completed
-            mdOrder: 8f1e4c2a-0b3d-4e5f-9a6b-7c8d9e0f1a2b
-            Session id: -
-            Error: -
-            HTTP status: -
-
-            == Order status ==
-            orderStatus=2, actionCode=0, Approved
-
-            == Journal ==
-            Time zone: UTC+00:00
-            12:34:56.789 INFO merchant: → POST https://dev.bpcbt.com/payment/rest/register.do userName=login-1&password=***
-            12:34:57.102 INFO merchant: ← 200 {"orderId":"8f1e4c2a-0b3d-4e5f-9a6b-7c8d9e0f1a2b"}
-            """.trimIndent() + "\n"
+        const val FENCE = "```text\n"
     }
 }

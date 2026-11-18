@@ -155,7 +155,7 @@ internal class QaRun(
         // Only a cancellation of this run's own coroutine stops it quietly. One the sheet threw for reasons of its own
         // (a cancelled future, a job inside the SDK) is an error like any other, or the run would stay in the sheet.
         if (failure is CancellationException && !currentCoroutineContext().isActive) throw failure
-        val error = listOfNotNull(failure.javaClass.simpleName.ifEmpty { failure.javaClass.name }, failure.message).joinToString(": ")
+        val error = failure.sheetError()
         val outcome = RunOutcome(ResultType.SDK_ERROR, order.mdOrder, order.sessionId, error, null, OrderStatus.NotQueried)
         synchronized(lock) {
             if (current !== attempt) return
@@ -243,3 +243,13 @@ private fun CheckoutResult.error(): SdkException? =
     }
 
 private fun SdkException.httpStatus(): Int? = (this as? SdkPaymentApiException)?.httpStatus
+
+/**
+ * `<SimpleClassName>: <message>`, or the class name alone when the message is missing or blank. An anonymous class has
+ * no simple name, so its binary name after the last `.` stands in (`QaRunTest$test$1`).
+ */
+internal fun Throwable.sheetError(): String {
+    val name = javaClass.simpleName.ifEmpty { javaClass.name.substringAfterLast('.') }
+    val text = message
+    return if (text.isNullOrBlank()) name else "$name: $text"
+}

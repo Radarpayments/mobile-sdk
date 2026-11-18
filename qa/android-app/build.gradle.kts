@@ -104,4 +104,9 @@ dependencies {
     testRuntimeOnly(libs.junit5.engine)
 }
 
-tasks.withType<Test> { useJUnitPlatform() }
+tasks.withType<Test> {
+    useJUnitPlatform()
+    // Tests read the contract's README and fixtures, so an edit to either has to run them again.
+    inputs.file(layout.projectDirectory.file("../README.md")).withPathSensitivity(PathSensitivity.RELATIVE)
+    inputs.dir(layout.projectDirectory.dir("../fixtures")).withPathSensitivity(PathSensitivity.RELATIVE)
+}

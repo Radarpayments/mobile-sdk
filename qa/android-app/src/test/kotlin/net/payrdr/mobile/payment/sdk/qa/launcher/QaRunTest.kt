@@ -3,6 +3,7 @@ package net.payrdr.mobile.payment.sdk.qa.launcher
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldNotContain
+import io.kotest.matchers.string.shouldStartWith
 import io.ktor.client.engine.mock.MockRequestHandleScope
 import io.ktor.client.request.HttpRequestData
 import kotlinx.coroutines.CancellationException
@@ -348,6 +349,21 @@ class QaRunTest {
             outcome.status shouldBe OrderStatus.NotQueried
             h.gateway.journalText() shouldContain "IllegalStateException: boom"
         }
+
+    @Test
+    fun `an exception without a message is named by its class alone`() {
+        IllegalStateException().sheetError() shouldBe "IllegalStateException"
+        IllegalStateException("  \n").sheetError() shouldBe "IllegalStateException"
+    }
+
+    @Test
+    fun `an exception of an anonymous class is named by the last segment of its binary name`() {
+        val anonymous = object : RuntimeException("boom") {}
+
+        anonymous.javaClass.simpleName shouldBe ""
+        anonymous.sheetError() shouldBe "${anonymous.javaClass.name.substringAfterLast('.')}: boom"
+        anonymous.sheetError() shouldStartWith "QaRunTest$"
+    }
 
     @Test
     fun `a gateway error of the sdk carries its http status`() =

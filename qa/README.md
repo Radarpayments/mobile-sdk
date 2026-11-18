@@ -247,8 +247,12 @@ limited to `[a-z0-9_-]`, 1 to 32 characters, because it is part of an identifier
 ### Run report
 
 `qa_report` copies the report of the finished run as plain text. It is built from the finished run alone: the profile
-and the configuration are the ones the run was launched with, not what the form holds when the report is copied. Both
-apps print it character for character the same; the Android golden test (`RunReportTest`) holds the example below.
+and the configuration are the ones the run was launched with, not what the form holds when the report is copied.
+
+Every line is the same text on both platforms except JSON. The Configuration section holds the same document on both
+platforms as JSON, not as text: every field is present, but key order, spacing, escaping and the spelling of numbers
+are the platform's own. The same holds for a JSON request or response body quoted in a journal line. The example below
+is Android's output; the Android test `RunReportTest` compares its report with this block character for character.
 
 - Lines end in `\n`, the report ends in one `\n`, sections are separated by one empty line. No line is ever left out:
   a missing value prints `-`.
@@ -256,24 +260,32 @@ apps print it character for character the same; the Android golden test (`RunRep
   - `== Versions ==`: `QA app: <app version>`, `SDK: <sdk version>`.
   - `== Device ==`: the device on one line, the OS on the next, with no label. The platform's own wording; the example
     shows Android's.
-  - `== Profile ==`: `Name: <name>`, `Gateway URL: <gatewayUrl>`, `API: v1|v2`. Never the login, password or API key.
-  - `== Configuration ==`: the run's `QaConfig` as `qa_export` writes it (pretty-printed, four spaces, every field).
+  - `== Profile ==`: `Name: <name>`, `Gateway URL: <gatewayUrl>`, `API: v1|v2`, nothing else. Passwords and API keys
+    are masked (`***`) everywhere in the report; the login is not a secret and can appear in journal lines
+    (`userName=<login>`).
+  - `== Configuration ==`: the run's `QaConfig` document, every field, nulls and defaults included (JSON, see above).
   - `== Result ==`: `qa_result_type: <id>`, `mdOrder: <mdOrder>`, `Session id: <session id>`, `Error: <error>`,
     `HTTP status: <status>`. The error is the SDK error's message for `failed` (and the cause's message for `unknown`),
     the gateway's answer for `registration_failed`, `<SimpleClassName>: <message>` of what the sheet threw for
-    `sdk_error` (`IllegalStateException: boom`; just the class name when there is no message). The HTTP status is the
-    gateway's for `registration_failed` and the SDK's for an API error, `-` otherwise.
-  - `== Order status ==`: the `qa_result_order_status` text, except that `not queried` is followed by `: <reason>`:
+    `sdk_error` (`IllegalStateException: boom`). A missing or blank message prints the class name alone. A class with
+    no simple name (anonymous) is named by its binary name after the last `.` on Android (e.g. `QaRunTest$run$1`), by
+    its type name on iOS. The HTTP status is the gateway's for `registration_failed` and the SDK's for an API error, `-`
+    otherwise.
+  - `== Order status ==`: the `qa_result_order_status` text, except that `not queried` is followed by `: <reason>`.
+    The reasons are tried in this order and the first that applies is printed:
     - `not queried: the checkout did not run` for `registration_failed` and `sdk_error`;
     - `not queried: API v2 has no status query`;
     - `not queried: the profile has no login and password`;
-    - `not queried: the checkout named no order` (canceled before an order was known).
+    - `not queried: the checkout named no order` otherwise (the sheet closed before an order was known).
   - `== Journal ==`: first `Time zone: UTC±hh:mm`, the device's offset at the first line's time (at the time of the
     report when the journal is empty), then every line of the run as `HH:mm:ss.SSS LEVEL tag: message` in that zone.
-    Digits and signs are written by hand, never by a locale-dependent formatter. Merchant lines are the ones of
-    "Gateway requests", secrets already masked; an `sdk_error` run adds `ERROR qa: The sheet threw <error>`.
+    `LEVEL` is `DEBUG`, `INFO`, `WARNING` or `ERROR`. Digits and signs are written by hand, never by a locale-dependent
+    formatter. Merchant lines are the ones of "Gateway requests", secrets already masked. When the sheet throws, the
+    journal gets `ERROR qa: The sheet threw <error>` (the error text of `sdk_error`), also when the sheet had already
+    delivered its result and the run finishes with that result.
+- A message, an error or a description that contains line breaks is printed as is, so one entry can span several lines.
 
-Example (`completed`, a registered order, v1 profile):
+Example, Android's output (`completed`, a registered order, v1 profile):
 
 ```text
 == Versions ==
