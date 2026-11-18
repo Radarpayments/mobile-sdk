@@ -199,7 +199,11 @@ which is not a failure), else `error.errorMessage` / `error.errorCode`. Status: 
 `HTTP <status>: <first 300 characters of the body>`. Every failure carries the HTTP status when there was a response.
 
 Journal lines of an exchange (tag `merchant`): `→ POST <url> <body>` and `← <status> <body>`, with the values of
-`password` and `X-API-KEY` replaced by `***`.
+`password` and `X-API-KEY` replaced by `***`. The request line and a 2xx answer are `INFO`, any other answer `WARNING`. A
+line is cut at 4000 characters (UTF-16 units) and ends in `…`; secrets are masked before the cut, in failure messages
+too. With no answer within the timeout, the body included, the result fails with `The gateway did not answer in <whole
+seconds> s`; a network error fails with `<the platform's error type>: <its message>`, at most 300 characters. Neither carries an HTTP status, and the journal shows either as `← <message>` at `WARNING`. A caller that is
+cancelled gets no failure and no `←` line.
 
 ### Theme presets
 
