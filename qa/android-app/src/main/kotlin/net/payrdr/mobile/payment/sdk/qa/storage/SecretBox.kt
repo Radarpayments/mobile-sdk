@@ -6,7 +6,6 @@ import android.util.Base64
 import java.io.IOException
 import java.security.GeneralSecurityException
 import java.security.KeyStore
-import java.security.ProviderException
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
@@ -14,6 +13,7 @@ import javax.crypto.spec.GCMParameterSpec
 
 /** Seals a text so that it can be kept next to the app's data and opened only by this app on this device. */
 internal interface SecretBox {
+    /** Throws when the text cannot be sealed (the Keystore failed); there is no fallback to storing it as it is. */
     fun seal(plain: String): String
 
     /** Returns the text [seal] was given, or null when [sealed] cannot be opened (another key, damaged, key gone). */
@@ -27,12 +27,16 @@ internal interface SecretBox {
 internal class KeystoreSecretBox : SecretBox {
     override fun seal(plain: String): String {
         val cipher = Cipher.getInstance(TRANSFORMATION)
-        cipher.init(Cipher.ENCRYPT_MODE, existingKey() ?: createKey())
+        cipher.init(Cipher.ENCRYPT_MODE, existingOrNewKey())
         return Base64.encodeToString(cipher.iv + cipher.doFinal(plain.toByteArray(Charsets.UTF_8)), Base64.NO_WRAP)
     }
 
     // The key is not created here: after a restore to another device it is gone, and a fresh one would only fail to open
     // what the old one sealed. The caller then starts without profiles.
+    // RuntimeException covers bad base64 and ProviderException, and also the IllegalStateException or NullPointerException
+    // that AndroidKeyStore on some OEM builds throws from the keystore service: any of them would crash the screen that
+    // reads the profiles at startup.
+    @Suppress("TooGenericExceptionCaught")
     override fun open(sealed: String): String? =
         try {
             val bytes = Base64.decode(sealed, Base64.NO_WRAP)
@@ -46,17 +50,19 @@ internal class KeystoreSecretBox : SecretBox {
             }
         } catch (_: GeneralSecurityException) {
             null
-        } catch (_: IllegalArgumentException) {
-            null
         } catch (_: IOException) {
             null
-        } catch (_: ProviderException) {
+        } catch (_: RuntimeException) {
             null
         }
 
     private fun keyStore(): KeyStore = KeyStore.getInstance(ANDROID_KEY_STORE).apply { load(null) }
 
     private fun existingKey(): SecretKey? = keyStore().getKey(KEY_ALIAS, null) as? SecretKey
+
+    // Two seals racing with no key would each generate one under the alias, and the first ciphertext could not be opened.
+    @Synchronized
+    private fun existingOrNewKey(): SecretKey = existingKey() ?: createKey()
 
     private fun createKey(): SecretKey {
         val spec =

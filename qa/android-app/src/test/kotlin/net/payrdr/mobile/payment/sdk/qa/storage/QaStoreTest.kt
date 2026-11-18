@@ -4,14 +4,19 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.preferencesOf
 import androidx.datastore.preferences.core.stringPreferencesKey
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldNotContain
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import net.payrdr.mobile.payment.sdk.qa.config.ApiVersion
 import net.payrdr.mobile.payment.sdk.qa.config.QaConfig
@@ -44,7 +49,13 @@ class QaStoreTest {
             File(createTempDirectory("qa-store").toFile(), "qa.preferences_pb")
         }
 
-    private fun TestScope.store(box: SecretBox = PrefixBox()) = QaStore(dataStore(), box)
+    // The test dispatcher instead of Dispatchers.Default keeps the reads on the test's scheduler.
+    private fun TestScope.qaStore(
+        dataStore: DataStore<Preferences>,
+        box: SecretBox,
+    ) = QaStore(dataStore, box, StandardTestDispatcher(testScheduler))
+
+    private fun TestScope.store(box: SecretBox = PrefixBox()) = qaStore(dataStore(), box)
 
     @Test
     fun `a fresh store holds the default config and no profiles`() =
@@ -93,10 +104,61 @@ class QaStoreTest {
         }
 
     @Test
+    fun `deleting from a list that cannot be opened leaves it stored`() =
+        runTest {
+            val dataStore = dataStore()
+            dataStore.edit { it[profilesKey] = "garbage" }
+            qaStore(dataStore, PrefixBox(opens = false)).deleteProfile("sandbox")
+            dataStore.data.first()[profilesKey] shouldBe "garbage"
+        }
+
+    @Test
+    fun `deleting a name that is not stored leaves the list as it was`() =
+        runTest {
+            val dataStore = dataStore()
+            // Spaced unlike what the store writes, so that a rewrite would show in the raw value.
+            val stored = PrefixBox().seal("[ ${StandProfileJson.encode(sandbox)} ]")
+            dataStore.edit { it[profilesKey] = stored }
+            qaStore(dataStore, PrefixBox()).deleteProfile("other")
+            dataStore.data.first()[profilesKey] shouldBe stored
+        }
+
+    @Test
+    fun `a change to the config does not open the profiles again`() =
+        runTest {
+            var opened = 0
+            val box =
+                object : SecretBox by PrefixBox() {
+                    override fun open(sealed: String): String? {
+                        opened++
+                        return PrefixBox().open(sealed)
+                    }
+                }
+            val sealed = PrefixBox().seal("[${StandProfileJson.encode(sandbox)}]")
+            val data = MutableStateFlow(preferencesOf(profilesKey to sealed))
+            val dataStore =
+                object : DataStore<Preferences> {
+                    override val data: Flow<Preferences> = data
+
+                    override suspend fun updateData(transform: suspend (t: Preferences) -> Preferences): Preferences =
+                        transform(data.value).also { data.value = it }
+                }
+            val seen = mutableListOf<List<StandProfile>>()
+            // Not in backgroundScope: advanceUntilIdle does not run background work, and the read runs as a child of this job.
+            val collecting = launch { qaStore(dataStore, box).profiles.collect { seen += it } }
+            advanceUntilIdle()
+            data.value = preferencesOf(profilesKey to sealed, configKey to QaConfigJson.encode(QaConfig(profile = "sandbox")))
+            advanceUntilIdle()
+            collecting.cancel()
+            seen shouldBe listOf(listOf(sandbox))
+            opened shouldBe 1
+        }
+
+    @Test
     fun `profiles are stored sealed`() =
         runTest {
             val dataStore = dataStore()
-            QaStore(dataStore, PrefixBox()).saveProfile(sandbox)
+            qaStore(dataStore, PrefixBox()).saveProfile(sandbox)
             val raw = dataStore.data.first()[profilesKey].orEmpty()
             raw shouldNotContain "password-1"
             raw shouldNotContain "key-1"
@@ -107,8 +169,8 @@ class QaStoreTest {
     fun `a config written by another build reads as the default`() =
         runTest {
             val dataStore = dataStore()
-            dataStore.edit { it[configKey] = "{\"version\":2}" }
-            QaStore(dataStore, PrefixBox()).config.first() shouldBe QaConfig()
+            dataStore.edit { it[configKey] = "{\"version\":2,\"profile\":\"sandbox\"}" }
+            qaStore(dataStore, PrefixBox()).config.first() shouldBe QaConfig()
         }
 
     @Test
@@ -116,15 +178,15 @@ class QaStoreTest {
         runTest {
             val dataStore = dataStore()
             dataStore.edit { it[configKey] = "<<<" }
-            QaStore(dataStore, PrefixBox()).config.first() shouldBe QaConfig()
+            qaStore(dataStore, PrefixBox()).config.first() shouldBe QaConfig()
         }
 
     @Test
     fun `profiles that cannot be opened read as none`() =
         runTest {
             val dataStore = dataStore()
-            QaStore(dataStore, PrefixBox()).saveProfile(sandbox)
-            QaStore(dataStore, PrefixBox(opens = false)).profiles.first() shouldBe emptyList()
+            qaStore(dataStore, PrefixBox()).saveProfile(sandbox)
+            qaStore(dataStore, PrefixBox(opens = false)).profiles.first() shouldBe emptyList()
         }
 
     @Test
@@ -132,7 +194,7 @@ class QaStoreTest {
         runTest {
             val dataStore = dataStore()
             dataStore.edit { it[profilesKey] = PrefixBox().seal("{\"name\":\"sandbox\"}") }
-            QaStore(dataStore, PrefixBox()).profiles.first() shouldBe emptyList()
+            qaStore(dataStore, PrefixBox()).profiles.first() shouldBe emptyList()
         }
 
     @Test
@@ -141,7 +203,7 @@ class QaStoreTest {
             val dataStore = dataStore()
             val broken = """{"name":"Not A Name","gatewayUrl":"https://dev.bpcbt.com/payment"}"""
             dataStore.edit { it[profilesKey] = PrefixBox().seal("[$broken,7,${StandProfileJson.encode(sandbox)}]") }
-            QaStore(dataStore, PrefixBox()).profiles.first() shouldBe listOf(sandbox)
+            qaStore(dataStore, PrefixBox()).profiles.first() shouldBe listOf(sandbox)
         }
 
     @Test
@@ -149,9 +211,9 @@ class QaStoreTest {
         runTest {
             val dataStore = dataStore()
             dataStore.edit { it[profilesKey] = "garbage" }
-            val store = QaStore(dataStore, PrefixBox(opens = false))
+            val store = qaStore(dataStore, PrefixBox(opens = false))
             store.saveProfile(sandbox)
-            QaStore(dataStore, PrefixBox()).profiles.first() shouldBe listOf(sandbox)
+            qaStore(dataStore, PrefixBox()).profiles.first() shouldBe listOf(sandbox)
         }
 
     @Test
@@ -164,7 +226,7 @@ class QaStoreTest {
                     override suspend fun updateData(transform: suspend (t: Preferences) -> Preferences): Preferences =
                         throw IOException("disk")
                 }
-            val store = QaStore(broken, PrefixBox())
+            val store = qaStore(broken, PrefixBox())
             store.config.first() shouldBe QaConfig()
             store.profiles.first() shouldBe emptyList()
         }
@@ -174,7 +236,7 @@ class QaStoreTest {
         runTest {
             val dataStore = dataStore()
             val config = QaConfig(profile = "sandbox")
-            QaStore(dataStore, PrefixBox()).saveConfig(config)
+            qaStore(dataStore, PrefixBox()).saveConfig(config)
             dataStore.data.first()[configKey] shouldBe QaConfigJson.encode(config)
         }
 }

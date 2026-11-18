@@ -6,8 +6,12 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
@@ -28,6 +32,8 @@ import java.io.IOException
 internal class QaStore(
     private val dataStore: DataStore<Preferences>,
     private val box: SecretBox,
+    // Opening the profiles is a Keystore call; a Compose collector would otherwise make it on the main thread.
+    private val readDispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) {
     // An unreadable file ends the flow with the defaults instead of failing the screen that collects it.
     private val preferences: Flow<Preferences> =
@@ -35,26 +41,45 @@ internal class QaStore(
             if (error is IOException) emit(emptyPreferences()) else throw error
         }
 
-    val config: Flow<QaConfig> = preferences.map { readConfig(it[CONFIG]) }
+    // Every write emits all preferences again; only a change of the stored text is read again.
+    val config: Flow<QaConfig> =
+        preferences
+            .map { it[CONFIG] }
+            .distinctUntilChanged()
+            .map(::readConfig)
+            .flowOn(readDispatcher)
 
     /** Sorted by name; the profiles of a stored list that are invalid are left out, the others are kept. */
-    val profiles: Flow<List<StandProfile>> = preferences.map { readProfiles(it[PROFILES]) }
+    val profiles: Flow<List<StandProfile>> =
+        preferences
+            .map { it[PROFILES] }
+            .distinctUntilChanged()
+            .map(::readProfiles)
+            .flowOn(readDispatcher)
 
+    /** Stores [config] as it is: the caller validates it first, since one that is invalid reads back as the default. */
     suspend fun saveConfig(config: QaConfig) {
         dataStore.edit { it[CONFIG] = QaConfigJson.encode(config) }
     }
 
-    /** Replaces the profile of the same name; a stored list that cannot be read is started again with this profile. */
+    /**
+     * Replaces the profile of the same name; a stored list that cannot be read is started again with this profile. The
+     * caller validates [profile] first: an invalid one is stored and then left out when the list is read.
+     */
     suspend fun saveProfile(profile: StandProfile) {
         dataStore.edit { preferences ->
             writeProfiles(preferences, readProfiles(preferences[PROFILES]).filterNot { it.name == profile.name } + profile)
         }
     }
 
-    /** Leaves the config alone: one that names the deleted profile is reported by the launch check. */
+    /**
+     * Leaves the config alone: one that names the deleted profile is reported by the launch check. A list that cannot be
+     * read, or holds no profile of that name, is left as it is stored.
+     */
     suspend fun deleteProfile(name: String) {
         dataStore.edit { preferences ->
-            writeProfiles(preferences, readProfiles(preferences[PROFILES]).filterNot { it.name == name })
+            val stored = readProfiles(preferences[PROFILES])
+            if (stored.any { it.name == name }) writeProfiles(preferences, stored.filterNot { it.name == name })
         }
     }
 
