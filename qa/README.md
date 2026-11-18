@@ -301,11 +301,14 @@ U+0085, a U+00A0, a vertical tab, a second U+FEFF or a U+FEFF after the whitespa
 
 **Launch arguments**, raw JSON (not base64): Android extras `qaConfig`, `qaProfile` (strings) and `qaLaunch`
 (boolean); iOS `-qaConfig <json>`, `-qaProfile <json>` and `-qaLaunch 1`, read from
-`ProcessInfo.processInfo.arguments` (not `UserDefaults`, which would parse a `{…}` argument as a property list). An
-argument that is empty after trimming is field `data`; otherwise it is decoded as its document and reports its own
-field (`$` when it is not a JSON object). The steps are: the profile, then the config, then Launch; `qaLaunch` without
-a config launches the stored one. When either document is rejected the result is that one rejection (the profile's
-when both are), and nothing is applied or launched.
+`ProcessInfo.processInfo.arguments` (not `UserDefaults`, which would parse a `{…}` argument as a property list). On
+iOS a flag's value is the argument after it, whatever it is (`-qaConfig -qaLaunch 1` is the config `-qaLaunch`), a
+repeated flag keeps its last value, a flag with nothing after it is ignored, and `-qaLaunch` launches only when its
+value is `1` after trimming (any other value is silently no launch). An argument that is empty after trimming is
+field `data`; otherwise it is decoded as its document and reports its own field (`$` when it is not a JSON object).
+The steps are: the profile, then the config, then Launch; `qaLaunch` without a config launches the stored one. When
+either document is rejected the result is that one rejection (the profile's when both are), and nothing is applied or
+launched.
 
 **Pasted or scanned text.** After trimming, text whose first 11 characters are `payrdrqa://` ignoring ASCII case is read
 as a link, as above. Any other text must be a JSON object (field `$` otherwise, bare base64 included): a root object
