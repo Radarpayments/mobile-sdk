@@ -221,6 +221,17 @@ class QaStoreTest {
         }
 
     @Test
+    fun `stored profiles that are not strict json are unreadable as a whole`() =
+        runTest {
+            val dataStore = dataStore()
+            val sandboxJson = StandProfileJson.encode(sandbox)
+            listOf("[$sandboxJson,abc]", "[$sandboxJson,01]", "[$sandboxJson] x", "[$sandboxJson,\"\\ud800\"]").forEach { plain ->
+                dataStore.edit { it[profilesKey] = PrefixBox().seal(plain) }
+                qaStore(dataStore, PrefixBox()).profiles.first() shouldBe emptyList()
+            }
+        }
+
+    @Test
     fun `saving a profile over unreadable ones starts the list again`() =
         runTest {
             val dataStore = dataStore()

@@ -39,12 +39,12 @@ internal val NOT_AN_OBJECT = Problem("$", "the document is not a JSON object")
 internal fun isHttpUrl(text: String): Boolean = URL_PATTERN.matches(text)
 
 /**
- * The root object of [text], or null when the text is not JSON or not an object.
+ * The root object of [text], or null when the text is not RFC 8259 JSON (see [isStrictJson]) or not an object.
  * The parser's own message quotes the input, so it is dropped.
  */
 internal fun parseObject(text: String): JsonObject? =
     try {
-        Json.parseToJsonElement(text) as? JsonObject
+        if (isStrictJson(text)) Json.parseToJsonElement(text) as? JsonObject else null
     } catch (_: SerializationException) {
         null
     } catch (_: IllegalArgumentException) {

@@ -114,6 +114,14 @@ field in the table's order is the one reported. A malformed document or an inval
 app names the field and keeps the previous state. Further rules, so that two decoders cannot read a document
 differently:
 
+- A document is JSON as RFC 8259 spells it, and the whole text is checked before any field is read; text that is not
+  JSON fails on `$` (the form's `order.extra` text on `order.extra`), however lenient a platform's parser would be.
+  Only space, tab, line feed and carriage return may stand around and between the tokens, and nothing may follow the
+  value. A number is `-?(0|[1-9][0-9]*)(\.[0-9]+)?([eE][+-]?[0-9]+)?` in ASCII digits, so `01`, `+1`, `1.`, `.5` and
+  `NaN` are not numbers, and `true`, `false` and `null` are the only bare words. A string holds no raw character below
+  U+0020 and no escape but `\"`, `\\`, `\/`, `\b`, `\f`, `\n`, `\r`, `\t` and `\uXXXX`; a surrogate, raw or escaped, is
+  only valid as the first or second half of a pair (RFC 8259 leaves a lone one to the parser; here it is not JSON).
+  A repeated key is JSON: the member keeps the place of its first occurrence and the value of its last.
 - An explicit JSON `null` is the same as the field being absent: the default applies.
 - An integral number (`version`, `order.amount`) is a JSON number whose value has no fractional part, whatever its
   spelling: `100`, `100.0` and `1e2` are all 100. A JSON boolean or string is a type error on that field, and so is a
@@ -470,10 +478,11 @@ Time zone: UTC+00:00
   "expect": { "document": <object> } | { "errorField": "<path>" } }
 ```
 
-`input` is the parsed document; `inputText` is a raw string, for text that is not JSON or is too deep to be `input`.
-`kind` selects `QaConfig` or `StandProfile`. `expect.document` is the full document as the encoder writes it (every
-field, nulls and defaults included): a test decodes `input`, encodes the result and compares it with `document`
-structurally (key order does not matter). `expect.errorField` is the field the decoder reports. Each failing input fails
+`input` is the parsed document; `inputText` is a raw string, for text that is not JSON, is too deep to be `input` or
+repeats a key (a parsed `input` would keep only one). `kind` selects `QaConfig` or `StandProfile`. `expect.document` is
+the full document as the encoder writes it (every field, nulls and defaults included): a test decodes `input`, encodes
+the result and compares it with `document` structurally (key order does not matter; array order does, so a set must come
+out in the order of its allowed values). `expect.errorField` is the field the decoder reports. Each failing input fails
 on that field only. The profile fixtures carry the placeholder secrets `login-1`, `password-1` and `key-1`.
 
 `qa/fixtures/identifiers.txt` is the identifier list above; a test checks that every identifier of the platform is

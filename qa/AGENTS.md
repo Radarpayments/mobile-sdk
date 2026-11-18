@@ -46,5 +46,9 @@ The same on both platforms, one directory each (`config/`, `storage/`, ... under
   `equalsIgnoringCase` in `TextRules.swift`; keep new rules on those helpers, not on `==` or `Foundation`'s
   `JSONSerialization` / `NSRegularExpression`. The app target isolates to the main actor by default, so `config` types
   and functions are `nonisolated`.
+- **Documents are strict JSON on both sides.** kotlinx's `Json.parseToJsonElement` reads `01`, `NaN`, bare words and
+  raw control characters, so Android parses document text only through `parseObject` (or after `isStrictJson`, as
+  `QaStore.readProfiles` does), never with kotlinx directly; iOS's `JSONValue.parse` is strict already. Text the app
+  wrote itself is exempt. A fixture with a repeated key or text that is not JSON uses `inputText`.
 - **Do not build the two Xcode projects in parallel** (this one and `samples/ios-app`): both write to
   `sdk-payment-scanner/build/XCFrameworks/debug`. No release linking of iOS frameworks, no whole-repo `./gradlew build`.

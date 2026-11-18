@@ -213,6 +213,20 @@ class IntakeTest {
     }
 
     @Test
+    fun `text that is not strict json is rejected at the root on every path`() {
+        listOf("""{"order":{"amount":01}}""", """{"order":{"amount":+1}}""", """{"order":{"extra":{"a":abc}}}""", "{\"clientId\":\"a\tb\"}")
+            .forEach {
+                field(intakeFromText(it)) shouldBe "$"
+                field(intakeFromLink("payrdrqa://config?data=${b64(it)}")) shouldBe "$"
+                field(intakeFromExtras(qaConfig = it, qaProfile = null, qaLaunch = true)) shouldBe "$"
+            }
+        val profile = """{"name":"sandbox","gatewayUrl":"https://dev.bpcbt.com/payment","version":01}"""
+        field(intakeFromText(profile)) shouldBe "$"
+        field(intakeFromLink("payrdrqa://profile?data=${b64(profile)}")) shouldBe "$"
+        field(intakeFromExtras(qaConfig = null, qaProfile = profile, qaLaunch = false)) shouldBe "$"
+    }
+
+    @Test
     fun `an empty extra is rejected as missing data`() {
         field(intakeFromExtras(qaConfig = "", qaProfile = null, qaLaunch = true)) shouldBe "data"
         field(intakeFromExtras(qaConfig = null, qaProfile = "  ", qaLaunch = false)) shouldBe "data"

@@ -3,18 +3,27 @@ import XCTest
 
 /// Runs `qa/fixtures/cases.json`, the cases both apps decode the same way.
 final class FixtureCasesTests: XCTestCase {
+    // A thrown error fails the test; XCTSkip would let a broken fixture file pass as skipped.
+    private struct FixtureError: Error, CustomStringConvertible {
+        let description: String
+
+        init(_ description: String) {
+            self.description = description
+        }
+    }
+
     private func cases() throws -> [JSONObject] {
         let url = URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent()
             .appendingPathComponent("../../fixtures/cases.json")
             .standardizedFileURL
         let text = try String(contentsOf: url, encoding: .utf8)
-        guard case let .array(items) = try XCTUnwrap(JSONValue.parse(text)) else {
-            throw XCTSkip("cases.json is not an array")
+        guard case let .array(items) = try XCTUnwrap(JSONValue.parse(text), "cases.json is not JSON") else {
+            throw FixtureError("cases.json is not an array")
         }
-        return items.compactMap { item in
-            if case let .object(fields) = item { return fields }
-            return nil
+        return try items.enumerated().map { index, item in
+            guard case let .object(fields) = item else { throw FixtureError("case \(index) is not an object") }
+            return fields
         }
     }
 

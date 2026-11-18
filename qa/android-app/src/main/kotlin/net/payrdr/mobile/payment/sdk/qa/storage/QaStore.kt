@@ -23,6 +23,7 @@ import net.payrdr.mobile.payment.sdk.qa.config.QaConfig
 import net.payrdr.mobile.payment.sdk.qa.config.QaConfigJson
 import net.payrdr.mobile.payment.sdk.qa.config.StandProfile
 import net.payrdr.mobile.payment.sdk.qa.config.StandProfileJson
+import net.payrdr.mobile.payment.sdk.qa.config.isStrictJson
 import net.payrdr.mobile.payment.sdk.qa.config.limitProblem
 import java.io.IOException
 
@@ -93,7 +94,7 @@ internal class QaStore(
         if (limitProblem(plain, maxBytes = Int.MAX_VALUE, maxDepth = MAX_DOCUMENT_DEPTH + 1) != null) return emptyList()
         val array =
             try {
-                Json.parseToJsonElement(plain) as? JsonArray
+                if (isStrictJson(plain)) Json.parseToJsonElement(plain) as? JsonArray else null
             } catch (_: SerializationException) {
                 null
             } catch (_: IllegalArgumentException) {
