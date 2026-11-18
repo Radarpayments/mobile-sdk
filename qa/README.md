@@ -144,8 +144,10 @@ CZK 203, TRY 949, AED 784, UAH 980, BYN 933, GEL 981, AMD 051, AZN 944, UZS 860`
 
 `base` is `gatewayUrl` without a trailing `/`. `api2` is `api2Url(gatewayUrl)` exactly as in the samples' `OrderRegistrar`
 (`…/payment` becomes `…/api2`). `orderNumber` is `qa-` and 20 hex characters. The timeout is 20 s. `order.extra` is merged
-last, at the top level, and replaces a value of the same name whole (no deep merge); in a form request a scalar goes as
-its text and an object or an array as its JSON text.
+last, at the top level, and replaces a value of the same name whole (no deep merge); a `null` value removes the parameter
+of that name from the request, form or JSON alike (a `null` for a name the request does not have changes nothing). In a
+form request a string goes without its quotes, a number or a boolean as its JSON text (`5`, `true`), and an object or an
+array as its JSON text (`{"a":1}`).
 
 | Endpoint | Shape | Fields in order |
 |---|---|---|

@@ -5,15 +5,19 @@ import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldNotContain
 import io.kotest.matchers.string.shouldStartWith
 import io.kotest.matchers.types.shouldBeInstanceOf
+import io.ktor.client.plugins.HttpSend
+import io.ktor.client.plugins.plugin
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.withCharset
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
@@ -321,10 +325,80 @@ class MerchantRegisterTest {
                     entered.complete(Unit)
                     awaitCancellation()
                 }
+            var outcome: Result<Registration>? = null
 
-            val result = withTimeoutOrNull(100) { gateway.merchant().register(OrderConfig(), V1) }
+            // Real time: under the test scheduler the caller's timeout could fire before the request reaches the engine.
+            withContext(Dispatchers.Default) {
+                withTimeoutOrNull(1_000) { outcome = runCatching { gateway.merchant().register(OrderConfig(), V1) } }
+            }
 
-            result shouldBe null
+            entered.isCompleted shouldBe true
+            outcome?.exceptionOrNull().shouldBeInstanceOf<CancellationException>()
+            gateway.journalText() shouldNotContain "did not answer"
+        }
+
+    @Test
+    fun `an http stack that reports our timeout as an io error still times out`() =
+        runTest {
+            val gateway = FakeGateway { awaitCancellation() }
+            // Ktor's engine pipeline turns the engine's own error into a cancellation, so the IOException that OkHttp
+            // throws for a cancelled call is raised where it reaches the merchant directly.
+            gateway.client.plugin(HttpSend).intercept { request ->
+                try {
+                    execute(request)
+                } catch (_: CancellationException) {
+                    throw IOException("Canceled")
+                }
+            }
+
+            gateway.merchant(timeoutMillis = 50).register(OrderConfig(), V1) shouldBe
+                Registration.Failed(null, "The gateway did not answer in 0 s")
+            gateway.journalText() shouldNotContain "IOException"
+        }
+
+    @Test
+    fun `a null in extra removes a form parameter`() =
+        runTest {
+            val gateway = FakeGateway()
+
+            gateway.merchant().register(OrderConfig(extra = extra("""{"returnUrl":null,"absent":null}""")), V1)
+
+            gateway
+                .single()
+                .form()
+                .names()
+                .toList() shouldBe listOf("userName", "password", "amount", "currency", "orderNumber")
+        }
+
+    @Test
+    fun `a null in extra removes a json value`() =
+        runTest {
+            val gateway = FakeGateway()
+
+            gateway.merchant().register(OrderConfig(type = OrderType.AFT, extra = extra("""{"returnUrl":null,"absent":null}""")), V1)
+            gateway.merchant().register(OrderConfig(extra = extra("""{"failureUrl":null}""")), V2)
+
+            val (transfer, session) = gateway.requests.map { it.json() }
+            transfer.keys shouldBe
+                setOf("username", "password", "amount", "currency", "orderNumber", "transactionTypeIndicator", "features")
+            session.keys shouldBe setOf("amount", "currency", "successUrl")
+        }
+
+    @Test
+    fun `the journal shows that the api key went out, not the key`() =
+        runTest {
+            val gateway = FakeGateway { ok("""{"id":"zzz"}""") }
+
+            gateway.merchant().register(OrderConfig(), V2)
+            gateway.merchant().register(OrderConfig(type = OrderType.AFT), V1)
+
+            val (session, transfer) =
+                gateway.journal.entries.value
+                    .filter { it.message.startsWith("→") }
+                    .map { it.message }
+            session shouldStartWith "→ POST https://dev.bpcbt.com/api2/sessions X-API-KEY: *** {"
+            session shouldNotContain "key-1"
+            transfer shouldNotContain "X-API-KEY"
         }
 
     @Test

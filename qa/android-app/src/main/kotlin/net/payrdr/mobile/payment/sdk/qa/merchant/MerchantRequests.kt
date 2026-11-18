@@ -4,6 +4,7 @@ import io.ktor.http.Parameters
 import io.ktor.http.Url
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
@@ -64,7 +65,7 @@ internal fun registerForm(
     order.clientId?.takeIf { it.isNotBlank() }?.let { fields["clientId"] = it }
     // ⚠ Unconfirmed on a stand: register.do is assumed to take the features as one comma-separated parameter.
     if (order.features.isNotEmpty()) fields["features"] = order.features.joinToString(",")
-    order.extra.forEach { (name, value) -> fields[name] = formText(value) }
+    order.extra.forEach { (name, value) -> if (value is JsonNull) fields.remove(name) else fields[name] = formText(value) }
     return Parameters.build { fields.forEach { (name, value) -> append(name, value) } }
 }
 
@@ -125,8 +126,9 @@ private fun numericCurrency(order: OrderConfig): String =
 // A form has only text: a JSON string goes without its quotes, any other value as its JSON text.
 private fun formText(value: JsonElement): String = if (value is JsonPrimitive) value.content else value.toString()
 
-// Map addition keeps the position of a replaced key, so the journal shows the request in its usual order.
+// Map addition keeps the position of a replaced key, so the journal shows the request in its usual order. A null in
+// extra is how QA leaves a parameter out.
 private fun withExtra(
     body: JsonObject,
     extra: JsonObject,
-): JsonObject = JsonObject(body + extra)
+): JsonObject = JsonObject((body + extra).filterValues { it !is JsonNull })

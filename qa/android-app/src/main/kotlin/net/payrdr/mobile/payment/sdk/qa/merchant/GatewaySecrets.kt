@@ -42,20 +42,40 @@ internal class GatewaySecrets private constructor(
                     .sortedByDescending { it.length },
             )
 
-        private fun spellingsOf(secret: String): List<String> =
-            listOf(
-                secret,
-                secret.encodeURLParameter(spaceToPlus = true),
-                secret.encodeURLParameter(),
-                // The gateway is a Java servlet: an echo of the form may come in its own encoding.
-                URLEncoder.encode(secret, Charsets.UTF_8.name()),
-                JsonPrimitive(secret).toString().removeSurrounding("\""),
+        private fun spellingsOf(secret: String): List<String> {
+            val percent =
+                listOf(
+                    secret.encodeURLParameter(spaceToPlus = true),
+                    secret.encodeURLParameter(),
+                    // The gateway is a Java servlet: an echo of the form may come in its own encoding.
+                    URLEncoder.encode(secret, Charsets.UTF_8.name()),
+                )
+            return listOf(secret) +
+                percent +
+                percent.map { encoded -> PERCENT_ESCAPE.replace(encoded) { it.value.lowercase() } } +
+                jsonSpellings(secret) +
                 secret
                     .replace("&", "&amp;")
                     .replace("<", "&lt;")
                     .replace(">", "&gt;")
                     .replace("\"", "&quot;")
-                    .replace("'", "&#39;"),
-            )
+                    .replace("'", "&#39;")
+        }
+
+        // Serializers differ: Gson escapes = & ' < > as \u003d and the like, PHP writes / as \/.
+        private fun jsonSpellings(secret: String): List<String> {
+            val plain = JsonPrimitive(secret).toString().removeSurrounding("\"")
+            return listOf(plain, plain.replace("/", "\\/")).flatMap { json ->
+                listOf(json, htmlSafe(json, "%04x"), htmlSafe(json, "%04X"))
+            }
+        }
+
+        private fun htmlSafe(
+            json: String,
+            hex: String,
+        ): String = HTML_UNSAFE.fold(json) { escaped, char -> escaped.replace(char.toString(), "\\u" + hex.format(char.code)) }
+
+        private const val HTML_UNSAFE = "=&'<>"
+        private val PERCENT_ESCAPE = Regex("%[0-9A-F]{2}")
     }
 }

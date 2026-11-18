@@ -85,6 +85,16 @@ class MerchantResponsesTest {
     }
 
     @Test
+    fun `secrets are masked in the escapes other serializers use`() {
+        val equals = GatewaySecrets.of(V1.copy(password = "p=ss"))
+        val mixed = GatewaySecrets.of(V1.copy(password = "a/b+c<d"))
+
+        equals.mask("gson p\\u003dss upper p\\u003Dss url p%3dss") shouldBe "gson *** upper *** url ***"
+        mixed.mask("slash a\\/b+c<d html-safe a\\/b+c\\u003cd plain a/b+c\\u003Cd") shouldBe "slash *** html-safe *** plain ***"
+        mixed.mask("lower a%2fb%2bc%3cd upper a%2Fb%2Bc%3Cd") shouldBe "lower *** upper ***"
+    }
+
+    @Test
     fun `masking happens before the cut`() {
         val secrets = GatewaySecrets.of(V1)
 

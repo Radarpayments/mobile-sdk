@@ -9,6 +9,7 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.content.TextContent
 import io.ktor.http.ContentType
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
@@ -93,7 +94,7 @@ internal class Merchant(
         secrets: GatewaySecrets,
     ): Outcome =
         try {
-            withContext(Dispatchers.IO) { withTimeoutOrNull(timeoutMillis) { send(request) } }
+            withContext(Dispatchers.IO) { withTimeoutOrNull(timeoutMillis) { sendOrCancelled(request) } }
                 ?: NoAnswer("The gateway did not answer in ${timeoutMillis / MILLIS_PER_SECOND} s")
         } catch (cancelled: CancellationException) {
             throw cancelled
@@ -117,13 +118,23 @@ internal class Merchant(
         return NoAnswer(secrets.bounded(text, MESSAGE_LIMIT))
     }
 
+    // OkHttp ends a cancelled call with IOException("Canceled"). Escaping the timeout block, it would win over the
+    // timeout's own cancellation and read as a network failure; the block's cancellation, rethrown instead, does not.
+    private suspend fun CoroutineScope.sendOrCancelled(request: GatewayRequest): Reply =
+        try {
+            send(request)
+        } catch (e: IOException) {
+            ensureActive()
+            throw e
+        }
+
     private suspend fun send(request: GatewayRequest): Reply {
         val response =
             when (request) {
                 is GatewayRequest.Form -> http.submitForm(request.url, request.parameters)
                 is GatewayRequest.Json ->
                     http.post(request.url) {
-                        request.apiKey?.let { header(API_KEY_HEADER, it) }
+                        request.apiKey?.let { header(GatewayRequest.API_KEY_HEADER, it) }
                         setBody(TextContent(request.body.toString(), ContentType.Application.Json))
                     }
             }
@@ -152,7 +163,6 @@ internal class Merchant(
 
     private companion object {
         const val TAG = "merchant"
-        const val API_KEY_HEADER = "X-API-KEY"
         const val MILLIS_PER_SECOND = 1_000
         const val MESSAGE_LIMIT = 300
     }
