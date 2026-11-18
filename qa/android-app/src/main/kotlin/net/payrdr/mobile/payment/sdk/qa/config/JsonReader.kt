@@ -26,9 +26,9 @@ internal sealed interface Decoded<out T> {
     ) : Decoded<Nothing>
 }
 
-// UNICODE_CHARACTER_CLASS makes \s match what Swift's whitespace does, so both apps judge the same links.
-private val URL_PATTERN =
-    Pattern.compile("^https?://[^\\s/?#]+\\S*$", Pattern.CASE_INSENSITIVE or Pattern.UNICODE_CHARACTER_CLASS).toRegex()
+// UNICODE_CHARACTER_CLASS makes \s match what Swift's whitespace does, so both apps judge the same links. The scheme is
+// spelled out in both cases because CASE_INSENSITIVE would also fold non-ASCII letters (U+017F into "s"), which Swift does not.
+private val URL_PATTERN = Pattern.compile("^[hH][tT][tT][pP]([sS])?://[^\\s/?#]+\\S*$", Pattern.UNICODE_CHARACTER_CLASS).toRegex()
 
 // The most digits an accepted integral number can have: amounts end at 999999999999.
 private const val MAX_INTEGER_DIGITS = 13
@@ -168,14 +168,13 @@ internal class JsonReader {
             try {
                 BigDecimal(content)
             } catch (_: NumberFormatException) {
-                null
+                return null
             }
-        val stripped = number?.takeIf { it.signum() != 0 }?.stripTrailingZeros()
-        return when {
-            number == null || stripped == null -> number?.let { 0L }
-            stripped.scale() > 0 -> null
-            stripped.precision() - stripped.scale() > MAX_INTEGER_DIGITS -> if (stripped.signum() < 0) Long.MIN_VALUE else Long.MAX_VALUE
-            else -> stripped.toBigIntegerExact().toLong()
-        }
+        if (number.signum() == 0) return 0
+        // Long arithmetic: an exponent near Int.MAX_VALUE overflows Int and would slip past the check into a huge expansion.
+        val integerDigits = number.precision().toLong() - number.scale()
+        if (integerDigits > MAX_INTEGER_DIGITS) return if (number.signum() < 0) Long.MIN_VALUE else Long.MAX_VALUE
+        val stripped = number.stripTrailingZeros()
+        return if (stripped.scale() > 0) null else stripped.toBigIntegerExact().toLong()
     }
 }

@@ -40,6 +40,17 @@ class QaConfigJsonTest {
     }
 
     @Test
+    fun `an exponent at the top of the int range is a wrong value and not a crash`() {
+        listOf("1e2147483647", "-1e2147483647", "12e2147483647", "100e2147483647", "1e2147483648", "1e99999999999", "-1e99999999999")
+            .forEach {
+                field("""{"order":{"amount":$it}}""") shouldBe "order.amount"
+                field("""{"version":$it}""") shouldBe "version"
+            }
+        field("""{"order":{"amount":1e-2147483648}}""") shouldBe "order.amount"
+        field("""{"order":{"amount":0.5e-2147483647}}""") shouldBe "order.amount"
+    }
+
+    @Test
     fun `an explicit null is the same as an absent field`() {
         ok("""{"profile":null,"order":{"amount":null,"currency":null,"features":null},"sdk":{"theme":null,"googlePay":null}}""") shouldBe
             QaConfig()
@@ -78,6 +89,8 @@ class QaConfigJsonTest {
     @Test
     fun `a url scheme is compared ignoring case and a bare scheme is rejected`() {
         ok("""{"sdk":{"keyProviderUrl":"HTTPS://dev.bpcbt.com/keys"}}""").sdk.keyProviderUrl shouldBe "HTTPS://dev.bpcbt.com/keys"
+        ok("""{"sdk":{"keyProviderUrl":"HTTPS://h"}}""").sdk.keyProviderUrl shouldBe "HTTPS://h"
+        field("""{"sdk":{"keyProviderUrl":"http\u017f://h"}}""") shouldBe "sdk.keyProviderUrl"
         field("""{"sdk":{"keyProviderUrl":"https://"}}""") shouldBe "sdk.keyProviderUrl"
         field("""{"sdk":{"keyProviderUrl":"ftp://dev.bpcbt.com"}}""") shouldBe "sdk.keyProviderUrl"
         field("""{"sdk":{"keyProviderUrl":"https://dev.bpcbt.com/a b"}}""") shouldBe "sdk.keyProviderUrl"
