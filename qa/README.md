@@ -64,7 +64,7 @@ on the other platform, so one file round-trips on both.
 | `profile` | string?, null | the profile name pattern |
 | `order.source` | `register` \| `mdOrder` \| `sessionId`, `register` | `register`: the app registers the order; the others open an existing one |
 | `order.type` | `payment` \| `aft`, `payment` | |
-| `order.amount` | integer, 10000 | integral number, 0…999999999999, in minor units (0 is a VERIFY order) |
+| `order.amount` | integer, 10000 | integral number (see Decoding), 0…999999999999, in minor units (0 is a VERIFY order) |
 | `order.currency` | string, `EUR` | a key of "Currencies" |
 | `order.clientId`, `order.mdOrder`, `order.sessionId` | string?, null | blank is read as null |
 | `order.features` | string[], [] | each non-blank, no comma, no whitespace |
@@ -72,18 +72,18 @@ on the other platform, so one file round-trips on both.
 | `sdk.locale` | string?, null | `en ru ro el bg de fr es ar`; null is the system language |
 | `sdk.theme` | string, `system` | `system light dark contrast rounded square largeText debug` |
 | `sdk.showResultScreen`, `sdk.scanner` | bool, false | |
-| `sdk.keyProviderUrl` | string?, null | absolute `http` / `https` URL |
+| `sdk.keyProviderUrl` | string?, null | absolute `http` / `https` URL (see Decoding) |
 | `sdk.sslPinning.enabled` | bool, false | |
-| `sdk.sslPinning.pins` | `{host,pin}[]`, [] | `host` non-blank, no `=`, no whitespace; `pin` base64 of exactly 32 bytes (the SHA-256 of the certificate's SPKI). Error field: `sdk.sslPinning.pins` |
+| `sdk.sslPinning.pins` | `{host,pin}[]`, [] | `host` non-blank, no `=`, no whitespace; `pin` matches `^[A-Za-z0-9+/]{43}=$`, the padded standard base64 of 32 bytes (the SHA-256 of the certificate's SPKI). Error field: `sdk.sslPinning.pins`, also for an element that is not an object |
 | `sdk.googlePay.enabled`, `.billingAddressRequired` | bool, false | |
 | `sdk.googlePay.merchantId`, `.merchantFullName`, `.gateway`, `.gatewayMerchantId`, `.countryCode` | string?, null | |
 | `sdk.googlePay.environment` | `test` \| `production` \| null, null | |
-| `sdk.googlePay.allowedCardNetworks` | string[], `["VISA","MASTERCARD"]` | subset of `AMEX DISCOVER INTERAC JCB MASTERCARD VISA` |
-| `sdk.googlePay.allowedAuthMethods` | string[], `["PAN_ONLY","CRYPTOGRAM_3DS"]` | subset of those two |
+| `sdk.googlePay.allowedCardNetworks` | string[], `["MASTERCARD","VISA"]` | subset of `AMEX DISCOVER INTERAC JCB MASTERCARD VISA` |
+| `sdk.googlePay.allowedAuthMethods` | string[], `["PAN_ONLY","CRYPTOGRAM_3DS"]` | subset of `PAN_ONLY CRYPTOGRAM_3DS`, in this order (`PAN_ONLY` first) |
 | `sdk.applePay.enabled` | bool, false | |
 | `sdk.applePay.merchantId` | string, `merchant.net.payrdr.samples.test` | non-blank |
-| `sdk.applePay.supportedNetworks` | string[], `["VISA","MASTERCARD"]` | subset of `AMEX DISCOVER JCB MASTERCARD VISA` |
-| `sdk.applePay.merchantCapabilities` | string[], `["THREE_D_SECURE","CREDIT","DEBIT"]` | subset of `CREDIT DEBIT EMV THREE_D_SECURE` |
+| `sdk.applePay.supportedNetworks` | string[], `["MASTERCARD","VISA"]` | subset of `AMEX DISCOVER JCB MASTERCARD VISA` |
+| `sdk.applePay.merchantCapabilities` | string[], `["CREDIT","DEBIT","THREE_D_SECURE"]` | subset of `CREDIT DEBIT EMV THREE_D_SECURE` |
 | `sdk.applePay.countryCode` | string?, null | |
 
 `sdk.applePay.merchantId` defaults to the placeholder the iOS sample commits, which is also the one in the committed
@@ -95,14 +95,27 @@ AFT, so QA can also try combinations the product does not support; `VERIFY` and 
 `username`, `password` and `token` are rejected so that `QaConfig` stays free of secrets.
 
 **Decoding.** The root must be a JSON object, else the error field is `$`. A known field of the wrong JSON type fails
-with its path. Unknown fields are ignored, missing fields take their defaults, so a link with two fields is a valid
-configuration. The first failing field in the table's order is the one reported. A malformed document or an invalid
-value is never applied in part: the app names the field and keeps the previous state.
+with its path; so does a known object field (`order`, `sdk`, `sdk.googlePay`, `sdk.applePay`, `sdk.sslPinning`) that is
+not an object, and an element of `pins` that is not an object fails with the path of `pins`. Unknown fields are
+ignored, missing fields take their defaults, so a link with two fields is a valid configuration. The first failing
+field in the table's order is the one reported. A malformed document or an invalid value is never applied in part: the
+app names the field and keeps the previous state. Further rules, so that two decoders cannot read a document
+differently:
+
+- An explicit JSON `null` is the same as the field being absent: the default applies.
+- An integral number (`version`, `order.amount`) is a JSON number whose value has no fractional part, whatever its
+  spelling: `100`, `100.0` and `1e2` are all 100. A JSON boolean or string is a type error on that field, and so is a
+  number with a fractional part.
+- A string is blank when it is empty or whitespace only. Every nullable string field (`profile`, `order.clientId`,
+  `order.mdOrder`, `order.sessionId`, `sdk.locale`, `sdk.keyProviderUrl`, the string fields of `sdk.googlePay` and
+  `sdk.applePay.countryCode` among them) reads a blank string as null. A non-blank string is stored as given, never trimmed.
+- An absolute `http` / `https` URL is a string that matches `^https?://[^\s/?#]+\S*$`, the scheme compared ignoring
+  case.
 
 **Encoding.** Every field is written, nulls included, `version` as 1, in the order of the tables. A string that is read
-as null (a blank `clientId`, `mdOrder` or `sessionId`) is written as null. A set (the Google Pay and Apple Pay lists)
-is written without duplicates in the order of its allowed values in the table, whatever order it was read in: the
-defaults in the tables name the members, so the default networks are written `["MASTERCARD","VISA"]`. This keeps two
+as null (a blank nullable string, see Decoding) is written as null. A set (the Google Pay and Apple Pay lists) is
+written without duplicates in the order of its allowed values in the table, whatever order it was read in; the order
+of the "subset of" lists is the output order, and the defaults are written in it. This keeps two
 implementations, one of which has no ordered set, write the same document. `order.features` has no allowed list: it
 keeps the order it was read in, with duplicates removed.
 
@@ -176,8 +189,8 @@ default typography and shapes unless listed. A custom preset does not follow the
 
 `qa/fixtures/identifiers.txt` lists them, one per line. A `# android` or `# ios` after an identifier marks the ones a
 single platform has; everything from `#` on is a comment. Android exposes them as test tags (as resource ids), iOS as
-accessibility identifiers. `qa_profile_select_<name>` stands for one identifier per stored profile, `<name>` being the
-profile name.
+accessibility identifiers. The line `qa_profile_select_<name>` is a pattern, not an identifier: `<name>` is the
+profile name, so there is one identifier per stored profile.
 
 - Config fields: `qa_profile`, `qa_order_source`, `qa_order_type`, `qa_order_amount`, `qa_order_currency`,
   `qa_order_client_id`, `qa_order_features`, `qa_order_extra`, `qa_order_md_order`, `qa_order_session_id`,
@@ -202,7 +215,8 @@ profile name.
 - `qa_result_type` text: `completed`, `failed`, `canceled`, `unknown`, `registration_failed`, `sdk_error`.
   `qa_result_order_status` text: `orderStatus=<n>, actionCode=<n>, <description>`, `not queried`, or `error: <message>`.
 
-Each `QaConfig` field has exactly one form element, named by the field's path in snake_case with the `qa_` prefix. A
+Each `QaConfig` field has exactly one form element on the platform that shows it (the other platform's wallet fields
+have none), named by the field's path in snake_case with the `qa_` prefix. A
 collection is one text element, not a row per item, so that identifiers do not depend on content. The profile name is
 limited to `[a-z0-9_-]`, 1 to 32 characters, because it is part of an identifier.
 
@@ -215,6 +229,9 @@ limited to `[a-z0-9_-]`, 1 to 32 characters, because it is part of an identifier
   iOS `-qaConfig <json>`, `-qaProfile <json>` and `-qaLaunch 1`, read from `ProcessInfo.processInfo.arguments` (not
   `UserDefaults`, which would parse a `{…}` argument as a property list). The profile is applied before the config;
   `qaLaunch` without a config launches the stored one.
+- Text that cannot be read names a field as well: `link` for a link whose host is neither `config` nor `profile`; `data`
+  for a missing `data` parameter, a `data` value that is not valid base64url or whose bytes are not UTF-8 (the launch
+  argument or extra payload too); `$` for text that is not a JSON object. A decoded document then reports its own field.
 - Pasted or scanned text, trimmed: a `payrdrqa://` link is read as a link; otherwise it is JSON, and an object with a
   `gatewayUrl` key is a profile, any other a config. Surrounding whitespace and newlines are accepted.
 - A config applies at once. A profile from a link, the clipboard or a QR waits for confirmation (its name, its gateway
