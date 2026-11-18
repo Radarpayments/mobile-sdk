@@ -364,7 +364,8 @@ iOS test `RunReportTests` every line of it but the Configuration document, which
 - Sections, in this order, each under a `== <Title> ==` line:
   - `== Versions ==`: `QA app: <app version>`, `SDK: <sdk version>`.
   - `== Device ==`: the device on one line, the OS on the next, with no label. The platform's own wording; the example
-    shows Android's.
+    shows Android's. iOS prints `Apple <model identifier>` (`Apple iPhone16,1`; a simulator, the model it simulates) and
+    `iOS <version>`.
   - `== Profile ==`: `Name: <name>`, `Gateway URL: <gatewayUrl>`, `API: v1|v2`, nothing else. Passwords and API keys
     are masked (`***`) everywhere in the report; the login is not a secret and can appear in journal lines
     (`userName=<login>`).
