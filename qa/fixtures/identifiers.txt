@@ -1,0 +1,71 @@
+qa_profile
+qa_order_source
+qa_order_type
+qa_order_amount
+qa_order_currency
+qa_order_client_id
+qa_order_features
+qa_order_extra
+qa_order_md_order
+qa_order_session_id
+qa_sdk_locale
+qa_sdk_theme
+qa_sdk_show_result_screen
+qa_sdk_scanner
+qa_sdk_key_provider_url
+qa_sdk_ssl_pinning_enabled
+qa_sdk_ssl_pinning_pins
+qa_sdk_google_pay_enabled  # android
+qa_sdk_google_pay_merchant_id  # android
+qa_sdk_google_pay_merchant_full_name  # android
+qa_sdk_google_pay_gateway  # android
+qa_sdk_google_pay_gateway_merchant_id  # android
+qa_sdk_google_pay_environment  # android
+qa_sdk_google_pay_allowed_card_networks  # android
+qa_sdk_google_pay_allowed_auth_methods  # android
+qa_sdk_google_pay_country_code  # android
+qa_sdk_google_pay_billing_address_required  # android
+qa_sdk_apple_pay_enabled  # ios
+qa_sdk_apple_pay_merchant_id  # ios
+qa_sdk_apple_pay_supported_networks  # ios
+qa_sdk_apple_pay_merchant_capabilities  # ios
+qa_sdk_apple_pay_country_code  # ios
+qa_group_order
+qa_group_sdk
+qa_group_theme
+qa_group_wallets
+qa_group_security
+qa_theme_legend
+qa_launch
+qa_menu
+qa_import
+qa_import_qr
+qa_export
+qa_reset
+qa_report
+qa_run_again
+qa_profiles_open
+qa_profile_name
+qa_profile_gateway_url
+qa_profile_api
+qa_profile_login
+qa_profile_password
+qa_profile_api_key
+qa_profile_add
+qa_profile_save
+qa_profile_delete
+qa_profile_select_<name>
+qa_profile_confirm
+qa_profile_reject
+qa_validation_error
+qa_result_type
+qa_result_md_order
+qa_result_md_order_copy
+qa_result_session_id
+qa_result_order_status
+qa_result_error
+qa_journal_open
+qa_journal_text
+qa_journal_level
+qa_journal_search
+qa_journal_clear
