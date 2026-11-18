@@ -4,9 +4,11 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkPaymentApiException
@@ -68,8 +70,14 @@ internal sealed interface RunState {
 
     data object QueryingStatus : RunState
 
+    /**
+     * A finished run with the [config] and the [profile] it was launched with, so that its report describes this run and
+     * not what the form holds by the time QA copies it. `toString()` prints no credentials ([StandProfile] masks them).
+     */
     data class Finished(
         val outcome: RunOutcome,
+        val config: QaConfig,
+        val profile: StandProfile,
     ) : RunState
 }
 
@@ -144,13 +152,16 @@ internal class QaRun(
                 registered(attempt)?.takeIf { attempt.move(RunState.InSheet(it)) }
             } ?: return
         val failure = runCatching { present(order) }.exceptionOrNull() ?: return
-        if (failure is CancellationException) throw failure
+        // Only a cancellation of this run's own coroutine stops it quietly. One the sheet threw for reasons of its own
+        // (a cancelled future, a job inside the SDK) is an error like any other, or the run would stay in the sheet.
+        if (failure is CancellationException && !currentCoroutineContext().isActive) throw failure
         val error = listOfNotNull(failure.javaClass.simpleName.ifEmpty { failure.javaClass.name }, failure.message).joinToString(": ")
         val outcome = RunOutcome(ResultType.SDK_ERROR, order.mdOrder, order.sessionId, error, null, OrderStatus.NotQueried)
         synchronized(lock) {
-            if (current !== attempt || mutableState.value !is RunState.InSheet) return
-            journal.record(LogLevel.ERROR, TAG, "The sheet did not open: $error")
-            mutableState.value = RunState.Finished(outcome)
+            if (current !== attempt) return
+            // Journaled even when the sheet already delivered its result before throwing, so the exception is not lost.
+            journal.record(LogLevel.ERROR, TAG, "The sheet threw $error")
+            if (mutableState.value is RunState.InSheet) mutableState.value = attempt.finished(outcome)
         }
     }
 
@@ -167,7 +178,7 @@ internal class QaRun(
                         registration.httpStatus,
                         OrderStatus.NotQueried,
                     )
-                attempt.move(RunState.Finished(outcome))
+                attempt.move(attempt.finished(outcome))
                 null
             }
         }
@@ -182,7 +193,7 @@ internal class QaRun(
         val status = merchant.status(mdOrder, attempt.profile)
         val error = result.error()
         val outcome = RunOutcome(result.type(), mdOrder, order.sessionId, error?.message, error?.httpStatus(), status)
-        attempt.move(RunState.Finished(outcome))
+        attempt.move(attempt.finished(outcome))
     }
 
     private fun RunState.isBusy(): Boolean = this is RunState.Registering || this is RunState.InSheet || this is RunState.QueryingStatus
@@ -207,6 +218,8 @@ internal class QaRun(
         val profile: StandProfile,
     ) {
         var job: Job? = null
+
+        fun finished(outcome: RunOutcome) = RunState.Finished(outcome, config, profile)
     }
 
     private companion object {

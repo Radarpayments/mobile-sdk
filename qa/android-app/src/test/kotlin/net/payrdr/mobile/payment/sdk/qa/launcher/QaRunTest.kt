@@ -2,11 +2,14 @@ package net.payrdr.mobile.payment.sdk.qa.launcher
 
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
+import io.kotest.matchers.string.shouldNotContain
 import io.ktor.client.engine.mock.MockRequestHandleScope
 import io.ktor.client.request.HttpRequestData
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.job
 import kotlinx.coroutines.joinAll
@@ -50,7 +53,9 @@ class QaRunTest {
 
         fun requests(path: String): List<String> = gateway.requests.map { it.url }.filter { it.endsWith(path) }
 
-        suspend fun finished(): RunOutcome = (run.state.first { it is RunState.Finished } as RunState.Finished).outcome
+        suspend fun finished(): RunOutcome = finishedState().outcome
+
+        suspend fun finishedState(): RunState.Finished = run.state.first { it is RunState.Finished } as RunState.Finished
 
         suspend fun inSheet(): OpenOrder = (run.state.first { it is RunState.InSheet } as RunState.InSheet).order
 
@@ -64,8 +69,9 @@ class QaRunTest {
 
     private fun TestScope.harness(
         gateway: FakeGateway = FakeGateway { answer(it) },
+        scope: CoroutineScope = this,
         present: (OpenOrder) -> Unit = {},
-    ) = Harness(gateway, this, present)
+    ) = Harness(gateway, scope, present)
 
     @Test
     fun `a missing profile is reported and nothing is sent`() =
@@ -135,6 +141,61 @@ class QaRunTest {
             h.finished() shouldBe
                 RunOutcome(ResultType.REGISTRATION_FAILED, null, null, "Access denied", 200, OrderStatus.NotQueried)
             h.opened shouldBe emptyList()
+        }
+
+    @Test
+    fun `a finished run keeps the config and the profile it was launched with`() =
+        runTest {
+            val h = harness()
+            val config = register.copy(order = register.order.copy(amount = 4_200))
+
+            h.run.launch(config, V1)
+            h.inSheet()
+            h.run.onResult(CheckoutResult.Completed("abc"))
+
+            val finished = h.finishedState()
+            finished.config shouldBe config
+            finished.profile shouldBe V1
+        }
+
+    @Test
+    fun `a failed registration keeps the config and the profile it was launched with`() =
+        runTest {
+            val h = harness(FakeGateway { ok("""{"errorCode":"5","errorMessage":"Access denied"}""") })
+
+            h.run.launch(register, V1)
+
+            val finished = h.finishedState()
+            finished.config shouldBe register
+            finished.profile shouldBe V1
+        }
+
+    @Test
+    fun `an sdk error keeps the config and the profile it was launched with`() =
+        runTest {
+            val h = harness(present = { error("boom") })
+
+            h.run.launch(existing("given"), V2)
+
+            val finished = h.finishedState()
+            finished.config shouldBe existing("given")
+            finished.profile shouldBe V2
+        }
+
+    @Test
+    fun `a finished state prints no credentials`() =
+        runTest {
+            val h = harness()
+
+            h.run.launch(register, V1)
+            h.inSheet()
+            h.run.onResult(CheckoutResult.Completed("abc"))
+
+            val text = h.finishedState().toString()
+            text shouldContain "dev.bpcbt.com"
+            text shouldNotContain "login-1"
+            text shouldNotContain "password-1"
+            RunState.Finished(h.finished(), register, V2).toString() shouldNotContain "key-1"
         }
 
     @Test
@@ -303,14 +364,49 @@ class QaRunTest {
         }
 
     @Test
-    fun `a cancellation from the sheet is not an sdk error`() =
+    fun `a cancellation the sheet throws on its own is an sdk error`() =
         runTest {
             val h = harness(present = { throw CancellationException("gone") })
+
+            h.run.launch(existing("given"), V1)
+
+            val outcome = h.finished()
+            outcome.type shouldBe ResultType.SDK_ERROR
+            outcome.error shouldBe "CancellationException: gone"
+            h.gateway.journalText() shouldContain "CancellationException: gone"
+        }
+
+    @Test
+    fun `a cancellation of the run's own coroutine stops it without a word`() =
+        runTest {
+            val runs = CoroutineScope(coroutineContext + Job(coroutineContext.job))
+            val h =
+                harness(scope = runs, present = {
+                    runs.cancel()
+                    throw CancellationException("gone")
+                })
 
             h.run.launch(existing("given"), V1)
             h.idle()
 
             h.run.state.value shouldBe RunState.InSheet(OpenOrder("given", null))
+            h.gateway.journal.entries.value shouldBe emptyList()
+        }
+
+    @Test
+    fun `an exception after the sheet delivered its result is still journaled`() =
+        runTest {
+            lateinit var h: Harness
+            h =
+                harness(present = {
+                    h.run.onResult(CheckoutResult.Canceled("given"))
+                    error("boom")
+                })
+
+            h.run.launch(existing("given"), V1)
+
+            h.finished().type shouldBe ResultType.CANCELED
+            h.gateway.journalText() shouldContain "IllegalStateException: boom"
         }
 
     @Test
@@ -410,6 +506,9 @@ class QaRunTest {
             h.run.state.value shouldBe RunState.Idle
         }
 
+    // The identity fence in QaRun's move has no test of its own: here the reset cancels the gated coroutine first, so a
+    // stale answer never reaches it. It matters only on a multi-threaded scope, where an answer can be past its last
+    // suspension point when the reset comes, and that interleaving cannot be forced in a test.
     @Test
     fun `a registration that answers after a reset does not touch the next run`() =
         runTest {

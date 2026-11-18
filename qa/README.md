@@ -216,6 +216,8 @@ profile name, so there is one identifier per stored profile.
   JSON object; `qa_sdk_ssl_pinning_pins` is `host=pin` per line, split at the first `=` (pins end in `=`).
 - `qa_result_type` text: `completed`, `failed`, `canceled`, `unknown`, `registration_failed`, `sdk_error`.
   `qa_result_order_status` text: `orderStatus=<n>, actionCode=<n>, <description>`, `not queried`, or `error: <message>`.
+  A missing `orderStatus` or `actionCode` prints `-`, a missing description is left out together with its `, `. This
+  text is exactly `not queried` here; only the run report adds the reason (see "Run report").
 
 Each `QaConfig` field has exactly one form element on the platform that shows it (the other platform's wallet fields
 have none), named by the field's path in snake_case with the `qa_` prefix. A
@@ -241,6 +243,127 @@ limited to `[a-z0-9_-]`, 1 to 32 characters, because it is part of an identifier
   the credentials; from a launch argument it is saved directly. An invalid document changes nothing and shows
   `qa_validation_error`.
 - QR scanning uses the device camera and is hidden on the simulator.
+
+### Run report
+
+`qa_report` copies the report of the finished run as plain text. It is built from the finished run alone: the profile
+and the configuration are the ones the run was launched with, not what the form holds when the report is copied. Both
+apps print it character for character the same; the Android golden test (`RunReportTest`) holds the example below.
+
+- Lines end in `\n`, the report ends in one `\n`, sections are separated by one empty line. No line is ever left out:
+  a missing value prints `-`.
+- Sections, in this order, each under a `== <Title> ==` line:
+  - `== Versions ==`: `QA app: <app version>`, `SDK: <sdk version>`.
+  - `== Device ==`: the device on one line, the OS on the next, with no label. The platform's own wording; the example
+    shows Android's.
+  - `== Profile ==`: `Name: <name>`, `Gateway URL: <gatewayUrl>`, `API: v1|v2`. Never the login, password or API key.
+  - `== Configuration ==`: the run's `QaConfig` as `qa_export` writes it (pretty-printed, four spaces, every field).
+  - `== Result ==`: `qa_result_type: <id>`, `mdOrder: <mdOrder>`, `Session id: <session id>`, `Error: <error>`,
+    `HTTP status: <status>`. The error is the SDK error's message for `failed` (and the cause's message for `unknown`),
+    the gateway's answer for `registration_failed`, `<SimpleClassName>: <message>` of what the sheet threw for
+    `sdk_error` (`IllegalStateException: boom`; just the class name when there is no message). The HTTP status is the
+    gateway's for `registration_failed` and the SDK's for an API error, `-` otherwise.
+  - `== Order status ==`: the `qa_result_order_status` text, except that `not queried` is followed by `: <reason>`:
+    - `not queried: the checkout did not run` for `registration_failed` and `sdk_error`;
+    - `not queried: API v2 has no status query`;
+    - `not queried: the profile has no login and password`;
+    - `not queried: the checkout named no order` (canceled before an order was known).
+  - `== Journal ==`: first `Time zone: UTC±hh:mm`, the device's offset at the first line's time (at the time of the
+    report when the journal is empty), then every line of the run as `HH:mm:ss.SSS LEVEL tag: message` in that zone.
+    Digits and signs are written by hand, never by a locale-dependent formatter. Merchant lines are the ones of
+    "Gateway requests", secrets already masked; an `sdk_error` run adds `ERROR qa: The sheet threw <error>`.
+
+Example (`completed`, a registered order, v1 profile):
+
+```text
+== Versions ==
+QA app: 1.0.0-beta.1 (7)
+SDK: 4.0.0-beta.1
+
+== Device ==
+Google Pixel 8
+Android 15 (API 35)
+
+== Profile ==
+Name: dev
+Gateway URL: https://dev.bpcbt.com/payment
+API: v1
+
+== Configuration ==
+{
+    "version": 1,
+    "profile": "dev",
+    "order": {
+        "source": "register",
+        "type": "payment",
+        "amount": 10000,
+        "currency": "EUR",
+        "clientId": null,
+        "mdOrder": null,
+        "sessionId": null,
+        "features": [],
+        "extra": {}
+    },
+    "sdk": {
+        "locale": null,
+        "theme": "system",
+        "showResultScreen": false,
+        "scanner": false,
+        "keyProviderUrl": null,
+        "sslPinning": {
+            "enabled": false,
+            "pins": []
+        },
+        "googlePay": {
+            "enabled": false,
+            "billingAddressRequired": false,
+            "merchantId": null,
+            "merchantFullName": null,
+            "gateway": null,
+            "gatewayMerchantId": null,
+            "countryCode": null,
+            "environment": null,
+            "allowedCardNetworks": [
+                "MASTERCARD",
+                "VISA"
+            ],
+            "allowedAuthMethods": [
+                "PAN_ONLY",
+                "CRYPTOGRAM_3DS"
+            ]
+        },
+        "applePay": {
+            "enabled": false,
+            "merchantId": "merchant.net.payrdr.samples.test",
+            "supportedNetworks": [
+                "MASTERCARD",
+                "VISA"
+            ],
+            "merchantCapabilities": [
+                "CREDIT",
+                "DEBIT",
+                "THREE_D_SECURE"
+            ],
+            "countryCode": null
+        }
+    }
+}
+
+== Result ==
+qa_result_type: completed
+mdOrder: 8f1e4c2a-0b3d-4e5f-9a6b-7c8d9e0f1a2b
+Session id: -
+Error: -
+HTTP status: -
+
+== Order status ==
+orderStatus=2, actionCode=0, Approved
+
+== Journal ==
+Time zone: UTC+00:00
+12:34:56.789 INFO merchant: → POST https://dev.bpcbt.com/payment/rest/register.do userName=login-1&password=***
+12:34:57.102 INFO merchant: ← 200 {"orderId":"8f1e4c2a-0b3d-4e5f-9a6b-7c8d9e0f1a2b"}
+```
 
 ## Fixtures
 

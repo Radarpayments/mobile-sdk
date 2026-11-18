@@ -5,16 +5,20 @@ import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldNotContain
 import kotlinx.coroutines.test.runTest
 import net.payrdr.mobile.payment.sdk.payment.logger.LogLevel
+import net.payrdr.mobile.payment.sdk.qa.config.OrderConfig
 import net.payrdr.mobile.payment.sdk.qa.config.QaConfig
 import net.payrdr.mobile.payment.sdk.qa.config.QaConfigJson
+import net.payrdr.mobile.payment.sdk.qa.config.StandProfile
 import net.payrdr.mobile.payment.sdk.qa.journal.JournalEntry
 import net.payrdr.mobile.payment.sdk.qa.launcher.ResultType
 import net.payrdr.mobile.payment.sdk.qa.launcher.RunOutcome
+import net.payrdr.mobile.payment.sdk.qa.launcher.RunState
 import net.payrdr.mobile.payment.sdk.qa.merchant.FakeGateway
 import net.payrdr.mobile.payment.sdk.qa.merchant.OrderStatus
 import net.payrdr.mobile.payment.sdk.qa.merchant.V1
 import net.payrdr.mobile.payment.sdk.qa.merchant.V2
 import net.payrdr.mobile.payment.sdk.qa.merchant.ok
+import java.util.Locale
 import java.util.TimeZone
 import kotlin.test.Test
 
@@ -23,12 +27,19 @@ class RunReportTest {
     private val config = QaConfig(profile = "v1")
     private val utc = TimeZone.getTimeZone("UTC")
 
+    private fun reportOf(
+        profile: StandProfile,
+        outcome: RunOutcome,
+        entries: List<JournalEntry>,
+        zone: TimeZone,
+    ) = runReport(app, RunState.Finished(outcome, config, profile), entries, zone)
+
     private fun completed(status: OrderStatus = OrderStatus.Known(2, 0, "Approved")) =
         RunOutcome(ResultType.COMPLETED, "abc", null, null, null, status)
 
     @Test
     fun `the report names the versions the device the profile and the result`() {
-        val report = runReport(app, config, V1, completed(), emptyList(), utc)
+        val report = reportOf(V1, completed(), emptyList(), utc)
 
         report shouldContain "== Versions ==\nQA app: 1.0.0-beta.1 (7)\nSDK: 4.0.0-beta.1"
         report shouldContain "== Device ==\nGoogle Pixel 8\nAndroid 15 (API 35)"
@@ -40,7 +51,7 @@ class RunReportTest {
     @Test
     fun `the sections come in the contract's order`() {
         val titles =
-            runReport(app, config, V1, completed(), emptyList(), utc)
+            reportOf(V1, completed(), emptyList(), utc)
                 .lines()
                 .filter { it.startsWith("== ") }
 
@@ -58,7 +69,7 @@ class RunReportTest {
 
     @Test
     fun `the report prints the config as json`() {
-        val report = runReport(app, config, V1, completed(), emptyList(), utc)
+        val report = reportOf(V1, completed(), emptyList(), utc)
 
         report shouldContain "== Configuration ==\n${QaConfigJson.encode(config)}\n"
     }
@@ -67,16 +78,16 @@ class RunReportTest {
     fun `the report prints the journal lines`() {
         val entries = listOf(JournalEntry(3_723_004, LogLevel.INFO, "merchant", "← 200 {}"))
 
-        val report = runReport(app, config, V1, completed(), entries, utc)
+        val report = reportOf(V1, completed(), entries, utc)
 
-        report shouldContain "== Journal ==\n01:02:03.004 INFO merchant: ← 200 {}"
+        report shouldContain "== Journal ==\nTime zone: UTC+00:00\n01:02:03.004 INFO merchant: ← 200 {}"
     }
 
     @Test
     fun `the report of a failed run carries the error and the http status`() {
         val outcome = RunOutcome(ResultType.REGISTRATION_FAILED, null, null, "Access denied", 200, OrderStatus.NotQueried)
 
-        val report = runReport(app, config, V1, outcome, emptyList(), utc)
+        val report = reportOf(V1, outcome, emptyList(), utc)
 
         report shouldContain "qa_result_type: registration_failed"
         report shouldContain "Error: Access denied"
@@ -86,18 +97,18 @@ class RunReportTest {
 
     @Test
     fun `the report says why a status was not asked`() {
-        runReport(app, config, V2, completed(OrderStatus.NotQueried), emptyList(), utc) shouldContain
+        reportOf(V2, completed(OrderStatus.NotQueried), emptyList(), utc) shouldContain
             "not queried: API v2 has no status query"
-        runReport(app, config, V1.copy(password = ""), completed(OrderStatus.NotQueried), emptyList(), utc) shouldContain
+        reportOf(V1.copy(password = ""), completed(OrderStatus.NotQueried), emptyList(), utc) shouldContain
             "not queried: the profile has no login and password"
         val nameless = RunOutcome(ResultType.CANCELED, null, null, null, null, OrderStatus.NotQueried)
-        runReport(app, config, V1, nameless, emptyList(), utc) shouldContain
+        reportOf(V1, nameless, emptyList(), utc) shouldContain
             "not queried: the checkout named no order"
     }
 
     @Test
     fun `a failed status query is printed with its error`() {
-        runReport(app, config, V1, completed(OrderStatus.Failed(200, "Order not found")), emptyList(), utc) shouldContain
+        reportOf(V1, completed(OrderStatus.Failed(200, "Order not found")), emptyList(), utc) shouldContain
             "== Order status ==\nerror: Order not found"
     }
 
@@ -114,11 +125,160 @@ class RunReportTest {
             merchant.register(config.order, V1)
             merchant.register(config.order, V2)
 
-            val report = runReport(app, config, V1, completed(), gateway.journal.entries.value, utc)
+            val report = reportOf(V1, completed(), gateway.journal.entries.value, utc)
 
             report shouldNotContain "password-1"
             report shouldNotContain "key-1"
             report shouldContain "dev.bpcbt.com"
             report shouldContain "/rest/register.do"
         }
+
+    @Test
+    fun `the report describes the config and the profile of its own run`() {
+        val launched = QaConfig(profile = "v2", order = OrderConfig(amount = 4_200))
+        val finished = RunState.Finished(completed(), launched, V2)
+
+        val report = runReport(app, finished, emptyList(), utc)
+
+        report shouldContain "== Configuration ==\n${QaConfigJson.encode(launched)}\n"
+        report shouldContain "Name: v2"
+        report shouldContain "API: v2"
+    }
+
+    @Test
+    fun `the journal names its time zone`() {
+        val moscow = TimeZone.getTimeZone("Europe/Moscow")
+        val entries = listOf(JournalEntry(0, LogLevel.INFO, "qa", "a line"))
+
+        runReport(app, RunState.Finished(completed(), config, V1), entries, moscow) shouldContain
+            "== Journal ==\nTime zone: UTC+03:00\n03:00:00.000 INFO qa: a line"
+    }
+
+    @Test
+    fun `a utc offset is printed by hand whatever the locale`() {
+        val saved = Locale.getDefault()
+        // Egyptian Arabic formats numbers with Arabic-Indic digits by default.
+        Locale.setDefault(Locale.forLanguageTag("ar-EG"))
+        try {
+            utcOffset(TimeZone.getTimeZone("UTC"), 0) shouldBe "UTC+00:00"
+            utcOffset(TimeZone.getTimeZone("Asia/Kolkata"), 0) shouldBe "UTC+05:30"
+            utcOffset(TimeZone.getTimeZone("America/St_Johns"), 0) shouldBe "UTC-03:30"
+        } finally {
+            Locale.setDefault(saved)
+        }
+    }
+
+    @Test
+    fun `the report is the readme's example to the character`() {
+        val mdOrder = "8f1e4c2a-0b3d-4e5f-9a6b-7c8d9e0f1a2b"
+        val finished =
+            RunState.Finished(
+                RunOutcome(ResultType.COMPLETED, mdOrder, null, null, null, OrderStatus.Known(2, 0, "Approved")),
+                QaConfig(profile = "dev"),
+                StandProfile("dev", "https://dev.bpcbt.com/payment", login = "login-1", password = "password-1"),
+            )
+        val entries =
+            listOf(
+                JournalEntry(45_296_789, LogLevel.INFO, "merchant", "→ POST $REGISTER userName=login-1&password=***"),
+                JournalEntry(45_297_102, LogLevel.INFO, "merchant", "← 200 {\"orderId\":\"$mdOrder\"}"),
+            )
+
+        runReport(app, finished, entries, utc) shouldBe GOLDEN
+    }
+
+    private companion object {
+        const val REGISTER = "https://dev.bpcbt.com/payment/rest/register.do"
+
+        // The example of the README's "Run report", character for character; iOS prints the same text.
+        val GOLDEN =
+            """
+            == Versions ==
+            QA app: 1.0.0-beta.1 (7)
+            SDK: 4.0.0-beta.1
+
+            == Device ==
+            Google Pixel 8
+            Android 15 (API 35)
+
+            == Profile ==
+            Name: dev
+            Gateway URL: https://dev.bpcbt.com/payment
+            API: v1
+
+            == Configuration ==
+            {
+                "version": 1,
+                "profile": "dev",
+                "order": {
+                    "source": "register",
+                    "type": "payment",
+                    "amount": 10000,
+                    "currency": "EUR",
+                    "clientId": null,
+                    "mdOrder": null,
+                    "sessionId": null,
+                    "features": [],
+                    "extra": {}
+                },
+                "sdk": {
+                    "locale": null,
+                    "theme": "system",
+                    "showResultScreen": false,
+                    "scanner": false,
+                    "keyProviderUrl": null,
+                    "sslPinning": {
+                        "enabled": false,
+                        "pins": []
+                    },
+                    "googlePay": {
+                        "enabled": false,
+                        "billingAddressRequired": false,
+                        "merchantId": null,
+                        "merchantFullName": null,
+                        "gateway": null,
+                        "gatewayMerchantId": null,
+                        "countryCode": null,
+                        "environment": null,
+                        "allowedCardNetworks": [
+                            "MASTERCARD",
+                            "VISA"
+                        ],
+                        "allowedAuthMethods": [
+                            "PAN_ONLY",
+                            "CRYPTOGRAM_3DS"
+                        ]
+                    },
+                    "applePay": {
+                        "enabled": false,
+                        "merchantId": "merchant.net.payrdr.samples.test",
+                        "supportedNetworks": [
+                            "MASTERCARD",
+                            "VISA"
+                        ],
+                        "merchantCapabilities": [
+                            "CREDIT",
+                            "DEBIT",
+                            "THREE_D_SECURE"
+                        ],
+                        "countryCode": null
+                    }
+                }
+            }
+
+            == Result ==
+            qa_result_type: completed
+            mdOrder: 8f1e4c2a-0b3d-4e5f-9a6b-7c8d9e0f1a2b
+            Session id: -
+            Error: -
+            HTTP status: -
+
+            == Order status ==
+            orderStatus=2, actionCode=0, Approved
+
+            == Journal ==
+            Time zone: UTC+00:00
+            12:34:56.789 INFO merchant: → POST https://dev.bpcbt.com/payment/rest/register.do userName=login-1&password=***
+            12:34:57.102 INFO merchant: ← 200 {"orderId":"8f1e4c2a-0b3d-4e5f-9a6b-7c8d9e0f1a2b"}
+            """.trimIndent() + "\n"
+    }
 }
