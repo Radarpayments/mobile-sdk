@@ -18,7 +18,12 @@ final class QaSessionTests: MerchantTestCase {
         super.tearDown()
     }
 
-    private func session(profiles: [StandProfile]? = nil, config: QaConfig? = nil) throws -> QaSession {
+    private func session(
+        profiles: [StandProfile]? = nil,
+        config: QaConfig? = nil,
+        arguments: [Intake] = [],
+        active: Bool = true
+    ) throws -> QaSession {
         UserDefaults().removePersistentDomain(forName: suite)
         secrets = InMemorySecretStore()
         let store = QaStore(defaults: UserDefaults(suiteName: suite)!, secrets: secrets)
@@ -26,7 +31,9 @@ final class QaSessionTests: MerchantTestCase {
             try store.save(profile: profile)
         }
         store.save(config: config ?? given)
-        return QaSession(store: store, journal: journal, merchant: merchant()) { [unowned self] order, _, _, onResult in
+        return QaSession(
+            store: store, journal: journal, merchant: merchant(), arguments: arguments, active: active
+        ) { [unowned self] order, _, _, onResult in
             opened.append(order)
             deliver = onResult
             return true
@@ -156,6 +163,7 @@ final class QaSessionTests: MerchantTestCase {
 
         XCTAssertFalse(session.deleteProfile(named: "sandbox"))
         XCTAssertEqual(session.editor.problem?.field, "store")
+        XCTAssertTrue(session.editor.problem?.message.hasPrefix("could not delete the profile") ?? false)
     }
 
     func test_a_profile_from_outside_that_cannot_be_saved_is_reported_and_the_rest_of_that_input_is_dropped() throws {
@@ -239,11 +247,65 @@ final class QaSessionTests: MerchantTestCase {
         XCTAssertNil(session.notice)
     }
 
-    func test_an_unavailable_camera_is_a_notice() throws {
+    func test_a_config_naming_a_profile_that_arrives_in_the_same_input_selects_it() throws {
+        let session = try session(profiles: [], config: QaConfig())
+
+        session.accept([.profile(sandbox, needsConfirmation: false), .config(given)])
+
+        XCTAssertEqual(session.selectedProfile, sandbox)
+    }
+
+    func test_a_config_naming_a_profile_that_arrived_earlier_selects_it() throws {
+        let session = try session(profiles: [], config: QaConfig())
+
+        session.accept([.profile(sandbox, needsConfirmation: true)])
+        session.confirmPending()
+        XCTAssertNil(session.selectedProfile)
+        session.accept([.config(given)])
+
+        XCTAssertEqual(session.selectedProfile, sandbox)
+    }
+
+    func test_input_and_reset_while_the_sheet_is_up_leave_the_run_and_its_journal() throws {
         let session = try session()
+        session.launch()
+        journal.record(.info, tag: "sdk", message: "first run")
 
-        session.scannerUnavailable()
+        session.accept([.config(QaConfig(profile: "sandbox"))])
+        session.reset()
 
-        XCTAssertEqual(session.shownProblem?.field, "camera")
+        XCTAssertEqual(session.run.state, .inSheet(OpenOrder(mdOrder: "md-1", sessionId: nil)))
+        XCTAssertEqual(journal.snapshot().map(\.message), ["first run"])
+    }
+
+    func test_input_waits_until_the_scene_is_active_and_the_launch_arguments_come_first() throws {
+        var fromArguments = given
+        fromArguments.order.amount = 500
+        var fromLink = given
+        fromLink.order.amount = 700
+        let session = try session(
+            profiles: [],
+            config: QaConfig(),
+            arguments: [.profile(sandbox, needsConfirmation: false), .config(fromArguments)],
+            active: false
+        )
+
+        session.accept([.config(fromLink), .launch])
+        XCTAssertEqual(session.form.config, QaConfig())
+        XCTAssertEqual(session.store.profiles, [])
+        session.setActive(true)
+
+        XCTAssertEqual(session.store.profiles, [sandbox])
+        XCTAssertEqual(session.form.config, fromLink)
+        XCTAssertEqual(opened, [OpenOrder(mdOrder: "md-1", sessionId: nil)])
+    }
+
+    func test_launch_arguments_apply_at_once_in_an_active_session() throws {
+        var fromArguments = given
+        fromArguments.order.amount = 500
+
+        let session = try session(config: QaConfig(), arguments: [.config(fromArguments)])
+
+        XCTAssertEqual(session.form.config, fromArguments)
     }
 }

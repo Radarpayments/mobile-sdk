@@ -257,6 +257,8 @@ profile name, so there is one identifier per stored profile.
   `qa_result_order_status` text: `orderStatus=<n>, actionCode=<n>, <description>`, `not queried`, or `error: <message>`.
   A missing `orderStatus` or `actionCode` prints `-`, a missing description is left out together with its `, `. This
   text is exactly `not queried` here; only the run report adds the reason (see "Run report").
+- On iOS a toolbar button's identifier (`qa_profiles_open`, `qa_journal_open`, `qa_menu`) can match two elements, the
+  toolbar item and its button; the button-typed match is the one to use.
 
 Each `QaConfig` field has exactly one form element on the platform that shows it (the other platform's wallet fields
 have none), named by the field's path in snake_case with the `qa_` prefix. A
@@ -308,11 +310,12 @@ value is `1` after trimming (any other value is silently no launch). An argument
 field `data`; otherwise it is decoded as its document and reports its own field (`$` when it is not a JSON object).
 The steps are: the profile, then the config, then Launch; `qaLaunch` without a config launches the stored one. When
 either document is rejected the result is that one rejection (the profile's when both are), and nothing is applied or
-launched.
+launched. The launch arguments are the first input of the process, before a link that started it.
 
 **Pasted or scanned text.** After trimming, text whose first 11 characters are `payrdrqa://` ignoring ASCII case is read
 as a link, as above. Any other text must be a JSON object (field `$` otherwise, bare base64 included): a root object
-with a `gatewayUrl` key, whatever its value, is a profile, any other object a config.
+with a `gatewayUrl` key, whatever its value, is a profile, any other object a config. iOS 16 and later asks "Allow
+Paste" when `qa_import` reads text another app copied; declining reads no text, the `$` problem of an empty clipboard.
 
 **Confirmation.** A config applies at once. A profile from a link, the clipboard or a QR waits for confirmation (its
 name, its gateway URL, and "replaces the existing profile" when the name is taken), so that a link cannot silently
@@ -320,7 +323,9 @@ replace the stand and the credentials; from a launch argument it is saved direct
 shows `qa_validation_error` with its field. The limits of Documents (size and depth, field `$`) apply to every way in.
 
 QR scanning uses the device camera and is hidden on the simulator. On Android the Google code scanner (Play services)
-reads the code; when Play services cannot provide it the app says so, and a cancelled scan changes nothing.
+reads the code; when Play services cannot provide it the app says so, and a cancelled scan changes nothing. On iOS the
+app reads the code with the camera itself and says so when there is no camera or access to it is denied. Neither is a
+problem of a field: `qa_validation_error` does not change.
 
 ### Screens
 
@@ -337,12 +342,13 @@ What both apps do around a run, beyond the documents above.
 - **Profiles from outside.** A profile that arrives from outside is saved, never selected; a config that names it, in
   the same input or later, selects it. Declining the confirmation shows no error and drops the rest of that input
   (its config and its launch). Inputs are applied one after another in the order they arrived: a second profile
-  link while a confirmation is open waits, and its own confirmation is shown once the first one is answered.
+  link while a confirmation is open waits, and its own confirmation is shown once the first one is answered. A
+  confirmation that arrives while the SDK sheet is up waits under it and is answered once the sheet closes.
 - **`qa_validation_error`** shows one problem, the first of: the form's problem with the text of a field; the
   notice about the last external input (its rejection) or about a failed save (field `store`, the message names
   what could not be saved, never a value); the refusal of the last launch. The notice clears with the next input or
-  launch; the refusal clears once the config changes. A profile that cannot be saved from the profile editor shows
-  the same `store` problem in the editor's error element.
+  launch; the refusal clears once the config changes. A profile that cannot be saved or deleted from the profile editor
+  shows the same `store` problem in the editor's error element.
 - **Reset** returns every field to its default but keeps the selected profile. **Run again** and Back on the result
   screen return to the configuration screen with the form unchanged; the result screen is opened once per run.
 - **Process end.** A run lives as long as the app process. When the process is killed while the sheet is open, the

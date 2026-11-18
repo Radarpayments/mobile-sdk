@@ -32,11 +32,24 @@ final class QaSession: ObservableObject {
     // Inputs from outside wait here, in order, while a profile of an earlier one waits for its answer.
     private var queue: [[Intake]] = []
     private var rest: [Intake] = []
+    // Input from outside waits while the scene is not active, so that a launch in it finds a key window to open over.
+    private var active: Bool
     private var subscriptions: Set<AnyCancellable> = []
 
-    init(store: QaStore, journal: Journal, merchant: Merchant, open: @escaping Opener) {
+    /// `arguments` are the steps of the launch arguments: they come before any other input. With `active` false, input
+    /// from outside waits for `setActive(true)`.
+    init(
+        store: QaStore,
+        journal: Journal,
+        merchant: Merchant,
+        arguments: [Intake] = [],
+        active: Bool = true,
+        open: @escaping Opener
+    ) {
         self.store = store
         self.journal = journal
+        self.active = active
+        if !arguments.isEmpty { queue.append(arguments) }
         form = ConfigForm(store.config)
         let relay = ResultRelay()
         run = QaRun(merchant: merchant, journal: journal) { order, config, profile in
@@ -51,6 +64,7 @@ final class QaSession: ObservableObject {
         for publisher in [form.objectWillChange, editor.objectWillChange, store.objectWillChange, run.objectWillChange] {
             publisher.sink { [weak self] _ in self?.objectWillChange.send() }.store(in: &subscriptions)
         }
+        drain()
     }
 
     /// What the validation line shows: the form's problem, else the notice, else the refusal of the last launch.
@@ -83,6 +97,11 @@ final class QaSession: ObservableObject {
     /// Applies the steps of one input from outside, after every input that came before it.
     func accept(_ steps: [Intake]) {
         queue.append(steps)
+        drain()
+    }
+
+    func setActive(_ active: Bool) {
+        self.active = active
         drain()
     }
 
@@ -125,7 +144,7 @@ final class QaSession: ObservableObject {
     }
 
     func deleteProfile(named name: String) -> Bool {
-        if let problem = write("the profile", { try store.deleteProfile(named: name) }) {
+        if let problem = write("the profile", verb: "delete", { try store.deleteProfile(named: name) }) {
             editor.failed(problem)
             return false
         }
@@ -137,17 +156,13 @@ final class QaSession: ObservableObject {
         run.reset()
     }
 
-    func scannerUnavailable() {
-        notice = Problem(field: "camera", message: "the camera is not available or access to it is denied")
-    }
-
     private func changed(_ config: QaConfig) {
         store.save(config: config)
         if case .invalid = run.state, config != refused { run.reset() }
     }
 
     private func drain() {
-        while pending == nil, !queue.isEmpty {
+        while active, pending == nil, !queue.isEmpty {
             notice = nil
             apply(queue.removeFirst())
         }
@@ -169,6 +184,7 @@ final class QaSession: ObservableObject {
                 }
                 if let problem = write("the profile", { try store.save(profile: profile) }) {
                     notice = problem
+                    rest = []
                     return
                 }
             case .launch:
@@ -187,13 +203,13 @@ final class QaSession: ObservableObject {
         run.launch(config: config, profile: profile)
     }
 
-    // The message names what could not be saved and the kind of failure, never a value.
-    private func write(_ what: String, _ action: () throws -> Void) -> Problem? {
+    // The message names what could not be saved or deleted and the kind of failure, never a value.
+    private func write(_ what: String, verb: String = "save", _ action: () throws -> Void) -> Problem? {
         do {
             try action()
             return nil
         } catch {
-            return Problem(field: "store", message: "could not save \(what) (\(type(of: error)))")
+            return Problem(field: "store", message: "could not \(verb) \(what) (\(type(of: error)))")
         }
     }
 }

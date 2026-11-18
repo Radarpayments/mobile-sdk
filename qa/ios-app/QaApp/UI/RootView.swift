@@ -14,6 +14,7 @@ struct RootView: View {
     @State private var scanning = false
     // A scanned text is applied once the scanner has closed, so that a launch in it finds the window free for the sheet.
     @State private var scanned: [Intake]?
+    @State private var scannerFailed = false
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -59,11 +60,16 @@ struct RootView: View {
                 switch scan {
                 case let .text(text): scanned = intake(fromText: text)
                 case .cancelled: break
-                case .unavailable: session.scannerUnavailable()
+                case .unavailable: scannerFailed = true
                 }
                 scanning = false
             }
             .ignoresSafeArea()
+        }
+        .alert("The QR scanner is not available", isPresented: $scannerFailed) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("The camera is missing or access to it is denied.")
         }
     }
 

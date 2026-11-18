@@ -33,7 +33,7 @@ final class Checkouts {
     // compared by scalars: Swift's `==` would take canonically equivalent texts for the same.
     private func checkoutFor(_ config: QaConfig, _ profile: StandProfile) -> PayrdrCheckout {
         let wanted = QaConfigJson.encode(config) + "\n" + StandProfileJson.encode(profile)
-        if let checkout, checkout.isPresenting || key.map({ sameText($0, wanted) }) == true {
+        if let checkout, reusesCheckout(presenting: checkout.isPresenting, key: key, wanted: wanted) {
             return checkout
         }
         let made = PayrdrCheckout(config: sdkPaymentConfig(config: config, profile: profile, journal: journal, scanner: scanner))
@@ -41,4 +41,10 @@ final class Checkouts {
         key = wanted
         return made
     }
+}
+
+/// Whether the kept checkout opens the next order: always while it is on screen, so that the SDK refuses a second sheet,
+/// and otherwise only when it was built from the same configuration and profile.
+nonisolated func reusesCheckout(presenting: Bool, key: String?, wanted: String) -> Bool {
+    presenting || key.map { sameText($0, wanted) } == true
 }
