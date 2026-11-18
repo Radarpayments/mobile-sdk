@@ -190,6 +190,20 @@ class QaStoreTest {
         }
 
     @Test
+    fun `stored text nested too deep reads as the default and no profiles`() =
+        runTest {
+            val dataStore = dataStore()
+            val deep = "[".repeat(100_000) + "]".repeat(100_000)
+            dataStore.edit {
+                it[configKey] = "{\"a\":$deep}"
+                it[profilesKey] = PrefixBox().seal(deep)
+            }
+            val store = qaStore(dataStore, PrefixBox())
+            store.config.first() shouldBe QaConfig()
+            store.profiles.first() shouldBe emptyList()
+        }
+
+    @Test
     fun `sealed text that is not a list of profiles reads as none`() =
         runTest {
             val dataStore = dataStore()

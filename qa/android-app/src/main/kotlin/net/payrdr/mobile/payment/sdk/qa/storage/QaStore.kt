@@ -18,10 +18,12 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import net.payrdr.mobile.payment.sdk.qa.config.Decoded
+import net.payrdr.mobile.payment.sdk.qa.config.MAX_DOCUMENT_DEPTH
 import net.payrdr.mobile.payment.sdk.qa.config.QaConfig
 import net.payrdr.mobile.payment.sdk.qa.config.QaConfigJson
 import net.payrdr.mobile.payment.sdk.qa.config.StandProfile
 import net.payrdr.mobile.payment.sdk.qa.config.StandProfileJson
+import net.payrdr.mobile.payment.sdk.qa.config.limitProblem
 import java.io.IOException
 
 /**
@@ -87,6 +89,8 @@ internal class QaStore(
 
     private fun readProfiles(stored: String?): List<StandProfile> {
         val plain = stored?.let(box::open) ?: return emptyList()
+        // The stored array holds every profile: one level above a document, and as large as the profiles are many.
+        if (limitProblem(plain, maxBytes = Int.MAX_VALUE, maxDepth = MAX_DOCUMENT_DEPTH + 1) != null) return emptyList()
         val array =
             try {
                 Json.parseToJsonElement(plain) as? JsonArray

@@ -22,7 +22,11 @@ internal fun extraToText(extra: JsonObject): String = extra.toString()
 
 internal fun extraFromText(text: String): Decoded<JsonObject> {
     if (text.isBlank()) return Decoded.Ok(JsonObject(emptyMap()))
+    limitProblem(text, maxDepth = EXTRA_DEPTH)?.let { return Decoded.Invalid(Problem("order.extra", it)) }
     val extra = parseObject(text) ?: return Decoded.Invalid(Problem("order.extra", "must be a JSON object"))
     val problem = extraProblem(extra)
     return if (problem == null) Decoded.Ok(extra) else Decoded.Invalid(problem)
 }
+
+// `extra` is level 3 of a configuration (the root, `order`, `extra`): two levels fewer keep the document within its limit.
+private const val EXTRA_DEPTH = MAX_DOCUMENT_DEPTH - 2

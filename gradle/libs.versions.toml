@@ -16,7 +16,7 @@ androidx-webkit = "1.12.1"
 androidx-compose-ui-test = "1.11.0"
 play-services-wallet = "19.4.0"
 play-services-tasks-coroutines = "1.9.0"
-# QA app only: Google code scanner reads a QR configuration through Play services, without a camera permission.
+# QA app only: Google code scanner reads QR codes in Play services' screen; it needs no camera permission of its own.
 play-services-code-scanner = "16.1.0"
 okhttp = "4.12.0"
 coroutines = "1.9.0"

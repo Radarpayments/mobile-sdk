@@ -10,6 +10,7 @@ internal object StandProfileJson {
     private val writer = Json { prettyPrint = true }
 
     fun decode(text: String): Decoded<StandProfile> {
+        limitProblem(text)?.let { return Decoded.Invalid(Problem("$", it)) }
         val root = parseObject(text) ?: return Decoded.Invalid(NOT_AN_OBJECT)
         val reader = JsonReader()
         val version = reader.integral(root, "version", "version")

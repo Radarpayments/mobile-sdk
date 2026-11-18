@@ -111,6 +111,10 @@ differently:
   `sdk.applePay.countryCode` among them) reads a blank string as null. A non-blank string is stored as given, never trimmed.
 - An absolute `http` / `https` URL is a string that matches `^https?://[^\s/?#]+\S*$`, the scheme compared ignoring
   case.
+- A document is at most 65536 bytes of UTF-8 and nests objects and arrays at most 32 levels deep, the root object
+  being level 1. Both are checked on the text before it is parsed, brackets inside strings not counting, and either
+  excess fails on `$` (the parsers recurse, and a deeply nested document would overflow the stack). The form's
+  `order.extra` text is checked the same way with 30 levels, its place in the document, and fails on `order.extra`.
 
 **Encoding.** Every field is written, nulls included, `version` as 1, in the order of the tables. A string that is read
 as null (a blank nullable string, see Decoding) is written as null. A set (the Google Pay and Apple Pay lists) is
@@ -226,23 +230,59 @@ limited to `[a-z0-9_-]`, 1 to 32 characters, because it is part of an identifier
 
 ### External input
 
-- Link: `payrdrqa://config?data=<base64url>[&launch=1]` and `payrdrqa://profile?data=<base64url>`. `data` is
-  percent-decoded, then base64url-decoded with or without `=` padding, then read as UTF-8 JSON. `launch=1` on a config
-  link starts the run at once.
-- Launch arguments, raw JSON (not base64): Android extras `qaConfig`, `qaProfile` (strings) and `qaLaunch` (boolean);
-  iOS `-qaConfig <json>`, `-qaProfile <json>` and `-qaLaunch 1`, read from `ProcessInfo.processInfo.arguments` (not
-  `UserDefaults`, which would parse a `{…}` argument as a property list). The profile is applied before the config;
-  `qaLaunch` without a config launches the stored one.
-- Text that cannot be read names a field as well: `link` for a link whose host is neither `config` nor `profile`; `data`
-  for a missing `data` parameter, a `data` value that is not valid base64url or whose bytes are not UTF-8 (the launch
-  argument or extra payload too); `$` for text that is not a JSON object. A decoded document then reports its own field.
-- Pasted or scanned text, trimmed: a `payrdrqa://` link is read as a link; otherwise it is JSON, and an object with a
-  `gatewayUrl` key is a profile, any other a config. Surrounding whitespace and newlines are accepted.
-- A config applies at once. A profile from a link, the clipboard or a QR waits for confirmation (its name, its gateway
-  URL, and "replaces the existing profile" when the name is taken), so that a link cannot silently replace the stand and
-  the credentials; from a launch argument it is saved directly. An invalid document changes nothing and shows
-  `qa_validation_error`.
-- QR scanning uses the device camera and is hidden on the simulator.
+Four ways in: a link, launch arguments, pasted text and a scanned QR code. Each yields either a list of steps applied
+in order (apply a profile, apply a config, launch) or a single rejection naming one field; a rejection applies nothing,
+not even the part that was valid, and launches nothing.
+
+**Trimming.** Before anything else a link, pasted or scanned text and each launch argument or extra lose one leading
+U+FEFF (a byte order mark), then ASCII space, tab, CR and LF at both ends, repeatedly. Nothing else is trimmed: a
+U+0085, a U+00A0, a vertical tab, a second U+FEFF or a U+FEFF after the whitespace stays and makes the text unreadable.
+
+**Link.** `payrdrqa://config?data=<base64url>[&launch=1]` or `payrdrqa://profile?data=<base64url>`, read in this order:
+
+1. Field `link` unless the trimmed text is `payrdrqa://` (the scheme compared ignoring ASCII case only, so
+   `PAYRDRQA://` is a link), then exactly `config` or `profile` (compared exactly: `CONFIG` is not), then either the
+   end or `?` and the query. So these are `link`: any `#` anywhere (a fragment), a user-info (`user@config`), a port,
+   even an empty one (`config:`), a path, even `/` alone (`config/`), an empty host (`payrdrqa:///config`), the opaque
+   form without `//` (`payrdrqa:config`), a percent-escape in the host.
+2. The query is split at `&` only (`;` is part of a value); empty pairs (`&&`, a leading or trailing `&`) are skipped.
+   A pair is split at its first `=`: the name before it, the value after it (a pair without `=` has an empty value, a
+   pair `=x` has an empty name). Names and values are percent-decoded strictly: `%` must be followed by two hex digits,
+   and the decoded bytes must be UTF-8 (an overlong form like `%C0%AE` is not); `+` stays a plus. A pair whose name
+   cannot be decoded is dropped; a value that cannot be decoded counts as an unusable value. Parameters other than
+   `data` and `launch` are ignored.
+3. Field `data` unless `data` occurs exactly once with a usable, non-empty value, and that value, after
+   percent-decoding, is at most 87384 characters (padded base64url of the largest document; a longer one is refused
+   before it is decoded), is base64url and decodes to UTF-8. Base64url is the alphabet `A–Z a–z 0–9 - _` only: `+`, `/`,
+   whitespace or a line break anywhere is rejected. Padding is all or nothing: a length that is a multiple of 4 with the
+   `=` it needs, or no `=` at all; `eyJhIjoxfQ=` (one of two) is rejected, and so are a length of 4n+1 characters and
+   non-zero pad bits (`eyJhIjoxfR`). The bytes must be strict UTF-8 (no overlong forms, no surrogates). Bare base64 is
+   never read as anything else.
+4. The text is decoded as the document the host names (see Documents); an invalid document reports its own field
+   unchanged.
+5. A config link is followed by Launch when the query has exactly one `launch` and its decoded value is exactly `1`.
+   Any other value, a repeated `launch` or an undecodable value is silently no launch, not an error. A profile link
+   never launches, whatever its query says.
+
+**Launch arguments**, raw JSON (not base64): Android extras `qaConfig`, `qaProfile` (strings) and `qaLaunch`
+(boolean); iOS `-qaConfig <json>`, `-qaProfile <json>` and `-qaLaunch 1`, read from
+`ProcessInfo.processInfo.arguments` (not `UserDefaults`, which would parse a `{…}` argument as a property list). An
+argument that is empty after trimming is field `data`; otherwise it is decoded as its document and reports its own
+field (`$` when it is not a JSON object). The steps are: the profile, then the config, then Launch; `qaLaunch` without
+a config launches the stored one. When either document is rejected the result is that one rejection (the profile's
+when both are), and nothing is applied or launched.
+
+**Pasted or scanned text.** After trimming, text whose first 11 characters are `payrdrqa://` ignoring ASCII case is read
+as a link, as above. Any other text must be a JSON object (field `$` otherwise, bare base64 included): a root object
+with a `gatewayUrl` key, whatever its value, is a profile, any other object a config.
+
+**Confirmation.** A config applies at once. A profile from a link, the clipboard or a QR waits for confirmation (its
+name, its gateway URL, and "replaces the existing profile" when the name is taken), so that a link cannot silently
+replace the stand and the credentials; from a launch argument it is saved directly. A rejection changes nothing and
+shows `qa_validation_error` with its field. The limits of Documents (size and depth, field `$`) apply to every way in.
+
+QR scanning uses the device camera and is hidden on the simulator. On Android the Google code scanner (Play services)
+reads the code; when Play services cannot provide it the app says so, and a cancelled scan changes nothing.
 
 ### Run report
 
@@ -386,11 +426,11 @@ Time zone: UTC+00:00
   "expect": { "document": <object> } | { "errorField": "<path>" } }
 ```
 
-`input` is the parsed document; `inputText` is a raw string for text that is not JSON. `kind` selects `QaConfig` or
-`StandProfile`. `expect.document` is the full document as the encoder writes it (every field, nulls and defaults
-included): a test decodes `input`, encodes the result and compares it with `document` structurally (key order does not
-matter). `expect.errorField` is the field the decoder reports. Each failing input fails on that field only. The profile
-fixtures carry the placeholder secrets `login-1`, `password-1` and `key-1`.
+`input` is the parsed document; `inputText` is a raw string, for text that is not JSON or is too deep to be `input`.
+`kind` selects `QaConfig` or `StandProfile`. `expect.document` is the full document as the encoder writes it (every
+field, nulls and defaults included): a test decodes `input`, encodes the result and compares it with `document`
+structurally (key order does not matter). `expect.errorField` is the field the decoder reports. Each failing input fails
+on that field only. The profile fixtures carry the placeholder secrets `login-1`, `password-1` and `key-1`.
 
 `qa/fixtures/identifiers.txt` is the identifier list above; a test checks that every identifier of the platform is
 present in the app and that no other `qa_` identifier is.

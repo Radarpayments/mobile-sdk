@@ -254,4 +254,138 @@ class IntakeTest {
     fun `a pasted profile that is invalid is rejected with its field`() {
         field(intakeFromText("""{"name":"sandbox","gatewayUrl":"ftp://dev.bpcbt.com"}""")) shouldBe "gatewayUrl"
     }
+
+    // The root object is level 1, so depth n is n objects nested in each other.
+    private fun nested(depth: Int): String = "{\"a\":".repeat(depth - 1) + "{}" + "}".repeat(depth - 1)
+
+    // 'é' is two bytes of UTF-8 and one char, so the byte limit is not mistaken for a char limit.
+    private fun sized(bytes: Int): String {
+        val filler = bytes - 8
+        return "{\"a\":\"" + "é".repeat(filler / 2) + "x".repeat(filler % 2) + "\"}"
+    }
+
+    @Test
+    fun `a link or pasted text keeps the depth limit`() {
+        intakeFromLink("payrdrqa://config?data=${b64(nested(32))}") shouldBe listOf(Intake.Config(QaConfig()))
+        field(intakeFromLink("payrdrqa://config?data=${b64(nested(33))}&launch=1")) shouldBe "$"
+        field(intakeFromLink("payrdrqa://profile?data=${b64(nested(33))}")) shouldBe "$"
+        intakeFromText(nested(32)) shouldBe listOf(Intake.Config(QaConfig()))
+        field(intakeFromText(nested(33))) shouldBe "$"
+        field(intakeFromText(nested(100_000))) shouldBe "$"
+        field(intakeFromExtras(qaConfig = nested(100_000), qaProfile = null, qaLaunch = true)) shouldBe "$"
+    }
+
+    @Test
+    fun `a link or pasted text keeps the size limit in bytes`() {
+        intakeFromLink("payrdrqa://config?data=${b64(sized(65536))}") shouldBe listOf(Intake.Config(QaConfig()))
+        field(intakeFromLink("payrdrqa://config?data=${b64(sized(65537))}")) shouldBe "$"
+        intakeFromText(sized(65536)) shouldBe listOf(Intake.Config(QaConfig()))
+        field(intakeFromText(sized(65537))) shouldBe "$"
+        field(intakeFromExtras(qaConfig = sized(65537), qaProfile = null, qaLaunch = false)) shouldBe "$"
+    }
+
+    @Test
+    fun `data longer than base64url of the largest document is refused before it is decoded`() {
+        // 87388 characters would decode to 65541 bytes; the largest document, 65536 bytes, takes 87384.
+        field(intakeFromLink("payrdrqa://config?data=${"A".repeat(87_388)}")) shouldBe "data"
+        field(intakeFromLink("payrdrqa://config?data=${"%41".repeat(87_388)}")) shouldBe "data"
+        field(intakeFromText("payrdrqa://config?data=${"A".repeat(1_000_000)}")) shouldBe "data"
+    }
+
+    @Test
+    fun `the scheme is read ignoring ascii case and the host is exact`() {
+        intakeFromLink("PAYRDRQA://config?data=${b64(configJson)}&launch=1") shouldBe
+            listOf(Intake.Config(config), Intake.Launch)
+        intakeFromText("PayRdrQa://config?data=${b64(configJson)}") shouldBe listOf(Intake.Config(config))
+        intakeFromText(" PAYRDRQA://profile?data=${b64(profileJson)}") shouldBe
+            listOf(Intake.Profile(profile, needsConfirmation = true))
+        field(intakeFromLink("payrdrqa://CONFIG?data=${b64(configJson)}")) shouldBe "link"
+        field(intakeFromText("PAYRDRQA://Profile?data=${b64(profileJson)}")) shouldBe "link"
+    }
+
+    @Test
+    fun `an authority other than the bare host is rejected`() {
+        listOf(
+            "payrdrqa://config:?data=${b64(configJson)}",
+            "payrdrqa:///config?data=${b64(configJson)}",
+            "payrdrqa://config/?data=${b64(configJson)}",
+            "payrdrqa:config?data=${b64(configJson)}",
+            "payrdrqa://%63onfig?data=${b64(configJson)}",
+            "payrdrqa://config.?data=${b64(configJson)}",
+        ).forEach { field(intakeFromLink(it)) shouldBe "link" }
+    }
+
+    @Test
+    fun `trimming removes ascii space, tab, cr, lf and one leading byte order mark`() {
+        intakeFromText("\uFEFF$configJson") shouldBe listOf(Intake.Config(config))
+        intakeFromText("\uFEFF \t\r\n$configJson \t\r\n") shouldBe listOf(Intake.Config(config))
+        intakeFromLink("\uFEFFpayrdrqa://config?data=${b64(configJson)}\n") shouldBe listOf(Intake.Config(config))
+        intakeFromExtras(qaConfig = "\uFEFF$configJson\n", qaProfile = "\uFEFF$profileJson", qaLaunch = false) shouldBe
+            listOf(Intake.Profile(profile, needsConfirmation = false), Intake.Config(config))
+        field(intakeFromExtras(qaConfig = "\uFEFF \n", qaProfile = null, qaLaunch = false)) shouldBe "data"
+    }
+
+    @Test
+    fun `other whitespace and a second byte order mark are not trimmed`() {
+        field(intakeFromText("\u0085$configJson")) shouldBe "$"
+        field(intakeFromText("$configJson\u0085")) shouldBe "$"
+        field(intakeFromText("\u000B$configJson")) shouldBe "$"
+        field(intakeFromText("\u00A0$configJson")) shouldBe "$"
+        field(intakeFromText("\uFEFF\uFEFF$configJson")) shouldBe "$"
+        field(intakeFromText("$configJson\uFEFF")) shouldBe "$"
+        field(intakeFromText("\u0085payrdrqa://config?data=${b64(configJson)}")) shouldBe "$"
+        field(intakeFromLink("\u0085payrdrqa://config?data=${b64(configJson)}")) shouldBe "link"
+        field(intakeFromExtras(qaConfig = "\u0085$configJson", qaProfile = null, qaLaunch = false)) shouldBe "$"
+        field(intakeFromExtras(qaConfig = "\u0085", qaProfile = null, qaLaunch = false)) shouldBe "$"
+    }
+
+    @Test
+    fun `escapes that decode to nothing usable are rejected`() {
+        field(intakeFromLink("payrdrqa://config?data=%00")) shouldBe "data"
+        field(intakeFromLink("payrdrqa://config?data=${b64(configJson)}%00")) shouldBe "data"
+        // C0 AE is an overlong spelling of '.', which a strict UTF-8 decoder refuses.
+        field(intakeFromLink("payrdrqa://config?data=%C0%AE")) shouldBe "data"
+        intakeFromLink("payrdrqa://config?data=${b64(configJson)}&launch=%C0%AE") shouldBe listOf(Intake.Config(config))
+        intakeFromLink("payrdrqa://config?%C0%AE=1&data=${b64(configJson)}") shouldBe listOf(Intake.Config(config))
+        intakeFromLink("payrdrqa://config?data=${b64(configJson)}&launch=%31") shouldBe
+            listOf(Intake.Config(config), Intake.Launch)
+    }
+
+    @Test
+    fun `an overlong utf-8 sequence inside data is rejected`() {
+        val bytes = byteArrayOf(0x7B, 0xC0.toByte(), 0xAE.toByte(), 0x7D)
+        field(intakeFromLink("payrdrqa://config?data=${Base64.getUrlEncoder().encodeToString(bytes)}")) shouldBe "data"
+    }
+
+    @Test
+    fun `base64url of the wrong length, with pad bits or a line break is rejected`() {
+        val unpadded = b64(configJson).trimEnd('=')
+        val oneLeft = if (unpadded.length % 4 == 0) unpadded + "A" else unpadded.dropLast(unpadded.length % 4 - 1)
+        (oneLeft.length % 4) shouldBe 1
+        field(intakeFromLink("payrdrqa://config?data=$oneLeft")) shouldBe "data"
+        // `{"a":1}` is eyJhIjoxfQ==; 'R' sets the pad bits that 'Q' leaves zero.
+        intakeFromLink("payrdrqa://config?data=eyJhIjoxfQ") shouldBe listOf(Intake.Config(QaConfig()))
+        field(intakeFromLink("payrdrqa://config?data=eyJhIjoxfR")) shouldBe "data"
+        field(intakeFromLink("payrdrqa://config?data=eyJhIjoxfQ=")) shouldBe "data"
+        val half = unpadded.length / 2
+        field(intakeFromLink("payrdrqa://config?data=${unpadded.take(half)}\n${unpadded.drop(half)}")) shouldBe "data"
+        field(intakeFromLink("payrdrqa://config?data=${unpadded.take(half)}%0A${unpadded.drop(half)}")) shouldBe "data"
+        field(intakeFromLink("payrdrqa://config?data=${unpadded.take(half)}%20${unpadded.drop(half)}")) shouldBe "data"
+    }
+
+    @Test
+    fun `only an ampersand separates parameters and empty or nameless pairs are skipped`() {
+        field(intakeFromLink("payrdrqa://config?data=${b64(configJson)};launch=1")) shouldBe "data"
+        intakeFromLink("payrdrqa://config?data=${b64(configJson)}&a=1;launch=1") shouldBe listOf(Intake.Config(config))
+        intakeFromLink("payrdrqa://config?=x&data=${b64(configJson)}&launch=1") shouldBe
+            listOf(Intake.Config(config), Intake.Launch)
+        intakeFromLink("payrdrqa://config?&&data=${b64(configJson)}&&launch=1&&") shouldBe
+            listOf(Intake.Config(config), Intake.Launch)
+        intakeFromLink("payrdrqa://config?data=${b64(configJson)}&other=%ZZ&x") shouldBe listOf(Intake.Config(config))
+    }
+
+    @Test
+    fun `pasted bare base64 is not json`() {
+        field(intakeFromText(b64(configJson))) shouldBe "$"
+    }
 }

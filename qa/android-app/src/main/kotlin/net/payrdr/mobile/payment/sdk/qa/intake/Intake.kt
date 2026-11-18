@@ -1,16 +1,16 @@
 package net.payrdr.mobile.payment.sdk.qa.intake
 
 import net.payrdr.mobile.payment.sdk.qa.config.Decoded
+import net.payrdr.mobile.payment.sdk.qa.config.MAX_DOCUMENT_BYTES
 import net.payrdr.mobile.payment.sdk.qa.config.NOT_AN_OBJECT
 import net.payrdr.mobile.payment.sdk.qa.config.Problem
 import net.payrdr.mobile.payment.sdk.qa.config.QaConfig
 import net.payrdr.mobile.payment.sdk.qa.config.QaConfigJson
 import net.payrdr.mobile.payment.sdk.qa.config.StandProfile
 import net.payrdr.mobile.payment.sdk.qa.config.StandProfileJson
+import net.payrdr.mobile.payment.sdk.qa.config.limitProblem
 import net.payrdr.mobile.payment.sdk.qa.config.parseObject
 import java.io.ByteArrayOutputStream
-import java.net.URI
-import java.net.URISyntaxException
 import java.nio.ByteBuffer
 import java.nio.charset.CharacterCodingException
 import java.nio.charset.CodingErrorAction
@@ -39,12 +39,13 @@ internal sealed interface Intake {
 }
 
 /**
- * Reads a `payrdrqa://config?data=…[&launch=1]` or `payrdrqa://profile?data=…` link, surrounding whitespace allowed.
+ * Reads a `payrdrqa://config?data=…[&launch=1]` or `payrdrqa://profile?data=…` link after [trimInput]; the scheme
+ * ignores ASCII case, the host does not.
  * A config yields [Intake.Config], followed by [Intake.Launch] when `launch` is exactly `1`; a profile yields an
  * [Intake.Profile] that needs confirmation. Anything unreadable or invalid yields a single [Intake.Rejected].
  */
 internal fun intakeFromLink(link: String): List<Intake> {
-    val trimmed = link.trim()
+    val trimmed = trimInput(link)
     val target = linkTarget(trimmed) ?: return rejected(LINK_PROBLEM)
     val query = parseQuery(trimmed.substringAfter('?', missingDelimiterValue = ""))
     val text = query[DATA_PARAMETER]?.singleOrNull()?.let(::decodeData) ?: return rejected(DATA_PROBLEM)
@@ -61,9 +62,10 @@ internal fun intakeFromLink(link: String): List<Intake> {
 }
 
 /**
- * Reads the launch extras `qaConfig` and `qaProfile` (raw JSON, null when absent) and `qaLaunch`. The result applies the
- * profile, unconfirmed, before the config and launches last. When either document cannot be used the result is a single
- * [Intake.Rejected] for the first of them, and nothing is applied or launched.
+ * Reads the launch extras `qaConfig` and `qaProfile` (raw JSON after [trimInput], null when absent; empty after trimming
+ * is unreadable) and `qaLaunch`. The result applies the profile, unconfirmed, before the config and launches last. When
+ * either document cannot be used the result is a single [Intake.Rejected] for the first of them, and nothing is applied
+ * or launched.
  */
 internal fun intakeFromExtras(
     qaConfig: String?,
@@ -86,12 +88,14 @@ internal fun intakeFromExtras(
 }
 
 /**
- * Reads pasted or scanned text after trimming it: a `payrdrqa://` link as [intakeFromLink] does, otherwise a JSON object,
- * which is a profile needing confirmation when it has a `gatewayUrl` key and a config when it has not.
+ * Reads pasted or scanned text after [trimInput]: text starting with `payrdrqa://` in any ASCII case as [intakeFromLink]
+ * does, otherwise a JSON object, which is a profile needing confirmation when it has a `gatewayUrl` key and a config when
+ * it has not.
  */
 internal fun intakeFromText(text: String): List<Intake> {
-    val trimmed = text.trim()
-    if (trimmed.startsWith(LINK_PREFIX)) return intakeFromLink(trimmed)
+    val trimmed = trimInput(text)
+    if (asciiLowercase(trimmed.take(LINK_PREFIX.length)) == LINK_PREFIX) return intakeFromLink(trimmed)
+    limitProblem(trimmed)?.let { return rejected(Problem("$", it)) }
     val root = parseObject(trimmed) ?: return rejected(NOT_AN_OBJECT)
     return if (GATEWAY_URL_KEY in root) profileIntake(trimmed, needsConfirmation = true) else listOf(configIntake(trimmed))
 }
@@ -99,26 +103,27 @@ internal fun intakeFromText(text: String): List<Intake> {
 private enum class LinkTarget { CONFIG, PROFILE }
 
 /**
- * The query is cut off by hand rather than read from [URI], which would decode `%26` into a separator and lose the
- * difference between `+` and its escape.
+ * Everything between `://` and the query must be the host itself, so a user-info, a port (even an empty one), a path or
+ * an escape in the host is not a link. [java.net.URI] is not used: it accepts all of those, and it would decode `%26`
+ * in the query into a separator.
  */
 private fun linkTarget(link: String): LinkTarget? {
-    if ('#' in link) return null
-    val uri =
-        try {
-            URI(link.substringBefore('?'))
-        } catch (_: URISyntaxException) {
-            return null
-        }
-    val plain =
-        uri.scheme == SCHEME && uri.rawUserInfo == null && uri.port == -1 && uri.rawPath.isNullOrEmpty() && uri.rawQuery == null
-    return when {
-        !plain -> null
-        uri.host == CONFIG_HOST -> LinkTarget.CONFIG
-        uri.host == PROFILE_HOST -> LinkTarget.PROFILE
+    if ('#' in link || asciiLowercase(link.take(LINK_PREFIX.length)) != LINK_PREFIX) return null
+    return when (link.substring(LINK_PREFIX.length).substringBefore('?')) {
+        CONFIG_HOST -> LinkTarget.CONFIG
+        PROFILE_HOST -> LinkTarget.PROFILE
         else -> null
     }
 }
+
+/**
+ * Drops one leading U+FEFF (a byte order mark that editors and clipboards leave), then ASCII space, tab, CR and LF from
+ * both ends. Other whitespace stays, so both platforms trim the same characters.
+ */
+private fun trimInput(text: String): String = text.removePrefix(BYTE_ORDER_MARK).trim { it in TRIMMED }
+
+// Kotlin's case-insensitive comparison also folds non-ASCII letters, which Swift does not.
+private fun asciiLowercase(text: String): String = text.map { if (it in 'A'..'Z') it + ('a' - 'A') else it }.joinToString("")
 
 /** Every value of every parameter; a parameter without `=` has an empty value, one whose name cannot be decoded is dropped. */
 private fun parseQuery(query: String): Map<String, List<String?>> =
@@ -127,12 +132,17 @@ private fun parseQuery(query: String): Map<String, List<String?>> =
         .filter { it.isNotEmpty() }
         .mapNotNull { pair ->
             val name = percentDecode(pair.substringBefore('=')) ?: return@mapNotNull null
-            name to percentDecode(pair.substringAfter('=', missingDelimiterValue = ""))
+            val value = pair.substringAfter('=', missingDelimiterValue = "")
+            // An escape is three characters for one, so a longer raw value cannot decode to an acceptable `data`.
+            name to if (value.length > MAX_DATA_LENGTH * ESCAPE_LENGTH) null else percentDecode(value)
         }.groupBy({ it.first }, { it.second })
 
-/** The UTF-8 JSON text carried in `data`, or null when it is empty, not base64url or not UTF-8. */
+/**
+ * The UTF-8 JSON text carried in `data`, or null when it is empty, longer than base64url of the largest document, not
+ * base64url or not UTF-8.
+ */
 private fun decodeData(value: String?): String? {
-    if (value.isNullOrEmpty()) return null
+    if (value.isNullOrEmpty() || value.length > MAX_DATA_LENGTH) return null
     val bytes =
         try {
             BASE64URL.decode(value)
@@ -176,8 +186,9 @@ private fun strictUtf8(bytes: ByteArray): String? =
     }
 
 private fun configIntake(text: String): Intake {
-    if (text.isBlank()) return Intake.Rejected(DATA_PROBLEM)
-    return when (val decoded = QaConfigJson.decode(text)) {
+    val trimmed = trimInput(text)
+    if (trimmed.isEmpty()) return Intake.Rejected(DATA_PROBLEM)
+    return when (val decoded = QaConfigJson.decode(trimmed)) {
         is Decoded.Ok -> Intake.Config(decoded.value)
         is Decoded.Invalid -> Intake.Rejected(decoded.problem)
     }
@@ -187,8 +198,9 @@ private fun profileIntake(
     text: String,
     needsConfirmation: Boolean,
 ): List<Intake> {
-    if (text.isBlank()) return rejected(DATA_PROBLEM)
-    return when (val decoded = StandProfileJson.decode(text)) {
+    val trimmed = trimInput(text)
+    if (trimmed.isEmpty()) return rejected(DATA_PROBLEM)
+    return when (val decoded = StandProfileJson.decode(trimmed)) {
         is Decoded.Ok -> listOf(Intake.Profile(decoded.value, needsConfirmation))
         is Decoded.Invalid -> rejected(decoded.problem)
     }
@@ -206,6 +218,13 @@ private const val LAUNCH_VALUE = "1"
 private const val GATEWAY_URL_KEY = "gatewayUrl"
 private const val HEX_RADIX = 16
 private const val ESCAPE_LENGTH = 3
+private const val BYTE_ORDER_MARK = "\uFEFF"
+private const val TRIMMED = " \t\r\n"
+private const val BASE64_GROUP_BYTES = 3
+private const val BASE64_GROUP_CHARS = 4
+
+// Padded base64url of MAX_DOCUMENT_BYTES: 87384 characters.
+private const val MAX_DATA_LENGTH = (MAX_DOCUMENT_BYTES + BASE64_GROUP_BYTES - 1) / BASE64_GROUP_BYTES * BASE64_GROUP_CHARS
 
 // The contract names base64url only, so the standard alphabet's '+' and '/' are rejected rather than guessed at.
 private val BASE64URL = Base64.UrlSafe.withPadding(Base64.PaddingOption.PRESENT_OPTIONAL)

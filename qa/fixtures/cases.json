@@ -1197,6 +1197,79 @@
     }
   },
   {
+    "name": "depth_32",
+    "kind": "config",
+    "inputText": "{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}",
+    "expect": {
+      "document": {
+        "version": 1,
+        "profile": null,
+        "order": {
+          "source": "register",
+          "type": "payment",
+          "amount": 10000,
+          "currency": "EUR",
+          "clientId": null,
+          "mdOrder": null,
+          "sessionId": null,
+          "features": [],
+          "extra": {}
+        },
+        "sdk": {
+          "locale": null,
+          "theme": "system",
+          "showResultScreen": false,
+          "scanner": false,
+          "keyProviderUrl": null,
+          "sslPinning": {
+            "enabled": false,
+            "pins": []
+          },
+          "googlePay": {
+            "enabled": false,
+            "billingAddressRequired": false,
+            "merchantId": null,
+            "merchantFullName": null,
+            "gateway": null,
+            "gatewayMerchantId": null,
+            "countryCode": null,
+            "environment": null,
+            "allowedCardNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "allowedAuthMethods": [
+              "PAN_ONLY",
+              "CRYPTOGRAM_3DS"
+            ]
+          },
+          "applePay": {
+            "enabled": false,
+            "merchantId": "merchant.net.payrdr.samples.test",
+            "supportedNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "merchantCapabilities": [
+              "CREDIT",
+              "DEBIT",
+              "THREE_D_SECURE"
+            ],
+            "countryCode": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "depth_33",
+    "kind": "config",
+    "inputText": "{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}",
+    "expect": {
+      "errorField": "$"
+    }
+  },
+  {
     "name": "profile_minimal",
     "kind": "profile",
     "input": {
