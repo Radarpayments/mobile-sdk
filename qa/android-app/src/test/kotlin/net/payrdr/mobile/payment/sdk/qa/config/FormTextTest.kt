@@ -37,6 +37,12 @@ class FormTextTest {
     }
 
     @Test
+    fun `a pin line whose host is a url names the pins field`() {
+        (pinsFromText("https://dev.bpcbt.com=$pin") as Decoded.Invalid).problem.field shouldBe "sdk.sslPinning.pins"
+        (pinsFromText("dev.bpcbt.com:443=$pin") as Decoded.Invalid).problem.field shouldBe "sdk.sslPinning.pins"
+    }
+
+    @Test
     fun `blank extra text is an empty object`() {
         extraFromText("  ") shouldBe Decoded.Ok(JsonObject(emptyMap()))
     }

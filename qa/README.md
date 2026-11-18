@@ -74,7 +74,7 @@ on the other platform, so one file round-trips on both.
 | `sdk.showResultScreen`, `sdk.scanner` | bool, false | |
 | `sdk.keyProviderUrl` | string?, null | absolute `http` / `https` URL (see Decoding) |
 | `sdk.sslPinning.enabled` | bool, false | |
-| `sdk.sslPinning.pins` | `{host,pin}[]`, [] | `host` non-blank, no `=`, no whitespace; `pin` matches `^[A-Za-z0-9+/]{43}=$`, the padded standard base64 of 32 bytes (the SHA-256 of the certificate's SPKI). Error field: `sdk.sslPinning.pins`, also for an element that is not an object |
+| `sdk.sslPinning.pins` | `{host,pin}[]`, [] | `host` is a plain hostname, matching `^(\*\*?\.)?[A-Za-z0-9-]{1,63}(\.[A-Za-z0-9-]{1,63})*$`: labels of ASCII letters, digits and hyphens, 1–63 characters, separated by single dots; no scheme, port, path, trailing dot or empty label. A leading `*.` covers one label below the domain, `**.` the domain and any depth below (as OkHttp's `CertificatePinner`; the SDK matches the same way on iOS); a `*` anywhere else is rejected. `pin` matches `^[A-Za-z0-9+/]{43}=$`, the padded standard base64 of 32 bytes (the SHA-256 of the certificate's SPKI). Error field: `sdk.sslPinning.pins`, also for an element that is not an object |
 | `sdk.googlePay.enabled`, `.billingAddressRequired` | bool, false | |
 | `sdk.googlePay.merchantId`, `.merchantFullName`, `.gateway`, `.gatewayMerchantId`, `.countryCode` | string?, null | |
 | `sdk.googlePay.environment` | `test` \| `production` \| null, null | |

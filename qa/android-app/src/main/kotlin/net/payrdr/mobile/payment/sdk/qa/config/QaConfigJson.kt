@@ -24,6 +24,10 @@ private val AP_CAPABILITIES = listOf("CREDIT", "DEBIT", "EMV", "THREE_D_SECURE")
 private val FORBIDDEN_EXTRA_KEYS = listOf("username", "password", "token")
 private val PIN_PATTERN = Regex("[A-Za-z0-9+/]{43}=")
 
+// What OkHttp's CertificatePinner accepts and the iOS delegate matches: no scheme, port or path, labels of at most 63
+// characters (OkHttp rejects longer ones), an optional leading `*.` (one label) or `**.` (any depth).
+private val PIN_HOST_PATTERN = Regex("""(\*\*?\.)?[A-Za-z0-9-]{1,63}(\.[A-Za-z0-9-]{1,63})*""")
+
 // The table order of the contract; a group path ranks before its members.
 private val FIELDS =
     listOf(
@@ -307,11 +311,10 @@ private fun readApplePay(
     )
 }
 
-internal fun isPinValid(pin: Pin): Boolean =
-    pin.host.isNotBlank() && pin.host.none { it == '=' || it.isWhitespace() } && PIN_PATTERN.matches(pin.pin)
+internal fun isPinValid(pin: Pin): Boolean = PIN_HOST_PATTERN.matches(pin.host) && PIN_PATTERN.matches(pin.pin)
 
 internal fun pinsProblem(pins: List<Pin>): Problem? =
-    if (pins.all(::isPinValid)) null else Problem(PINS, "each pin needs a host and a 44 character base64 SHA-256 pin")
+    if (pins.all(::isPinValid)) null else Problem(PINS, "each pin needs a hostname and a 44 character base64 SHA-256 pin")
 
 internal fun extraProblem(extra: JsonObject): Problem? =
     if (extra.keys.none { key -> FORBIDDEN_EXTRA_KEYS.any { it.equals(key, ignoreCase = true) } }) {

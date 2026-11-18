@@ -14,14 +14,17 @@ import net.payrdr.mobile.payment.sdk.payment.scanner.CardScannerConfig
 import net.payrdr.mobile.payment.sdk.payment.scanner.CardScannerProvider
 import net.payrdr.mobile.payment.sdk.payment.scanner.CardScannerResult
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentTheme
+import net.payrdr.mobile.payment.sdk.qa.config.Decoded
 import net.payrdr.mobile.payment.sdk.qa.config.GooglePayOptions
 import net.payrdr.mobile.payment.sdk.qa.config.Pin
 import net.payrdr.mobile.payment.sdk.qa.config.QaConfig
+import net.payrdr.mobile.payment.sdk.qa.config.QaConfigJson
 import net.payrdr.mobile.payment.sdk.qa.config.SdkOptions
 import net.payrdr.mobile.payment.sdk.qa.config.SslPinningOptions
 import net.payrdr.mobile.payment.sdk.qa.config.StandProfile
 import net.payrdr.mobile.payment.sdk.qa.config.ThemePreset
 import net.payrdr.mobile.payment.sdk.qa.journal.Journal
+import okhttp3.CertificatePinner
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
@@ -139,6 +142,23 @@ class SdkConfigTest {
     fun `pinning is passed only when enabled`() {
         build(SdkOptions(sslPinning = SslPinningOptions(enabled = true, pins = listOf(pin)))).sslPinning.shouldNotBeNull()
         build(SdkOptions(sslPinning = SslPinningOptions(enabled = false, pins = listOf(pin)))).sslPinning.shouldBeNull()
+    }
+
+    // The checkout hands every pin, lowercased, to OkHttp's CertificatePinner when it builds its client; that is where a
+    // host the SDK's builder accepts can still fail. The entries the SDK keeps are internal API, so the test hands the
+    // validated hosts to the pinner itself.
+    @Test
+    fun `the most exotic pin hosts the validation accepts build and pass OkHttp's pinner`() {
+        val hosts = listOf("**.A-1.bpcbt.com", "*.bpcbt.com", "a".repeat(63) + ".x--y.com", "localhost", "10.0.0.1")
+        val pins = hosts.map { Pin(it, pin.pin) }
+        val text = QaConfigJson.encode(QaConfig(sdk = SdkOptions(sslPinning = SslPinningOptions(enabled = true, pins = pins))))
+        val config = (QaConfigJson.decode(text) as Decoded.Ok).value
+
+        sdkPaymentConfig(config, profile, journal, scanner).sslPinning.shouldNotBeNull()
+        val pinner = CertificatePinner.Builder()
+        config.sdk.sslPinning.pins
+            .forEach { pinner.add(it.host.lowercase(), "sha256/${it.pin}") }
+        pinner.build().pins.size shouldBe hosts.size
     }
 
     @Test

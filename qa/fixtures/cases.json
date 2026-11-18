@@ -855,6 +855,270 @@
     }
   },
   {
+    "name": "pin_host_url",
+    "kind": "config",
+    "input": {
+      "sdk": {
+        "sslPinning": {
+          "enabled": true,
+          "pins": [
+            {
+              "host": "https://dev.bpcbt.com",
+              "pin": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+            }
+          ]
+        }
+      }
+    },
+    "expect": {
+      "errorField": "sdk.sslPinning.pins"
+    }
+  },
+  {
+    "name": "pin_host_with_port",
+    "kind": "config",
+    "input": {
+      "sdk": {
+        "sslPinning": {
+          "enabled": true,
+          "pins": [
+            {
+              "host": "dev.bpcbt.com:443",
+              "pin": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+            }
+          ]
+        }
+      }
+    },
+    "expect": {
+      "errorField": "sdk.sslPinning.pins"
+    }
+  },
+  {
+    "name": "pin_host_dot",
+    "kind": "config",
+    "input": {
+      "sdk": {
+        "sslPinning": {
+          "enabled": true,
+          "pins": [
+            {
+              "host": ".",
+              "pin": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+            }
+          ]
+        }
+      }
+    },
+    "expect": {
+      "errorField": "sdk.sslPinning.pins"
+    }
+  },
+  {
+    "name": "pin_host_with_path",
+    "kind": "config",
+    "input": {
+      "sdk": {
+        "sslPinning": {
+          "enabled": false,
+          "pins": [
+            {
+              "host": "dev.bpcbt.com/x",
+              "pin": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+            }
+          ]
+        }
+      }
+    },
+    "expect": {
+      "errorField": "sdk.sslPinning.pins"
+    }
+  },
+  {
+    "name": "pin_host_inner_wildcard",
+    "kind": "config",
+    "input": {
+      "sdk": {
+        "sslPinning": {
+          "enabled": true,
+          "pins": [
+            {
+              "host": "dev.*.bpcbt.com",
+              "pin": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+            }
+          ]
+        }
+      }
+    },
+    "expect": {
+      "errorField": "sdk.sslPinning.pins"
+    }
+  },
+  {
+    "name": "pin_host_wildcard_one_label",
+    "kind": "config",
+    "input": {
+      "sdk": {
+        "sslPinning": {
+          "enabled": true,
+          "pins": [
+            {
+              "host": "*.bpcbt.com",
+              "pin": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+            }
+          ]
+        }
+      }
+    },
+    "expect": {
+      "document": {
+        "version": 1,
+        "profile": null,
+        "order": {
+          "source": "register",
+          "type": "payment",
+          "amount": 10000,
+          "currency": "EUR",
+          "clientId": null,
+          "mdOrder": null,
+          "sessionId": null,
+          "features": [],
+          "extra": {}
+        },
+        "sdk": {
+          "locale": null,
+          "theme": "system",
+          "showResultScreen": false,
+          "scanner": false,
+          "keyProviderUrl": null,
+          "sslPinning": {
+            "enabled": true,
+            "pins": [
+              {
+                "host": "*.bpcbt.com",
+                "pin": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+              }
+            ]
+          },
+          "googlePay": {
+            "enabled": false,
+            "billingAddressRequired": false,
+            "merchantId": null,
+            "merchantFullName": null,
+            "gateway": null,
+            "gatewayMerchantId": null,
+            "countryCode": null,
+            "environment": null,
+            "allowedCardNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "allowedAuthMethods": [
+              "PAN_ONLY",
+              "CRYPTOGRAM_3DS"
+            ]
+          },
+          "applePay": {
+            "enabled": false,
+            "merchantId": "merchant.net.payrdr.samples.test",
+            "supportedNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "merchantCapabilities": [
+              "CREDIT",
+              "DEBIT",
+              "THREE_D_SECURE"
+            ],
+            "countryCode": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "pin_host_wildcard_any_depth",
+    "kind": "config",
+    "input": {
+      "sdk": {
+        "sslPinning": {
+          "enabled": true,
+          "pins": [
+            {
+              "host": "**.bpcbt.com",
+              "pin": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+            }
+          ]
+        }
+      }
+    },
+    "expect": {
+      "document": {
+        "version": 1,
+        "profile": null,
+        "order": {
+          "source": "register",
+          "type": "payment",
+          "amount": 10000,
+          "currency": "EUR",
+          "clientId": null,
+          "mdOrder": null,
+          "sessionId": null,
+          "features": [],
+          "extra": {}
+        },
+        "sdk": {
+          "locale": null,
+          "theme": "system",
+          "showResultScreen": false,
+          "scanner": false,
+          "keyProviderUrl": null,
+          "sslPinning": {
+            "enabled": true,
+            "pins": [
+              {
+                "host": "**.bpcbt.com",
+                "pin": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+              }
+            ]
+          },
+          "googlePay": {
+            "enabled": false,
+            "billingAddressRequired": false,
+            "merchantId": null,
+            "merchantFullName": null,
+            "gateway": null,
+            "gatewayMerchantId": null,
+            "countryCode": null,
+            "environment": null,
+            "allowedCardNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "allowedAuthMethods": [
+              "PAN_ONLY",
+              "CRYPTOGRAM_3DS"
+            ]
+          },
+          "applePay": {
+            "enabled": false,
+            "merchantId": "merchant.net.payrdr.samples.test",
+            "supportedNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "merchantCapabilities": [
+              "CREDIT",
+              "DEBIT",
+              "THREE_D_SECURE"
+            ],
+            "countryCode": null
+          }
+        }
+      }
+    }
+  },
+  {
     "name": "gpay_environment_unknown",
     "kind": "config",
     "input": {

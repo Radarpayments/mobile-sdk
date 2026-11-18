@@ -87,6 +87,43 @@ class QaConfigJsonTest {
     }
 
     @Test
+    fun `a pin host that is not a hostname fails as the pins field whether or not pinning is on`() {
+        val pin = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+        listOf(
+            ".",
+            "https://dev.bpcbt.com",
+            "dev.bpcbt.com:443",
+            "dev.bpcbt.com/x",
+            "a*b.com",
+            "dev..bpcbt.com",
+            "dev.bpcbt.com.",
+            ".dev.bpcbt.com",
+            "*",
+            "*.",
+            "***.bpcbt.com",
+            "dev.*.bpcbt.com",
+            "a_b.com",
+            "дев.рф",
+            "a".repeat(64) + ".com",
+        ).forEach { host ->
+            listOf(true, false).forEach { enabled ->
+                field("""{"sdk":{"sslPinning":{"enabled":$enabled,"pins":[{"host":"$host","pin":"$pin"}]}}}""") shouldBe
+                    "sdk.sslPinning.pins"
+            }
+        }
+    }
+
+    @Test
+    fun `a pin host may be a hostname with a leading one or any depth wildcard`() {
+        val pin = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+        listOf("dev.bpcbt.com", "localhost", "DEV-1.Bpcbt.com", "10.0.0.1", "*.bpcbt.com", "**.bpcbt.com", "a".repeat(63) + ".com")
+            .forEach { host ->
+                ok("""{"sdk":{"sslPinning":{"enabled":true,"pins":[{"host":"$host","pin":"$pin"}]}}}""").sdk.sslPinning.pins shouldBe
+                    listOf(Pin(host, pin))
+            }
+    }
+
+    @Test
     fun `a url scheme is compared ignoring case and a bare scheme is rejected`() {
         ok("""{"sdk":{"keyProviderUrl":"HTTPS://dev.bpcbt.com/keys"}}""").sdk.keyProviderUrl shouldBe "HTTPS://dev.bpcbt.com/keys"
         ok("""{"sdk":{"keyProviderUrl":"HTTPS://h"}}""").sdk.keyProviderUrl shouldBe "HTTPS://h"

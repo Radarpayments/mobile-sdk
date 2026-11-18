@@ -1,11 +1,13 @@
 package net.payrdr.mobile.payment.sdk.qa.theme
 
-import io.kotest.matchers.nulls.shouldNotBeNull
+import androidx.compose.ui.text.font.FontFamily
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentColor
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentCorners
+import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentFontFamily
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentShapes
+import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentTextStyle
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentTheme
 import net.payrdr.mobile.payment.sdk.payment.ui.theme.PaymentTypography
 import net.payrdr.mobile.payment.sdk.qa.config.ThemePreset
@@ -41,23 +43,20 @@ class ThemePresetsTest {
     @Test
     fun `large text scales all eight styles by one and a half and uses a serif family`() {
         val theme = ThemePreset.LARGE_TEXT.custom()
-        val typography = theme.typography
-        typography.title.size shouldBe 25.5f
-        typography.title.lineHeight shouldBe 33f
-        typography.amount.size shouldBe 45f
-        typography.caption.size shouldBe 18.75f
-        val styles =
-            listOf(
-                typography.title,
-                typography.body,
-                typography.label,
-                typography.button,
-                typography.input,
-                typography.headline,
-                typography.amount,
-                typography.caption,
-            )
-        styles.forEach { it.fontFamily.shouldNotBeNull() }
+        val serif = PaymentFontFamily(FontFamily.Serif)
+
+        fun PaymentTextStyle.large() = copy(size = size * 1.5f, lineHeight = lineHeight * 1.5f, fontFamily = serif)
+        val default = PaymentTypography.Default
+        theme.typography.title shouldBe default.title.large()
+        theme.typography.body shouldBe default.body.large()
+        theme.typography.label shouldBe default.label.large()
+        theme.typography.button shouldBe default.button.large()
+        theme.typography.input shouldBe default.input.large()
+        theme.typography.headline shouldBe default.headline.large()
+        theme.typography.amount shouldBe default.amount.large()
+        theme.typography.caption shouldBe default.caption.large()
+        theme.typography.title.size shouldBe 25.5f
+        theme.typography.amount.lineHeight shouldBe 51f
         theme.shapes shouldBe PaymentShapes.Default
     }
 
