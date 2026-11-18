@@ -38,8 +38,8 @@
             "countryCode": null,
             "environment": null,
             "allowedCardNetworks": [
-              "VISA",
-              "MASTERCARD"
+              "MASTERCARD",
+              "VISA"
             ],
             "allowedAuthMethods": [
               "PAN_ONLY",
@@ -50,13 +50,13 @@
             "enabled": false,
             "merchantId": "merchant.net.payrdr.samples.test",
             "supportedNetworks": [
-              "VISA",
-              "MASTERCARD"
+              "MASTERCARD",
+              "VISA"
             ],
             "merchantCapabilities": [
-              "THREE_D_SECURE",
               "CREDIT",
-              "DEBIT"
+              "DEBIT",
+              "THREE_D_SECURE"
             ],
             "countryCode": null
           }
@@ -110,8 +110,8 @@
             "countryCode": null,
             "environment": null,
             "allowedCardNetworks": [
-              "VISA",
-              "MASTERCARD"
+              "MASTERCARD",
+              "VISA"
             ],
             "allowedAuthMethods": [
               "PAN_ONLY",
@@ -122,13 +122,13 @@
             "enabled": false,
             "merchantId": "merchant.net.payrdr.samples.test",
             "supportedNetworks": [
-              "VISA",
-              "MASTERCARD"
+              "MASTERCARD",
+              "VISA"
             ],
             "merchantCapabilities": [
-              "THREE_D_SECURE",
               "CREDIT",
-              "DEBIT"
+              "DEBIT",
+              "THREE_D_SECURE"
             ],
             "countryCode": null
           }
@@ -152,7 +152,8 @@
         "sessionId": "session-1",
         "features": [
           "VERIFY",
-          "FORCE_CREATE_BINDING"
+          "FORCE_CREATE_BINDING",
+          "VERIFY"
         ],
         "extra": {
           "description": "qa run",
@@ -186,6 +187,7 @@
           "countryCode": "CY",
           "environment": "production",
           "allowedCardNetworks": [
+            "JCB",
             "AMEX",
             "JCB"
           ],
@@ -197,13 +199,14 @@
           "enabled": true,
           "merchantId": "merchant.example.qa",
           "supportedNetworks": [
+            "JCB",
             "AMEX",
-            "DISCOVER",
-            "JCB"
+            "DISCOVER"
           ],
           "merchantCapabilities": [
+            "THREE_D_SECURE",
             "DEBIT",
-            "THREE_D_SECURE"
+            "DEBIT"
           ],
           "countryCode": "CY"
         }
@@ -331,8 +334,8 @@
             "countryCode": null,
             "environment": null,
             "allowedCardNetworks": [
-              "VISA",
-              "MASTERCARD"
+              "MASTERCARD",
+              "VISA"
             ],
             "allowedAuthMethods": [
               "PAN_ONLY",
@@ -343,13 +346,13 @@
             "enabled": false,
             "merchantId": "merchant.net.payrdr.samples.test",
             "supportedNetworks": [
-              "VISA",
-              "MASTERCARD"
+              "MASTERCARD",
+              "VISA"
             ],
             "merchantCapabilities": [
-              "THREE_D_SECURE",
               "CREDIT",
-              "DEBIT"
+              "DEBIT",
+              "THREE_D_SECURE"
             ],
             "countryCode": null
           }
@@ -400,8 +403,8 @@
             "countryCode": null,
             "environment": null,
             "allowedCardNetworks": [
-              "VISA",
-              "MASTERCARD"
+              "MASTERCARD",
+              "VISA"
             ],
             "allowedAuthMethods": [
               "PAN_ONLY",
@@ -412,13 +415,13 @@
             "enabled": false,
             "merchantId": "merchant.net.payrdr.samples.test",
             "supportedNetworks": [
-              "VISA",
-              "MASTERCARD"
+              "MASTERCARD",
+              "VISA"
             ],
             "merchantCapabilities": [
-              "THREE_D_SECURE",
               "CREDIT",
-              "DEBIT"
+              "DEBIT",
+              "THREE_D_SECURE"
             ],
             "countryCode": null
           }
@@ -469,8 +472,8 @@
             "countryCode": null,
             "environment": null,
             "allowedCardNetworks": [
-              "VISA",
-              "MASTERCARD"
+              "MASTERCARD",
+              "VISA"
             ],
             "allowedAuthMethods": [
               "PAN_ONLY",
@@ -481,13 +484,13 @@
             "enabled": false,
             "merchantId": "merchant.net.payrdr.samples.test",
             "supportedNetworks": [
-              "VISA",
-              "MASTERCARD"
+              "MASTERCARD",
+              "VISA"
             ],
             "merchantCapabilities": [
-              "THREE_D_SECURE",
               "CREDIT",
-              "DEBIT"
+              "DEBIT",
+              "THREE_D_SECURE"
             ],
             "countryCode": null
           }
@@ -548,8 +551,8 @@
             "countryCode": null,
             "environment": null,
             "allowedCardNetworks": [
-              "VISA",
-              "MASTERCARD"
+              "MASTERCARD",
+              "VISA"
             ],
             "allowedAuthMethods": [
               "PAN_ONLY",
@@ -560,13 +563,13 @@
             "enabled": false,
             "merchantId": "merchant.net.payrdr.samples.test",
             "supportedNetworks": [
-              "VISA",
-              "MASTERCARD"
+              "MASTERCARD",
+              "VISA"
             ],
             "merchantCapabilities": [
-              "THREE_D_SECURE",
               "CREDIT",
-              "DEBIT"
+              "DEBIT",
+              "THREE_D_SECURE"
             ],
             "countryCode": null
           }

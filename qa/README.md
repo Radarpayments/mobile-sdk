@@ -100,8 +100,11 @@ configuration. The first failing field in the table's order is the one reported.
 value is never applied in part: the app names the field and keeps the previous state.
 
 **Encoding.** Every field is written, nulls included, `version` as 1, in the order of the tables. A string that is read
-as null (a blank `clientId`, `mdOrder` or `sessionId`) is written as null. Arrays keep the order they were read in; the
-defaults of the sets are the lists in the tables, not sorted ones.
+as null (a blank `clientId`, `mdOrder` or `sessionId`) is written as null. A set (the Google Pay and Apple Pay lists)
+is written without duplicates in the order of its allowed values in the table, whatever order it was read in: the
+defaults in the tables name the members, so the default networks are written `["MASTERCARD","VISA"]`. This keeps two
+implementations, one of which has no ordered set, write the same document. `order.features` has no allowed list: it
+keeps the order it was read in, with duplicates removed.
 
 **Launch checks.** They are not document validation (a half-edited form and a two-field link stay valid documents).
 They run when Launch is pressed, in this order, and each reports one field:
