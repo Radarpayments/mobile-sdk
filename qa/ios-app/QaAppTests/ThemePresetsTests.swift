@@ -106,4 +106,37 @@ final class ThemePresetsTests: XCTestCase {
         )
         XCTAssertEqual(colors.scrim.argb, 0x80FF_0080)
     }
+
+    private func argb(_ colors: PaymentColors) -> [Int64] {
+        [
+            colors.primary, colors.onPrimary, colors.background, colors.onBackground, colors.surface, colors.onSurface,
+            colors.error, colors.onError, colors.outline, colors.success, colors.onSurfaceVariant, colors.placeholder,
+            colors.outlineStrong, colors.scrim,
+        ].map(\.argb)
+    }
+
+    // The values of README "Theme presets", token by token in the order of PaymentColors' initializer.
+    func test_every_palette_is_the_readmes() throws {
+        XCTAssertEqual(
+            Array(argb(try custom(.rounded).colors).prefix(10)),
+            [
+                0xFF1F_5FFF, 0xFFFF_FFFF, 0xFFFF_FFFF, 0xFF14_161A, 0xFFF3_F4F6, 0xFF14_161A, 0xFFD9_2D20, 0xFFFF_FFFF,
+                0xFFD0_D5DD, 0xFF12_B76A,
+            ]
+        )
+        XCTAssertEqual(
+            argb(try custom(.contrast).colors),
+            [
+                0xFF00_0000, 0xFFFF_FFFF, 0xFFFF_FFFF, 0xFF00_0000, 0xFFFF_FFFF, 0xFF00_0000, 0xFFB0_0020, 0xFFFF_FFFF,
+                0xFF00_0000, 0xFF00_6400, 0xFF00_0000, 0xFF59_5959, 0xFF00_0000, 0xCC00_0000,
+            ]
+        )
+        XCTAssertEqual(
+            argb(try custom(.debug).colors),
+            [
+                0xFFFF_00FF, 0xFF00_FF00, 0xFFFF_FF00, 0xFF00_00FF, 0xFF00_FFFF, 0xFFFF_0000, 0xFFFF_8000, 0xFF80_0080,
+                0xFF00_8000, 0xFF00_80FF, 0xFF80_4000, 0xFF80_8080, 0xFF00_0000, 0x80FF_0080,
+            ]
+        )
+    }
 }

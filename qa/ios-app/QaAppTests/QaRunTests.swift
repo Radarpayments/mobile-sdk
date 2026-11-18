@@ -461,6 +461,31 @@ final class QaRunTests: MerchantTestCase {
         XCTAssertEqual(journalEntries, [])
     }
 
+    func test_a_registration_reset_before_it_starts_sends_nothing_into_the_next_runs_journal() async {
+        run.launch(config: register, profile: v1)
+        run.reset()
+        run.launch(config: existing("second"), profile: v1)
+        await run.waitUntilSettled()
+
+        XCTAssertEqual(run.state, .inSheet(OpenOrder(mdOrder: "second", sessionId: nil)))
+        XCTAssertEqual(journalEntries, [])
+        XCTAssertTrue(StubURLProtocol.requests.isEmpty)
+    }
+
+    func test_a_status_query_reset_before_it_starts_sends_nothing_into_the_next_runs_journal() async {
+        run.launch(config: register, profile: v1)
+        await run.waitUntilSettled()
+        let registered = StubURLProtocol.requests.count
+        run.onResult(CheckoutResultCompleted(orderId: "abc"))
+        run.reset()
+        run.launch(config: existing("second"), profile: v1)
+        await run.waitUntilSettled()
+
+        XCTAssertEqual(run.state, .inSheet(OpenOrder(mdOrder: "second", sessionId: nil)))
+        XCTAssertEqual(journalEntries, [])
+        XCTAssertEqual(StubURLProtocol.requests.count, registered)
+    }
+
     func test_a_sheet_of_a_reset_run_that_does_not_open_does_not_finish_the_next_run() async {
         onPresent = { [unowned self] call, _ in
             guard call == 0 else { return true }

@@ -120,6 +120,9 @@ final class QaRun: ObservableObject {
     }
 
     private func register(_ attempt: Attempt) async {
+        // A reset in the same main-actor turn as the next launch cancels this task before it runs; the merchant would
+        // otherwise journal this attempt's request into the next attempt's cleared journal.
+        guard current === attempt, !Task.isCancelled else { return }
         let registration: Registration
         do {
             registration = try await merchant.register(order: attempt.config.order, profile: attempt.profile)
@@ -155,6 +158,7 @@ final class QaRun: ObservableObject {
     private func finish(_ attempt: Attempt, _ order: OpenOrder, _ result: CheckoutResult) async {
         // After a session the app knows the order only from the result; an empty orderId means the sheet closed first.
         let mdOrder = order.mdOrder ?? (isBlank(result.orderId) ? nil : result.orderId)
+        guard current === attempt, !Task.isCancelled else { return }
         let status: OrderStatus
         do {
             status = try await merchant.status(orderId: mdOrder, profile: attempt.profile)

@@ -81,6 +81,11 @@ nonisolated struct QrScannerState {
     mutating func disappear() -> QrScan? {
         end(.cancelled)
     }
+
+    /// The camera may start: false once the scan has been reported, e.g. the screen closed during the permission prompt.
+    var mayStart: Bool {
+        !reported
+    }
 }
 
 final class QrScannerController: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
@@ -160,6 +165,7 @@ final class QrScannerController: UIViewController, AVCaptureMetadataOutputObject
     }
 
     private func configure() {
+        guard state.mayStart else { return }
         let output = AVCaptureMetadataOutput()
         output.setMetadataObjectsDelegate(self, queue: .main)
         // Configuring and starting the session block until the camera is up.

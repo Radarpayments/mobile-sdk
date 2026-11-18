@@ -21,6 +21,14 @@ final class QrScannerStateTests: XCTestCase {
         XCTAssertEqual(state.appear(), .none)
     }
 
+    func test_a_camera_granted_after_the_screen_closed_during_the_prompt_does_not_start() {
+        var state = QrScannerState()
+        _ = state.appear()
+        XCTAssertTrue(state.mayStart)
+        _ = state.disappear()
+        XCTAssertFalse(state.mayStart)
+    }
+
     func test_a_code_is_reported_and_nothing_after_it() {
         var state = QrScannerState()
         _ = state.appear()
