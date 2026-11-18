@@ -262,6 +262,8 @@ final class MerchantRegisterTests: MerchantTestCase {
 
         let outcome = await task.result
         XCTAssertThrowsError(try outcome.get()) { XCTAssertTrue($0 is CancellationError, "\($0)") }
+        XCTAssertFalse(journalText.contains("did not answer"), journalText)
+        XCTAssertFalse(journal.snapshot().contains { $0.message.hasPrefix("←") }, journalText)
     }
 
     func test_the_callers_own_timeout_is_not_turned_into_a_failure() async throws {
@@ -282,6 +284,7 @@ final class MerchantRegisterTests: MerchantTestCase {
         await fulfillment(of: [started], timeout: 1)
         XCTAssertThrowsError(try outcome.get()) { XCTAssertTrue($0 is CancellationError, "\($0)") }
         XCTAssertFalse(journalText.contains("did not answer"), journalText)
+        XCTAssertFalse(journal.snapshot().contains { $0.message.hasPrefix("←") }, journalText)
     }
 
     func test_an_http_stack_that_reports_our_timeout_as_an_error_still_times_out() async throws {
@@ -451,6 +454,80 @@ final class MerchantRegisterTests: MerchantTestCase {
         let result = try await merchant().register(order: OrderConfig(), profile: v1)
 
         XCTAssertEqual(result, .registered(mdOrder: "abc", sessionId: nil))
+    }
+
+    func test_a_redirect_is_not_followed_and_fails_with_its_status() async throws {
+        StubURLProtocol.reset { _ in .redirect(status: 302, location: "https://elsewhere.invalid/pay", body: "") }
+
+        let result = try await merchant().register(order: OrderConfig(), profile: v1)
+
+        XCTAssertEqual(StubURLProtocol.requests.map(\.url), ["https://dev.bpcbt.com/payment/rest/register.do"])
+        XCTAssertEqual(result, .failed(httpStatus: 302, message: "HTTP 302: (empty body)"))
+        XCTAssertEqual(journal.snapshot().last?.message, "← 302 ")
+        XCTAssertEqual(journal.snapshot().last?.level, .warning)
+    }
+
+    func test_a_redirect_that_keeps_the_method_does_not_post_the_form_again() async throws {
+        StubURLProtocol.reset { _ in .redirect(status: 307, location: "https://elsewhere.invalid/pay", body: "moved") }
+
+        let result = try await merchant().register(order: OrderConfig(), profile: v1)
+
+        XCTAssertEqual(StubURLProtocol.requests.count, 1)
+        XCTAssertEqual(result, .failed(httpStatus: 307, message: "HTTP 307: moved"))
+        XCTAssertEqual(journal.snapshot().last?.message, "← 307 moved")
+    }
+
+    func test_a_redirect_does_not_take_the_api_key_to_another_host() async throws {
+        StubURLProtocol.reset { _ in .redirect(status: 303, location: "https://elsewhere.invalid/pay", body: "") }
+
+        let result = try await merchant().register(order: OrderConfig(), profile: v2)
+
+        XCTAssertEqual(StubURLProtocol.requests.map(\.url), ["https://dev.bpcbt.com/api2/sessions"])
+        XCTAssertEqual(result, .failed(httpStatus: 303, message: "HTTP 303: (empty body)"))
+    }
+
+    func test_the_merchant_session_sends_no_cookie_back() async throws {
+        let configuration = merchantSessionConfiguration()
+        configuration.protocolClasses = [StubURLProtocol.self]
+        let merchant = Merchant(session: URLSession(configuration: configuration), journal: journal, orderNumber: { "qa-1" })
+        StubURLProtocol.reset { _ in
+            .answerWithHeaders(status: 200, headers: ["Set-Cookie": "JSESSIONID=s1; Path=/"], body: #"{"orderId":"abc"}"#)
+        }
+
+        _ = try await merchant.register(order: OrderConfig(), profile: v1)
+        _ = try await merchant.status(orderId: "abc", profile: v1)
+
+        let requests = StubURLProtocol.requests
+        XCTAssertEqual(requests.count, 2)
+        XCTAssertNil(requests[1].headers["Cookie"], "\(requests[1].headers.keys)")
+    }
+
+    func test_the_merchant_session_keeps_no_cookie_cache_or_credential() {
+        let configuration = makeMerchantSession().configuration
+
+        XCTAssertNil(configuration.httpCookieStorage)
+        XCTAssertFalse(configuration.httpShouldSetCookies)
+        XCTAssertEqual(configuration.httpCookieAcceptPolicy, .never)
+        XCTAssertNil(configuration.urlCache)
+        XCTAssertNil(configuration.urlCredentialStorage)
+    }
+
+    func test_a_timeout_that_is_not_positive_times_out_at_once() async throws {
+        StubURLProtocol.reset { _ in .hang }
+
+        for timeout in [-1, 0, -.infinity, .nan] as [TimeInterval] {
+            let result = try await merchant(timeout: timeout).register(order: OrderConfig(), profile: v1)
+
+            XCTAssertEqual(result, .failed(httpStatus: nil, message: "The gateway did not answer in 0 s"), "\(timeout)")
+        }
+    }
+
+    func test_a_huge_timeout_waits_for_the_answer() async throws {
+        for timeout in [.infinity, .greatestFiniteMagnitude, 1e300, 1e10] as [TimeInterval] {
+            let result = try await merchant(timeout: timeout).register(order: OrderConfig(), profile: v1)
+
+            XCTAssertEqual(result, .registered(mdOrder: "abc", sessionId: nil), "\(timeout)")
+        }
     }
 
     private func sessionId(of mdOrder: String) -> String {

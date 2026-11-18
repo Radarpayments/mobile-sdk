@@ -10,6 +10,11 @@ enum StubReply {
     case hang
     /// Sends the status line and then nothing.
     case headOnly(status: Int)
+    /// Answers with these headers, which may set a cookie.
+    case answerWithHeaders(status: Int, headers: [String: String], body: String)
+    /// A 30x to [location]: the URL loading system is told of the redirect as a real HTTP stack tells it, and the redirect
+    /// response is delivered as the answer for a client that refuses to follow.
+    case redirect(status: Int, location: String, body: String)
     /// Reacts only after [seconds], unless the request was cancelled before.
     indirect case after(seconds: TimeInterval, StubReply)
 }
@@ -81,6 +86,28 @@ final class StubURLProtocol: URLProtocol {
             client?.urlProtocol(self, didFailWithError: error)
         case .hang:
             break
+        case let .answerWithHeaders(status, headers, body):
+            let response = HTTPURLResponse(url: request.url!, statusCode: status, httpVersion: "HTTP/1.1", headerFields: headers)!
+            client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+            client?.urlProtocol(self, didLoad: Data(body.utf8))
+            client?.urlProtocolDidFinishLoading(self)
+        case let .redirect(status, location, body):
+            let response = HTTPURLResponse(
+                url: request.url!,
+                statusCode: status,
+                httpVersion: "HTTP/1.1",
+                headerFields: ["Location": location]
+            )!
+            var next = request
+            next.url = URL(string: location)
+            if status == 301 || status == 302 || status == 303 {
+                next.httpMethod = "GET"
+                next.httpBody = nil
+            }
+            client?.urlProtocol(self, wasRedirectedTo: next, redirectResponse: response)
+            client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+            client?.urlProtocol(self, didLoad: Data(body.utf8))
+            client?.urlProtocolDidFinishLoading(self)
         case let .headOnly(status):
             let response = HTTPURLResponse(url: request.url!, statusCode: status, httpVersion: "HTTP/1.1", headerFields: nil)!
             client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)

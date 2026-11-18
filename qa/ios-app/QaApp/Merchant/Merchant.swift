@@ -1,17 +1,29 @@
 import Foundation
 import RadarpaymentsSDKPayment
 
-/// The session the merchant calls go through: no cookies or cache shared with anything else, and no timeout of its own
-/// shorter than the merchant's.
+/// The session the merchant calls go through: no timeout of its own shorter than the merchant's, and nothing kept from
+/// one call to the next. A merchant's server sends no cookie back, so a cookie from `register.do` must not reach the status
+/// call or the next run.
 nonisolated func makeMerchantSession() -> URLSession {
+    URLSession(configuration: merchantSessionConfiguration())
+}
+
+nonisolated func merchantSessionConfiguration() -> URLSessionConfiguration {
     let configuration = URLSessionConfiguration.ephemeral
     configuration.timeoutIntervalForRequest = idleTimeoutCeiling
     configuration.timeoutIntervalForResource = idleTimeoutCeiling
-    return URLSession(configuration: configuration)
+    configuration.httpCookieStorage = nil
+    configuration.httpShouldSetCookies = false
+    configuration.httpCookieAcceptPolicy = .never
+    configuration.urlCache = nil
+    configuration.urlCredentialStorage = nil
+    return configuration
 }
 
 // The merchant times the whole exchange itself; the stack's own timeouts only stand behind it.
-private nonisolated let idleTimeoutCeiling: TimeInterval = 24 * 60 * 60
+private nonisolated let idleTimeoutCeiling: TimeInterval = 2 * maxTimeout
+// Task.sleep takes whole nanoseconds in a UInt64; a day keeps any timeout far inside it.
+private nonisolated let maxTimeout: TimeInterval = 24 * 60 * 60
 
 /// The merchant's backend, played from the device: registers the order the SDK then pays, and asks its status
 /// afterwards, with the stand profile's credentials. Every exchange is journaled under `merchant`, the password and the
@@ -34,7 +46,7 @@ nonisolated struct Merchant {
     ) {
         self.session = session
         self.journal = journal
-        self.timeout = timeout
+        self.timeout = timeout > 0 ? min(timeout, maxTimeout) : 0
         self.orderNumber = orderNumber
     }
 
@@ -98,7 +110,7 @@ nonisolated struct Merchant {
         do {
             return try await withThrowingTaskGroup(of: Outcome?.self) { group in
                 group.addTask {
-                    let (data, response) = try await session.data(for: urlRequest)
+                    let (data, response) = try await session.data(for: urlRequest, delegate: NoRedirect())
                     guard let http = response as? HTTPURLResponse else { throw URLError(.badServerResponse) }
                     return .reply(status: http.statusCode, body: text(of: data, http))
                 }
@@ -175,4 +187,19 @@ private nonisolated func text(of data: Data, _ response: HTTPURLResponse) -> Str
         }
     }
     return String(decoding: data, as: UTF8.self)
+}
+
+// A 307 or 308 would post the password again and a 301/302/303 would carry the API key to the `Location` host, so the
+// redirect is read as the answer, like any other that is not 2xx. On the task rather than the session: the caller may
+// pass any session.
+private nonisolated final class NoRedirect: NSObject, URLSessionTaskDelegate, Sendable {
+    func urlSession(
+        _: URLSession,
+        task _: URLSessionTask,
+        willPerformHTTPRedirection _: HTTPURLResponse,
+        newRequest _: URLRequest,
+        completionHandler: @escaping (URLRequest?) -> Void
+    ) {
+        completionHandler(nil)
+    }
 }

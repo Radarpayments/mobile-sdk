@@ -190,7 +190,9 @@ array as its JSON text (`{"a":1}`).
 | `POST {base}/rest/getOrderStatusExtended.do` (v1 with credentials) | form | `userName`, `password`, `orderId` ⚠ |
 
 ⚠ marks what is not taken from the samples; it is checked against the sandbox. Unlike the samples, the app adds nothing
-for a zero amount.
+for a zero amount. On both platforms the app follows no redirect, since following one would post the password again or
+carry the API key to another host: a 30x is read like any other answer that is not 2xx and fails as `HTTP <status>: …`,
+so a profile must name the final URL. It sends no cookies and keeps none between calls.
 
 Answers. `register.do` and `registerP2P.do`: `orderId`, else `errorMessage` or `Gateway error <errorCode>`. Sessions:
 `id` (the `mdOrder` is decoded from it as the samples' `mdOrderOfSession` does, and is null when it does not decode,
