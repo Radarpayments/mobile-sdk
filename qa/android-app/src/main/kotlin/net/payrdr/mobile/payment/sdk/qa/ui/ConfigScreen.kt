@@ -76,7 +76,7 @@ internal fun ConfigScreen(
         LaunchBar(
             problem = form.problem ?: session.notice ?: (state as? RunState.Invalid)?.problem,
             busy = state.isBusy(),
-            enabled = profileProblem == null && !state.isBusy(),
+            enabled = form.problem == null && profileProblem == null && !state.isBusy(),
             onLaunch = session::launch,
         )
     }

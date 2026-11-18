@@ -27,18 +27,23 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import net.payrdr.mobile.payment.sdk.payment.android.rememberPayrdrCheckout
+import net.payrdr.mobile.payment.sdk.payment.scanner.CardScannerProvider
+import net.payrdr.mobile.payment.sdk.qa.launcher.OpenOrder
 import net.payrdr.mobile.payment.sdk.qa.launcher.RunState
 import net.payrdr.mobile.payment.sdk.qa.launcher.sdkPaymentConfig
 
 /** The app's screens, the checkout that stays composed under them, and the confirmation of an incoming profile. */
 @Composable
-internal fun QaNavGraph(session: QaSession) {
+internal fun QaNavGraph(
+    session: QaSession,
+    scanner: CardScannerProvider,
+) {
     MaterialTheme {
         Surface(Modifier.fillMaxSize().semantics { testTagsAsResourceId = true }) {
             Column(Modifier.safeDrawingPadding()) {
                 if (session.ready) Screens(session)
             }
-            session.launched?.let { Checkout(session, it) }
+            session.launched?.let { Checkout(session, scanner, it) }
             session.pending?.let { ProfileConfirmation(it) }
         }
     }
@@ -51,7 +56,11 @@ private fun Screens(session: QaSession) {
     val profiles by session.profiles.collectAsState()
     val entries by session.journal.entries.collectAsState()
     LaunchedEffect(state) {
-        if (state is RunState.Finished && nav.currentDestination?.route != RESULT) nav.navigate(RESULT) { popUpTo(CONFIG) }
+        // Once per run: a rotation re-runs this effect, and QA may have gone from the result to the journal since.
+        val finished = state as? RunState.Finished ?: return@LaunchedEffect
+        if (session.shown === finished) return@LaunchedEffect
+        session.shown = finished
+        if (nav.currentDestination?.route != RESULT) nav.navigate(RESULT) { popUpTo(CONFIG) }
     }
     NavHost(nav, startDestination = CONFIG) {
         composable(CONFIG) {
@@ -85,16 +94,20 @@ private fun Screens(session: QaSession) {
 @Composable
 private fun Checkout(
     session: QaSession,
+    scanner: CardScannerProvider,
     launch: Launched,
 ) {
     val config =
         remember(launch.config, launch.profile) {
-            sdkPaymentConfig(launch.config, launch.profile, session.journal, session.scanner)
+            sdkPaymentConfig(launch.config, launch.profile, session.journal, scanner)
         }
     val checkout = rememberPayrdrCheckout(config, session.run::onResult)
     DisposableEffect(checkout) {
-        session.presenter = { order -> order.sessionId?.let(checkout::presentSession) ?: checkout.present(order.mdOrder.orEmpty()) }
-        onDispose { session.presenter = null }
+        val presenter: (OpenOrder) -> Unit = { order ->
+            order.sessionId?.let(checkout::presentSession) ?: checkout.present(order.mdOrder.orEmpty())
+        }
+        session.attach(presenter)
+        onDispose { session.detach(presenter) }
     }
     LaunchedEffect(launch) { session.checkoutReady(launch) }
 }

@@ -106,8 +106,13 @@ private fun <T, R> Decoded<T>.map(transform: (T) -> R): Decoded<R> =
 
 private fun ok(value: String?): Decoded<String?> = Decoded.Ok(value?.takeIf { it.isNotBlank() })
 
+// toLongOrNull takes a sign and the digits of every script; Swift's Int64 does not, and the apps must agree.
 private fun amount(text: String): Decoded<Long> =
-    text.toLongOrNull()?.let { Decoded.Ok(it) } ?: Decoded.Invalid(Problem("order.amount", "must be a whole number of minor units"))
+    text
+        .takeIf { it.isNotEmpty() && it.all { char -> char in '0'..'9' } }
+        ?.toLongOrNull()
+        ?.let { Decoded.Ok(it) }
+        ?: Decoded.Invalid(Problem("order.amount", "must be a whole number of minor units"))
 
 private fun flag(
     path: String,

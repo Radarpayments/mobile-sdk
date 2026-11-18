@@ -1,22 +1,23 @@
 package net.payrdr.mobile.payment.sdk.qa.ui
 
-import android.app.Application
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import net.payrdr.mobile.payment.sdk.payment.scanner.CardScannerProvider
-import net.payrdr.mobile.payment.sdk.qa.QaApplication
 import net.payrdr.mobile.payment.sdk.qa.config.Problem
 import net.payrdr.mobile.payment.sdk.qa.config.QaConfig
 import net.payrdr.mobile.payment.sdk.qa.config.StandProfile
@@ -26,6 +27,7 @@ import net.payrdr.mobile.payment.sdk.qa.journal.Journal
 import net.payrdr.mobile.payment.sdk.qa.launcher.OpenOrder
 import net.payrdr.mobile.payment.sdk.qa.launcher.QaRun
 import net.payrdr.mobile.payment.sdk.qa.launcher.RunState
+import net.payrdr.mobile.payment.sdk.qa.merchant.Merchant
 import net.payrdr.mobile.payment.sdk.qa.storage.QaStore
 
 /** A launch the checkout is built for; [id] tells two launches of the same configuration apart. */
@@ -51,19 +53,16 @@ internal class PendingProfile(
 }
 
 /**
- * The state the screens share, kept across a rotation: the form, the stored profiles, the run, and the external input,
- * applied one batch after another in the order it arrived.
+ * The app's one session: the form, the stored profiles, the run, and the external input, applied one batch after
+ * another in the order it arrived. It belongs to the process, not to a screen: an input that starts a second screen
+ * above the open sheet must reach the run that is under way, not start another one.
  */
 internal class QaSession(
-    application: Application,
-) : AndroidViewModel(application) {
-    private val app = application as QaApplication
-    private val store: QaStore = app.store
-
-    val journal: Journal = app.journal
-
-    val scanner: CardScannerProvider = app.scanner
-
+    private val store: QaStore,
+    val journal: Journal,
+    merchant: Merchant,
+    private val scope: CoroutineScope,
+) {
     val form = ConfigForm(QaConfig())
 
     val editor = ProfileEditor()
@@ -72,9 +71,9 @@ internal class QaSession(
     var ready by mutableStateOf(false)
         private set
 
-    val profiles: StateFlow<List<StandProfile>> = store.profiles.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+    val profiles: StateFlow<List<StandProfile>> = store.profiles.stateIn(scope, SharingStarted.Eagerly, emptyList())
 
-    /** The last rejection of external input, until the next input or launch. */
+    /** The last rejection of external input or failed write, until the next input or launch. */
     var notice: Problem? by mutableStateOf(null)
         private set
 
@@ -88,24 +87,29 @@ internal class QaSession(
     var launched: Launched? by mutableStateOf(null)
         private set
 
+    /** The finished run the result screen was opened for, so that it is opened once per run. */
+    var shown: RunState.Finished? = null
+
     private var started = 0L
 
-    /** Opens the sheet; set by the checkout while it is on screen. */
-    var presenter: ((OpenOrder) -> Unit)? = null
+    private var refused: QaConfig? = null
 
-    val run = QaRun(app.merchant, journal, viewModelScope) { order -> checkNotNull(presenter) { "The checkout is not on screen" }(order) }
+    // The checkouts on screen, the newest last. A run waits for one instead of failing while none is composed.
+    private val presenters = MutableStateFlow<List<(OpenOrder) -> Unit>>(emptyList())
+
+    val run = QaRun(merchant, journal, scope) { order -> presenters.map { it.lastOrNull() }.filterNotNull().first()(order) }
 
     private val intakes = Channel<List<Intake>>(Channel.UNLIMITED)
 
     init {
-        viewModelScope.launch {
+        scope.launch {
             form.set(store.config.first())
             ready = true
             launch {
                 snapshotFlow { form.config }.collectLatest { config ->
                     // A refusal is about the config it was given; once QA changes that config it is stale.
                     if (run.state.value is RunState.Invalid && config != refused) run.reset()
-                    store.saveConfig(config)
+                    write("the configuration") { store.saveConfig(config) }?.let { notice = it }
                 }
             }
             for (steps in intakes) apply(steps)
@@ -120,7 +124,13 @@ internal class QaSession(
         start(profiles.value)
     }
 
-    private var refused: QaConfig? = null
+    fun attach(presenter: (OpenOrder) -> Unit) {
+        presenters.update { it + presenter }
+    }
+
+    fun detach(presenter: (OpenOrder) -> Unit) {
+        presenters.update { it - presenter }
+    }
 
     fun checkoutReady(launch: Launched) {
         if (launch.id <= started) return
@@ -137,16 +147,31 @@ internal class QaSession(
         form.edit(Tags.PROFILE, name)
     }
 
-    fun saveProfile(profile: StandProfile) {
-        viewModelScope.launch { store.saveProfile(profile) }
+    fun saveProfile(
+        profile: StandProfile,
+        onSaved: () -> Unit,
+    ) {
+        scope.launch {
+            val problem = write("the profile") { store.saveProfile(profile) }
+            if (problem == null) onSaved() else editor.failed(problem)
+        }
     }
 
-    fun deleteProfile(name: String) {
-        viewModelScope.launch { store.deleteProfile(name) }
+    fun deleteProfile(
+        name: String,
+        onDeleted: () -> Unit,
+    ) {
+        scope.launch {
+            val problem = write("the profile") { store.deleteProfile(name) }
+            if (problem == null) onDeleted() else editor.failed(problem)
+        }
     }
 
     private fun start(profiles: List<StandProfile>) {
-        if (run.state.value.isBusy()) return
+        // A launch whose checkout is not composed yet is under way too.
+        if (run.state.value.isBusy() || (launched?.id ?: 0) > started) return
+        // The field shows text that is not in the config; launching the last good value would test something else.
+        if (form.problem != null) return
         notice = null
         val config = form.config
         val profile = profiles.find { it.name == config.profile }
@@ -166,7 +191,11 @@ internal class QaSession(
                 is Intake.Config -> form.set(step.config)
                 is Intake.Profile -> {
                     if (step.needsConfirmation && !confirmed(step.profile)) return
-                    store.saveProfile(step.profile)
+                    val problem = write("the profile") { store.saveProfile(step.profile) }
+                    if (problem != null) {
+                        notice = problem
+                        return
+                    }
                 }
                 Intake.Launch -> start(store.profiles.first())
             }
@@ -183,5 +212,23 @@ internal class QaSession(
         }
     }
 }
+
+/**
+ * Runs a store write and returns what went wrong instead of throwing: a full disk, a Keystore that refuses to seal.
+ * The message names the exception's class only, since a message could carry what was being sealed.
+ */
+@Suppress("TooGenericExceptionCaught")
+private suspend fun write(
+    what: String,
+    block: suspend () -> Unit,
+): Problem? =
+    try {
+        block()
+        null
+    } catch (cancelled: CancellationException) {
+        throw cancelled
+    } catch (error: Exception) {
+        Problem("store", "could not save $what (${error.javaClass.simpleName})")
+    }
 
 internal fun RunState.isBusy(): Boolean = this is RunState.Registering || this is RunState.InSheet || this is RunState.QueryingStatus

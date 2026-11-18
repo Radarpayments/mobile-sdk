@@ -67,16 +67,14 @@ internal fun ProfilesScreen(
                 Button(
                     onClick = {
                         editor.valid()?.let { profile ->
-                            session.saveProfile(profile)
-                            context.say("Profile ${profile.name} saved")
+                            session.saveProfile(profile) { context.say("Profile ${profile.name} saved") }
                         }
                     },
                     modifier = Modifier.testTag(Tags.PROFILE_SAVE),
                 ) { Text("Save") }
                 OutlinedButton(
                     onClick = {
-                        session.deleteProfile(editor.name)
-                        editor.load(null)
+                        session.deleteProfile(editor.name) { editor.load(null) }
                     },
                     enabled = profiles.any { it.name == editor.name },
                     modifier = Modifier.testTag(Tags.PROFILE_DELETE),

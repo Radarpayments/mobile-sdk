@@ -1376,5 +1376,57 @@
     "expect": {
       "errorField": "api"
     }
+  },
+  {
+    "name": "profile_gateway_next_line",
+    "kind": "profile",
+    "input": {
+      "name": "sandbox",
+      "gatewayUrl": "https://dev.bpcbt.com/pay\u0085ment"
+    },
+    "expect": {
+      "errorField": "gatewayUrl"
+    }
+  },
+  {
+    "name": "profile_gateway_no_break_space",
+    "kind": "profile",
+    "input": {
+      "name": "sandbox",
+      "gatewayUrl": "https://dev.bpcbt.com/pay\u00a0ment"
+    },
+    "expect": {
+      "errorField": "gatewayUrl"
+    }
+  },
+  {
+    "name": "profile_gateway_ideographic_space",
+    "kind": "profile",
+    "input": {
+      "name": "sandbox",
+      "gatewayUrl": "https://dev.bpcbt.com/pay\u3000ment"
+    },
+    "expect": {
+      "errorField": "gatewayUrl"
+    }
+  },
+  {
+    "name": "profile_gateway_zero_width_space_is_not_white_space",
+    "kind": "profile",
+    "input": {
+      "name": "sandbox",
+      "gatewayUrl": "https://dev.bpcbt.com/pay\u200bment"
+    },
+    "expect": {
+      "document": {
+        "version": 1,
+        "name": "sandbox",
+        "gatewayUrl": "https://dev.bpcbt.com/pay\u200bment",
+        "api": "v1",
+        "login": "",
+        "password": "",
+        "apiKey": ""
+      }
+    }
   }
 ]

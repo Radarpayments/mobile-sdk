@@ -90,7 +90,7 @@ internal class QaRun(
     private val merchant: Merchant,
     private val journal: Journal,
     private val scope: CoroutineScope,
-    private val present: (OpenOrder) -> Unit,
+    private val present: suspend (OpenOrder) -> Unit,
 ) {
     private val mutableState = MutableStateFlow<RunState>(RunState.Idle)
     val state: StateFlow<RunState> = mutableState.asStateFlow()

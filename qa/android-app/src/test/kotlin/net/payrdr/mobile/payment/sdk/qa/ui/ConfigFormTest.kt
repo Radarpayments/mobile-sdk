@@ -42,6 +42,16 @@ class ConfigFormTest {
     }
 
     @Test
+    fun `the amount takes ASCII digits only`() {
+        listOf("+500", "-500", "５００", "٥٠٠", " 500", "5 00").forEach { text ->
+            form.edit(Tags.ORDER_AMOUNT, text)
+
+            form.config.order.amount shouldBe 10_000
+            form.problem?.field shouldBe "order.amount"
+        }
+    }
+
+    @Test
     fun `correcting the text clears the problem`() {
         form.edit(Tags.ORDER_AMOUNT, "25x")
         form.edit(Tags.ORDER_AMOUNT, "25")

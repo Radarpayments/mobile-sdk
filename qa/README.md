@@ -110,7 +110,8 @@ differently:
   `order.mdOrder`, `order.sessionId`, `sdk.locale`, `sdk.keyProviderUrl`, the string fields of `sdk.googlePay` and
   `sdk.applePay.countryCode` among them) reads a blank string as null. A non-blank string is stored as given, never trimmed.
 - An absolute `http` / `https` URL is a string that matches `^https?://[^\s/?#]+\S*$`, the scheme compared ignoring
-  case.
+  ASCII case only. `\s` is Unicode's White_Space: U+0009–U+000D, U+0020, U+0085, U+00A0, U+1680, U+2000–U+200A,
+  U+2028, U+2029, U+202F, U+205F and U+3000 (U+200B and U+FEFF are not in it).
 - A document is at most 65536 bytes of UTF-8 and nests objects and arrays at most 32 levels deep, the root object
   being level 1. Both are checked on the text before it is parsed, brackets inside strings not counting, and either
   excess fails on `$` (the parsers recurse, and a deeply nested document would overflow the stack). The form's
@@ -283,6 +284,32 @@ shows `qa_validation_error` with its field. The limits of Documents (size and de
 
 QR scanning uses the device camera and is hidden on the simulator. On Android the Google code scanner (Play services)
 reads the code; when Play services cannot provide it the app says so, and a cancelled scan changes nothing.
+
+### Screens
+
+What both apps do around a run, beyond the documents above.
+
+- **One session.** The app has one form, one run and one journal per process. A launch while a run is busy (from
+  registering the order to the end of the status query) is ignored, whether it comes from the Launch button,
+  `launch=1` or `qaLaunch`; the other steps of that input (its profile, its config) are still applied, the open
+  sheet stays open, its result is still shown, and the running attempt's journal is kept.
+- **Launch and the form.** Launch is refused while a field holds text that does not parse (the field shows the
+  problem): the last good value is not launched. An external launch in that state is ignored too, and the problem
+  stays on screen. `order.amount` takes ASCII digits `0`–`9` only, no sign, no space and no other script's digits
+  (`+500`, `５００` and `٥٠٠` are problems on `order.amount`).
+- **Profiles from outside.** A profile that arrives from outside is saved, never selected; a config that names it, in
+  the same input or later, selects it. Declining the confirmation shows no error and drops the rest of that input
+  (its config and its launch). Inputs are applied one after another in the order they arrived: a second profile
+  link while a confirmation is open waits, and its own confirmation is shown once the first one is answered.
+- **`qa_validation_error`** shows one problem, the first of: the form's problem with the text of a field; the
+  notice about the last external input (its rejection) or about a failed save (field `store`, the message names
+  what could not be saved, never a value); the refusal of the last launch. The notice clears with the next input or
+  launch; the refusal clears once the config changes. A profile that cannot be saved from the profile editor shows
+  the same `store` problem in the editor's error element.
+- **Reset** returns every field to its default but keeps the selected profile. **Run again** and Back on the result
+  screen return to the configuration screen with the form unchanged; the result screen is opened once per run.
+- **Process end.** A run lives as long as the app process. When the process is killed while the sheet is open, the
+  sheet's result is lost and the app starts Idle with the stored form.
 
 ### Run report
 

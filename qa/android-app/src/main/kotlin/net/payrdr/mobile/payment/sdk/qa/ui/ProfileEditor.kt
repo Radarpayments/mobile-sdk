@@ -23,6 +23,11 @@ internal class ProfileEditor {
     var problem: Problem? by mutableStateOf(null)
         private set
 
+    /** A save or delete the store could not carry out. */
+    fun failed(problem: Problem) {
+        this.problem = problem
+    }
+
     fun load(profile: StandProfile?) {
         name = profile?.name.orEmpty()
         gatewayUrl = profile?.gatewayUrl.orEmpty()
