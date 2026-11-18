@@ -28,6 +28,20 @@ final class InMemorySecretStore: SecretStore {
     }
 }
 
+final class CountingSecretStore: SecretStore {
+    private let stored = InMemorySecretStore()
+    private(set) var reads = 0
+
+    func read() -> Data? {
+        reads += 1
+        return stored.read()
+    }
+
+    func write(_ data: Data?) throws {
+        try stored.write(data)
+    }
+}
+
 final class QaStoreTests: XCTestCase {
     private let suite = "qa-store-tests-\(UUID().uuidString)"
     private let sandbox = StandProfile(
@@ -77,6 +91,18 @@ final class QaStoreTests: XCTestCase {
         let store = store()
         store.save(config: QaConfig(profile: "sandbox"))
         XCTAssertEqual(store.config, QaConfig(profile: "sandbox"))
+    }
+
+    @MainActor
+    func test_a_change_to_the_config_does_not_open_the_profiles_again() throws {
+        let secrets = CountingSecretStore()
+        let store = store(secrets)
+        try store.save(profile: sandbox)
+        let reads = secrets.reads
+        store.save(config: QaConfig(profile: "sandbox"))
+        store.save(config: QaConfig(profile: "other"))
+        XCTAssertEqual(secrets.reads, reads)
+        XCTAssertEqual(store.profiles, [sandbox])
     }
 
     @MainActor

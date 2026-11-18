@@ -38,6 +38,9 @@ The same on both platforms, one directory each (`config/`, `storage/`, ... under
   URL, never its credentials. Types that carry a secret override `toString()`.
 - **Stored data may be unreadable** (written by another build, a Keystore or Keychain entry gone after a restore): the
   app starts with the default config and no profiles instead of crashing.
+- **iOS profiles outlive the app.** The Keychain item survives deleting the app, so a reinstall finds the old profiles
+  and credentials but the default config (Android's uninstall wipes both). Accepted; to start clean on a simulator,
+  erase it (`xcrun simctl erase`) or delete the profiles in the app.
 - **Deliberately out** of the first version: a store front, the headless flow, the classic Activity, the SDK Core
   screen, a per-token theme editor, CI artifacts, Flutter and React Native, UI tests of the apps.
 - **iOS compares text by scalars.** Swift's `String ==`, `Dictionary` keys and `Character` use canonical equivalence

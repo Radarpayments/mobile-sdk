@@ -7,11 +7,23 @@ nonisolated struct JournalEntry: Equatable {
     let level: LogLevel
     let tag: String
     let message: String
+    // Folded once here rather than on every keystroke of the journal search.
+    fileprivate let foldedTag: FoldedText
+    fileprivate let foldedMessage: FoldedText
+
+    init(time: Date, level: LogLevel, tag: String, message: String) {
+        self.time = time
+        self.level = level
+        self.tag = tag
+        self.message = message
+        foldedTag = FoldedText(tag)
+        foldedMessage = FoldedText(message)
+    }
 
     /// `HH:mm:ss.SSS LEVEL tag: message` in [timeZone], the device's zone by default. Formatted by hand: a date formatter
     /// would print the digits of the user's locale, and the report must read the same on every device.
     func line(timeZone: TimeZone = .current) -> String {
-        // Rounded, not truncated: a date made from whole milliseconds is a binary fraction that can fall a hair short.
+        // The journal keeps whole milliseconds; rounded, because a date made of them can fall a hair short.
         let millis = Int64((time.timeIntervalSince1970 * 1000).rounded()) + Int64(timeZone.secondsFromGMT(for: time)) * 1000
         let ofDay = (millis % Self.millisPerDay + Self.millisPerDay) % Self.millisPerDay
         let hours = ofDay / 3_600_000
@@ -67,7 +79,7 @@ nonisolated final class Journal: NSObject, ObservableObject, LogTransport, @unch
         lock.lock()
         defer { lock.unlock() }
         if buffer.count == capacity { buffer.removeFirst() }
-        buffer.append(JournalEntry(time: clock(), level: level, tag: tag, message: message))
+        buffer.append(JournalEntry(time: wholeMilliseconds(clock()), level: level, tag: tag, message: message))
         schedulePublish()
     }
 
@@ -92,17 +104,25 @@ nonisolated final class Journal: NSObject, ObservableObject, LogTransport, @unch
         }
     }
 
+    // Android's clock counts whole milliseconds, cut rather than rounded. The microsecond of slack keeps a date that is
+    // already whole milliseconds, which a binary fraction can leave a hair short of them, from losing one.
+    private func wholeMilliseconds(_ date: Date) -> Date {
+        let millis = (date.timeIntervalSince1970 * 1000 + 0.001).rounded(.down)
+        return Date(timeIntervalSince1970: millis / 1000)
+    }
+
     private func suffix(_ cause: KotlinThrowable) -> String {
-        let name = typeName(of: cause)
+        let name = causeName(of: cause)
         return cause.message.map { " (\(name): \($0))" } ?? " (\(name))"
     }
 }
 
 /// The entries at [minLevel] or above whose tag or message contains [query], ignoring case.
 nonisolated func filtered(_ entries: [JournalEntry], minLevel: LogLevel, query: String) -> [JournalEntry] {
-    entries.filter { entry in
-        levelRank(entry.level) >= levelRank(minLevel)
-            && (containsIgnoringCase(entry.tag, query) || containsIgnoringCase(entry.message, query))
+    let search = FoldedText(query)
+    let rank = levelRank(minLevel)
+    return entries.filter { entry in
+        levelRank(entry.level) >= rank && (entry.foldedTag.contains(search) || entry.foldedMessage.contains(search))
     }
 }
 

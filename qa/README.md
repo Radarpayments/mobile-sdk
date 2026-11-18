@@ -54,7 +54,10 @@ on the device can pass them. This is accepted: the app is a test tool that holds
 ### Documents
 
 Two JSON documents. `StandProfile` holds the stand and its credentials, the only place with secrets. `QaConfig` holds
-everything else and no secrets, so it can be pasted into a bug report. Both platforms model **both** documents in full,
+everything else and no secrets, so it can be pasted into a bug report. The app keeps the config in its preferences
+(DataStore / `UserDefaults`) and the list of profiles encrypted (Keystore / Keychain). Uninstalling the Android app
+removes both; an iOS Keychain item survives deleting the app, so after a reinstall on iOS the profiles and their
+credentials are back while the config starts from its defaults. Both platforms model **both** documents in full,
 the wallet fields of the other platform included: they are carried through import and export and have no form element
 on the other platform, so one file round-trips on both.
 
@@ -376,6 +379,19 @@ is Android's output; the Android test `RunReportTest` compares its report with t
     journal gets `ERROR qa: The sheet threw <error>` (the error text of `sdk_error`), also when the sheet had already
     delivered its result and the run finishes with that result.
 - A message, an error or a description that contains line breaks is printed as is, so one entry can span several lines.
+- An SDK event with a cause journals `<message> (<SimpleName>: <cause message>)`, or `<message> (<SimpleName>)` when
+  the cause has no message. The simple name is the Kotlin class's: Android's `simpleName` (the binary name when it is
+  empty, an anonymous class); iOS reads it from the cause's Kotlin `toString()` (`description()` in Swift, which is
+  `<qualified name>` or `<qualified name>: <message>`): without the `: <message>` suffix, cut at the first `: ` when a
+  class overrides `toString()` after the default text, then what follows the last `.`, `Throwable` when nothing does.
+  The Objective-C class cannot name it: a class the framework does not export arrives as a synthetic class or as its
+  nearest exported superclass. Nested classes read the same on both platforms (`Inner`); an anonymous class reads
+  `pkg.Outer$f$1` on Android and `Throwable` on iOS, where Kotlin/Native has no name for it. A Swift subclass of a
+  Kotlin throwable is named by its Swift type name.
+- The journal search (`qa_journal_search`) keeps the entries whose tag or message contains the text ignoring case as
+  Kotlin's `contains(ignoreCase = true)`: Java's rule one UTF-16 char at a time (`İ` and `ı` match `i`, `ſ` matches
+  `s`, `ß` matches `ẞ` but not `ss`; a character beyond the basic plane matches only itself). An empty search keeps
+  every entry at the chosen level.
 
 Example, Android's output (`completed`, a registered order, v1 profile):
 

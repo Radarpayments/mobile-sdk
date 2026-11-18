@@ -5,6 +5,12 @@ import XCTest
 
 private final class TimeoutFailure: KotlinThrowable {}
 
+// A flow that never emits: cancelling a coroutine that collects it ends in kotlinx.coroutines' JobCancellationException,
+// a class the framework does not export to Objective-C.
+private final class SilentFlow: NSObject, Kotlinx_coroutines_coreFlow {
+    func __collect(collector: any Kotlinx_coroutines_coreFlowCollector, completionHandler: @escaping @Sendable ((any Error)?) -> Void) {}
+}
+
 final class JournalTests: XCTestCase {
     // 2026-11-18 09:05:07.042 UTC
     private let time = Date(timeIntervalSince1970: 1_794_992_707.042)
@@ -44,6 +50,63 @@ final class JournalTests: XCTestCase {
         XCTAssertEqual(journal.snapshot().map(\.message), ["failed (TimeoutFailure: slow)"])
     }
 
+    func test_a_cause_whose_class_is_not_exported_is_named_by_its_kotlin_name() throws {
+        let iterator = SkieColdFlowIterator<AnyObject>(flow: SilentFlow())
+        let ended = expectation(description: "ended")
+        var failure: Error?
+        iterator.__hasNext { _, error in
+            failure = error
+            ended.fulfill()
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { iterator.cancel() }
+        wait(for: [ended], timeout: 5)
+        let cause = try XCTUnwrap((failure as NSError?)?.userInfo["KotlinException"] as? KotlinThrowable)
+        XCTAssertFalse(NSStringFromClass(type(of: cause)).hasSuffix("JobCancellationException"))
+
+        let journal = journal()
+        journal.log(event: LogEvent(level: .error, tag: "qa", message: "stopped", cause: cause))
+        XCTAssertEqual(journal.snapshot().map(\.message), ["stopped (JobCancellationException: \(cause.message ?? ""))"])
+    }
+
+    func test_a_kotlin_name_is_read_from_the_description_of_the_cause() {
+        let cases: [(description: String, message: String?, name: String)] = [
+            ("kotlin.IllegalStateException: a: b.c", "a: b.c", "IllegalStateException"),
+            ("kotlin.IllegalStateException", nil, "IllegalStateException"),
+            ("net.payrdr.Outer.Inner: v1.2", "v1.2", "Inner"),
+            ("io.ktor.client.plugins.HttpRequestTimeoutException: Request timeout has expired", "Request timeout has expired",
+             "HttpRequestTimeoutException"),
+            ("kotlinx.coroutines.JobCancellationException: was cancelled; job=Producer{Active}@1f", "was cancelled",
+             "JobCancellationException"),
+            ("x.Y: ", "", "Y"),
+            ("x.Y: a\nb.c: d", "a\nb.c: d", "Y"),
+            ("Plain", nil, "Plain"),
+            ("Throwable: m", "m", "Throwable"),
+            ("", nil, "Throwable"),
+            (": m", "m", "Throwable"),
+            ("a.b.: m", "m", "Throwable"),
+        ]
+        for (description, message, name) in cases {
+            XCTAssertEqual(kotlinSimpleName(description: description, message: message), name, description)
+        }
+    }
+
+    func test_the_time_is_kept_in_whole_milliseconds_cut_as_on_android() {
+        let journal = Journal(clock: { Date(timeIntervalSince1970: 1_794_992_707.0428) })
+        journal.record(.info, tag: "t", message: "m")
+        let entry = journal.snapshot()[0]
+        XCTAssertEqual(entry.time, time)
+        XCTAssertEqual(entry.line(timeZone: TimeZone(secondsFromGMT: 0)!), "09:05:07.042 INFO t: m")
+    }
+
+    func test_a_time_of_whole_milliseconds_keeps_them() {
+        for millis in [Int64(1_794_992_707_042), 1_794_992_707_999, 1_794_992_708_000, 1_794_992_707_001] {
+            let date = Date(timeIntervalSince1970: Double(millis) / 1000)
+            let journal = Journal(clock: { date })
+            journal.record(.info, tag: "t", message: "m")
+            XCTAssertEqual(journal.snapshot()[0].time, date, "\(millis)")
+        }
+    }
+
     func test_the_oldest_entries_are_dropped_beyond_the_capacity() {
         let journal = journal()
         for index in 0 ..< 2005 {
@@ -68,15 +131,21 @@ final class JournalTests: XCTestCase {
     func test_events_from_many_threads_are_all_kept_in_order_per_thread() {
         let journal = journal()
         DispatchQueue.concurrentPerform(iterations: 8) { thread in
+            let cause = KotlinIllegalStateException(message: "t\(thread)")
             for index in 0 ..< 200 {
-                journal.record(.debug, tag: "t\(thread)", message: "\(index)")
+                if index.isMultiple(of: 2) {
+                    journal.record(.debug, tag: "t\(thread)", message: "\(index)")
+                } else {
+                    journal.log(event: LogEvent(level: .error, tag: "t\(thread)", message: "\(index)", cause: cause))
+                }
             }
         }
         let entries = journal.snapshot()
         XCTAssertEqual(entries.count, 1600)
         for thread in 0 ..< 8 {
             let messages = entries.filter { $0.tag == "t\(thread)" }.map(\.message)
-            XCTAssertEqual(messages, (0 ..< 200).map { "\($0)" })
+            let expected = (0 ..< 200).map { $0.isMultiple(of: 2) ? "\($0)" : "\($0) (IllegalStateException: t\(thread))" }
+            XCTAssertEqual(messages, expected)
         }
     }
 
