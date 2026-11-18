@@ -20,6 +20,7 @@ import kotlinx.coroutines.test.runTest
 import net.payrdr.mobile.payment.sdk.payment.logger.LogLevel
 import net.payrdr.mobile.payment.sdk.qa.config.OrderConfig
 import net.payrdr.mobile.payment.sdk.qa.config.OrderSource
+import net.payrdr.mobile.payment.sdk.qa.config.Problem
 import net.payrdr.mobile.payment.sdk.qa.config.QaConfig
 import net.payrdr.mobile.payment.sdk.qa.config.StandProfile
 import net.payrdr.mobile.payment.sdk.qa.intake.Intake
@@ -210,6 +211,20 @@ class QaSessionTest {
             f.session.editor.problem
                 ?.message
                 .orEmpty() shouldNotContain "password-1"
+            f.close()
+        }
+
+    @Test
+    fun `a profile that cannot be deleted says so`() =
+        runTest {
+            val f = fixture { dataStore, _ -> dataStore.failing = true }
+            var deleted = false
+
+            f.session.deleteProfile(sandbox.name) { deleted = true }
+            advanceUntilIdle()
+
+            deleted shouldBe false
+            f.session.editor.problem shouldBe Problem("store", "could not delete the profile (IOException)")
             f.close()
         }
 

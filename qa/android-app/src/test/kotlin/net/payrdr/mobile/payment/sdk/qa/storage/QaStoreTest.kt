@@ -18,7 +18,12 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import net.payrdr.mobile.payment.sdk.qa.config.ApiVersion
+import net.payrdr.mobile.payment.sdk.qa.config.Decoded
+import net.payrdr.mobile.payment.sdk.qa.config.MAX_DOCUMENT_BYTES
 import net.payrdr.mobile.payment.sdk.qa.config.QaConfig
 import net.payrdr.mobile.payment.sdk.qa.config.QaConfigJson
 import net.payrdr.mobile.payment.sdk.qa.config.StandProfile
@@ -263,5 +268,32 @@ class QaStoreTest {
             val config = QaConfig(profile = "sandbox")
             qaStore(dataStore, PrefixBox()).saveConfig(config)
             dataStore.data.first()[configKey] shouldBe QaConfigJson.encode(config)
+        }
+
+    @Test
+    fun `a config accepted near the limit survives the longer stored copy`() =
+        runTest {
+            val extra = JsonObject((1..2_000).associate { "k%04d".format(it) to JsonPrimitive("v".repeat(20)) })
+            val config = QaConfig().let { it.copy(order = it.order.copy(extra = extra)) }
+            val compact = Json.parseToJsonElement(QaConfigJson.encode(config)).toString()
+            (compact.length <= MAX_DOCUMENT_BYTES) shouldBe true
+            (QaConfigJson.encode(config).length > MAX_DOCUMENT_BYTES) shouldBe true
+            QaConfigJson.decode(compact) shouldBe Decoded.Ok(config)
+            val dataStore = dataStore()
+
+            qaStore(dataStore, PrefixBox()).saveConfig(config)
+
+            qaStore(dataStore, PrefixBox()).config.first() shouldBe config
+        }
+
+    @Test
+    fun `a profile with credentials longer than a document survives a restart`() =
+        runTest {
+            val profile = sandbox.copy(password = "p".repeat(MAX_DOCUMENT_BYTES))
+            val dataStore = dataStore()
+
+            qaStore(dataStore, PrefixBox()).saveProfile(profile)
+
+            qaStore(dataStore, PrefixBox()).profiles.first() shouldBe listOf(profile)
         }
 }

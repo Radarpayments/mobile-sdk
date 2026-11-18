@@ -95,6 +95,36 @@ class MerchantResponsesTest {
     }
 
     @Test
+    fun `secrets are masked in any mix of spellings`() {
+        val secrets = GatewaySecrets.of(V1.copy(password = "p=s s'é😀"))
+
+        secrets.mask("p%3Ds+s'%C3%A9😀") shouldBe "***"
+        secrets.mask("p%3ds%20s&#39;é%F0%9F%98%80 tail") shouldBe "*** tail"
+        secrets.mask("p&#x3D;s s&#39;\\u00e9😀") shouldBe "***"
+        secrets.mask("p=s s&apos;\\u00E9\\uD83D\\ude00") shouldBe "***"
+        secrets.mask("p\\u003ds s'\\u00e9😀 \\u0070=s s'é😀") shouldBe "*** ***"
+        secrets.mask("p=s s'e😀") shouldBe "p=s s'e😀"
+    }
+
+    @Test
+    fun `the cut counts utf-16 units and does not split a pair`() {
+        none.bounded("ab😀cd", 4, "…") shouldBe "ab😀…"
+        none.bounded("ab😀cd", 3, "…") shouldBe "ab…"
+        none.bounded("ab😀", 4, "…") shouldBe "ab😀"
+    }
+
+    @Test
+    fun `an answer beyond the document limits is not read`() {
+        val deep = """{"orderId":"abc","orderStatus":2,"x":""" + "[".repeat(40) + "]".repeat(40) + "}"
+        val large = """{"orderId":"abc","id":"abc","orderStatus":2,"padding":"""" + "p".repeat(70_000) + "\"}"
+
+        registerAnswer(200, deep, none) shouldBe Registration.Failed(200, "HTTP 200: $deep")
+        registerAnswer(200, large, none) shouldBe Registration.Failed(200, "HTTP 200: " + large.take(300))
+        sessionAnswer(200, large, none) shouldBe Registration.Failed(200, "HTTP 200: " + large.take(300))
+        statusAnswer(200, deep, none) shouldBe OrderStatus.Failed(200, "HTTP 200: $deep")
+    }
+
+    @Test
     fun `masking happens before the cut`() {
         val secrets = GatewaySecrets.of(V1)
 

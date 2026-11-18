@@ -25,7 +25,8 @@ internal fun OrderStatus.text(): String =
 /**
  * The plain text QA attaches to a bug, built from the [finished] run alone: versions, device, the run's profile without
  * its credentials, the configuration it was launched with, the result, the order status and the journal of the run.
- * The format is the contract's "Run report" (qa/README.md); both apps print the same text.
+ * The format is the contract's "Run report" (qa/README.md), which lists where iOS differs: the device lines, error type
+ * names, and the key order and spacing of the JSON in the configuration and in quoted bodies.
  */
 internal fun runReport(
     app: AppInfo,

@@ -86,7 +86,10 @@ internal class QaStore(
         }
     }
 
-    private fun readConfig(stored: String?): QaConfig = ((stored?.let(QaConfigJson::decode)) as? Decoded.Ok)?.value ?: QaConfig()
+    // The stored copy is the app's own: pretty printing makes a configuration accepted near the size limit longer than the
+    // limit. Its depth is what was accepted, so that limit stays.
+    private fun readConfig(stored: String?): QaConfig =
+        ((stored?.let { QaConfigJson.decode(it, maxBytes = Int.MAX_VALUE) }) as? Decoded.Ok)?.value ?: QaConfig()
 
     private fun readProfiles(stored: String?): List<StandProfile> {
         val plain = stored?.let(box::open) ?: return emptyList()
@@ -102,7 +105,7 @@ internal class QaStore(
             } ?: return emptyList()
         return array
             .mapNotNull { element ->
-                ((element as? JsonObject)?.let { StandProfileJson.decode(it.toString()) } as? Decoded.Ok)?.value
+                ((element as? JsonObject)?.let { StandProfileJson.decode(it.toString(), maxBytes = Int.MAX_VALUE) } as? Decoded.Ok)?.value
             }.associateBy { it.name }
             .values
             .sortedBy { it.name }

@@ -5,6 +5,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import net.payrdr.mobile.payment.sdk.qa.config.limitProblem
 import java.math.BigInteger
 
 /** What registering an order gave: the ids the SDK opens the checkout with, or why there are none. */
@@ -108,9 +109,11 @@ internal fun mdOrderOfSession(sessionId: String): String? {
 
 private fun Int.isSuccess(): Boolean = this in 200..299
 
+// The answer is untrusted: it is read only within the limits of a document, so a deep or huge body is not parsed (and
+// fails with its start) instead of exhausting the stack or the memory, as on iOS.
 private fun jsonObjectOf(body: String): JsonObject? =
     try {
-        Json.parseToJsonElement(body) as? JsonObject
+        if (limitProblem(body) != null) null else Json.parseToJsonElement(body) as? JsonObject
     } catch (_: SerializationException) {
         null
     }

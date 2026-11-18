@@ -89,7 +89,7 @@ on the other platform, so one file round-trips on both.
 | `sdk.showResultScreen`, `sdk.scanner` | bool, false | |
 | `sdk.keyProviderUrl` | string?, null | absolute `http` / `https` URL (see Decoding) |
 | `sdk.sslPinning.enabled` | bool, false | |
-| `sdk.sslPinning.pins` | `{host,pin}[]`, [] | `host` is a plain hostname, matching `^(\*\*?\.)?[A-Za-z0-9-]{1,63}(\.[A-Za-z0-9-]{1,63})*$`: labels of ASCII letters, digits and hyphens, 1–63 characters, separated by single dots; no scheme, port, path, trailing dot or empty label. A leading `*.` covers one label below the domain, `**.` the domain and any depth below (as OkHttp's `CertificatePinner`; the SDK matches the same way on iOS); a `*` anywhere else is rejected. `pin` matches `^[A-Za-z0-9+/]{43}=$`, the padded standard base64 of 32 bytes (the SHA-256 of the certificate's SPKI). Error field: `sdk.sslPinning.pins`, also for an element that is not an object |
+| `sdk.sslPinning.pins` | `{host,pin}[]`, [] | `host` is a plain hostname, matching `^(\*\*?\.)?[A-Za-z0-9-]{1,63}(\.[A-Za-z0-9-]{1,63})*$`: labels of ASCII letters, digits and hyphens, 1–63 characters, separated by single dots, at most 253 characters in all (the prefix included); no scheme, port, path, trailing dot or empty label. A leading `*.` covers one label below the domain, `**.` the domain and any depth below (as OkHttp's `CertificatePinner`; the SDK matches the same way on iOS); a `*` anywhere else is rejected. `pin` matches `^[A-Za-z0-9+/]{43}=$`, the padded standard base64 of 32 bytes (the SHA-256 of the certificate's SPKI). Error field: `sdk.sslPinning.pins`, also for an element that is not an object |
 | `sdk.googlePay.enabled`, `.billingAddressRequired` | bool, false | |
 | `sdk.googlePay.merchantId`, `.merchantFullName`, `.gateway`, `.gatewayMerchantId`, `.countryCode` | string?, null | |
 | `sdk.googlePay.environment` | `test` \| `production` \| null, null | |
@@ -200,7 +200,8 @@ which is not a failure), else `error.errorMessage` / `error.errorCode`. Status: 
 `actionCodeDescription`, or a failure when `errorCode` is present and not `"0"`. A body that is none of these fails with
 `HTTP <status>: <first 300 characters of the body>`. Every failure carries the HTTP status when there was a response.
 
-Journal lines of an exchange (tag `merchant`): `→ POST <url> <body>` and `← <status> <body>`, with the values of
+Journal lines of an exchange (tag `merchant`): `→ POST <url> <body>` (`→ POST <url> X-API-KEY: *** <body>` when the
+profile sends an API key) and `← <status> <body>`, with the values of
 `password` and `X-API-KEY` replaced by `***`. The request line and a 2xx answer are `INFO`, any other answer `WARNING`. A
 line is cut at 4000 characters (UTF-16 units) and ends in `…`; secrets are masked before the cut, in failure messages
 too. With no answer within the timeout, the body included, the result fails with `The gateway did not answer in <whole
@@ -296,7 +297,8 @@ U+0085, a U+00A0, a vertical tab, a second U+FEFF or a U+FEFF after the whitespa
    non-zero pad bits (`eyJhIjoxfR`). The bytes must be strict UTF-8 (no overlong forms, no surrogates). Bare base64 is
    never read as anything else.
 4. The text is decoded as the document the host names (see Documents); an invalid document reports its own field
-   unchanged.
+   unchanged. The decoded text of a profile link is trimmed as above first (field `data` when nothing is left); that
+   of a config link is not, so a leading U+FEFF there makes the document unreadable.
 5. A config link is followed by Launch when the query has exactly one `launch` and its decoded value is exactly `1`.
    Any other value, a repeated `launch` or an undecodable value is silently no launch, not an error. A profile link
    never launches, whatever its query says.

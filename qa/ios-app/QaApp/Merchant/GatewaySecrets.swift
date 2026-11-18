@@ -1,9 +1,9 @@
 /// The password and the API key of a profile, and every spelling of them a gateway may echo back. Whatever text of an
 /// exchange reaches the journal or a failure message goes through here.
 ///
-/// Android lists whole spellings (raw, percent-encoded, JSON-escaped, HTML entities). Here each character of a secret
-/// is matched in any of its spellings independently, so a mix, such as a form encoder that leaves some characters raw
-/// next to a JSON writer that escapes others, is masked as well.
+/// Each character of a secret is matched in any of its spellings independently (raw, `+` for a space, percent-encoded,
+/// JSON-escaped, an HTML entity), as on Android, so a mix, such as a form encoder that leaves some characters raw next
+/// to a JSON writer that escapes others, is masked as well.
 nonisolated struct GatewaySecrets: CustomStringConvertible, CustomDebugStringConvertible, CustomReflectable {
     static let mask = "***"
 

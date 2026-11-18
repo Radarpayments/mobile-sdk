@@ -21,8 +21,8 @@ final class JSONValueTests: XCTestCase {
         XCTAssertEqual(JSONValue.parse("{\"a\":1,\"a\":2}"), .object(["a": .number("2")]))
     }
 
-    // kotlinx on Android is more lenient here: it reads a bare word or a malformed number as a literal and keeps a lone
-    // surrogate. The contract says JSON, so iOS is strict (see the task report).
+    // kotlinx alone would read a bare word or a malformed number as a literal and keep a lone surrogate; Android checks
+    // the text with isStrictJson first, so both platforms refuse these.
     func test_text_that_is_not_strict_json_is_rejected() {
         let texts = [
             "{\"a\":01}", "{\"a\":abc}", "{\"a\":+1}", "{\"a\":.5}", "{\"a\":1.}", "{\"a\":1e}", "{\"a\":-}", "{\"a\":NaN}",

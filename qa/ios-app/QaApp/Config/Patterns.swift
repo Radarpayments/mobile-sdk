@@ -27,11 +27,12 @@ nonisolated func isProfileName(_ text: String) -> Bool {
     }
 }
 
-/// `(\*\*?\.)?[A-Za-z0-9-]{1,63}(\.[A-Za-z0-9-]{1,63})*`: what OkHttp's CertificatePinner accepts and the iOS delegate
-/// matches — no scheme, port or path, labels of at most 63 characters, an optional leading `*.` (one label) or `**.`
-/// (any depth).
+/// `(\*\*?\.)?[A-Za-z0-9-]{1,63}(\.[A-Za-z0-9-]{1,63})*`, at most 253 characters: what OkHttp's CertificatePinner
+/// accepts and the iOS delegate matches — no scheme, port or path, labels of at most 63 characters, a host of at most 253,
+/// an optional leading `*.` (one label) or `**.` (any depth).
 nonisolated func isPinHost(_ text: String) -> Bool {
     var bytes = Array(text.utf8)[...]
+    guard bytes.count <= 253 else { return false }
     if bytes.starts(with: Array("**.".utf8)) {
         bytes = bytes.dropFirst(3)
     } else if bytes.starts(with: Array("*.".utf8)) {

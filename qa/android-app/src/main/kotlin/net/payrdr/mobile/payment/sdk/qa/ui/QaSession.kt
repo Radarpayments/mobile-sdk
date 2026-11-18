@@ -162,7 +162,7 @@ internal class QaSession(
         onDeleted: () -> Unit,
     ) {
         scope.launch {
-            val problem = write("the profile") { store.deleteProfile(name) }
+            val problem = write("the profile", verb = "delete") { store.deleteProfile(name) }
             if (problem == null) onDeleted() else editor.failed(problem)
         }
     }
@@ -220,6 +220,7 @@ internal class QaSession(
 @Suppress("TooGenericExceptionCaught")
 private suspend fun write(
     what: String,
+    verb: String = "save",
     block: suspend () -> Unit,
 ): Problem? =
     try {
@@ -228,7 +229,7 @@ private suspend fun write(
     } catch (cancelled: CancellationException) {
         throw cancelled
     } catch (error: Exception) {
-        Problem("store", "could not save $what (${error.javaClass.simpleName})")
+        Problem("store", "could not $verb $what (${error.javaClass.simpleName})")
     }
 
 internal fun RunState.isBusy(): Boolean = this is RunState.Registering || this is RunState.InSheet || this is RunState.QueryingStatus

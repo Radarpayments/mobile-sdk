@@ -25,7 +25,9 @@ private val FORBIDDEN_EXTRA_KEYS = listOf("username", "password", "token")
 private val PIN_PATTERN = Regex("[A-Za-z0-9+/]{43}=")
 
 // What OkHttp's CertificatePinner accepts and the iOS delegate matches: no scheme, port or path, labels of at most 63
-// characters (OkHttp rejects longer ones), an optional leading `*.` (one label) or `**.` (any depth).
+// characters and a host of at most 253 (OkHttp throws at Launch on longer ones), an optional leading `*.` (one label) or
+// `**.` (any depth).
+private const val PIN_HOST_MAX_LENGTH = 253
 private val PIN_HOST_PATTERN = Regex("""(\*\*?\.)?[A-Za-z0-9-]{1,63}(\.[A-Za-z0-9-]{1,63})*""")
 
 // The table order of the contract; a group path ranks before its members.
@@ -74,8 +76,12 @@ private val FIELDS =
 internal object QaConfigJson {
     private val writer = Json { prettyPrint = true }
 
-    fun decode(text: String): Decoded<QaConfig> {
-        limitProblem(text)?.let { return Decoded.Invalid(Problem("$", it)) }
+    /** [maxBytes] is raised only for the app's own stored copy, which pretty printing can grow past a document's limit. */
+    fun decode(
+        text: String,
+        maxBytes: Int = MAX_DOCUMENT_BYTES,
+    ): Decoded<QaConfig> {
+        limitProblem(text, maxBytes)?.let { return Decoded.Invalid(Problem("$", it)) }
         val root = parseObject(text) ?: return Decoded.Invalid(NOT_AN_OBJECT)
         val reader = JsonReader()
         val version = reader.integral(root, "version", "version")
@@ -312,7 +318,8 @@ private fun readApplePay(
     )
 }
 
-internal fun isPinValid(pin: Pin): Boolean = PIN_HOST_PATTERN.matches(pin.host) && PIN_PATTERN.matches(pin.pin)
+internal fun isPinValid(pin: Pin): Boolean =
+    pin.host.length <= PIN_HOST_MAX_LENGTH && PIN_HOST_PATTERN.matches(pin.host) && PIN_PATTERN.matches(pin.pin)
 
 internal fun pinsProblem(pins: List<Pin>): Problem? =
     if (pins.all(::isPinValid)) null else Problem(PINS, "each pin needs a hostname and a 44 character base64 SHA-256 pin")
