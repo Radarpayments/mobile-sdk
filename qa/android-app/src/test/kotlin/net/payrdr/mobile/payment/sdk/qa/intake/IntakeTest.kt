@@ -366,6 +366,14 @@ class IntakeTest {
     }
 
     @Test
+    fun `an escape takes ascii hex digits only`() {
+        // U+0664 and U+0661 are Arabic-Indic four and one, which a Unicode digit reader would turn into %41, 'A'.
+        val data = b64(configJson)
+        field(intakeFromLink("payrdrqa://config?data=${data.dropLast(1)}%٤١")) shouldBe "data"
+        intakeFromLink("payrdrqa://config?data=$data&launch=%３１") shouldBe listOf(Intake.Config(config))
+    }
+
+    @Test
     fun `an overlong utf-8 sequence inside data is rejected`() {
         val bytes = byteArrayOf(0x7B, 0xC0.toByte(), 0xAE.toByte(), 0x7D)
         field(intakeFromLink("payrdrqa://config?data=${Base64.getUrlEncoder().encodeToString(bytes)}")) shouldBe "data"

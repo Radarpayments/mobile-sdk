@@ -49,12 +49,46 @@ struct QrScannerView: UIViewControllerRepresentable {
     func updateUIViewController(_: QrScannerController, context _: Context) {}
 }
 
+/// What a scanner screen does as it appears and as a scan ends, apart from the camera: it reports once, and a screen that
+/// is gone without a code is a cancel.
+nonisolated struct QrScannerState {
+    enum Step: Equatable {
+        case configure
+        case resume
+        case none
+    }
+
+    private var configured = false
+    private var reported = false
+
+    /// The camera is configured on the first appearance and resumed on a later one, until the scan has been reported.
+    mutating func appear() -> Step {
+        guard !reported else { return .none }
+        guard configured else {
+            configured = true
+            return .configure
+        }
+        return .resume
+    }
+
+    /// The scan to report, or nil when one has been reported already.
+    mutating func end(_ scan: QrScan) -> QrScan? {
+        guard !reported else { return nil }
+        reported = true
+        return scan
+    }
+
+    mutating func disappear() -> QrScan? {
+        end(.cancelled)
+    }
+}
+
 final class QrScannerController: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
     private let onScan: (QrScan) -> Void
     private let session = AVCaptureSession()
     private let sessionQueue = DispatchQueue(label: "qa.qr.session")
     private lazy var preview = AVCaptureVideoPreviewLayer(session: session)
-    private var finished = false
+    private var state = QrScannerState()
 
     init(onScan: @escaping (QrScan) -> Void) {
         self.onScan = onScan
@@ -90,13 +124,34 @@ final class QrScannerController: UIViewController, AVCaptureMetadataOutputObject
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        switch state.appear() {
+        case .configure:
+            authorize()
+        case .resume:
+            // A swipe down that was abandoned shows the screen again; the camera may not be configured yet if the
+            // permission prompt is still open.
+            sessionQueue.async { [session] in
+                if !session.inputs.isEmpty, !session.isRunning { session.startRunning() }
+            }
+        case .none:
+            break
+        }
+    }
+
+    // Not viewWillDisappear: a swipe down that is started and abandoned calls it, and the sheet stays.
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        if let scan = state.disappear() { report(scan) }
+    }
+
+    private func authorize() {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .authorized:
-            start()
+            configure()
         case .notDetermined:
             AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
                 DispatchQueue.main.async {
-                    if granted { self?.start() } else { self?.finish(.unavailable) }
+                    if granted { self?.configure() } else { self?.finish(.unavailable) }
                 }
             }
         default:
@@ -104,26 +159,26 @@ final class QrScannerController: UIViewController, AVCaptureMetadataOutputObject
         }
     }
 
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        // A swipe down closes the sheet without the cancel button.
-        finish(.cancelled)
-    }
-
-    private func start() {
-        guard !finished, !session.isRunning else { return }
+    private func configure() {
         let output = AVCaptureMetadataOutput()
-        guard let camera = AVCaptureDevice.default(for: .video),
-              let input = try? AVCaptureDeviceInput(device: camera),
-              session.canAddInput(input), session.canAddOutput(output)
-        else { return finish(.unavailable) }
-        session.addInput(input)
-        session.addOutput(output)
-        // The QR type is offered only once the output is attached to a session with a camera.
-        output.metadataObjectTypes = [.qr]
         output.setMetadataObjectsDelegate(self, queue: .main)
-        // startRunning blocks until the camera is up.
-        sessionQueue.async { [session] in session.startRunning() }
+        // Configuring and starting the session block until the camera is up.
+        sessionQueue.async { [weak self, session] in
+            guard let camera = AVCaptureDevice.default(for: .video),
+                  let input = try? AVCaptureDeviceInput(device: camera),
+                  session.canAddInput(input), session.canAddOutput(output)
+            else {
+                DispatchQueue.main.async { self?.finish(.unavailable) }
+                return
+            }
+            session.beginConfiguration()
+            session.addInput(input)
+            session.addOutput(output)
+            // The QR type is offered only once the output is attached to a session with a camera.
+            output.metadataObjectTypes = [.qr]
+            session.commitConfiguration()
+            session.startRunning()
+        }
     }
 
     nonisolated func metadataOutput(
@@ -139,8 +194,10 @@ final class QrScannerController: UIViewController, AVCaptureMetadataOutputObject
     }
 
     private func finish(_ scan: QrScan) {
-        guard !finished else { return }
-        finished = true
+        if let scan = state.end(scan) { report(scan) }
+    }
+
+    private func report(_ scan: QrScan) {
         sessionQueue.async { [session] in session.stopRunning() }
         onScan(scan)
     }

@@ -152,7 +152,10 @@ private fun decodeData(value: String?): String? {
     return strictUtf8(bytes)
 }
 
-/** `+` stays a `+`: this is a URI query, not a form, and base64url never needs a space. Null on a malformed escape. */
+/**
+ * `+` stays a `+`: this is a URI query, not a form, and base64url never needs a space. Null on a malformed escape or a hex
+ * digit outside ASCII.
+ */
 private fun percentDecode(value: String): String? {
     val bytes = ByteArrayOutputStream()
     var index = 0
@@ -160,8 +163,8 @@ private fun percentDecode(value: String): String? {
         val char = value[index]
         if (char == '%') {
             if (index + ESCAPE_LENGTH > value.length) return null
-            val high = value[index + 1].digitToIntOrNull(HEX_RADIX) ?: return null
-            val low = value[index + 2].digitToIntOrNull(HEX_RADIX) ?: return null
+            val high = hexDigit(value[index + 1]) ?: return null
+            val low = hexDigit(value[index + 2]) ?: return null
             bytes.write(high * HEX_RADIX + low)
             index += ESCAPE_LENGTH
         } else {
@@ -171,6 +174,13 @@ private fun percentDecode(value: String): String? {
     }
     return strictUtf8(bytes.toByteArray())
 }
+
+// digitToIntOrNull also reads Unicode digits and fullwidth letters, such as U+0664 for 4.
+private fun hexDigit(char: Char): Int? =
+    when (char) {
+        in '0'..'9', in 'a'..'f', in 'A'..'F' -> char.digitToInt(HEX_RADIX)
+        else -> null
+    }
 
 /** [String] constructors replace malformed bytes with U+FFFD; a coder set to report them lets the caller reject instead. */
 private fun strictUtf8(bytes: ByteArray): String? =
