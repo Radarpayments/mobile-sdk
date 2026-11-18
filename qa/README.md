@@ -19,8 +19,20 @@ export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"  
 ./gradlew :qa:android-app:assembleDebug     # an APK signed with the debug key
 ```
 
-The iOS build and test commands are added here with the Xcode project. The two Xcode projects (this and the iOS sample)
-write to the same `sdk-payment-scanner/build/XCFrameworks/debug`: never build them in parallel.
+```bash
+# iOS: a simulator build, zipped for a tester's simulator (the first build links the SDK through Gradle: minutes)
+xcodebuild -project qa/ios-app/QaApp.xcodeproj -scheme QaApp -sdk iphonesimulator -configuration Debug \
+  -derivedDataPath build/qa-ios build
+ditto -c -k --keepParent build/qa-ios/Build/Products/Debug-iphonesimulator/QaApp.app build/QaApp-simulator.zip
+
+# iOS unit tests
+xcodebuild -project qa/ios-app/QaApp.xcodeproj -scheme QaApp \
+  -destination 'platform=iOS Simulator,name=iPhone 15 Pro,OS=17.4' test -only-testing:QaAppTests
+```
+
+The Xcode build phase sets its own `JAVA_HOME` for Gradle. The two Xcode projects (this and the iOS sample) write to
+the same `sdk-payment-scanner/build/XCFrameworks/debug`, and Gradle builds of the SDK write there too: never run two of
+these builds at once.
 
 ## Passing input from outside
 
@@ -109,6 +121,11 @@ differently:
 - A string is blank when it is empty or whitespace only. Every nullable string field (`profile`, `order.clientId`,
   `order.mdOrder`, `order.sessionId`, `sdk.locale`, `sdk.keyProviderUrl`, the string fields of `sdk.googlePay` and
   `sdk.applePay.countryCode` among them) reads a blank string as null. A non-blank string is stored as given, never trimmed.
+  Whitespace here, in `order.features` and in the form's trimming is Kotlin's `Char.isWhitespace`: Unicode's White_Space
+  without U+0085, plus U+001C–U+001F. The URL rule below has its own set.
+- Strings are compared character for character, without Unicode normalisation: `KZT` (KELVIN SIGN) is not `KZT`,
+  and `extra` keys `K` and `K` are two keys. "Ignoring case" in the `order.extra` rule is Java's `equalsIgnoreCase`,
+  one character at a time, so `toKen` and `paſsword` are forbidden too.
 - An absolute `http` / `https` URL is a string that matches `^https?://[^\s/?#]+\S*$`, the scheme compared ignoring
   ASCII case only. `\s` is Unicode's White_Space: U+0009–U+000D, U+0020, U+0085, U+00A0, U+1680, U+2000–U+200A,
   U+2028, U+2029, U+202F, U+205F and U+3000 (U+200B and U+FEFF are not in it).

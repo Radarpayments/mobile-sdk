@@ -40,5 +40,11 @@ The same on both platforms, one directory each (`config/`, `storage/`, ... under
   app starts with the default config and no profiles instead of crashing.
 - **Deliberately out** of the first version: a store front, the headless flow, the classic Activity, the SDK Core
   screen, a per-token theme editor, CI artifacts, Flutter and React Native, UI tests of the apps.
+- **iOS compares text by scalars.** Swift's `String ==`, `Dictionary` keys and `Character` use canonical equivalence
+  (`"\u{212A}"` equals `"K"`), Android compares chars. `QaApp/Config` reads JSON with its own parser into `JSONValue`
+  (numbers keep their text, objects keep their order and scalar keys) and compares through `sameText`, `isBlank` and
+  `equalsIgnoringCase` in `TextRules.swift`; keep new rules on those helpers, not on `==` or `Foundation`'s
+  `JSONSerialization` / `NSRegularExpression`. The app target isolates to the main actor by default, so `config` types
+  and functions are `nonisolated`.
 - **Do not build the two Xcode projects in parallel** (this one and `samples/ios-app`): both write to
   `sdk-payment-scanner/build/XCFrameworks/debug`. No release linking of iOS frameworks, no whole-repo `./gradlew build`.
