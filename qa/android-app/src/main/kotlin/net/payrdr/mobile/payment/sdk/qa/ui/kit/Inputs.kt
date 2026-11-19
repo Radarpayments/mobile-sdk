@@ -65,7 +65,11 @@ internal fun TextInput(
                 cursorBrush = SolidColor(colors.ink),
                 interactionSource = interaction,
                 visualTransformation = if (look.hidden) PasswordVisualTransformation() else VisualTransformation.None,
-                keyboardOptions = KeyboardOptions(keyboardType = if (look.hidden) KeyboardType.Password else look.keyboardType),
+                keyboardOptions =
+                    KeyboardOptions(
+                        autoCorrectEnabled = look.autoCorrect,
+                        keyboardType = if (look.hidden) KeyboardType.Password else look.keyboardType,
+                    ),
                 modifier =
                     Modifier
                         .weight(1f)

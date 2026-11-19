@@ -171,6 +171,12 @@ private fun HomeMenu(
     BarMenu(Tags.MENU, onClick = { expanded = true }) {
         QaMenu(expanded, onDismiss = { expanded = false }) {
             QaMenuItem("Import from clipboard", Tags.IMPORT, { chosen { session.accept(intakeFromText(context.clipboardText())) } })
+            QaMenuItem("Import from text", Tags.IMPORT_TEXT, {
+                chosen {
+                    session.textImport.clear()
+                    open(Route.IMPORT_TEXT)
+                }
+            })
             QaMenuItem("Import from QR code", Tags.IMPORT_QR, {
                 chosen {
                     scope.launch {

@@ -41,6 +41,9 @@ internal object Tags {
     const val MENU = "qa_menu"
     const val IMPORT = "qa_import"
     const val IMPORT_QR = "qa_import_qr"
+    const val IMPORT_TEXT = "qa_import_text"
+    const val IMPORT_TEXT_FIELD = "qa_import_text_field"
+    const val IMPORT_TEXT_APPLY = "qa_import_text_apply"
     const val EXPORT = "qa_export"
     const val RESET = "qa_reset"
     const val REPORT = "qa_report"
@@ -71,6 +74,7 @@ internal object Tags {
     const val PROFILE_REJECT = "qa_profile_reject"
     const val PROFILE_ENTER = "qa_profile_enter"
     const val PROFILE_PASTE = "qa_profile_paste"
+    const val PROFILE_PASTE_TEXT = "qa_profile_paste_text"
     const val PROFILE_SCAN = "qa_profile_scan"
     const val PROFILE_PASSWORD_SHOW = "qa_profile_password_show"
     const val PROFILE_API_KEY_SHOW = "qa_profile_api_key_show"
@@ -138,6 +142,9 @@ internal object Tags {
                 MENU,
                 IMPORT,
                 IMPORT_QR,
+                IMPORT_TEXT,
+                IMPORT_TEXT_FIELD,
+                IMPORT_TEXT_APPLY,
                 EXPORT,
                 RESET,
                 REPORT,
@@ -166,6 +173,7 @@ internal object Tags {
                 PROFILE_REJECT,
                 PROFILE_ENTER,
                 PROFILE_PASTE,
+                PROFILE_PASTE_TEXT,
                 PROFILE_SCAN,
                 PROFILE_PASSWORD_SHOW,
                 PROFILE_API_KEY_SHOW,

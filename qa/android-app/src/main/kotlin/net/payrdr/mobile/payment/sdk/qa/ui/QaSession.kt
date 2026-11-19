@@ -74,6 +74,8 @@ internal class QaSession(
 
     val editor = ProfileEditor()
 
+    val textImport = TextImport()
+
     /** False until the stored configuration is in the form; the form is not shown before, so no edit is overwritten. */
     var ready by mutableStateOf(false)
         private set

@@ -63,6 +63,7 @@ internal object Route {
     const val SSL_PINNING = "ssl_pinning"
     const val STANDS = "stands"
     const val STAND = "stand"
+    const val IMPORT_TEXT = "import_text"
     const val RESULT = "result"
     const val JOURNAL = "journal"
     const val FIELD = "field/{tag}"
@@ -95,8 +96,9 @@ private fun Screens(session: QaSession) {
         composable(Route.LOCALE) { LocaleScreen(session.form, back) }
         composable(Route.GOOGLE_PAY) { GooglePayScreen(session.form, back) }
         composable(Route.SSL_PINNING) { SslPinningScreen(session.form, back) }
-        composable(Route.STANDS) { StandsScreen(session, profiles, back) { open(Route.STAND) } }
+        composable(Route.STANDS) { StandsScreen(session, profiles, back, { open(Route.STAND) }) { open(Route.IMPORT_TEXT) } }
         composable(Route.STAND) { StandEditorScreen(session, back) }
+        composable(Route.IMPORT_TEXT) { ImportTextScreen(session, back) }
         composable(Route.RESULT) {
             when (val last = session.lastRun) {
                 null -> LaunchedEffect(Unit) { nav.home() }

@@ -41,7 +41,7 @@ import net.payrdr.mobile.payment.sdk.qa.ui.kit.TwoLineRow
 
 /**
  * The stored stands. The mark chooses the one the configuration uses, Edit opens it in the editor; a stand is added by
- * hand, from the clipboard or from a QR code, and an imported one is confirmed before it is stored.
+ * hand, from the clipboard, as typed text or from a QR code, and an imported one is confirmed before it is stored.
  */
 @Composable
 internal fun StandsScreen(
@@ -49,6 +49,7 @@ internal fun StandsScreen(
     profiles: List<StandProfile>,
     onBack: () -> Unit,
     onEdit: () -> Unit,
+    onPasteText: () -> Unit,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -72,6 +73,10 @@ internal fun StandsScreen(
         ListGroup {
             NavRow("Enter by hand", "", Tags.PROFILE_ENTER, { edit(null) })
             NavRow("Paste from clipboard", "", Tags.PROFILE_PASTE, { session.accept(intakeFromText(context.clipboardText())) })
+            NavRow("Paste as text", "", Tags.PROFILE_PASTE_TEXT, {
+                session.textImport.clear()
+                onPasteText()
+            })
             NavRow("Scan a QR code", "", Tags.PROFILE_SCAN, {
                 scope.launch {
                     when (val scan = scanQr(context)) {

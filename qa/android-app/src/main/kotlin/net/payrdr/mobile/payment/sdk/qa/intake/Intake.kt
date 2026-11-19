@@ -120,7 +120,7 @@ private fun linkTarget(link: String): LinkTarget? {
  * Drops one leading U+FEFF (a byte order mark that editors and clipboards leave), then ASCII space, tab, CR and LF from
  * both ends. Other whitespace stays, so both platforms trim the same characters.
  */
-private fun trimInput(text: String): String = text.removePrefix(BYTE_ORDER_MARK).trim { it in TRIMMED }
+internal fun trimInput(text: String): String = text.removePrefix(BYTE_ORDER_MARK).trim { it in TRIMMED }
 
 // Kotlin's case-insensitive comparison also folds non-ASCII letters, which Swift does not.
 private fun asciiLowercase(text: String): String = text.map { if (it in 'A'..'Z') it + ('a' - 'A') else it }.joinToString("")
