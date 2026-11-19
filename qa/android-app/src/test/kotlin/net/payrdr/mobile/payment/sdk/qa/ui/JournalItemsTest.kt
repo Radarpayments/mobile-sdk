@@ -30,6 +30,16 @@ class JournalItemsTest {
     }
 
     @Test
+    fun `the result counts the items the journal screen shows`() {
+        val second = gateway(6_000, "→ POST https://dev.bpcbt.com/payment/rest/getOrderStatusExtended.do body")
+        val secondAnswer = gateway(6_400, "← 200 {}")
+
+        entriesSummary(listOf(request, answer, second, secondAnswer)) shouldBe "2 entries"
+        entriesSummary(listOf(request, answer)) shouldBe "1 entry"
+        entriesSummary(listOf(request, sdk, answer)) shouldBe "2 entries"
+    }
+
+    @Test
     fun `an answer without a request is a line of its own`() {
         val items = journalItems(listOf(answer, request))
 

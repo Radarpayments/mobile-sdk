@@ -130,4 +130,12 @@ class SummariesTest {
         durationText(0) shouldBe "0.0 s"
         durationText(20_400) shouldBe "20 s"
     }
+
+    @Test
+    fun `a duration that rounds to ten seconds has no decimal`() {
+        durationText(9_949) shouldBe "9.9 s"
+        durationText(9_950) shouldBe "10 s"
+        durationText(9_999) shouldBe "10 s"
+        durationText(10_000) shouldBe "10 s"
+    }
 }

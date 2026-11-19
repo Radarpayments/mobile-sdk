@@ -88,7 +88,7 @@ internal fun ResultScreen(
             LaunchedRow("Theme", finished.config.sdk.theme.json, Tags.RESULT_THEME)
         }
         Caption("Evidence")
-        ListGroup { NavRow("Journal", entriesSummary(entries.size), Tags.JOURNAL_OPEN, onJournal) }
+        ListGroup { NavRow("Journal", entriesSummary(entries), Tags.JOURNAL_OPEN, onJournal) }
     }
 }
 

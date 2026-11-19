@@ -133,11 +133,14 @@ internal fun List<JournalItem>.shown(
             item.entries.any { it.tag.contains(query, ignoreCase = true) || it.message.contains(query, ignoreCase = true) }
     }
 
-/** Under ten seconds with one decimal (`4.3 s`), whole seconds from there (`20 s`); digits are ASCII in any locale. */
+/**
+ * Under ten seconds with one decimal (`4.3 s`), whole seconds from there (`20 s`); digits are ASCII in any locale. The
+ * choice follows the rounded value, so 9 950 ms reads `10 s`, not `10.0 s`.
+ */
 internal fun durationText(millis: Long): String {
     val safe = millis.coerceAtLeast(0)
-    if (safe >= TEN_SECONDS) return "${(safe + HALF_SECOND) / ONE_SECOND} s"
     val tenths = (safe + HALF_TENTH) / ONE_TENTH
+    if (tenths >= TEN_SECONDS_IN_TENTHS) return "${(safe + HALF_SECOND) / ONE_SECOND} s"
     return "${tenths / TENTHS}.${tenths % TENTHS} s"
 }
 
@@ -155,7 +158,7 @@ private const val NONE = -1
 private val HTTP_OK = 200..299
 private const val ONE_SECOND = 1_000L
 private const val HALF_SECOND = 500L
-private const val TEN_SECONDS = 10_000L
+private const val TEN_SECONDS_IN_TENTHS = 100L
 private const val ONE_TENTH = 100L
 private const val HALF_TENTH = 50L
 private const val TENTHS = 10L

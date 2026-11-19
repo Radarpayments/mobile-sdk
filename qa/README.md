@@ -383,8 +383,8 @@ What both apps do around a run, beyond the documents above.
   + Other, the client id and extra parameters on screens of their own; for mdOrder or Session id only that field with
   Paste), Theme, Behaviour (locale, result screen, scanner, key provider URL), the wallet, SSL pinning, Stands (the
   stored stands with Edit, and adding one by hand, from the clipboard or from a QR code) and the stand editor. The
-  journal shows a gateway request and its answer as one entry; its filters and the text of `qa_journal_text` do not
-  change what the report prints.
+  journal shows a gateway request and its answer as one entry, and the result screen's Journal row counts entries
+  that way; its filters and the text of `qa_journal_text` do not change what the report prints.
 - **Process end.** A run lives as long as the app process. When the process is killed while the sheet is open, the
   sheet's result is lost and the app starts Idle with the stored form.
 

@@ -3,6 +3,7 @@ package net.payrdr.mobile.payment.sdk.qa.ui
 import net.payrdr.mobile.payment.sdk.qa.config.OrderConfig
 import net.payrdr.mobile.payment.sdk.qa.config.OrderSource
 import net.payrdr.mobile.payment.sdk.qa.journal.ClockPrecision
+import net.payrdr.mobile.payment.sdk.qa.journal.JournalEntry
 import net.payrdr.mobile.payment.sdk.qa.journal.timeOfDay
 import net.payrdr.mobile.payment.sdk.qa.launcher.ResultType
 import net.payrdr.mobile.payment.sdk.qa.merchant.OrderStatus
@@ -60,7 +61,14 @@ internal fun lastRunSummary(
 internal fun launchedOrderSummary(order: OrderConfig): String =
     if (order.source == OrderSource.REGISTER) "${order.type.json} · ${amountSummary(order)}" else orderSummary(order)
 
-internal fun entriesSummary(count: Int): String = if (count == 1) "1 entry" else "$count entries"
+/**
+ * `2 entries`: the items the journal screen lists, a gateway request and its answer counting once, so the number matches
+ * what the Journal row opens.
+ */
+internal fun entriesSummary(entries: List<JournalEntry>): String {
+    val count = journalItems(entries).size
+    return if (count == 1) "1 entry" else "$count entries"
+}
 
 // A status field the gateway left out.
 private const val MISSING = "-"
