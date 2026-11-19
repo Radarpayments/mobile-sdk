@@ -4,6 +4,7 @@ import SwiftUI
 enum Route: Hashable {
     case stands
     case stand
+    case importText
     case order
     case field(String)
     case theme
@@ -36,6 +37,7 @@ struct RootView: View {
                 toaster: toaster,
                 scannerShown: scannerShown,
                 go: go,
+                onImportText: openTextImport,
                 onScan: { scanning = true }
             )
             .navigationDestination(for: Route.self, destination: screen)
@@ -82,9 +84,11 @@ struct RootView: View {
                     session.editor.load(profile)
                     go(.stand)
                 },
+                onPasteText: openTextImport,
                 onScan: { scanning = true }
             )
         case .stand: StandEditorScreen(session: session, editor: session.editor, toaster: toaster, back: back)
+        case .importText: ImportTextScreen(session: session, textImport: session.textImport, back: back)
         case .order: OrderScreen(session: session, form: form, back: back, go: go)
         case let .field(tag): FieldScreen(form: form, tag: tag, back: back)
         case .theme: ThemeScreen(form: form, back: back)
@@ -119,6 +123,11 @@ struct RootView: View {
 
     private func go(_ route: Route) {
         if path.last != route { path.append(route) }
+    }
+
+    private func openTextImport() {
+        session.textImport.clear()
+        go(.importText)
     }
 
     private func back() {

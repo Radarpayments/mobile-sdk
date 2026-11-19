@@ -34,6 +34,9 @@ nonisolated enum Tags {
     static let menu = "qa_menu"
     static let importClipboard = "qa_import"
     static let importQr = "qa_import_qr"
+    static let importText = "qa_import_text"
+    static let importTextField = "qa_import_text_field"
+    static let importTextApply = "qa_import_text_apply"
     static let export = "qa_export"
     static let reset = "qa_reset"
     static let report = "qa_report"
@@ -64,6 +67,7 @@ nonisolated enum Tags {
     static let profileReject = "qa_profile_reject"
     static let profileEnter = "qa_profile_enter"
     static let profilePaste = "qa_profile_paste"
+    static let profilePasteText = "qa_profile_paste_text"
     static let profileScan = "qa_profile_scan"
     static let profilePasswordShow = "qa_profile_password_show"
     static let profileApiKeyShow = "qa_profile_api_key_show"
@@ -116,12 +120,13 @@ nonisolated enum Tags {
     static let all: [String] = fields + [
         groupOrder, groupSdk, groupTheme, groupWallets, groupSecurity, themeLegend,
         launch, menu, importClipboard, importQr, export, reset, report, runAgain,
+        importText, importTextField, importTextApply,
         profilesOpen, homeAmount, homeFeatures, homeLastRun,
         orderFeaturesOther, orderFeaturesOtherName, orderFeaturesOtherAdd, orderClientIdOpen, orderExtraOpen,
         orderMdOrderPaste, orderSessionIdPaste,
         profileName, profileGatewayUrl, profileApi, profileLogin, profilePassword, profileApiKey,
         profileAdd, profileSave, profileDelete, profileConfirm, profileReject,
-        profileEnter, profilePaste, profileScan, profilePasswordShow, profileApiKeyShow,
+        profileEnter, profilePaste, profilePasteText, profileScan, profilePasswordShow, profileApiKeyShow,
         validationError, resultType, resultMdOrder, resultMdOrderCopy, resultSessionId, resultOrderStatus, resultError,
         resultSessionIdCopy, resultStand, resultOrder, resultTheme,
         journalOpen, journalText, journalLevel, journalSearch, journalClear, journalCopy,

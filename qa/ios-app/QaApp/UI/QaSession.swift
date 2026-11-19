@@ -24,6 +24,7 @@ typealias Opener = @MainActor (OpenOrder, QaConfig, StandProfile, @escaping (Che
 final class QaSession: ObservableObject {
     let form: ConfigForm
     let editor = ProfileEditor()
+    let textImport = TextImport()
     let store: QaStore
     let journal: Journal
     let run: QaRun

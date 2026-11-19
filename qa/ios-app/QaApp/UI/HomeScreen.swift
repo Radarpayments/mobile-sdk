@@ -10,6 +10,7 @@ struct HomeScreen: View {
     let toaster: Toaster
     let scannerShown: Bool
     let go: (Route) -> Void
+    let onImportText: () -> Void
     let onScan: () -> Void
 
     var body: some View {
@@ -78,6 +79,7 @@ struct HomeScreen: View {
         BarMenu(tag: Tags.menu) {
             Button("Import from clipboard") { session.accept(intake(fromText: UIPasteboard.general.string ?? "")) }
                 .accessibilityIdentifier(Tags.importClipboard)
+            Button("Import from text", action: onImportText).accessibilityIdentifier(Tags.importText)
             if scannerShown {
                 Button("Import from QR code", action: onScan).accessibilityIdentifier(Tags.importQr)
             }

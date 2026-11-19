@@ -8,6 +8,7 @@ struct StandsScreen: View {
     let scannerShown: Bool
     let back: () -> Void
     let onEdit: (StandProfile?) -> Void
+    let onPasteText: () -> Void
     let onScan: () -> Void
 
     var body: some View {
@@ -36,6 +37,7 @@ struct StandsScreen: View {
                 NavRow(label: "Paste from clipboard", value: "", tag: Tags.profilePaste) {
                     session.accept(intake(fromText: UIPasteboard.general.string ?? ""))
                 }
+                NavRow(label: "Paste as text", value: "", tag: Tags.profilePasteText, action: onPasteText)
                 if scannerShown {
                     NavRow(label: "Scan a QR code", value: "", tag: Tags.profileScan, action: onScan)
                 }

@@ -122,7 +122,7 @@ private nonisolated func rejected(_ problem: Problem) -> [Intake] {
 
 /// Drops one leading U+FEFF (a byte order mark that editors and clipboards leave), then ASCII space, tab, CR and LF from
 /// both ends. Other whitespace stays, so both platforms trim the same characters; Swift's own trimming would take more.
-private nonisolated func trimInput(_ text: String) -> String {
+nonisolated func trimInput(_ text: String) -> String {
     var scalars = Substring(text).unicodeScalars
     if scalars.first == "\u{FEFF}" { scalars.removeFirst() }
     let kept: (Unicode.Scalar) -> Bool = { !trimmedScalars.contains($0) }
