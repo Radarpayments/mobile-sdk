@@ -61,6 +61,9 @@ qa_launch
 qa_menu
 qa_import
 qa_import_qr
+qa_import_text
+qa_import_text_field
+qa_import_text_apply
 qa_export
 qa_reset
 qa_report
@@ -80,6 +83,7 @@ qa_profile_select_<name>
 qa_profile_edit_<name>
 qa_profile_enter
 qa_profile_paste
+qa_profile_paste_text
 qa_profile_scan
 qa_profile_password_show
 qa_profile_api_key_show

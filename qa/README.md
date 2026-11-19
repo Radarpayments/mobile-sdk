@@ -262,12 +262,14 @@ them, the whole is lower-cased, every run of other characters than `a-z` and `0-
 - Order screen: `qa_order_features_other` (+ Other), `qa_order_features_other_name`, `qa_order_features_other_add`,
   `qa_order_client_id_open`, `qa_order_extra_open` (open the field's own screen), `qa_order_md_order_paste`,
   `qa_order_session_id_paste`.
-- Actions: `qa_launch`, `qa_menu`, `qa_import` (clipboard), `qa_import_qr`, `qa_export` (copies the `QaConfig` JSON),
-  `qa_reset`, `qa_report`, `qa_run_again`.
+- Actions: `qa_launch`, `qa_menu`, `qa_import` (clipboard), `qa_import_qr`, `qa_import_text` (opens Import from text),
+  `qa_export` (copies the `QaConfig` JSON), `qa_reset`, `qa_report`, `qa_run_again`.
+- Import from text: `qa_import_text_field` (the text), `qa_import_text_apply` (Import).
 - Stands (profiles): `qa_profile_name`, `qa_profile_gateway_url`, `qa_profile_api`, `qa_profile_login`,
   `qa_profile_password`, `qa_profile_password_show`, `qa_profile_api_key`, `qa_profile_api_key_show`, `qa_profile_add`,
-  `qa_profile_enter`, `qa_profile_paste`, `qa_profile_scan`, `qa_profile_save`, `qa_profile_delete`,
-  `qa_profile_select_<name>`, `qa_profile_edit_<name>`, `qa_profile_confirm`, `qa_profile_reject`.
+  `qa_profile_enter`, `qa_profile_paste`, `qa_profile_paste_text` (opens Import from text), `qa_profile_scan`,
+  `qa_profile_save`, `qa_profile_delete`, `qa_profile_select_<name>`, `qa_profile_edit_<name>`, `qa_profile_confirm`,
+  `qa_profile_reject`.
 - Asserted on: `qa_validation_error` (text `<field>: <message>`), `qa_result_type`, `qa_result_md_order`,
   `qa_result_md_order_copy`, `qa_result_session_id`, `qa_result_session_id_copy`, `qa_result_order_status`,
   `qa_result_error`, `qa_result_stand`, `qa_result_order`, `qa_result_theme`, `qa_journal_open`, `qa_journal_text`,
@@ -337,11 +339,15 @@ launched. The launch arguments are the first input of the process, before a link
 as a link, as above. Any other text must be a JSON object (field `$` otherwise, bare base64 included): a root object
 with a `gatewayUrl` key, whatever its value, is a profile, any other object a config. iOS 16 and later asks "Allow
 Paste" when `qa_import` reads text another app copied; declining reads no text, the `$` problem of an empty clipboard.
+Text typed or pasted into the field of Import from text is read the same way. It is the way in on a device whose
+clipboard is not the tester's, such as one of a cloud device farm, where the clipboard reads empty but keyboard input
+arrives. The text is held in memory only, never saved or written to the journal: a profile carries its password.
 
-**Confirmation.** A config applies at once. A profile from a link, the clipboard or a QR waits for confirmation (its
-name, its gateway URL, and "replaces the existing profile" when the name is taken), so that a link cannot silently
-replace the stand and the credentials; from a launch argument it is saved directly. A rejection changes nothing and
-shows `qa_validation_error` with its field. The limits of Documents (size and depth, field `$`) apply to every way in.
+**Confirmation.** A config applies at once. A profile from a link, the clipboard, Import from text or a QR waits for
+confirmation (its name, its gateway URL, and "replaces the existing profile" when the name is taken), so that a link
+cannot silently replace the stand and the credentials; from a launch argument it is saved directly. A rejection
+changes nothing and shows `qa_validation_error` with its field; Import from text then stays open with its text. The
+limits of Documents (size and depth, field `$`) apply to every way in.
 
 QR scanning uses the device camera and is hidden on the simulator. On Android the Google code scanner (Play services)
 reads the code; when Play services cannot provide it the app says so, and a cancelled scan changes nothing. On iOS the
@@ -372,7 +378,8 @@ What both apps do around a run, beyond the documents above.
   notice about the last external input (its rejection) or about a failed save (field `store`, the message names
   what could not be saved, never a value); the refusal of the last launch. The notice clears with the next input or
   launch; the refusal clears once the config changes. A profile that cannot be saved or deleted from the profile editor
-  shows the same `store` problem in the editor's error element.
+  shows the same `store` problem in the editor's error element. Import from text shows the rejection of its own text
+  in its error element until the text changes.
 - **Reset** returns every field to its default but keeps the selected profile. **Run again** on the result screen
   returns to the home screen with the form unchanged, Back to the screen before it; the result screen is opened once
   per run and stays reachable from the home screen's Last run row.
@@ -381,9 +388,11 @@ What both apps do around a run, beyond the documents above.
   opens its screen: Order (source and type as segments, the amount with the currency menu, features as chips with
   + Other, the client id and extra parameters on screens of their own; for mdOrder or Session id only that field with
   Paste), Theme, Behaviour (locale, result screen, scanner, key provider URL), the wallet, SSL pinning, Stands (the
-  stored stands with Edit, and adding one by hand, from the clipboard or from a QR code) and the stand editor. The
-  journal shows a gateway request and its answer as one entry, and the result screen's Journal row counts entries
-  that way; its filters and the text of `qa_journal_text` do not change what the report prints.
+  stored stands with Edit, and adding one by hand, from the clipboard, as text or from a QR code), the stand editor and
+  Import from text (from Stands and the home menu: a field for a stand or a configuration as JSON or a link, and
+  Import, off while the field is blank, which closes the screen once the text is accepted). The journal shows a
+  gateway request and its answer as one entry, and the result screen's Journal row counts entries that way; its
+  filters and the text of `qa_journal_text` do not change what the report prints.
 - **Process end.** A run lives as long as the app process. When the process is killed while the sheet is open, the
   sheet's result is lost and the app starts Idle with the stored form.
 
