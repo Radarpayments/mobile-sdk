@@ -78,3 +78,11 @@ Quirks met:
   merchant lacks them and answers `errorCode` 14. Use an AFT stand for that case.
 - The gateway's answers do not echo the request's `password`, so the `←` lines of the journal carry no secret even
   before masking.
+
+## Reading a uiautomator dump
+
+`uiautomator dump` writes an attribute in single quotes when its value contains a double quote, which every journal
+line does: `text='09:54:15.876 → …'`. A grep or regex for `text="…"` then reads `qa_journal_text` as empty although
+the node carries the whole journal. Read dumps with an XML parser; Appium reads the node through accessibility and is
+not affected.
+
