@@ -10,6 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 import kotlin.test.Test
 
 class MerchantHttpTest {
@@ -52,6 +53,8 @@ class MerchantHttpTest {
     @Test
     fun `a slow first build of the client is neither journaled as sent nor counted against the timeout`() =
         runTest {
+            // Loads Ktor's classes first, so the timed exchange below is short even on a loaded machine.
+            FakeGateway().merchant().status("abc", V1)
             val gateway = FakeGateway { ok("""{"orderStatus":2}""") }
             var linesWhenBuilt = -1
             val client =
@@ -61,7 +64,7 @@ class MerchantHttpTest {
                     Thread.sleep(SLOW_BUILD_MILLIS)
                     gateway.client
                 }
-            val merchant = Merchant(client, gateway.journal, timeoutMillis = SHORT_TIMEOUT_MILLIS) { "qa-1" }
+            val merchant = Merchant(client, gateway.journal, timeoutMillis = TIMEOUT_MILLIS) { "qa-1" }
 
             merchant.status("abc", V1) shouldBe OrderStatus.Known(2, null, null)
             linesWhenBuilt shouldBe 0
@@ -76,7 +79,7 @@ class MerchantHttpTest {
             val client =
                 lazy {
                     building.countDown()
-                    release.await()
+                    check(release.await(LATCH_SECONDS, TimeUnit.SECONDS))
                     gateway.client
                 }
             var outcome: Result<OrderStatus>? = null
@@ -85,7 +88,7 @@ class MerchantHttpTest {
                 launch(Dispatchers.Default) {
                     outcome = runCatching { Merchant(client, gateway.journal) { "qa-1" }.status("abc", V1) }
                 }
-            building.await()
+            building.await(LATCH_SECONDS, TimeUnit.SECONDS) shouldBe true
             job.cancel()
             release.countDown()
             job.join()
@@ -97,7 +100,8 @@ class MerchantHttpTest {
         }
 
     private companion object {
-        const val SHORT_TIMEOUT_MILLIS = 100L
-        const val SLOW_BUILD_MILLIS = 300L
+        const val TIMEOUT_MILLIS = 1_000L
+        const val SLOW_BUILD_MILLIS = 1_500L
+        const val LATCH_SECONDS = 5L
     }
 }
