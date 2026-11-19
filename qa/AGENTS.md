@@ -58,14 +58,15 @@ The same on both platforms, one directory each (`config/`, `storage/`, ... under
 
 ## Gateway formats checked on a stand
 
-On 2026-11-19 the formats the samples do not use were sent to the sandbox `https://dev.bpcbt.com` (API v1 profile):
+On 2026-11-19 the formats the samples do not use were sent to the sandbox `https://dev.bpcbt.com` (API v1 profile) and,
+for AFT, to an AFT stand, since the sandbox merchant cannot save cards:
 
 - `register.do` `features` as one comma-joined form parameter: confirmed. `FORCE_TDS` alone registers; `VERIFY` with
   amount 0 registers.
 - `getOrderStatusExtended.do` with `userName`, `password`, `orderId`: confirmed; the answer carries `orderStatus`,
   `actionCode` and `actionCodeDescription` (a fresh order: `orderStatus=0, actionCode=-100`).
-- `registerP2P.do` with `features.feature = [WITHOUT_TO_CARD, VERIFY, FORCE_CREATE_BINDING]` and amount 0 is
-  well-formed; it registers on an AFT stand, as does a plain transfer.
+- `registerP2P.do` with `features.feature = [WITHOUT_TO_CARD, VERIFY, FORCE_CREATE_BINDING]` and amount 0: confirmed
+  on the AFT stand, not on the sandbox (see the quirks); a plain transfer of 100 registered there too.
 - Still open: the `features` array of `POST {api2}/sessions`. No API key for the sandbox's API v2 was at hand; keep the
   ⚠ in `README.md` and in both `MerchantRequests` until a v2 profile has registered a session with a feature.
 
@@ -76,8 +77,8 @@ Quirks met:
   the comma-joined value into names.
 - Bindings on AFT (`VERIFY`, `FORCE_CREATE_BINDING`) need merchant options (`BINDING_ALLOWED` and others); the sandbox
   merchant lacks them and answers `errorCode` 14. Use an AFT stand for that case.
-- The gateway's answers do not echo the request's `password`, so the `←` lines of the journal carry no secret even
-  before masking.
+- On the sandbox, for the requests above, the answers did not echo the request's `password`. The journal still masks
+  it: another stand or an error path may quote the request back.
 
 ## Reading a uiautomator dump
 

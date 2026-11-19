@@ -30,7 +30,8 @@ import java.io.IOException
  * API key masked. Never throws for a gateway or network problem: the result says what went wrong.
  *
  * The client is taken from [http] on the first request, on the IO dispatcher: building a Ktor client loads SLF4J, which
- * scans the APK, and done on the main thread at start it held the first screen long enough for an ANR.
+ * scans the APK, and done on the main thread at start it held the first screen long enough for an ANR. It is built
+ * before the `→` line and outside the timeout, so a slow first build does not read as a gateway that did not answer.
  */
 internal class Merchant(
     private val http: Lazy<HttpClient>,
@@ -75,8 +76,9 @@ internal class Merchant(
         failed: (String) -> T,
         answer: (Int, String) -> T,
     ): T {
+        val client = withContext(Dispatchers.IO) { http.value }
         journal.record(LogLevel.INFO, TAG, request.printed(secrets))
-        return when (val outcome = call(request, secrets)) {
+        return when (val outcome = call(client, request, secrets)) {
             is Reply -> {
                 val level = if (outcome.status in 200..299) LogLevel.INFO else LogLevel.WARNING
                 val line = "← ${outcome.status} ${outcome.body}"
@@ -93,11 +95,12 @@ internal class Merchant(
     // Real time on the IO dispatcher, as the sample's server calls: a stalled DNS lookup must not hold the caller.
     // The body is read inside the timeout too, since a gateway may send the headers and then stall.
     private suspend fun call(
+        client: HttpClient,
         request: GatewayRequest,
         secrets: GatewaySecrets,
     ): Outcome =
         try {
-            withContext(Dispatchers.IO) { withTimeoutOrNull(timeoutMillis) { sendOrCancelled(request) } }
+            withContext(Dispatchers.IO) { withTimeoutOrNull(timeoutMillis) { sendOrCancelled(client, request) } }
                 ?: NoAnswer("The gateway did not answer in ${timeoutMillis / MILLIS_PER_SECOND} s")
         } catch (cancelled: CancellationException) {
             throw cancelled
@@ -123,16 +126,21 @@ internal class Merchant(
 
     // OkHttp ends a cancelled call with IOException("Canceled"). Escaping the timeout block, it would win over the
     // timeout's own cancellation and read as a network failure; the block's cancellation, rethrown instead, does not.
-    private suspend fun CoroutineScope.sendOrCancelled(request: GatewayRequest): Reply =
+    private suspend fun CoroutineScope.sendOrCancelled(
+        client: HttpClient,
+        request: GatewayRequest,
+    ): Reply =
         try {
-            send(request)
+            send(client, request)
         } catch (e: IOException) {
             ensureActive()
             throw e
         }
 
-    private suspend fun send(request: GatewayRequest): Reply {
-        val client = http.value
+    private suspend fun send(
+        client: HttpClient,
+        request: GatewayRequest,
+    ): Reply {
         val response =
             when (request) {
                 is GatewayRequest.Form -> client.submitForm(request.url, request.parameters)
