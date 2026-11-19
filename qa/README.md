@@ -279,8 +279,6 @@ them, the whole is lower-cased, every run of other characters than `a-z` and `0-
   `qa_result_order_status` text: `orderStatus=<n>, actionCode=<n>, <description>`, `not queried`, or `error: <message>`.
   A missing `orderStatus` or `actionCode` prints `-`, a missing description is left out together with its `, `. This
   text is exactly `not queried` here; only the run report adds the reason (see "Run report").
-- On iOS a toolbar button's identifier (`qa_profiles_open`, `qa_journal_open`, `qa_menu`) can match two elements, the
-  toolbar item and its button; the button-typed match is the one to use.
 
 Each `QaConfig` field has exactly one form element on the platform that shows it (the other platform's wallet fields
 have none), named by the field's path in snake_case with the `qa_` prefix. A
