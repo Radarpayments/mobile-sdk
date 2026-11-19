@@ -28,9 +28,12 @@ import java.io.IOException
  * The merchant's backend, played from the device: registers the order the SDK then pays, and asks its status
  * afterwards, with the stand profile's credentials. Every exchange is journaled under `merchant`, the password and the
  * API key masked. Never throws for a gateway or network problem: the result says what went wrong.
+ *
+ * The client is taken from [http] on the first request, on the IO dispatcher: building a Ktor client loads SLF4J, which
+ * scans the APK, and done on the main thread at start it held the first screen long enough for an ANR.
  */
 internal class Merchant(
-    private val http: HttpClient,
+    private val http: Lazy<HttpClient>,
     private val journal: Journal,
     private val timeoutMillis: Long = 20_000,
     private val orderNumber: () -> String = ::newOrderNumber,
@@ -129,11 +132,12 @@ internal class Merchant(
         }
 
     private suspend fun send(request: GatewayRequest): Reply {
+        val client = http.value
         val response =
             when (request) {
-                is GatewayRequest.Form -> http.submitForm(request.url, request.parameters)
+                is GatewayRequest.Form -> client.submitForm(request.url, request.parameters)
                 is GatewayRequest.Json ->
-                    http.post(request.url) {
+                    client.post(request.url) {
                         request.apiKey?.let { header(GatewayRequest.API_KEY_HEADER, it) }
                         setBody(TextContent(request.body.toString(), ContentType.Application.Json))
                     }

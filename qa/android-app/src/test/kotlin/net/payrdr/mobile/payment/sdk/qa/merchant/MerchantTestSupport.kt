@@ -59,7 +59,7 @@ internal class FakeGateway(
             },
         )
 
-    fun merchant(timeoutMillis: Long = 20_000): Merchant = Merchant(client, journal, timeoutMillis) { "qa-1" }
+    fun merchant(timeoutMillis: Long = 20_000): Merchant = Merchant(lazyOf(client), journal, timeoutMillis) { "qa-1" }
 
     fun journalText(): String = journal.entries.value.joinToString("\n") { it.message }
 

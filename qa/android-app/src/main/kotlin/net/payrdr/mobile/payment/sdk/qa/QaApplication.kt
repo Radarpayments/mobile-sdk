@@ -25,6 +25,6 @@ internal class QaApplication : Application() {
     // The run presents the sheet and takes its result on the main thread.
     val session: QaSession by lazy {
         val store = QaStore(qaDataStore { preferencesDataStoreFile("qa") }, KeystoreSecretBox())
-        QaSession(store, journal, Merchant(merchantHttpClient(), journal), MainScope())
+        QaSession(store, journal, Merchant(lazy(::merchantHttpClient), journal), MainScope())
     }
 }
