@@ -1,8 +1,8 @@
-# PAYRDR QA apps
+# QA Sample App
 
 Two native apps, Android (`qa/android-app`, Compose) and iOS (`qa/ios-app`, SwiftUI), that open the SDK's checkout with
 any configuration a QA specialist chooses: order parameters, SDK parameters, theme. The application id and the bundle
-id are `net.payrdr.mobile.payment.sdk.qa`, the display name is `PAYRDR QA`; the apps install next to a sample.
+id are `net.payrdr.mobile.payment.sdk.qa`, the display name is `QA Sample App`; the apps install next to a sample.
 
 They are a test tool, **not a sample for integrators**. Where an integrator should see one clean integration, these apps
 expose every knob, accept parameters from outside and keep test-stand credentials on the device. For the integration

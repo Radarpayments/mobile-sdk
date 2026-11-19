@@ -67,7 +67,7 @@ internal fun HomeScreen(
     val why = form.problem ?: session.notice ?: (state as? RunState.Invalid)?.problem ?: launchCheck
     val busy = state.isBusy()
     QaScreen(
-        title = "PAYRDR QA",
+        title = "QA Sample App",
         actions = { HomeMenu(session, open) },
         footer = {
             Footer(why = { why?.let { FooterWhy("${it.field}: ${it.message}", Modifier.testTag(Tags.VALIDATION_ERROR)) } }) {
