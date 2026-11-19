@@ -40,6 +40,17 @@ nonisolated enum Tags {
     static let runAgain = "qa_run_again"
 
     static let profilesOpen = "qa_profiles_open"
+    static let homeAmount = "qa_home_amount"
+    static let homeFeatures = "qa_home_features"
+    static let homeLastRun = "qa_home_last_run"
+    static let orderFeaturesOther = "qa_order_features_other"
+    static let orderFeaturesOtherName = "qa_order_features_other_name"
+    static let orderFeaturesOtherAdd = "qa_order_features_other_add"
+    static let orderClientIdOpen = "qa_order_client_id_open"
+    static let orderExtraOpen = "qa_order_extra_open"
+    static let orderMdOrderPaste = "qa_order_md_order_paste"
+    static let orderSessionIdPaste = "qa_order_session_id_paste"
+
     static let profileName = "qa_profile_name"
     static let profileGatewayUrl = "qa_profile_gateway_url"
     static let profileApi = "qa_profile_api"
@@ -51,6 +62,11 @@ nonisolated enum Tags {
     static let profileDelete = "qa_profile_delete"
     static let profileConfirm = "qa_profile_confirm"
     static let profileReject = "qa_profile_reject"
+    static let profileEnter = "qa_profile_enter"
+    static let profilePaste = "qa_profile_paste"
+    static let profileScan = "qa_profile_scan"
+    static let profilePasswordShow = "qa_profile_password_show"
+    static let profileApiKeyShow = "qa_profile_api_key_show"
 
     static let validationError = "qa_validation_error"
     static let resultType = "qa_result_type"
@@ -59,12 +75,17 @@ nonisolated enum Tags {
     static let resultSessionId = "qa_result_session_id"
     static let resultOrderStatus = "qa_result_order_status"
     static let resultError = "qa_result_error"
+    static let resultSessionIdCopy = "qa_result_session_id_copy"
+    static let resultStand = "qa_result_stand"
+    static let resultOrder = "qa_result_order"
+    static let resultTheme = "qa_result_theme"
 
     static let journalOpen = "qa_journal_open"
     static let journalText = "qa_journal_text"
     static let journalLevel = "qa_journal_level"
     static let journalSearch = "qa_journal_search"
     static let journalClear = "qa_journal_clear"
+    static let journalCopy = "qa_journal_copy"
 
     /// The configuration fields, in the order of the form: the order `ConfigForm` reports its first problem in.
     static let fields: [String] = [
@@ -95,13 +116,82 @@ nonisolated enum Tags {
     static let all: [String] = fields + [
         groupOrder, groupSdk, groupTheme, groupWallets, groupSecurity, themeLegend,
         launch, menu, importClipboard, importQr, export, reset, report, runAgain,
-        profilesOpen, profileName, profileGatewayUrl, profileApi, profileLogin, profilePassword, profileApiKey,
+        profilesOpen, homeAmount, homeFeatures, homeLastRun,
+        orderFeaturesOther, orderFeaturesOtherName, orderFeaturesOtherAdd, orderClientIdOpen, orderExtraOpen,
+        orderMdOrderPaste, orderSessionIdPaste,
+        profileName, profileGatewayUrl, profileApi, profileLogin, profilePassword, profileApiKey,
         profileAdd, profileSave, profileDelete, profileConfirm, profileReject,
+        profileEnter, profilePaste, profileScan, profilePasswordShow, profileApiKeyShow,
         validationError, resultType, resultMdOrder, resultMdOrderCopy, resultSessionId, resultOrderStatus, resultError,
-        journalOpen, journalText, journalLevel, journalSearch, journalClear,
+        resultSessionIdCopy, resultStand, resultOrder, resultTheme,
+        journalOpen, journalText, journalLevel, journalSearch, journalClear, journalCopy,
     ]
 
-    static func profileSelect(_ name: String) -> String {
-        "qa_profile_select_\(name)"
+    /// The identifiers that end in a value, as `qa/fixtures/identifiers.txt` writes them: an option of a choice, a chip
+    /// of a set, a profile's row. The value part is what `option` makes of the value.
+    static let patterns: [String] = [
+        "\(orderSource)_<value>",
+        "\(orderType)_<value>",
+        "\(orderCurrency)_<value>",
+        "\(orderFeature)_<value>",
+        "\(sdkTheme)_<value>",
+        "\(sdkLocale)_<value>",
+        "\(sdkApplePaySupportedNetworks)_<value>",
+        "\(sdkApplePayMerchantCapabilities)_<value>",
+        "\(profileSelectPrefix)_<name>",
+        "\(profileEditPrefix)_<name>",
+        "\(profileApi)_<value>",
+        "\(journalFilterPrefix)_<value>",
+    ]
+
+    /// The identifier of one option of [field]: the value in snake case (a camel hump becomes `_`), lower case, with
+    /// every run of other characters than `a-z` and `0-9` as one `_`, and `none` for no value: `qa_order_currency_eur`,
+    /// `qa_sdk_theme_large_text`, `qa_sdk_locale_none`. Works on scalars, as Android's regexes work on chars.
+    static func option(_ field: String, _ value: String?) -> String {
+        var out = String.UnicodeScalarView()
+        var previousLower = false
+        var inRun = false
+        for scalar in (value ?? "").unicodeScalars {
+            let isLower = scalar.value >= 0x61 && scalar.value <= 0x7A
+            let isUpper = scalar.value >= 0x41 && scalar.value <= 0x5A
+            let isDigit = scalar.value >= 0x30 && scalar.value <= 0x39
+            if isUpper && previousLower {
+                out.append("_")
+            }
+            if isLower || isDigit {
+                out.append(scalar)
+                inRun = false
+            } else if isUpper {
+                out.append(Unicode.Scalar(scalar.value + 0x20)!)
+                inRun = false
+            } else if !inRun {
+                out.append("_")
+                inRun = true
+            }
+            previousLower = isLower
+        }
+        let id = String(out)
+        return "\(field)_\(id.isEmpty ? "none" : id)"
     }
+
+    static func feature(_ name: String) -> String {
+        option(orderFeature, name)
+    }
+
+    static func profileSelect(_ name: String) -> String {
+        "\(profileSelectPrefix)_\(name)"
+    }
+
+    static func profileEdit(_ name: String) -> String {
+        "\(profileEditPrefix)_\(name)"
+    }
+
+    static func journalFilter(_ id: String) -> String {
+        "\(journalFilterPrefix)_\(id)"
+    }
+
+    private static let orderFeature = "qa_order_feature"
+    private static let profileSelectPrefix = "qa_profile_select"
+    private static let profileEditPrefix = "qa_profile_edit"
+    private static let journalFilterPrefix = "qa_journal_filter"
 }

@@ -1,6 +1,11 @@
 /// The checks that run when Launch is pressed. They are not document validation: a half-edited form and a link with two
 /// fields stay valid documents. [profile] is the stored profile named by `config.profile`, nil when there is none.
 nonisolated func launchProblem(config: QaConfig, profile: StandProfile?) -> Problem? {
+    launchProblems(config: config, profile: profile).first
+}
+
+/// Every check [launchProblem] would refuse with, in order, so the home screen can mark each row it concerns.
+nonisolated func launchProblems(config: QaConfig, profile: StandProfile?) -> [Problem] {
     let order = config.order
     let registers = order.source == .register
     let checks: [(Bool, String, String)] = [
@@ -28,5 +33,5 @@ nonisolated func launchProblem(config: QaConfig, profile: StandProfile?) -> Prob
             "pinning is enabled without a pin"
         ),
     ]
-    return checks.first { $0.0 }.map { Problem(field: $0.1, message: $0.2) }
+    return checks.filter { $0.0 }.map { Problem(field: $0.1, message: $0.2) }
 }

@@ -252,7 +252,8 @@ them, the whole is lower-cased, every run of other characters than `a-z` and `0-
 - Options (patterns): `qa_order_source_<value>`, `qa_order_type_<value>`, `qa_order_currency_<value>` (the items of
   the currency menu), `qa_order_feature_<value>` (a chip, a custom name included), `qa_sdk_theme_<value>`,
   `qa_sdk_locale_<value>`, `qa_profile_api_<value>`; Android only `qa_sdk_google_pay_environment_<value>`,
-  `qa_sdk_google_pay_allowed_card_networks_<value>`, `qa_sdk_google_pay_allowed_auth_methods_<value>`. The field's own
+  `qa_sdk_google_pay_allowed_card_networks_<value>`, `qa_sdk_google_pay_allowed_auth_methods_<value>`; iOS only
+  `qa_sdk_apple_pay_supported_networks_<value>`, `qa_sdk_apple_pay_merchant_capabilities_<value>`. The field's own
   identifier stays on the control that holds the choice and its text is the value.
 - Home rows, each opening a screen: `qa_profiles_open` (the stand, its text-bearing child is `qa_profile`),
   `qa_group_order` (Order screen), `qa_home_amount`, `qa_home_features` (both open the Order screen),

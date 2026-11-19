@@ -46,6 +46,8 @@ qa_sdk_apple_pay_merchant_id  # ios
 qa_sdk_apple_pay_supported_networks  # ios
 qa_sdk_apple_pay_merchant_capabilities  # ios
 qa_sdk_apple_pay_country_code  # ios
+qa_sdk_apple_pay_supported_networks_<value>  # ios
+qa_sdk_apple_pay_merchant_capabilities_<value>  # ios
 qa_group_order
 qa_group_sdk
 qa_group_theme

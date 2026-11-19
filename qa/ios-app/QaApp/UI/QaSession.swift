@@ -1,4 +1,5 @@
 import Combine
+import Foundation
 import RadarpaymentsSDKPayment
 
 /// A profile from outside that waits for the tester's answer before it is saved.
@@ -6,6 +7,12 @@ struct PendingProfile: Equatable {
     var profile: StandProfile
     /// A stored profile of the same name would be replaced.
     var replaces: Bool
+}
+
+/// A finished run and when the app saw it finish; the home screen keeps showing it after Run again resets the run.
+struct LastRun: Equatable {
+    var finished: FinishedRun
+    var time: Date
 }
 
 /// Opens the sheet of an order and hands its result to the closure; false when nothing opened.
@@ -26,6 +33,8 @@ final class QaSession: ObservableObject {
     @Published private(set) var pending: PendingProfile?
     /// The finished run the result screen shows: set when a run finishes, cleared when the next one starts or by Run again.
     @Published private(set) var shown: FinishedRun?
+    /// The last run that finished, kept after Run again for the home screen and the result screen it opens.
+    @Published private(set) var lastRun: LastRun?
 
     // The configuration of the last launch the check refused: its problem stays until the configuration changes.
     private var refused: QaConfig?
@@ -44,6 +53,7 @@ final class QaSession: ObservableObject {
         merchant: Merchant,
         arguments: [Intake] = [],
         active: Bool = true,
+        clock: @escaping () -> Date = Date.init,
         open: @escaping Opener
     ) {
         self.store = store
@@ -59,7 +69,14 @@ final class QaSession: ObservableObject {
 
         form.$config.dropFirst().sink { [weak self] config in self?.changed(config) }.store(in: &subscriptions)
         run.$state.sink { [weak self] state in
-            if case let .finished(finished) = state { self?.shown = finished } else { self?.shown = nil }
+            guard let self else { return }
+            if case let .finished(finished) = state {
+                // Once per run: a run that finishes like the one before still gets its own time.
+                if shown == nil { lastRun = LastRun(finished: finished, time: clock()) }
+                shown = finished
+            } else {
+                shown = nil
+            }
         }.store(in: &subscriptions)
         for publisher in [form.objectWillChange, editor.objectWillChange, store.objectWillChange, run.objectWillChange] {
             publisher.sink { [weak self] _ in self?.objectWillChange.send() }.store(in: &subscriptions)
@@ -75,14 +92,13 @@ final class QaSession: ObservableObject {
         return nil
     }
 
-    /// The launch check's problem with the profile, shown under the profile picker.
-    var profileProblem: Problem? {
-        let problem = launchProblem(config: form.config, profile: selectedProfile)
-        return problem?.field == "profile" ? problem : nil
+    /// What Launch would refuse with now, nil when it would start.
+    var launchCheck: Problem? {
+        launchProblem(config: form.config, profile: selectedProfile)
     }
 
     var canLaunch: Bool {
-        form.problem == nil && profileProblem == nil && !run.state.isBusy
+        form.problem == nil && launchCheck == nil && !run.state.isBusy
     }
 
     var selectedProfile: StandProfile? {

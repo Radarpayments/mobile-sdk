@@ -108,13 +108,18 @@ private func ok(_ text: String) -> Decoded<String?> {
     .ok(isBlank(text) ? nil : text)
 }
 
-// Int64(_:) takes a sign; the apps must agree, so the text is ASCII digits only.
-private func amount(_ text: String) -> Decoded<Int64> {
-    let digits = !text.isEmpty && text.unicodeScalars.allSatisfy { ("0"..."9").contains($0) }
-    guard digits, let value = Int64(text) else {
-        return .invalid(Problem(field: "order.amount", message: "must be a whole number of minor units"))
+// The form reads the amount in major units of the order's currency; the document keeps minor units.
+private func amount(_ text: String, _ currency: String) -> Decoded<Int64> {
+    let digits = Currencies.minorDigits(currency)
+    guard let minor = majorToMinor(text, digits: digits) else {
+        return .invalid(Problem(field: "order.amount", message: "must be digits with at most \(digits) after the point"))
     }
-    return .ok(value)
+    guard minor <= QaConfigJson.maxAmount else {
+        return .invalid(
+            Problem(field: "order.amount", message: "must be at most \(minorToMajor(QaConfigJson.maxAmount, digits: digits))")
+        )
+    }
+    return .ok(minor)
 }
 
 private func flag(_ path: String, _ text: String) -> Decoded<Bool> {
@@ -140,8 +145,8 @@ private let fields: [String: Field] = [
     Tags.orderType: order({ $0.type.rawValue }) { order, text in
         choice("order.type", text, OrderType.self).map { var copy = order; copy.type = $0; return copy }
     },
-    Tags.orderAmount: order({ String($0.amount) }) { order, text in
-        amount(text).map { var copy = order; copy.amount = $0; return copy }
+    Tags.orderAmount: order({ minorToMajor($0.amount, digits: Currencies.minorDigits($0.currency)) }) { order, text in
+        amount(text, order.currency).map { var copy = order; copy.amount = $0; return copy }
     },
     Tags.orderCurrency: order({ $0.currency }) { order, text in
         var copy = order

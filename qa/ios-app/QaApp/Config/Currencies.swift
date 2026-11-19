@@ -1,4 +1,5 @@
-/// The currencies an order may be in, ISO 4217 alphabetic to numeric (the gateway takes the numeric code).
+/// The currencies an order may be in, ISO 4217 alphabetic to numeric (the gateway takes the numeric code), with the
+/// digits of their minor unit.
 nonisolated enum Currencies {
     private static let numericByAlpha = [
         ("EUR", "978"),
@@ -26,4 +27,12 @@ nonisolated enum Currencies {
     static func numeric(_ alpha: String) -> String? {
         numericByAlpha.first { sameText($0.0, alpha) }?.1
     }
+
+    /// Digits after the point in the form's amount. Every listed currency has two; an unknown one gets two as well, so a
+    /// typed code still shows an amount.
+    static func minorDigits(_ alpha: String) -> Int {
+        numericByAlpha.contains { sameText($0.0, alpha) } ? 2 : defaultMinorDigits
+    }
+
+    private static let defaultMinorDigits = 2
 }

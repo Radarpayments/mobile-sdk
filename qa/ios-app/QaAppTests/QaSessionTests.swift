@@ -22,7 +22,8 @@ final class QaSessionTests: MerchantTestCase {
         profiles: [StandProfile]? = nil,
         config: QaConfig? = nil,
         arguments: [Intake] = [],
-        active: Bool = true
+        active: Bool = true,
+        clock: @escaping () -> Date = Date.init
     ) throws -> QaSession {
         UserDefaults().removePersistentDomain(forName: suite)
         secrets = InMemorySecretStore()
@@ -32,7 +33,7 @@ final class QaSessionTests: MerchantTestCase {
         }
         store.save(config: config ?? given)
         return QaSession(
-            store: store, journal: journal, merchant: merchant(), arguments: arguments, active: active
+            store: store, journal: journal, merchant: merchant(), arguments: arguments, active: active, clock: clock
         ) { [unowned self] order, _, _, onResult in
             opened.append(order)
             deliver = onResult
@@ -48,7 +49,7 @@ final class QaSessionTests: MerchantTestCase {
 
     func test_an_edit_that_parses_is_stored() throws {
         let session = try session()
-        session.form.edit(Tags.orderAmount, "700")
+        session.form.edit(Tags.orderAmount, "7.00")
 
         XCTAssertEqual(session.store.config.order.amount, 700)
     }
@@ -114,13 +115,44 @@ final class QaSessionTests: MerchantTestCase {
         XCTAssertEqual(session.form.config, given)
     }
 
+    func test_the_last_run_outlives_run_again_and_each_run_gets_its_own_time() async throws {
+        var now = Date(timeIntervalSince1970: 1000)
+        let session = try session(clock: { now })
+        XCTAssertNil(session.lastRun)
+
+        session.launch()
+        try XCTUnwrap(deliver)(CheckoutResultCanceled(orderId: "md-1"))
+        await session.run.waitUntilSettled()
+        session.runAgain()
+
+        XCTAssertEqual(session.lastRun?.finished.outcome.type, .canceled)
+        XCTAssertEqual(session.lastRun?.time, Date(timeIntervalSince1970: 1000))
+
+        now = Date(timeIntervalSince1970: 2000)
+        session.launch()
+        try XCTUnwrap(deliver)(CheckoutResultCanceled(orderId: "md-1"))
+        await session.run.waitUntilSettled()
+
+        XCTAssertEqual(session.lastRun?.time, Date(timeIntervalSince1970: 2000))
+    }
+
+    func test_launch_is_off_while_the_launch_check_fails() throws {
+        let session = try session(config: QaConfig(profile: "sandbox", order: OrderConfig(source: .mdOrder)))
+
+        XCTAssertEqual(session.launchCheck?.field, "order.mdOrder")
+        XCTAssertFalse(session.canLaunch)
+        session.form.edit(Tags.orderMdOrder, "md-1")
+        XCTAssertNil(session.launchCheck)
+        XCTAssertTrue(session.canLaunch)
+    }
+
     func test_a_launch_the_check_refuses_shows_its_problem_until_the_configuration_changes() throws {
         let session = try session(config: QaConfig(profile: "missing"))
 
         session.launch()
 
         XCTAssertEqual(session.shownProblem?.field, "profile")
-        session.form.edit(Tags.orderAmount, "700")
+        session.form.edit(Tags.orderAmount, "7.00")
         XCTAssertEqual(session.run.state, .idle)
         XCTAssertNil(session.shownProblem)
     }

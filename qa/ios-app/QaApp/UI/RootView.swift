@@ -1,15 +1,25 @@
 import SwiftUI
 
-private enum Route: Hashable {
-    case profiles
-    case journal
+/// The app's screens. Each section of the home screen opens one; Stands opens the editor, Order its optional fields.
+enum Route: Hashable {
+    case stands
+    case stand
+    case order
+    case field(String)
+    case theme
+    case behaviour
+    case locale
+    case wallet
+    case sslPinning
     case result
+    case journal
 }
 
 /// The screens over the one session. A finished run opens its result once; a profile from outside waits for its answer
 /// over whatever screen is shown.
 struct RootView: View {
     @ObservedObject var session: QaSession
+    @StateObject private var toaster = Toaster()
     @State private var path: [Route] = []
     @State private var scanning = false
     // A scanned text is applied once the scanner has closed, so that a launch in it finds the window free for the sheet.
@@ -18,42 +28,26 @@ struct RootView: View {
 
     var body: some View {
         NavigationStack(path: $path) {
-            ConfigScreen(
+            HomeScreen(
                 session: session,
                 form: session.form,
                 store: session.store,
                 run: session.run,
+                toaster: toaster,
                 scannerShown: scannerShown,
-                onProfiles: { path.append(.profiles) },
-                onJournal: { openJournal() },
+                go: go,
                 onScan: { scanning = true }
             )
-            .navigationDestination(for: Route.self) { route in
-                switch route {
-                case .profiles:
-                    ProfilesScreen(session: session, store: session.store, form: session.form, editor: session.editor)
-                        .toolbar { journalButton }
-                case .journal:
-                    JournalScreen(journal: session.journal)
-                case .result:
-                    if let finished = session.shown {
-                        ResultScreen(finished: finished, journal: session.journal, onRunAgain: runAgain)
-                            .toolbar { journalButton }
-                    }
-                }
-            }
+            .navigationDestination(for: Route.self, destination: screen)
         }
+        .overlay { ToastLayer(toaster: toaster) }
         .overlay {
             if let pending = session.pending {
                 ConfirmProfile(pending: pending, onSave: session.confirmPending, onReject: session.rejectPending)
             }
         }
         .onChange(of: session.shown) { shown in
-            if shown != nil {
-                path = [.result]
-            } else if path.contains(.result) {
-                path = []
-            }
+            if shown != nil { path = [.result] }
         }
         .sheet(isPresented: $scanning, onDismiss: applyScan) {
             QrScannerView { scan in
@@ -73,6 +67,48 @@ struct RootView: View {
         }
     }
 
+    @ViewBuilder
+    private func screen(_ route: Route) -> some View {
+        let form = session.form
+        switch route {
+        case .stands:
+            StandsScreen(
+                session: session,
+                form: form,
+                store: session.store,
+                scannerShown: scannerShown,
+                back: back,
+                onEdit: { profile in
+                    session.editor.load(profile)
+                    go(.stand)
+                },
+                onScan: { scanning = true }
+            )
+        case .stand: StandEditorScreen(session: session, editor: session.editor, toaster: toaster, back: back)
+        case .order: OrderScreen(session: session, form: form, back: back, go: go)
+        case let .field(tag): FieldScreen(form: form, tag: tag, back: back)
+        case .theme: ThemeScreen(form: form, back: back)
+        case .behaviour: BehaviourScreen(form: form, back: back, go: go)
+        case .locale: LocaleScreen(form: form, back: back)
+        case .wallet: ApplePayScreen(form: form, back: back)
+        case .sslPinning: SslPinningScreen(session: session, form: form, back: back)
+        case .result:
+            if let lastRun = session.lastRun {
+                ResultScreen(
+                    finished: lastRun.finished,
+                    journal: session.journal,
+                    toaster: toaster,
+                    back: back,
+                    onRunAgain: runAgain,
+                    openJournal: { go(.journal) }
+                )
+            } else {
+                Color.clear.onAppear { path = [] }
+            }
+        case .journal: JournalScreen(journal: session.journal, toaster: toaster, back: back)
+        }
+    }
+
     private var scannerShown: Bool {
         #if targetEnvironment(simulator)
             false
@@ -81,18 +117,17 @@ struct RootView: View {
         #endif
     }
 
-    private var journalButton: some ToolbarContent {
-        ToolbarItem(placement: .navigationBarTrailing) {
-            Button("Journal") { openJournal() }.accessibilityIdentifier(Tags.journalOpen)
-        }
+    private func go(_ route: Route) {
+        if path.last != route { path.append(route) }
     }
 
-    private func openJournal() {
-        if path.last != .journal { path.append(.journal) }
+    private func back() {
+        if !path.isEmpty { path.removeLast() }
     }
 
+    // Only a finished run is reset: a run started from elsewhere meanwhile is left alone.
     private func runAgain() {
-        session.runAgain()
+        if case .finished = session.run.state { session.runAgain() }
         path = []
     }
 
@@ -103,7 +138,7 @@ struct RootView: View {
     }
 }
 
-/// A profile from outside: saved only on Save, never selected.
+/// A stand from outside: saved only on Save, never selected.
 private struct ConfirmProfile: View {
     let pending: PendingProfile
     let onSave: () -> Void
@@ -112,23 +147,34 @@ private struct ConfirmProfile: View {
     var body: some View {
         ZStack {
             Color.black.opacity(0.4).ignoresSafeArea()
-            VStack(alignment: .leading, spacing: 12) {
-                Text("Save the profile \(pending.profile.name)?").font(.headline)
-                Text(pending.profile.gatewayUrl).font(.callout)
+            VStack(alignment: .leading, spacing: 0) {
+                Text("Save the stand \(pending.profile.name)?")
+                    .qaStyle(QaType.title)
+                    .padding(.horizontal, QaSize.screen)
+                    .padding(.top, 20)
+                Text(pending.profile.gatewayUrl)
+                    .qaStyle(QaType.value)
+                    .foregroundStyle(QaColor.muted)
+                    .padding(.horizontal, QaSize.screen)
+                    .padding(.top, QaSize.gap)
                 if pending.replaces {
-                    Text("It replaces the existing profile \(pending.profile.name).").font(.callout).foregroundStyle(.secondary)
+                    Text("It replaces the stored stand \(pending.profile.name).")
+                        .qaStyle(QaType.help)
+                        .foregroundStyle(QaColor.muted)
+                        .padding(.horizontal, QaSize.screen)
+                        .padding(.top, QaSize.gap)
                 }
-                HStack {
-                    Spacer()
-                    Button("Reject", action: onReject).accessibilityIdentifier(Tags.profileReject)
-                    Button("Save", action: onSave)
-                        .buttonStyle(.borderedProminent)
-                        .accessibilityIdentifier(Tags.profileConfirm)
+                QaFooter {
+                    QaButton(text: "Reject", tag: Tags.profileReject, kind: .secondary, action: onReject)
+                    QaButton(text: "Save", tag: Tags.profileConfirm, action: onSave)
                 }
+                .padding(.top, 20)
             }
-            .padding(20)
-            .background(RoundedRectangle(cornerRadius: 14).fill(Color(.systemBackground)))
-            .padding(32)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .foregroundStyle(QaColor.ink)
+            .background(QaColor.bg)
+            .overlay { Rectangle().strokeBorder(QaColor.line, lineWidth: QaSize.line) }
+            .padding(QaSize.screen)
         }
         .accessibilityAddTraits(.isModal)
     }

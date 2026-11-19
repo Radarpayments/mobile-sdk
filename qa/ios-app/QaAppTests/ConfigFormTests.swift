@@ -6,11 +6,22 @@ final class ConfigFormTests: XCTestCase {
     private let form = ConfigForm(QaConfig())
     private let pin = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
 
-    func test_editing_the_amount_changes_the_config() {
-        form.edit(Tags.orderAmount, "250")
+    func test_the_amount_is_typed_in_major_units() {
+        form.edit(Tags.orderAmount, "2.50")
 
         XCTAssertEqual(form.config.order.amount, 250)
         XCTAssertNil(form.problem)
+    }
+
+    func test_the_amount_reads_in_major_units_of_its_currency() {
+        XCTAssertEqual(form.text(Tags.orderAmount), "100.00")
+    }
+
+    func test_more_decimals_than_the_currency_has_name_the_field() {
+        form.edit(Tags.orderAmount, "2.505")
+
+        XCTAssertEqual(form.config.order.amount, 10000)
+        XCTAssertEqual(form.problem?.field, "order.amount")
     }
 
     func test_a_half_typed_amount_keeps_the_last_good_config_and_names_the_field() {
@@ -22,14 +33,14 @@ final class ConfigFormTests: XCTestCase {
     }
 
     func test_an_amount_out_of_range_names_the_field() {
-        form.edit(Tags.orderAmount, "1000000000000")
+        form.edit(Tags.orderAmount, "10000000000")
 
         XCTAssertEqual(form.config.order.amount, 10000)
         XCTAssertEqual(form.problem?.field, "order.amount")
     }
 
     func test_the_amount_takes_ascii_digits_only() {
-        for text in ["+500", "-500", "５００", "٥٠٠", " 500", "5 00", "", "99999999999999999999"] {
+        for text in ["+500", "-500", "５００", "٥٠٠", " 500", "5 00", "", ".50", "1.2.3", "99999999999999999999"] {
             form.edit(Tags.orderAmount, text)
 
             XCTAssertEqual(form.config.order.amount, 10000, text)
@@ -42,7 +53,7 @@ final class ConfigFormTests: XCTestCase {
         form.edit(Tags.orderAmount, "25")
 
         XCTAssertNil(form.problem)
-        XCTAssertEqual(form.config.order.amount, 25)
+        XCTAssertEqual(form.config.order.amount, 2500)
     }
 
     func test_the_text_keeps_what_was_typed_while_it_is_valid() {
@@ -170,7 +181,7 @@ final class ConfigFormTests: XCTestCase {
         form.set(QaConfig())
 
         XCTAssertNil(form.problem)
-        XCTAssertEqual(form.text(Tags.orderAmount), "10000")
+        XCTAssertEqual(form.text(Tags.orderAmount), "100.00")
     }
 
     func test_every_field_of_the_contract_can_be_edited() {

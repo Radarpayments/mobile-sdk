@@ -211,7 +211,7 @@ final class QaRun: ObservableObject {
         }
     }
 
-    private static let tag = "qa"
+    nonisolated static let tag = "qa"
 
     private final class Attempt {
         let config: QaConfig

@@ -30,7 +30,7 @@ private nonisolated let maxTimeout: TimeInterval = 24 * 60 * 60
 /// API key masked. Throws only `CancellationError`, when the caller is cancelled: for a gateway or network problem the
 /// result says what went wrong.
 nonisolated struct Merchant {
-    private static let tag = "merchant"
+    static let tag = "merchant"
     private static let messageLimit = 300
 
     private let session: URLSession

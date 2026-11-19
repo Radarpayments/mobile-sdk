@@ -23,23 +23,39 @@ nonisolated struct JournalEntry: Equatable {
     /// `HH:mm:ss.SSS LEVEL tag: message` in [timeZone], the device's zone by default. Formatted by hand: a date formatter
     /// would print the digits of the user's locale, and the report must read the same on every device.
     func line(timeZone: TimeZone = .current) -> String {
-        // The journal keeps whole milliseconds; rounded, because a date made of them can fall a hair short.
-        let millis = Int64((time.timeIntervalSince1970 * 1000).rounded()) + Int64(timeZone.secondsFromGMT(for: time)) * 1000
-        let ofDay = (millis % Self.millisPerDay + Self.millisPerDay) % Self.millisPerDay
-        let hours = ofDay / 3_600_000
-        let minutes = ofDay / 60000 % 60
-        let seconds = ofDay / 1000 % 60
-        let rest = ofDay % 1000
-        let time = "\(pad(hours, 2)):\(pad(minutes, 2)):\(pad(seconds, 2)).\(pad(rest, 3))"
-        return "\(time) \(levelName(level)) \(tag): \(message)"
+        "\(timeOfDay(time, timeZone: timeZone, precision: .millis)) \(levelName(level)) \(tag): \(message)"
     }
 
-    private static let millisPerDay: Int64 = 86_400_000
-
-    private func pad(_ value: Int64, _ width: Int) -> String {
-        let digits = String(value)
-        return String(repeating: "0", count: max(0, width - digits.count)) + digits
+    /// Whether the tag or the message contains [search], ignoring case.
+    func contains(_ search: FoldedText) -> Bool {
+        foldedTag.contains(search) || foldedMessage.contains(search)
     }
+}
+
+nonisolated enum ClockPrecision {
+    case minutes
+    case seconds
+    case millis
+}
+
+/// `10:50`, `10:50:30` or `10:50:30.123` of [time] in [timeZone], with ASCII digits whatever the locale.
+nonisolated func timeOfDay(_ time: Date, timeZone: TimeZone = .current, precision: ClockPrecision) -> String {
+    // The journal keeps whole milliseconds; rounded, because a date made of them can fall a hair short.
+    let millis = Int64((time.timeIntervalSince1970 * 1000).rounded()) + Int64(timeZone.secondsFromGMT(for: time)) * 1000
+    let ofDay = (millis % millisPerDay + millisPerDay) % millisPerDay
+    let minutes = "\(pad(ofDay / 3_600_000, 2)):\(pad(ofDay / 60000 % 60, 2))"
+    switch precision {
+    case .minutes: return minutes
+    case .seconds: return "\(minutes):\(pad(ofDay / 1000 % 60, 2))"
+    case .millis: return "\(minutes):\(pad(ofDay / 1000 % 60, 2)).\(pad(ofDay % 1000, 3))"
+    }
+}
+
+private nonisolated let millisPerDay: Int64 = 86_400_000
+
+private nonisolated func pad(_ value: Int64, _ width: Int) -> String {
+    let digits = String(value)
+    return String(repeating: "0", count: max(0, width - digits.count)) + digits
 }
 
 /// The SDK's log of one run, kept in memory as it was logged: nothing is filtered or redacted here. Holds the last
@@ -122,7 +138,7 @@ nonisolated func filtered(_ entries: [JournalEntry], minLevel: LogLevel, query: 
     let search = FoldedText(query)
     let rank = levelRank(minLevel)
     return entries.filter { entry in
-        levelRank(entry.level) >= rank && (entry.foldedTag.contains(search) || entry.foldedMessage.contains(search))
+        levelRank(entry.level) >= rank && entry.contains(search)
     }
 }
 
@@ -135,7 +151,7 @@ nonisolated func levelName(_ level: LogLevel) -> String {
     }
 }
 
-nonisolated private func levelRank(_ level: LogLevel) -> Int {
+nonisolated func levelRank(_ level: LogLevel) -> Int {
     switch level {
     case .debug: 0
     case .info: 1

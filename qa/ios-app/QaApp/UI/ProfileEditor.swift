@@ -10,6 +10,8 @@ final class ProfileEditor: ObservableObject {
     @Published var password = ""
     @Published var apiKey = ""
     @Published private(set) var problem: Problem?
+    /// The name of the stored profile being edited, nil for a new one.
+    @Published private(set) var original: String?
 
     /// A save or delete the store could not carry out.
     func failed(_ problem: Problem) {
@@ -17,6 +19,7 @@ final class ProfileEditor: ObservableObject {
     }
 
     func load(_ profile: StandProfile?) {
+        original = profile?.name
         name = profile?.name ?? ""
         gatewayUrl = profile?.gatewayUrl ?? ""
         api = profile?.api ?? .v1

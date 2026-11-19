@@ -19,7 +19,7 @@ The same on both platforms, one directory each (`config/`, `storage/`, ... under
 | `launcher` | builds `SdkPaymentConfig` from `QaConfig`, opens the sheet through the turnkey checkout API | `config`, `theme`, SDK |
 | `journal` | the app's `LogTransport`, entries in memory, gateway exchanges of `merchant` | SDK |
 | `report` | builds the run report text | `config`, `journal` |
-| `ui` | screens; `ui/kit` holds the visual system (one file of colour, size and type tokens, light and dark) and the components every screen is built from — no screen styles a Material component itself | all of the above |
+| `ui` | screens; `ui/kit` holds the visual system (one file of colour, size and type tokens, light and dark) and the components every screen is built from — no screen styles a Material component itself, and no iOS screen uses `List` or `Form` | all of the above |
 
 ## Rules
 
@@ -53,6 +53,9 @@ The same on both platforms, one directory each (`config/`, `storage/`, ... under
   raw control characters, so Android parses document text only through `parseObject` (or after `isStrictJson`, as
   `QaStore.readProfiles` does), never with kotlinx directly; iOS's `JSONValue.parse` is strict already. Text the app
   wrote itself is exempt. A fixture with a repeated key or text that is not JSON uses `inputText`.
+- **SwiftUI `Text` wraps only between words.** A journal body is one long unbroken string, so it goes through the kit's
+  `WrappedText` (a `UITextView` wrapping by character, as Compose does); with `Text` the arrow would stand alone on a
+  line above the body.
 - **Do not build the two Xcode projects in parallel** (this one and `samples/ios-app`): both write to
   `sdk-payment-scanner/build/XCFrameworks/debug`. No release linking of iOS frameworks, no whole-repo `./gradlew build`.
 

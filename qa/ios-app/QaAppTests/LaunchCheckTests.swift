@@ -111,4 +111,13 @@ final class LaunchCheckTests: XCTestCase {
         XCTAssertEqual(launchProblem(config: broken, profile: nil)?.field, "profile")
         XCTAssertEqual(launchProblem(config: config(source: .mdOrder, pinning: pinned), profile: v1)?.field, "order.mdOrder")
     }
+
+    func test_every_failing_check_is_listed_in_order_and_the_first_is_the_launch_problem() {
+        let given = config(source: .mdOrder, pinning: pinned)
+        let problems = launchProblems(config: given, profile: v1)
+
+        XCTAssertEqual(problems.map(\.field), ["order.mdOrder", "sdk.sslPinning.pins"])
+        XCTAssertEqual(launchProblem(config: given, profile: v1), problems.first)
+        XCTAssertEqual(launchProblems(config: config(), profile: v1), [])
+    }
 }
