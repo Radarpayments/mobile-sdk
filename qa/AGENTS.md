@@ -19,7 +19,7 @@ The same on both platforms, one directory each (`config/`, `storage/`, ... under
 | `launcher` | builds `SdkPaymentConfig` from `QaConfig`, opens the sheet through the turnkey checkout API | `config`, `theme`, SDK |
 | `journal` | the app's `LogTransport`, entries in memory, gateway exchanges of `merchant` | SDK |
 | `report` | builds the run report text | `config`, `journal` |
-| `ui` | screens | all of the above |
+| `ui` | screens; `ui/kit` holds the visual system (one file of colour, size and type tokens, light and dark) and the components every screen is built from — no screen styles a Material component itself | all of the above |
 
 ## Rules
 
