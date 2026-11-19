@@ -184,14 +184,17 @@ array as its JSON text (`{"a":1}`).
 
 | Endpoint | Shape | Fields in order |
 |---|---|---|
-| `POST {base}/rest/register.do` (`payment`, v1) | form | `userName`, `password`, `amount`, `currency` (numeric), `orderNumber`, `returnUrl=sdk://done`, `clientId` if set, `features` = names joined by `,` if non-empty ⚠, extra |
+| `POST {base}/rest/register.do` (`payment`, v1) | form | `userName`, `password`, `amount`, `currency` (numeric), `orderNumber`, `returnUrl=sdk://done`, `clientId` if set, `features` = names joined by `,` if non-empty, extra |
 | `POST {base}/rest/api/p2p/registerP2P.do` (`aft`, v1) | JSON | `username`, `password`, `amount` (number), `currency` (numeric string), `orderNumber`, `returnUrl`, `transactionTypeIndicator:"A"`, `features:{feature:[…]}` = `WITHOUT_TO_CARD` first, then `order.features` without duplicates, `clientId` if set, extra |
 | `POST {api2}/sessions` (`payment`, v2) | JSON, header `X-API-KEY` | `amount` (number), `currency` (alphabetic), `successUrl`, `failureUrl` (`sdk://done`), `merchantCustomerId` if `clientId` is set, `features` array if non-empty ⚠, extra |
-| `POST {base}/rest/getOrderStatusExtended.do` (v1 with credentials) | form | `userName`, `password`, `orderId` ⚠ |
+| `POST {base}/rest/getOrderStatusExtended.do` (v1 with credentials) | form | `userName`, `password`, `orderId` |
 
-⚠ marks what is not taken from the samples; it is checked against the sandbox. Unlike the samples, the app adds nothing
-for a zero amount. On both platforms the app follows no redirect, since following one would post the password again or
-carry the API key to another host: a 30x is read like any other answer that is not 2xx and fails as `HTTP <status>: …`,
+The `features` of `register.do` and the status request are not taken from the samples; both were checked against the
+sandbox. `register.do` reads `features` as names split at `,`, ignores a name it does not know without a word (the order
+registers as if it were absent) and rejects `FORCE_TDS` together with `FORCE_SSL` (`errorCode` 13). ⚠ marks the one
+format not checked yet: the `features` array of sessions (no API key for the sandbox's API v2). Unlike the samples, the
+app adds nothing for a zero amount. On both platforms the app follows no redirect, since following one would post the
+password again or carry the API key to another host: a 30x is read like any other answer that is not 2xx and fails as `HTTP <status>: …`,
 so a profile must name the final URL. It sends no cookies and keeps none between calls.
 
 Answers. `register.do` and `registerP2P.do`: `orderId`, else `errorMessage` or `Gateway error <errorCode>`. Sessions:

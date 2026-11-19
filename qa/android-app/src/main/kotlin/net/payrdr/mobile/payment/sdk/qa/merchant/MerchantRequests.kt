@@ -63,7 +63,6 @@ internal fun registerForm(
             "returnUrl" to DONE_URL,
         )
     order.clientId?.takeIf { it.isNotBlank() }?.let { fields["clientId"] = it }
-    // ⚠ Unconfirmed on a stand: register.do is assumed to take the features as one comma-separated parameter.
     if (order.features.isNotEmpty()) fields["features"] = order.features.joinToString(",")
     order.extra.forEach { (name, value) -> if (value is JsonNull) fields.remove(name) else fields[name] = formText(value) }
     return Parameters.build { fields.forEach { (name, value) -> append(name, value) } }
@@ -103,13 +102,13 @@ internal fun sessionJson(order: OrderConfig): JsonObject {
             put("successUrl", DONE_URL)
             put("failureUrl", DONE_URL)
             order.clientId?.takeIf { it.isNotBlank() }?.let { put("merchantCustomerId", it) }
-            // ⚠ Unconfirmed on a stand: sessions are assumed to take the features as a plain array of names.
+            // ⚠ Unconfirmed on a stand (no API key on the sandbox yet): sessions are assumed to take a plain array of names.
             if (order.features.isNotEmpty()) put("features", JsonArray(order.features.map(::JsonPrimitive)))
         }
     return withExtra(body, order.extra)
 }
 
-/** `getOrderStatusExtended.do`. ⚠ Unconfirmed on a stand: the order is assumed to be named by `orderId` alone. */
+/** `getOrderStatusExtended.do`. */
 internal fun statusForm(
     orderId: String,
     profile: StandProfile,

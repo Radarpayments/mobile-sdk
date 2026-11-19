@@ -55,3 +55,26 @@ The same on both platforms, one directory each (`config/`, `storage/`, ... under
   wrote itself is exempt. A fixture with a repeated key or text that is not JSON uses `inputText`.
 - **Do not build the two Xcode projects in parallel** (this one and `samples/ios-app`): both write to
   `sdk-payment-scanner/build/XCFrameworks/debug`. No release linking of iOS frameworks, no whole-repo `./gradlew build`.
+
+## Gateway formats checked on a stand
+
+On 2026-11-19 the formats the samples do not use were sent to the sandbox `https://dev.bpcbt.com` (API v1 profile):
+
+- `register.do` `features` as one comma-joined form parameter: confirmed. `FORCE_TDS` alone registers; `VERIFY` with
+  amount 0 registers.
+- `getOrderStatusExtended.do` with `userName`, `password`, `orderId`: confirmed; the answer carries `orderStatus`,
+  `actionCode` and `actionCodeDescription` (a fresh order: `orderStatus=0, actionCode=-100`).
+- `registerP2P.do` with `features.feature = [WITHOUT_TO_CARD, VERIFY, FORCE_CREATE_BINDING]` and amount 0 is
+  well-formed; it registers on an AFT stand, as does a plain transfer.
+- Still open: the `features` array of `POST {api2}/sessions`. No API key for the sandbox's API v2 was at hand; keep the
+  ⚠ in `README.md` and in both `MerchantRequests` until a v2 profile has registered a session with a feature.
+
+Quirks met:
+- An unknown feature name is ignored silently: the order registers as if it were not there, so a typo in
+  `order.features` does not fail the run. Check the order's behaviour, not only that it registered.
+- `FORCE_TDS` (or `FRAUD_FORCE_TDS`) with `FORCE_SSL` (or `FRAUD_FORCE_SSL`) is `errorCode` 13; the gateway does split
+  the comma-joined value into names.
+- Bindings on AFT (`VERIFY`, `FORCE_CREATE_BINDING`) need merchant options (`BINDING_ALLOWED` and others); the sandbox
+  merchant lacks them and answers `errorCode` 14. Use an AFT stand for that case.
+- The gateway's answers do not echo the request's `password`, so the `←` lines of the journal carry no secret even
+  before masking.

@@ -107,7 +107,6 @@ nonisolated func registerForm(
         ("returnUrl", doneUrl),
     ]
     if let clientId = order.clientId, !isBlank(clientId) { fields.append(("clientId", clientId)) }
-    // ⚠ Unconfirmed on a stand: register.do is assumed to take the features as one comma-separated parameter.
     if !order.features.isEmpty { fields.append(("features", order.features.joined(separator: ","))) }
     for (name, value) in order.extra {
         let position = fields.firstIndex { sameText($0.0, name) }
@@ -153,12 +152,12 @@ nonisolated func sessionJson(_ order: OrderConfig) -> JSONObject {
     body["successUrl"] = .string(doneUrl)
     body["failureUrl"] = .string(doneUrl)
     if let clientId = order.clientId, !isBlank(clientId) { body["merchantCustomerId"] = .string(clientId) }
-    // ⚠ Unconfirmed on a stand: sessions are assumed to take the features as a plain array of names.
+    // ⚠ Unconfirmed on a stand (no API key on the sandbox yet): sessions are assumed to take a plain array of names.
     if !order.features.isEmpty { body["features"] = .array(order.features.map(JSONValue.string)) }
     return withExtra(body, order.extra)
 }
 
-/// `getOrderStatusExtended.do`. ⚠ Unconfirmed on a stand: the order is assumed to be named by `orderId` alone.
+/// `getOrderStatusExtended.do`.
 nonisolated func statusForm(_ orderId: String, _ profile: StandProfile) -> [(String, String)] {
     [("userName", profile.login), ("password", profile.password), ("orderId", orderId)]
 }
