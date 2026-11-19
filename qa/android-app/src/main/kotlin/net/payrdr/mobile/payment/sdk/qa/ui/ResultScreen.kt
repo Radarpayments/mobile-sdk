@@ -2,25 +2,15 @@ package net.payrdr.mobile.payment.sdk.qa.ui
 
 import android.content.Context
 import android.os.Build
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import net.payrdr.mobile.payment.sdk.payment.SdkPayment
 import net.payrdr.mobile.payment.sdk.qa.journal.JournalEntry
@@ -28,58 +18,126 @@ import net.payrdr.mobile.payment.sdk.qa.launcher.RunState
 import net.payrdr.mobile.payment.sdk.qa.report.AppInfo
 import net.payrdr.mobile.payment.sdk.qa.report.runReport
 import net.payrdr.mobile.payment.sdk.qa.report.text
+import net.payrdr.mobile.payment.sdk.qa.ui.kit.ButtonKind
+import net.payrdr.mobile.payment.sdk.qa.ui.kit.Caption
+import net.payrdr.mobile.payment.sdk.qa.ui.kit.Footer
+import net.payrdr.mobile.payment.sdk.qa.ui.kit.Link
+import net.payrdr.mobile.payment.sdk.qa.ui.kit.ListGroup
+import net.payrdr.mobile.payment.sdk.qa.ui.kit.ListRow
+import net.payrdr.mobile.payment.sdk.qa.ui.kit.NavRow
+import net.payrdr.mobile.payment.sdk.qa.ui.kit.QaButton
+import net.payrdr.mobile.payment.sdk.qa.ui.kit.QaScreen
+import net.payrdr.mobile.payment.sdk.qa.ui.kit.QaSize
+import net.payrdr.mobile.payment.sdk.qa.ui.kit.QaText
+import net.payrdr.mobile.payment.sdk.qa.ui.kit.QaType
+import net.payrdr.mobile.payment.sdk.qa.ui.kit.RowValue
+import net.payrdr.mobile.payment.sdk.qa.ui.kit.TwoLineRow
+import net.payrdr.mobile.payment.sdk.qa.ui.kit.ValueText
+import net.payrdr.mobile.payment.sdk.qa.ui.kit.qaColors
 
-/** What a finished run came to: the checkout's result, the order's status, and the report of the run. */
+/**
+ * What a finished run came to: the outcome, the ids to copy, what it was launched with and the journal. Rows with
+ * nothing to show are left out.
+ */
 @Composable
 internal fun ResultScreen(
     finished: RunState.Finished,
     entries: List<JournalEntry>,
+    onBack: () -> Unit,
     onRunAgain: () -> Unit,
     onJournal: () -> Unit,
 ) {
     val context = LocalContext.current
     val outcome = finished.outcome
-    Column(Modifier.fillMaxSize()) {
-        ScreenBar("Result", onRunAgain) { JournalButton(onJournal) }
-        SelectionContainer(Modifier.weight(1f)) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 16.dp),
-            ) {
-                Value("Result", outcome.type.id, Tags.RESULT_TYPE)
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Column(Modifier.weight(1f)) { Value("mdOrder", outcome.mdOrder ?: MISSING, Tags.RESULT_MD_ORDER) }
-                    TextButton(
-                        onClick = { outcome.mdOrder?.let { context.copyText("mdOrder", it) } },
-                        enabled = outcome.mdOrder != null,
-                        modifier = Modifier.testTag(Tags.RESULT_MD_ORDER_COPY),
-                    ) { Text("Copy") }
+    QaScreen(
+        title = "Result",
+        onBack = onBack,
+        footer = {
+            Footer {
+                QaButton(
+                    "Copy report",
+                    Tags.REPORT,
+                    { context.copyText("Report", runReport(context.appInfo(), finished, entries)) },
+                    ButtonKind.SECONDARY,
+                )
+                QaButton("Run again", Tags.RUN_AGAIN, onRunAgain)
+            }
+        },
+    ) {
+        Banner(finished)
+        val ids = listOfNotNull(outcome.mdOrder, outcome.sessionId, outcome.error)
+        if (ids.isNotEmpty()) {
+            Caption("Order")
+            ListGroup {
+                outcome.mdOrder?.let { CopyRow("mdOrder", it, Tags.RESULT_MD_ORDER, Tags.RESULT_MD_ORDER_COPY) }
+                outcome.sessionId?.let { CopyRow("Session id", it, Tags.RESULT_SESSION_ID, Tags.RESULT_SESSION_ID_COPY) }
+                outcome.error?.let { error ->
+                    TwoLineRow(
+                        text = {
+                            QaText(outcome.httpStatus?.let { "Error · HTTP $it" } ?: "Error", QaType.body, maxLines = 1)
+                            ValueText(error, error, Tags.RESULT_ERROR, QaType.value, qaColors.bad)
+                        },
+                    )
                 }
-                Value("Session id", outcome.sessionId ?: MISSING, Tags.RESULT_SESSION_ID)
-                Value("Order status", outcome.status.text(), Tags.RESULT_ORDER_STATUS)
-                Value("Error", outcome.error ?: MISSING, Tags.RESULT_ERROR)
-                Value("HTTP status", outcome.httpStatus?.toString() ?: MISSING)
             }
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-            OutlinedButton(
-                onClick = { context.copyText("Report", runReport(context.appInfo(), finished, entries)) },
-                modifier = Modifier.weight(1f).testTag(Tags.REPORT),
-            ) { Text("Copy report") }
-            Button(onClick = onRunAgain, modifier = Modifier.weight(1f).testTag(Tags.RUN_AGAIN)) { Text("Run again") }
+        Caption("Launched with")
+        ListGroup {
+            LaunchedRow("Stand", "${finished.profile.name} · API ${finished.profile.api.json}", Tags.RESULT_STAND)
+            LaunchedRow("Order", launchedOrderSummary(finished.config.order), Tags.RESULT_ORDER)
+            LaunchedRow("Theme", finished.config.sdk.theme.json, Tags.RESULT_THEME)
         }
+        Caption("Evidence")
+        ListGroup { NavRow("Journal", entriesSummary(entries.size), Tags.JOURNAL_OPEN, onJournal) }
+    }
+}
+
+/**
+ * The outcome in its colour, the only coloured block of the app. The title reads as the contract's id
+ * (`qa_result_type`) and the detail as the contract's status text (`qa_result_order_status`).
+ */
+@Composable
+private fun Banner(finished: RunState.Finished) {
+    val outcome = finished.outcome
+    val onColor = qaColors.onOutcome
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .background(toneColor(outcomeTone(outcome.type)))
+            .padding(horizontal = QaSize.screen, vertical = 24.dp),
+    ) {
+        ValueText(outcomeTitle(outcome.type), outcome.type.id, Tags.RESULT_TYPE, QaType.outcome, onColor)
+        Spacer(Modifier.height(QaSize.gap))
+        ValueText(statusDetail(outcome.status).joinToString("\n"), outcome.status.text(), Tags.RESULT_ORDER_STATUS, QaType.value, onColor)
     }
 }
 
 @Composable
-private fun Value(
+private fun CopyRow(
     label: String,
     value: String,
-    tag: String? = null,
+    tag: String,
+    copyTag: String,
 ) {
-    Column {
-        Text(label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        Text(value, style = MaterialTheme.typography.bodyLarge, modifier = if (tag != null) Modifier.testTag(tag) else Modifier)
+    val context = LocalContext.current
+    TwoLineRow(
+        text = {
+            QaText(label, QaType.body, maxLines = 1)
+            ValueText(value, value, tag, QaType.value, qaColors.muted)
+        },
+        trailing = { Link("Copy", copyTag, { context.copyText(label, value) }) },
+    )
+}
+
+@Composable
+private fun LaunchedRow(
+    label: String,
+    value: String,
+    tag: String,
+) {
+    ListRow {
+        QaText(label, QaType.body, maxLines = 1)
+        RowValue(value, tag = tag)
     }
 }
 
@@ -96,5 +154,3 @@ private fun Context.appInfo(): AppInfo {
 
 @Suppress("DEPRECATION")
 private fun versionCodeBefore28(info: android.content.pm.PackageInfo): Long = info.versionCode.toLong()
-
-private const val MISSING = "-"

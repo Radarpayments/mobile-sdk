@@ -222,7 +222,7 @@ internal class QaRun(
         fun finished(outcome: RunOutcome) = RunState.Finished(outcome, config, profile)
     }
 
-    private companion object {
+    internal companion object {
         const val TAG = "qa"
     }
 }

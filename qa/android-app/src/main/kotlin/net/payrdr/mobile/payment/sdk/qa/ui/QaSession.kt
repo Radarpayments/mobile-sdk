@@ -37,6 +37,12 @@ internal data class Launched(
     val id: Long,
 )
 
+/** A finished run and when the app saw it finish; the home screen keeps showing it after Run again resets the run. */
+internal class LastRun(
+    val finished: RunState.Finished,
+    val timeMillis: Long,
+)
+
 /** A profile from a link, the clipboard or a QR code that waits for QA to confirm it. */
 internal class PendingProfile(
     val profile: StandProfile,
@@ -62,6 +68,7 @@ internal class QaSession(
     val journal: Journal,
     merchant: Merchant,
     private val scope: CoroutineScope,
+    private val clock: () -> Long = System::currentTimeMillis,
 ) {
     val form = ConfigForm(QaConfig())
 
@@ -87,6 +94,10 @@ internal class QaSession(
     var launched: Launched? by mutableStateOf(null)
         private set
 
+    /** The latest finished run, kept until the next one finishes. */
+    var lastRun: LastRun? by mutableStateOf(null)
+        private set
+
     /** The finished run the result screen was opened for, so that it is opened once per run. */
     var shown: RunState.Finished? = null
 
@@ -102,6 +113,11 @@ internal class QaSession(
     private val intakes = Channel<List<Intake>>(Channel.UNLIMITED)
 
     init {
+        scope.launch {
+            run.state.collect { state ->
+                if (state is RunState.Finished && state !== lastRun?.finished) lastRun = LastRun(state, clock())
+            }
+        }
         scope.launch {
             form.set(store.config.first())
             ready = true

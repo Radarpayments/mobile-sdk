@@ -4,8 +4,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import net.payrdr.mobile.payment.sdk.qa.config.Currencies
 import net.payrdr.mobile.payment.sdk.qa.config.Decoded
 import net.payrdr.mobile.payment.sdk.qa.config.GooglePayOptions
+import net.payrdr.mobile.payment.sdk.qa.config.MAX_AMOUNT
 import net.payrdr.mobile.payment.sdk.qa.config.OrderConfig
 import net.payrdr.mobile.payment.sdk.qa.config.OrderSource
 import net.payrdr.mobile.payment.sdk.qa.config.OrderType
@@ -16,6 +18,8 @@ import net.payrdr.mobile.payment.sdk.qa.config.SdkOptions
 import net.payrdr.mobile.payment.sdk.qa.config.ThemePreset
 import net.payrdr.mobile.payment.sdk.qa.config.extraFromText
 import net.payrdr.mobile.payment.sdk.qa.config.extraToText
+import net.payrdr.mobile.payment.sdk.qa.config.majorToMinor
+import net.payrdr.mobile.payment.sdk.qa.config.minorToMajor
 import net.payrdr.mobile.payment.sdk.qa.config.namesFromText
 import net.payrdr.mobile.payment.sdk.qa.config.namesToText
 import net.payrdr.mobile.payment.sdk.qa.config.pinsFromText
@@ -106,13 +110,22 @@ private fun <T, R> Decoded<T>.map(transform: (T) -> R): Decoded<R> =
 
 private fun ok(value: String?): Decoded<String?> = Decoded.Ok(value?.takeIf { it.isNotBlank() })
 
-// toLongOrNull takes a sign and the digits of every script; Swift's Int64 does not, and the apps must agree.
-private fun amount(text: String): Decoded<Long> =
-    text
-        .takeIf { it.isNotEmpty() && it.all { char -> char in '0'..'9' } }
-        ?.toLongOrNull()
-        ?.let { Decoded.Ok(it) }
-        ?: Decoded.Invalid(Problem("order.amount", "must be a whole number of minor units"))
+// The form shows major units, the document keeps minor ones. The digits are ASCII only: Kotlin's digit parsing takes every
+// script's digits and Swift's does not, and the apps must agree.
+private fun amount(
+    text: String,
+    currency: String,
+): Decoded<Long> {
+    val digits = Currencies.minorDigits(currency)
+    val minor =
+        majorToMinor(text, digits)
+            ?: return Decoded.Invalid(Problem("order.amount", "must be digits with at most $digits after the point"))
+    return if (minor <= MAX_AMOUNT) {
+        Decoded.Ok(minor)
+    } else {
+        Decoded.Invalid(Problem("order.amount", "must be at most ${minorToMajor(MAX_AMOUNT, digits)}"))
+    }
+}
 
 private fun flag(
     path: String,
@@ -139,7 +152,10 @@ private val FIELDS: Map<String, Field> =
             order({ it.type.json }) { order, text ->
                 choice("order.type", text, OrderType.entries) { it.json }.map { order.copy(type = it) }
             },
-        Tags.ORDER_AMOUNT to order({ it.amount.toString() }) { order, text -> amount(text).map { order.copy(amount = it) } },
+        Tags.ORDER_AMOUNT to
+            order({ minorToMajor(it.amount, Currencies.minorDigits(it.currency)) }) { order, text ->
+                amount(text, order.currency).map { order.copy(amount = it) }
+            },
         Tags.ORDER_CURRENCY to order({ it.currency }) { order, text -> Decoded.Ok(order.copy(currency = text)) },
         Tags.ORDER_CLIENT_ID to order({ it.clientId.orEmpty() }) { order, text -> ok(text).map { order.copy(clientId = it) } },
         Tags.ORDER_MD_ORDER to order({ it.mdOrder.orEmpty() }) { order, text -> ok(text).map { order.copy(mdOrder = it) } },

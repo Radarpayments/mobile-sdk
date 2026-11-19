@@ -23,6 +23,10 @@ internal class ProfileEditor {
     var problem: Problem? by mutableStateOf(null)
         private set
 
+    /** The name of the stored profile being edited, null for a new one: Delete is offered for a stored one only. */
+    var original: String? by mutableStateOf(null)
+        private set
+
     /** A save or delete the store could not carry out. */
     fun failed(problem: Problem) {
         this.problem = problem
@@ -35,6 +39,7 @@ internal class ProfileEditor {
         login = profile?.login.orEmpty()
         password = profile?.password.orEmpty()
         apiKey = profile?.apiKey.orEmpty()
+        original = profile?.name
         problem = null
     }
 

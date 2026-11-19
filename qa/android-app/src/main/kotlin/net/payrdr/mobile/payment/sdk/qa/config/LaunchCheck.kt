@@ -7,7 +7,13 @@ package net.payrdr.mobile.payment.sdk.qa.config
 internal fun launchProblem(
     config: QaConfig,
     profile: StandProfile?,
-): Problem? {
+): Problem? = launchProblems(config, profile).firstOrNull()
+
+/** Every check [launchProblem] makes that fails, in its order, so each screen can show the one it fixes. */
+internal fun launchProblems(
+    config: QaConfig,
+    profile: StandProfile?,
+): List<Problem> {
     val order = config.order
     val registers = order.source == OrderSource.REGISTER
     return listOfNotNull(
@@ -36,7 +42,7 @@ internal fun launchProblem(
             "sdk.sslPinning.pins",
             "pinning is enabled without a pin",
         ),
-    ).firstOrNull()
+    )
 }
 
 private fun launchProblemIf(

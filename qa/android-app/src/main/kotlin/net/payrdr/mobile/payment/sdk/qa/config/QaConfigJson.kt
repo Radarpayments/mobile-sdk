@@ -9,7 +9,7 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 
-private const val MAX_AMOUNT = 999_999_999_999L
+internal const val MAX_AMOUNT = 999_999_999_999L
 private const val PINS = "sdk.sslPinning.pins"
 private const val EXTRA = "order.extra"
 private const val GP = "sdk.googlePay"
@@ -17,8 +17,8 @@ private const val AP = "sdk.applePay"
 
 internal val LOCALES = listOf("en", "ru", "ro", "el", "bg", "de", "fr", "es", "ar")
 internal val GP_ENVIRONMENTS = listOf("test", "production")
-private val GP_NETWORKS = listOf("AMEX", "DISCOVER", "INTERAC", "JCB", "MASTERCARD", "VISA")
-private val GP_AUTH_METHODS = listOf("PAN_ONLY", "CRYPTOGRAM_3DS")
+internal val GP_NETWORKS = listOf("AMEX", "DISCOVER", "INTERAC", "JCB", "MASTERCARD", "VISA")
+internal val GP_AUTH_METHODS = listOf("PAN_ONLY", "CRYPTOGRAM_3DS")
 private val AP_NETWORKS = listOf("AMEX", "DISCOVER", "JCB", "MASTERCARD", "VISA")
 private val AP_CAPABILITIES = listOf("CREDIT", "DEBIT", "EMV", "THREE_D_SECURE")
 private val FORBIDDEN_EXTRA_KEYS = listOf("username", "password", "token")

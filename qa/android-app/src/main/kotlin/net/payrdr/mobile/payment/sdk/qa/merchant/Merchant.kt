@@ -173,9 +173,9 @@ internal class Merchant(
         val message: String,
     ) : Outcome
 
-    private companion object {
+    internal companion object {
         const val TAG = "merchant"
-        const val MILLIS_PER_SECOND = 1_000
-        const val MESSAGE_LIMIT = 300
+        private const val MILLIS_PER_SECOND = 1_000
+        private const val MESSAGE_LIMIT = 300
     }
 }

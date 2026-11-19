@@ -17,11 +17,24 @@ class ConfigFormTest {
     private val pin = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
 
     @Test
-    fun `editing the amount changes the config`() {
-        form.edit(Tags.ORDER_AMOUNT, "250")
+    fun `the amount is typed in major units and stored in minor units`() {
+        form.edit(Tags.ORDER_AMOUNT, "2.50")
 
         form.config.order.amount shouldBe 250
         form.problem shouldBe null
+    }
+
+    @Test
+    fun `the amount reads in major units of the currency`() {
+        form.text(Tags.ORDER_AMOUNT) shouldBe "100.00"
+    }
+
+    @Test
+    fun `more decimals than the currency has names the field`() {
+        form.edit(Tags.ORDER_AMOUNT, "2.505")
+
+        form.config.order.amount shouldBe 10_000
+        form.problem?.field shouldBe "order.amount"
     }
 
     @Test
@@ -35,7 +48,7 @@ class ConfigFormTest {
 
     @Test
     fun `an amount out of range names the field`() {
-        form.edit(Tags.ORDER_AMOUNT, "1000000000000")
+        form.edit(Tags.ORDER_AMOUNT, "10000000000")
 
         form.config.order.amount shouldBe 10_000
         form.problem?.field shouldBe "order.amount"
@@ -43,7 +56,7 @@ class ConfigFormTest {
 
     @Test
     fun `the amount takes ASCII digits only`() {
-        listOf("+500", "-500", "５００", "٥٠٠", " 500", "5 00").forEach { text ->
+        listOf("+500", "-500", "５００", "٥٠٠", " 500", "5 00", ".50", "1.2.3").forEach { text ->
             form.edit(Tags.ORDER_AMOUNT, text)
 
             form.config.order.amount shouldBe 10_000
@@ -57,7 +70,7 @@ class ConfigFormTest {
         form.edit(Tags.ORDER_AMOUNT, "25")
 
         form.problem shouldBe null
-        form.config.order.amount shouldBe 25
+        form.config.order.amount shouldBe 2_500
     }
 
     @Test
@@ -186,7 +199,7 @@ class ConfigFormTest {
         form.set(QaConfig())
 
         form.problem shouldBe null
-        form.text(Tags.ORDER_AMOUNT) shouldBe "10000"
+        form.text(Tags.ORDER_AMOUNT) shouldBe "100.00"
     }
 
     @Test

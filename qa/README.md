@@ -234,8 +234,12 @@ default typography and shapes unless listed. A custom preset does not follow the
 
 `qa/fixtures/identifiers.txt` lists them, one per line. A `# android` or `# ios` after an identifier marks the ones a
 single platform has; everything from `#` on is a comment. Android exposes them as test tags (as resource ids), iOS as
-accessibility identifiers. The line `qa_profile_select_<name>` is a pattern, not an identifier: `<name>` is the
-profile name, so there is one identifier per stored profile.
+accessibility identifiers. A line with `<name>` or `<value>` is a pattern, not an identifier: `<name>` is a stored
+profile's name (one identifier per profile), `<value>` an option of a choice, a chip of a set or a journal filter. An
+option's identifier is its value in snake case: a lower-case letter followed by an upper-case one gets a `_` between
+them, the whole is lower-cased, every run of other characters than `a-z` and `0-9` becomes one `_`, and no value
+(`null` or empty) is `none` — `qa_order_currency_eur`, `qa_order_source_md_order`, `qa_sdk_theme_large_text`,
+`qa_sdk_locale_none`, `qa_order_feature_force_tds`, `qa_sdk_google_pay_allowed_auth_methods_cryptogram_3ds`.
 
 - Config fields: `qa_profile`, `qa_order_source`, `qa_order_type`, `qa_order_amount`, `qa_order_currency`,
   `qa_order_client_id`, `qa_order_features`, `qa_order_extra`, `qa_order_md_order`, `qa_order_session_id`,
@@ -245,16 +249,29 @@ profile name, so there is one identifier per stored profile.
   `_environment`, `_allowed_card_networks`, `_allowed_auth_methods`, `_country_code`, `_billing_address_required`.
 - iOS only: `qa_sdk_apple_pay_enabled`, `_merchant_id`, `_supported_networks`, `_merchant_capabilities`,
   `_country_code`.
-- Groups (collapsible, expanded by default): `qa_group_order`, `qa_group_sdk`, `qa_group_theme`, `qa_group_wallets`,
-  `qa_group_security`; `qa_theme_legend`.
+- Options (patterns): `qa_order_source_<value>`, `qa_order_type_<value>`, `qa_order_currency_<value>` (the items of
+  the currency menu), `qa_order_feature_<value>` (a chip, a custom name included), `qa_sdk_theme_<value>`,
+  `qa_sdk_locale_<value>`, `qa_profile_api_<value>`; Android only `qa_sdk_google_pay_environment_<value>`,
+  `qa_sdk_google_pay_allowed_card_networks_<value>`, `qa_sdk_google_pay_allowed_auth_methods_<value>`. The field's own
+  identifier stays on the control that holds the choice and its text is the value.
+- Home rows, each opening a screen: `qa_profiles_open` (the stand, its text-bearing child is `qa_profile`),
+  `qa_group_order` (Order screen), `qa_home_amount`, `qa_home_features` (both open the Order screen),
+  `qa_group_theme` (Theme), `qa_group_sdk` (Behaviour), `qa_group_wallets` (the wallet's screen), `qa_group_security`
+  (SSL pinning), `qa_home_last_run` (the result of the last run, shown once a run has finished); `qa_theme_legend`.
+- Order screen: `qa_order_features_other` (+ Other), `qa_order_features_other_name`, `qa_order_features_other_add`,
+  `qa_order_client_id_open`, `qa_order_extra_open` (open the field's own screen), `qa_order_md_order_paste`,
+  `qa_order_session_id_paste`.
 - Actions: `qa_launch`, `qa_menu`, `qa_import` (clipboard), `qa_import_qr`, `qa_export` (copies the `QaConfig` JSON),
-  `qa_reset`, `qa_report`, `qa_run_again`, `qa_profiles_open`.
-- Profiles: `qa_profile_name`, `qa_profile_gateway_url`, `qa_profile_api`, `qa_profile_login`, `qa_profile_password`,
-  `qa_profile_api_key`, `qa_profile_add`, `qa_profile_save`, `qa_profile_delete`, `qa_profile_select_<name>`,
-  `qa_profile_confirm`, `qa_profile_reject`.
+  `qa_reset`, `qa_report`, `qa_run_again`.
+- Stands (profiles): `qa_profile_name`, `qa_profile_gateway_url`, `qa_profile_api`, `qa_profile_login`,
+  `qa_profile_password`, `qa_profile_password_show`, `qa_profile_api_key`, `qa_profile_api_key_show`, `qa_profile_add`,
+  `qa_profile_enter`, `qa_profile_paste`, `qa_profile_scan`, `qa_profile_save`, `qa_profile_delete`,
+  `qa_profile_select_<name>`, `qa_profile_edit_<name>`, `qa_profile_confirm`, `qa_profile_reject`.
 - Asserted on: `qa_validation_error` (text `<field>: <message>`), `qa_result_type`, `qa_result_md_order`,
-  `qa_result_md_order_copy`, `qa_result_session_id`, `qa_result_order_status`, `qa_result_error`, `qa_journal_open`,
-  `qa_journal_text`, `qa_journal_level`, `qa_journal_search`, `qa_journal_clear`.
+  `qa_result_md_order_copy`, `qa_result_session_id`, `qa_result_session_id_copy`, `qa_result_order_status`,
+  `qa_result_error`, `qa_result_stand`, `qa_result_order`, `qa_result_theme`, `qa_journal_open`, `qa_journal_text`,
+  `qa_journal_level` (text `all`, `gateway`, `sdk` or `errors`, the filter shown), `qa_journal_filter_<value>`,
+  `qa_journal_search`, `qa_journal_clear`, `qa_journal_copy`.
 - Text of a collection element: `qa_order_features` and the wallet sets are names separated by `,`; `qa_order_extra` is a
   JSON object; `qa_sdk_ssl_pinning_pins` is `host=pin` per line, split at the first `=` (pins end in `=`).
 - `qa_result_type` text: `completed`, `failed`, `canceled`, `unknown`, `registration_failed`, `sdk_error`.
@@ -342,8 +359,11 @@ What both apps do around a run, beyond the documents above.
   sheet stays open, its result is still shown, and the running attempt's journal is kept.
 - **Launch and the form.** Launch is refused while a field holds text that does not parse (the field shows the
   problem): the last good value is not launched. An external launch in that state is ignored too, and the problem
-  stays on screen. `order.amount` takes ASCII digits `0`–`9` only, no sign, no space and no other script's digits
-  (`+500`, `５００` and `٥٠٠` are problems on `order.amount`).
+  stays on screen. The form takes `order.amount` in major units of the currency: ASCII digits `0`–`9` with at most
+  one `.` or `,` and at most as many digits after it as the currency has minor digits (2 for every currency of the
+  app), no sign, no space and no other script's digits (`+5`, `2.505`, `５` and `٥` are problems on `order.amount`).
+  The document keeps minor units: `10.5` EUR is `1050`. The field's text is the major amount (`10.00`), and the
+  helper under it names the minor units.
 - **Profiles from outside.** A profile that arrives from outside is saved, never selected; a config that names it, in
   the same input or later, selects it. Declining the confirmation shows no error and drops the rest of that input
   (its config and its launch). Inputs are applied one after another in the order they arrived: a second profile
@@ -354,8 +374,17 @@ What both apps do around a run, beyond the documents above.
   what could not be saved, never a value); the refusal of the last launch. The notice clears with the next input or
   launch; the refusal clears once the config changes. A profile that cannot be saved or deleted from the profile editor
   shows the same `store` problem in the editor's error element.
-- **Reset** returns every field to its default but keeps the selected profile. **Run again** and Back on the result
-  screen return to the configuration screen with the form unchanged; the result screen is opened once per run.
+- **Reset** returns every field to its default but keeps the selected profile. **Run again** on the result screen
+  returns to the home screen with the form unchanged, Back to the screen before it; the result screen is opened once
+  per run and stays reachable from the home screen's Last run row.
+- **The screens.** Home lists the stand, the order, the checkout settings and the last run, one row per section with
+  its state in words; a section with a problem shows it in red on its row, and Launch sits in the footer. Each row
+  opens its screen: Order (source and type as segments, the amount with the currency menu, features as chips with
+  + Other, the client id and extra parameters on screens of their own; for mdOrder or Session id only that field with
+  Paste), Theme, Behaviour (locale, result screen, scanner, key provider URL), the wallet, SSL pinning, Stands (the
+  stored stands with Edit, and adding one by hand, from the clipboard or from a QR code) and the stand editor. The
+  journal shows a gateway request and its answer as one entry; its filters and the text of `qa_journal_text` do not
+  change what the report prints.
 - **Process end.** A run lives as long as the app process. When the process is killed while the sheet is open, the
   sheet's result is lost and the app starts Idle with the stored form.
 
@@ -415,7 +444,7 @@ iOS test `RunReportTests` every line of it but the Configuration document, which
 - The journal search (`qa_journal_search`) keeps the entries whose tag or message contains the text ignoring case as
   Kotlin's `contains(ignoreCase = true)`: Java's rule one UTF-16 char at a time (`İ` and `ı` match `i`, `ſ` matches
   `s`, `ß` matches `ẞ` but not `ss`; a character beyond the basic plane matches only itself). An empty search keeps
-  every entry at the chosen level.
+  every entry the chosen filter keeps.
 
 Example, Android's output (`completed`, a registered order, v1 profile):
 

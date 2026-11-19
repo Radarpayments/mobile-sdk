@@ -80,13 +80,27 @@ internal fun List<JournalEntry>.filtered(
  * (minSdk is 24, no desugaring), a shared `SimpleDateFormat` is not thread-safe, and both would print the digits of an
  * Arabic locale.
  */
-internal fun JournalEntry.line(zone: TimeZone = TimeZone.getDefault()): String {
+internal fun JournalEntry.line(zone: TimeZone = TimeZone.getDefault()): String =
+    "${timeOfDay(timeMillis, zone, ClockPrecision.MILLIS)} $level $tag: $message"
+
+internal enum class ClockPrecision { MINUTES, SECONDS, MILLIS }
+
+/** `HH:mm`, `HH:mm:ss` or `HH:mm:ss.SSS` of [timeMillis] in [zone], formatted by hand for the reasons of [line]. */
+internal fun timeOfDay(
+    timeMillis: Long,
+    zone: TimeZone = TimeZone.getDefault(),
+    precision: ClockPrecision,
+): String {
     val millisOfDay = Math.floorMod(timeMillis + zone.getOffset(timeMillis), MILLIS_PER_DAY)
     val hours = millisOfDay / MILLIS_PER_HOUR
     val minutes = millisOfDay / MILLIS_PER_MINUTE % MINUTES_PER_HOUR
     val seconds = millisOfDay / MILLIS_PER_SECOND % SECONDS_PER_MINUTE
     val millis = millisOfDay % MILLIS_PER_SECOND
-    return "${hours.pad(2)}:${minutes.pad(2)}:${seconds.pad(2)}.${millis.pad(3)} $level $tag: $message"
+    return when (precision) {
+        ClockPrecision.MINUTES -> "${hours.pad(2)}:${minutes.pad(2)}"
+        ClockPrecision.SECONDS -> "${hours.pad(2)}:${minutes.pad(2)}:${seconds.pad(2)}"
+        ClockPrecision.MILLIS -> "${hours.pad(2)}:${minutes.pad(2)}:${seconds.pad(2)}.${millis.pad(3)}"
+    }
 }
 
 private fun Long.pad(width: Int): String = toString().padStart(width, '0')
