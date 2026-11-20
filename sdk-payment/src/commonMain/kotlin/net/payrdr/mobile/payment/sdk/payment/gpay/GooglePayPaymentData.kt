@@ -3,6 +3,7 @@ package net.payrdr.mobile.payment.sdk.payment.gpay
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import net.payrdr.mobile.payment.sdk.payment.api.PayerDataFormParams
 
 /**
  * The token the gateway takes from Google Pay's `PaymentData` JSON — `paymentMethodData.tokenizationData.token`, itself
@@ -16,12 +17,14 @@ internal fun googlePayToken(paymentDataJson: String): String? {
 
 /**
  * The buyer's email and phone from Google Pay's `PaymentData` JSON — `email` and
- * `paymentMethodData.info.billingAddress.phoneNumber` — each null when the answer has none.
+ * `paymentMethodData.info.billingAddress.phoneNumber` — each null when the answer has none. They come out as the card
+ * form sends them: the email trimmed, the phone as its digits with the leading plus.
  */
 internal fun googlePayPayer(paymentDataJson: String): GooglePayPayer {
     val root = paymentData(paymentDataJson)
     val info = (root?.get("paymentMethodData") as? JsonObject)?.get("info") as? JsonObject
-    return GooglePayPayer(email = root.text("email"), phone = (info?.get("billingAddress") as? JsonObject).text("phoneNumber"))
+    val phone = (info?.get("billingAddress") as? JsonObject).text("phoneNumber")?.let(PayerDataFormParams::normalizePhone)
+    return GooglePayPayer(email = root.text("email")?.trim(), phone = phone?.takeIf { it.any(Char::isDigit) })
 }
 
 private fun paymentData(json: String): JsonObject? = runCatching { Json.parseToJsonElement(json) }.getOrNull() as? JsonObject

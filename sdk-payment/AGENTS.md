@@ -83,7 +83,8 @@ intent while one is in flight is ignored.
      `ProcessFormResponse` shape. The Google Pay token is sent **base64-encoded**, as the gateway's own payment page does.
      A Google Pay payment request always asks for the email and for the phone (Google gives a phone only inside a
      billing address, so at least the `MIN` one is requested); they go to `google/paymentOrder.do` as
-     `additionalParameters {email, phone}`, each only when present. A `PAN_ONLY` token is a plain card to the gateway and
+     `additionalParameters {email, phone}`, each only when present. The phone is normalized as the card form's
+     (`PayerDataFormParams.normalizePhone`). A `PAN_ONLY` token is a plain card to the gateway and
      is declined without them when the bank requires the payer's contacts. `p2p/perform.do` takes no such block, so
      a transfer's sheet does not ask for them (`payerContacts = false`).
    - AFT (P2P order with `WITHOUT_TO_CARD`, `flow/Transfer.kt`): `p2p/perform.do` (JSON, `fromCard` = seToken |

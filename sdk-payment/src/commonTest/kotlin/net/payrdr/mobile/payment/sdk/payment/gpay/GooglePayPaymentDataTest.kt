@@ -48,7 +48,20 @@ class GooglePayPaymentDataTest {
               "tokenizationData":{"type":"PAYMENT_GATEWAY","token":"{}"}}}
             """.trimIndent()
 
-        googlePayPayer(paymentData) shouldBe GooglePayPayer(email = "buyer@example.com", phone = "+1 650-555-5555")
+        googlePayPayer(paymentData) shouldBe GooglePayPayer(email = "buyer@example.com", phone = "+16505555555")
+    }
+
+    @Test
+    fun `the contacts come out as the card form sends them`() {
+        fun payer(
+            email: String,
+            phone: String,
+        ) = googlePayPayer("""{"email":"$email","paymentMethodData":{"info":{"billingAddress":{"phoneNumber":"$phone"}}}}""")
+
+        payer(" buyer@example.com ", "+44 (20) 7946-0958") shouldBe GooglePayPayer(email = "buyer@example.com", phone = "+442079460958")
+        payer("buyer@example.com", "(650) 555-5555").phone shouldBe "6505555555"
+        payer("buyer@example.com", "+").phone shouldBe null
+        payer("buyer@example.com", "n/a").phone shouldBe null
     }
 
     @Test
