@@ -4,6 +4,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.withTimeoutOrNull
 import net.payrdr.mobile.payment.sdk.payment.api.PaymentApi
 import net.payrdr.mobile.payment.sdk.payment.api.dto.request.ApplePayProcessFormRequest
+import net.payrdr.mobile.payment.sdk.payment.api.dto.request.GooglePayAdditionalParameters
 import net.payrdr.mobile.payment.sdk.payment.api.dto.request.GooglePayProcessFormRequest
 import net.payrdr.mobile.payment.sdk.payment.api.dto.request.WalletVendor
 import net.payrdr.mobile.payment.sdk.payment.api.dto.response.GPayData
@@ -18,6 +19,7 @@ import net.payrdr.mobile.payment.sdk.payment.config.GooglePayConfig
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkApplePayException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkGooglePayException
+import net.payrdr.mobile.payment.sdk.payment.gpay.GooglePayPayer
 import net.payrdr.mobile.payment.sdk.payment.gpay.GooglePayTokenProvider
 import net.payrdr.mobile.payment.sdk.payment.gpay.GooglePayTokenResult
 import net.payrdr.mobile.payment.sdk.payment.logger.Logger
@@ -37,6 +39,15 @@ internal val WalletVendor.title: String
             WalletVendor.GOOGLE -> "Google Pay"
             WalletVendor.APPLE -> "Apple Pay"
         }
+
+/**
+ * The buyer's payment token from a wallet's sheet, as the gateway takes it, with the contacts Google Pay gave along
+ * ([payer]; Apple Pay gives none).
+ */
+internal class WalletToken(
+    val value: String,
+    val payer: GooglePayPayer? = null,
+)
 
 /**
  * The wallet side of a checkout: which wallets an order offers, the buyer's payment token from the wallet's sheet,
@@ -69,7 +80,8 @@ internal class WalletPayments(
         vendor: WalletVendor,
         form: PaymentState.CardFormShown,
         session: SessionStatusResponse,
-    ): String? {
+        payerContacts: Boolean,
+    ): WalletToken? {
         // Known: the resolver offers a wallet only when the order's amount can be read.
         val amountMinor = checkNotNull(WalletResolver.amountMinor(session)) { "Wallet offered for an amount it cannot read" }
         // Known too: it offers a wallet only with the order's currency and a country.
@@ -83,10 +95,12 @@ internal class WalletPayments(
                         amountMinorUnits = amountMinor,
                         currencyCode = currency,
                         countryCode = config.countryCode.orEmpty(),
+                        payerContacts = payerContacts,
                     )
                 when (result) {
                     // The gateway reads Google's token as base64, as its own payment page sends it.
-                    is GooglePayTokenResult.Success -> Base64.encode(result.paymentToken.encodeToByteArray())
+                    is GooglePayTokenResult.Success ->
+                        WalletToken(Base64.encode(result.paymentToken.encodeToByteArray()), result.payer)
                     GooglePayTokenResult.Cancelled -> null
                     GooglePayTokenResult.NotAvailable -> throw SdkGooglePayException("Google Pay is not available on this device")
                     is GooglePayTokenResult.Failure -> throw SdkGooglePayException(result.reason, result.cause)
@@ -103,7 +117,7 @@ internal class WalletPayments(
                         merchantDisplayName = session.merchantInfo.merchantFullName.orEmpty(),
                     )
                 when (result) {
-                    is ApplePayTokenResult.Success -> result.paymentToken
+                    is ApplePayTokenResult.Success -> WalletToken(result.paymentToken)
                     ApplePayTokenResult.Cancelled -> null
                     ApplePayTokenResult.NotAvailable -> throw SdkApplePayException("Apple Pay is not available on this device")
                     is ApplePayTokenResult.Failure -> throw SdkApplePayException(result.reason, result.cause)
@@ -115,16 +129,24 @@ internal class WalletPayments(
     /** Pays [mdOrder] with a wallet [token]; the answer comes in the card form's shape, for the shared 3DS and refusal handling. */
     suspend fun pay(
         vendor: WalletVendor,
-        token: String,
+        token: WalletToken,
         mdOrder: String,
     ): ProcessFormResponse =
         when (vendor) {
             WalletVendor.GOOGLE ->
-                api.googlePayProcessForm(GooglePayProcessFormRequest(paymentToken = token, mdOrder = mdOrder)).let {
-                    answer(it.success, it.data, it.error)
-                }
+                api
+                    .googlePayProcessForm(
+                        GooglePayProcessFormRequest(
+                            paymentToken = token.value,
+                            mdOrder = mdOrder,
+                            additionalParameters =
+                                token.payer
+                                    ?.takeIf { it.email != null || it.phone != null }
+                                    ?.let { GooglePayAdditionalParameters(email = it.email, phone = it.phone) },
+                        ),
+                    ).let { answer(it.success, it.data, it.error) }
             WalletVendor.APPLE ->
-                api.applePayProcessForm(ApplePayProcessFormRequest(paymentToken = token, mdOrder = mdOrder)).let {
+                api.applePayProcessForm(ApplePayProcessFormRequest(paymentToken = token.value, mdOrder = mdOrder)).let {
                     answer(it.success, it.data, it.error)
                 }
         }

@@ -20,6 +20,7 @@ import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import net.payrdr.mobile.payment.sdk.core.SdkCore
 import net.payrdr.mobile.payment.sdk.core.model.Key
+import net.payrdr.mobile.payment.sdk.payment.api.dto.request.GooglePayAdditionalParameters
 import net.payrdr.mobile.payment.sdk.payment.api.dto.response.ApplePayProcessFormResponse
 import net.payrdr.mobile.payment.sdk.payment.api.dto.response.BindingItem
 import net.payrdr.mobile.payment.sdk.payment.api.dto.response.CustomerDetails
@@ -42,6 +43,7 @@ import net.payrdr.mobile.payment.sdk.payment.exception.SdkSessionExpiredExceptio
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkThreeDsChallengeFailedException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkThreeDsTimeoutException
 import net.payrdr.mobile.payment.sdk.payment.exception.SdkTransactionException
+import net.payrdr.mobile.payment.sdk.payment.gpay.GooglePayPayer
 import net.payrdr.mobile.payment.sdk.payment.gpay.GooglePayTokenResult
 import net.payrdr.mobile.payment.sdk.payment.keyprovider.KeyProvider
 import net.payrdr.mobile.payment.sdk.payment.logger.LogEvent
@@ -1232,6 +1234,7 @@ class PaymentFlowControllerTest {
             // The gateway reads the token as base64, as its own payment page sends it.
             api.googlePayCalls[0].paymentToken shouldBe "RkFLRV9KV0VfVE9LRU4="
             api.googlePayCalls[0].mdOrder shouldBe Fixtures.TEST_MD_ORDER
+            api.googlePayCalls[0].additionalParameters shouldBe null
 
             val terminal = controller.state.value
             terminal.shouldBeInstanceOf<PaymentState.Completed>()
@@ -1290,6 +1293,31 @@ class PaymentFlowControllerTest {
             gpay.calls[0].amountMinorUnits shouldBe 124990L
             apay.calls.size shouldBe 1
             apay.calls[0].amountMinorUnits shouldBe 124990L
+        }
+
+    @Test fun `TapGooglePay sends only the contacts google pay gave`() =
+        runTest {
+            val both = buildController()
+            both.googlePay.nextResult =
+                GooglePayTokenResult.Success("FAKE_JWE_TOKEN", GooglePayPayer(email = "buyer@example.com", phone = "+35799000000"))
+            both.controller.handle(PaymentIntent.Start(CheckoutConfig.MdOrder(Fixtures.TEST_MD_ORDER)))
+            advanceUntilIdle()
+            both.controller.handle(PaymentIntent.TapGooglePay)
+            advanceUntilIdle()
+
+            val phoneOnly = buildController()
+            phoneOnly.googlePay.nextResult = GooglePayTokenResult.Success("FAKE_JWE_TOKEN", GooglePayPayer(phone = "+35799000000"))
+            phoneOnly.controller.handle(PaymentIntent.Start(CheckoutConfig.MdOrder(Fixtures.TEST_MD_ORDER)))
+            advanceUntilIdle()
+            phoneOnly.controller.handle(PaymentIntent.TapGooglePay)
+            advanceUntilIdle()
+
+            both.api.googlePayCalls
+                .single()
+                .additionalParameters shouldBe GooglePayAdditionalParameters(email = "buyer@example.com", phone = "+35799000000")
+            phoneOnly.api.googlePayCalls
+                .single()
+                .additionalParameters shouldBe GooglePayAdditionalParameters(phone = "+35799000000")
         }
 
     @Test fun `TapGooglePay cancelled returns to card form without terminating checkout`() =
@@ -1441,6 +1469,7 @@ class PaymentFlowControllerTest {
 
             built.api.getPaymentSettingsCalls shouldBe listOf("m-login")
             val call = built.googlePay.calls.single()
+            call.payerContacts shouldBe true
             call.currencyCode shouldBe "EUR"
             call.countryCode shouldBe "DE"
             call.config.gateway shouldBe "bpcpay"

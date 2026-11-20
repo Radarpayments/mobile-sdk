@@ -22,21 +22,31 @@ internal interface GooglePayTokenProvider {
      * @param amountMinorUnits the amount to charge, in minor currency units (e.g. 10055 = 100.55 USD).
      * @param currencyCode ISO 4217 alpha-3 currency code: the order's.
      * @param countryCode ISO 3166-1 alpha-2 country code; the same as [GooglePayConfig.countryCode].
+     * @param payerContacts whether the sheet asks the buyer for the email and phone the gateway takes with a payment;
+     *   false for a transfer, which sends none.
      */
     suspend fun requestPaymentToken(
         config: GooglePayConfig,
         amountMinorUnits: Long,
         currencyCode: String,
         countryCode: String,
+        payerContacts: Boolean,
     ): GooglePayTokenResult
 }
 
 /** Outcome of a Google Pay token request. */
 internal sealed interface GooglePayTokenResult {
-    /** User authorized payment; [paymentToken] is the encrypted JWE blob to hand to the backend. */
+    /**
+     * User authorized payment; [paymentToken] is the encrypted JWE blob to hand to the backend, [payer] the email and
+     * phone Google Pay gave with it.
+     */
     data class Success(
         val paymentToken: String,
-    ) : GooglePayTokenResult
+        val payer: GooglePayPayer = GooglePayPayer(),
+    ) : GooglePayTokenResult {
+        // The token pays for the order: it must not reach logs or crash reports.
+        override fun toString(): String = "Success(paymentToken=••••, payer=$payer)"
+    }
 
     /** User dismissed the GPay sheet without completing. */
     data object Cancelled : GooglePayTokenResult

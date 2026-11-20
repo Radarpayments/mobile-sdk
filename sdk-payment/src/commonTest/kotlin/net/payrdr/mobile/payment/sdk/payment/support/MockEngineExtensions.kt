@@ -15,7 +15,13 @@ import io.ktor.http.headersOf
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
-private val lenientJson = Json { ignoreUnknownKeys = true }
+// Defaults and nulls are written as the SDK's own client writes them: a test of a request body sees what the gateway gets.
+private val lenientJson =
+    Json {
+        ignoreUnknownKeys = true
+        encodeDefaults = true
+        explicitNulls = false
+    }
 
 internal fun mockJsonClient(handle: suspend MockRequestHandleScope.(HttpRequestData) -> HttpResponseData): Pair<HttpClient, MockEngine> {
     val engine = MockEngine(handle)

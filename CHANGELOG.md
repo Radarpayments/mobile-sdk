@@ -38,6 +38,11 @@ Notable changes to the PAYRDR Mobile SDK. Versions follow [Semantic Versioning](
 - `CardParams.mdOrder` and `BindingParams.mdOrder` have no default any more. The empty default always failed with
   `ParamField.MD_ORDER` `required`; pass the order, or use `CardInstantParams` / `BindingInstantParams` without one.
 - `sdk-payment` exposes `androidx.activity` to the app's compile classpath, since `PayrdrCheckout` takes its types.
+- Android: a Google Pay payment always asks Google for the buyer's email, phone and short billing address and sends the
+  email and phone to the gateway with the token. Without them the gateway declined a card that Google passes as a
+  plain number (`PAN_ONLY`) when the bank requires the payer's contacts. In a payment
+  `GooglePayConfig.billingAddressRequired` now only chooses the full address over the short one; a transfer (AFT) asks
+  for nothing new. The app changes nothing.
 
 ### Fixed
 

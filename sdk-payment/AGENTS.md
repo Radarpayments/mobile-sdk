@@ -81,6 +81,11 @@ intent while one is in flight is ignored.
    - Saved card: `BindingParams(bindingId, cvc)` → `processBindingForm.do`; removal `unbindcardanon.do`.
    - Google Pay `google/paymentOrder.do`, Apple Pay `applepay/paymentOrder.do`; the answer is mapped to the
      `ProcessFormResponse` shape. The Google Pay token is sent **base64-encoded**, as the gateway's own payment page does.
+     A Google Pay payment request always asks for the email and for the phone (Google gives a phone only inside a
+     billing address, so at least the `MIN` one is requested); they go to `google/paymentOrder.do` as
+     `additionalParameters {email, phone}`, each only when present. A `PAN_ONLY` token is a plain card to the gateway and
+     is declined without them when the bank requires the payer's contacts. `p2p/perform.do` takes no such block, so
+     a transfer's sheet does not ask for them (`payerContacts = false`).
    - AFT (P2P order with `WITHOUT_TO_CARD`, `flow/Transfer.kt`): `p2p/perform.do` (JSON, `fromCard` = seToken |
      bindingId | wallet token), saved card via `p2p/performByBinding.do`; sender `payer*` / recipient `recipient*` fields;
      only DEBIT bindings (`bindingCategory == "D"`). Save-card mode HIDDEN / OFFERED / LOCKED / IMPLIED from

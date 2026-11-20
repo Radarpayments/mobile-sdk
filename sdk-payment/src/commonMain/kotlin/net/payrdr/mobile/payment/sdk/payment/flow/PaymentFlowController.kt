@@ -397,7 +397,8 @@ public class PaymentFlowController internal constructor(
         }
 
         moveTo(PaymentState.Processing(ProcessingStep.SUBMITTING_PAYMENT))
-        val token = wallets.token(vendor, form, session)
+        // A transfer sends the gateway no payer contacts, so its sheet does not ask the buyer for them.
+        val token = wallets.token(vendor, form, session, payerContacts = transfer == null)
         if (token == null) {
             // The buyer dismissed the wallet's sheet: back to the form, the checkout goes on.
             moveTo(form)
@@ -407,7 +408,7 @@ public class PaymentFlowController internal constructor(
         paymentSent = true
         val response =
             if (transfer != null) {
-                api.p2pPerform(transferFromWallet(P2PFromCard.Wallet(vendor, token)))
+                api.p2pPerform(transferFromWallet(P2PFromCard.Wallet(vendor, token.value)))
             } else {
                 wallets.pay(vendor, token, mdOrder)
             }

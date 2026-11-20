@@ -37,4 +37,31 @@ class GooglePayPaymentDataTest {
         googlePayToken("not json").shouldBeNull()
         googlePayToken("[]").shouldBeNull()
     }
+
+    @Test
+    fun `the payer is the email and the billing address phone`() {
+        val paymentData =
+            """
+            {"apiVersion":2,"email":"buyer@example.com",
+             "paymentMethodData":{"type":"CARD",
+              "info":{"cardNetwork":"VISA","billingAddress":{"name":"A Buyer","countryCode":"US","phoneNumber":"+1 650-555-5555"}},
+              "tokenizationData":{"type":"PAYMENT_GATEWAY","token":"{}"}}}
+            """.trimIndent()
+
+        googlePayPayer(paymentData) shouldBe GooglePayPayer(email = "buyer@example.com", phone = "+1 650-555-5555")
+    }
+
+    @Test
+    fun `a blank or missing contact is no contact`() {
+        googlePayPayer("""{"email":"  ","paymentMethodData":{"info":{"billingAddress":{"phoneNumber":""}}}}""") shouldBe GooglePayPayer()
+        googlePayPayer("""{"email":null,"paymentMethodData":{"info":{"billingAddress":{}}}}""") shouldBe GooglePayPayer()
+        googlePayPayer("""{"paymentMethodData":{"info":{}}}""") shouldBe GooglePayPayer()
+        googlePayPayer("""{"email":"buyer@example.com","paymentMethodData":"CARD"}""") shouldBe GooglePayPayer(email = "buyer@example.com")
+    }
+
+    @Test
+    fun `an answer that is not a json object has no payer`() {
+        googlePayPayer("not json") shouldBe GooglePayPayer()
+        googlePayPayer("[]") shouldBe GooglePayPayer()
+    }
 }

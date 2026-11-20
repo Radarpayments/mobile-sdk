@@ -129,6 +129,10 @@ class AftFlowTest {
             advanceUntilIdle()
 
             built.api.googlePayCalls.shouldBeEmpty()
+            // A transfer sends no payer contacts, so the sheet must not ask the buyer for them.
+            built.googlePay.calls
+                .single()
+                .payerContacts shouldBe false
             val request = built.api.p2pPerformCalls.single()
             request.mdOrder shouldBe Fixtures.TEST_MD_ORDER
             // The gateway reads the token as base64, as its own payment page sends it.

@@ -23,6 +23,7 @@ internal object GooglePayRequestBuilder {
      *   for formatting (Google Pay requires a dot-separated decimal string).
      * @param currencyCode ISO 4217 alpha-3 currency.
      * @param countryCode ISO 3166-1 alpha-2 country.
+     * @param payerContacts whether to ask the buyer for the email and phone the gateway takes with a payment.
      * @return JSON string ready to pass to `PaymentDataRequest.fromJson(...)`.
      */
     fun buildPaymentDataRequest(
@@ -30,6 +31,7 @@ internal object GooglePayRequestBuilder {
         totalPriceMajor: String,
         currencyCode: String,
         countryCode: String,
+        payerContacts: Boolean = true,
     ): String {
         require(config.allowedCardNetworks.isNotEmpty()) {
             "GooglePayConfig.allowedCardNetworks must contain at least one network"
@@ -54,9 +56,10 @@ internal object GooglePayRequestBuilder {
             buildJsonObject {
                 put("apiVersion", JsonPrimitive(2))
                 put("apiVersionMinor", JsonPrimitive(0))
-                put("allowedPaymentMethods", allowedPaymentMethods(config))
+                put("allowedPaymentMethods", allowedPaymentMethods(config, payerContacts))
                 put("transactionInfo", transactionInfo(totalPriceMajor, currencyCode, countryCode))
                 put("merchantInfo", merchantInfo(config))
+                if (payerContacts) put("emailRequired", JsonPrimitive(true))
             }
         return root.toString()
     }
@@ -85,21 +88,28 @@ internal object GooglePayRequestBuilder {
         require(config.allowedAuthMethods.isNotEmpty()) {
             "GooglePayConfig.allowedAuthMethods must contain at least one method"
         }
-        return buildJsonArray { add(baseCardPaymentMethod(config)) }
+        return buildJsonArray { add(baseCardPaymentMethod(config, billingAddress(config))) }
     }
 
-    private fun allowedPaymentMethods(config: GooglePayConfig): JsonArray =
+    private fun allowedPaymentMethods(
+        config: GooglePayConfig,
+        payerContacts: Boolean,
+    ): JsonArray =
         buildJsonArray {
+            val billingAddress = if (payerContacts) payerBillingAddress(config) else billingAddress(config)
             add(
                 JsonObject(
-                    baseCardPaymentMethod(config).toMutableMap().also {
+                    baseCardPaymentMethod(config, billingAddress).toMutableMap().also {
                         it["tokenizationSpecification"] = tokenizationSpecification(config)
                     },
                 ),
             )
         }
 
-    private fun baseCardPaymentMethod(config: GooglePayConfig): JsonObject =
+    private fun baseCardPaymentMethod(
+        config: GooglePayConfig,
+        billingAddress: JsonObject?,
+    ): JsonObject =
         buildJsonObject {
             put("type", JsonPrimitive("CARD"))
             put(
@@ -117,15 +127,24 @@ internal object GooglePayRequestBuilder {
                             config.allowedCardNetworks.forEach { add(JsonPrimitive(it.value)) }
                         },
                     )
-                    put("billingAddressRequired", JsonPrimitive(config.billingAddressRequired))
-                    if (config.billingAddressRequired) {
-                        put(
-                            "billingAddressParameters",
-                            buildJsonObject { put("format", JsonPrimitive("FULL")) },
-                        )
-                    }
+                    put("billingAddressRequired", JsonPrimitive(billingAddress != null))
+                    billingAddress?.let { put("billingAddressParameters", it) }
                 },
             )
+        }
+
+    private fun billingAddress(config: GooglePayConfig): JsonObject? =
+        if (config.billingAddressRequired) buildJsonObject { put("format", JsonPrimitive("FULL")) } else null
+
+    /**
+     * The billing address of a payment comes with the phone: Google Pay gives the buyer's phone only inside
+     * a billing address, and the gateway needs it with the email for a card the wallet has not tokenized (`PAN_ONLY`)
+     * when the bank checks payer data. The gateway's own payment page asks for the same.
+     */
+    private fun payerBillingAddress(config: GooglePayConfig): JsonObject =
+        buildJsonObject {
+            put("format", JsonPrimitive(if (config.billingAddressRequired) "FULL" else "MIN"))
+            put("phoneNumberRequired", JsonPrimitive(true))
         }
 
     private fun tokenizationSpecification(config: GooglePayConfig): JsonObject =
