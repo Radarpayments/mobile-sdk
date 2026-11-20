@@ -9,5 +9,6 @@ internal object NoOpGooglePayTokenProvider : GooglePayTokenProvider {
         amountMinorUnits: Long,
         currencyCode: String,
         countryCode: String,
+        payerContacts: Boolean,
     ): GooglePayTokenResult = GooglePayTokenResult.NotAvailable
 }

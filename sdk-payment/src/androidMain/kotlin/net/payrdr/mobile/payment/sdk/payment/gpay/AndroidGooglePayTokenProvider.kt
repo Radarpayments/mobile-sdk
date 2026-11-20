@@ -57,6 +57,7 @@ internal class AndroidGooglePayTokenProvider(
         amountMinorUnits: Long,
         currencyCode: String,
         countryCode: String,
+        payerContacts: Boolean,
     ): GooglePayTokenResult {
         if (!GooglePayAvailability.isAvailable) return GooglePayTokenResult.NotAvailable
 
@@ -76,6 +77,7 @@ internal class AndroidGooglePayTokenProvider(
                     totalPriceMajor = totalPriceMajor,
                     currencyCode = currencyCode,
                     countryCode = resolvedCountry,
+                    payerContacts = payerContacts,
                 )
             val paymentsClient = createPaymentsClient(requireNotNull(config.environment) { "GooglePayConfig.environment is not known" })
             val request = PaymentDataRequest.fromJson(json)
@@ -160,7 +162,7 @@ internal class AndroidGooglePayTokenProvider(
         if (token == null) {
             resumeWith(deferred, GooglePayTokenResult.Failure("Missing paymentMethodData.tokenizationData.token"))
         } else {
-            resumeWith(deferred, GooglePayTokenResult.Success(token))
+            resumeWith(deferred, GooglePayTokenResult.Success(token, googlePayPayer(json)))
         }
     }
 

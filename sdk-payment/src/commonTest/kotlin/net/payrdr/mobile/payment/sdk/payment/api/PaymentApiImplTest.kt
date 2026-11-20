@@ -12,6 +12,7 @@ import io.ktor.http.decodeURLQueryComponent
 import kotlinx.coroutines.test.runTest
 import kotlinx.io.IOException
 import net.payrdr.mobile.payment.sdk.payment.api.dto.request.ApplePayProcessFormRequest
+import net.payrdr.mobile.payment.sdk.payment.api.dto.request.GooglePayAdditionalParameters
 import net.payrdr.mobile.payment.sdk.payment.api.dto.request.GooglePayProcessFormRequest
 import net.payrdr.mobile.payment.sdk.payment.api.dto.request.P2PFromCard
 import net.payrdr.mobile.payment.sdk.payment.api.dto.request.P2PPerformRequest
@@ -172,6 +173,37 @@ class PaymentApiImplTest {
             recorded.single().url.encodedPath shouldBe "/google/paymentOrder.do"
             body shouldContain "\"paymentToken\":\"G-TOK\""
             body shouldContain "\"mdOrder\":\"O-1\""
+            body shouldNotContain "additionalParameters"
+        }
+
+    @Test fun `googlePayProcessForm sends the payer's contacts it has and leaves the others out`() =
+        runTest {
+            val recorded = mutableListOf<HttpRequestData>()
+            val (client, _) =
+                mockJsonClient { req ->
+                    recorded += req
+                    json("""{"success":"true"}""")
+                }
+            val api = PaymentApiImpl(baseUrl = BASE_URL, httpClient = client)
+
+            api.googlePayProcessForm(
+                GooglePayProcessFormRequest(
+                    paymentToken = "G-TOK",
+                    mdOrder = "O-1",
+                    additionalParameters = GooglePayAdditionalParameters(email = "buyer@example.com", phone = "+35799000000"),
+                ),
+            )
+            api.googlePayProcessForm(
+                GooglePayProcessFormRequest(
+                    paymentToken = "G-TOK",
+                    mdOrder = "O-1",
+                    additionalParameters = GooglePayAdditionalParameters(phone = "+35799000000"),
+                ),
+            )
+
+            val bodies = recorded.map { it.body.toByteArray().decodeToString() }
+            bodies[0] shouldContain """"additionalParameters":{"email":"buyer@example.com","phone":"+35799000000"}"""
+            bodies[1] shouldContain """"additionalParameters":{"phone":"+35799000000"}"""
         }
 
     private suspend fun p2pBody(recorded: List<HttpRequestData>): kotlinx.serialization.json.JsonObject =

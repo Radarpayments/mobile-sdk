@@ -3,15 +3,31 @@ package net.payrdr.mobile.payment.sdk.payment.gpay
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import net.payrdr.mobile.payment.sdk.payment.api.PayerDataFormParams
 
 /**
  * The token the gateway takes from Google Pay's `PaymentData` JSON — `paymentMethodData.tokenizationData.token`, itself
  * a JSON document passed on as the string it is — or null when the answer has none.
  */
 internal fun googlePayToken(paymentDataJson: String): String? {
-    val root = runCatching { Json.parseToJsonElement(paymentDataJson) }.getOrNull() as? JsonObject ?: return null
-    val methodData = root["paymentMethodData"] as? JsonObject
+    val methodData = paymentData(paymentDataJson)?.get("paymentMethodData") as? JsonObject
     val tokenization = methodData?.get("tokenizationData") as? JsonObject
-    val token = tokenization?.get("token") as? JsonPrimitive
-    return token?.takeIf { it.isString }?.content?.takeIf { it.isNotBlank() }
+    return tokenization.text("token")
 }
+
+/**
+ * The buyer's email and phone from Google Pay's `PaymentData` JSON — `email` and
+ * `paymentMethodData.info.billingAddress.phoneNumber` — each null when the answer has none. They come out as the card
+ * form sends them: the email trimmed, the phone as its digits with the leading plus.
+ */
+internal fun googlePayPayer(paymentDataJson: String): GooglePayPayer {
+    val root = paymentData(paymentDataJson)
+    val info = (root?.get("paymentMethodData") as? JsonObject)?.get("info") as? JsonObject
+    val phone = (info?.get("billingAddress") as? JsonObject).text("phoneNumber")?.let(PayerDataFormParams::normalizePhone)
+    return GooglePayPayer(email = root.text("email")?.trim(), phone = phone?.takeIf { it.any(Char::isDigit) })
+}
+
+private fun paymentData(json: String): JsonObject? = runCatching { Json.parseToJsonElement(json) }.getOrNull() as? JsonObject
+
+private fun JsonObject?.text(name: String): String? =
+    (this?.get(name) as? JsonPrimitive)?.takeIf { it.isString }?.content?.takeIf { it.isNotBlank() }

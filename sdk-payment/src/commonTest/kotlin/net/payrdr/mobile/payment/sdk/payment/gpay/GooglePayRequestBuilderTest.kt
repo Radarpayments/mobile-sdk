@@ -100,6 +100,40 @@ class GooglePayRequestBuilderTest {
                 .jsonObject
         params["billingAddressRequired"]!!.jsonPrimitive.content shouldBe "true"
         params["billingAddressParameters"]!!.jsonObject["format"]!!.jsonPrimitive.content shouldBe "FULL"
+        params["billingAddressParameters"]!!.jsonObject["phoneNumberRequired"]!!.jsonPrimitive.content shouldBe "true"
+    }
+
+    @Test fun `a payment asks for the email and for the phone in a short billing address`() {
+        val json = GooglePayRequestBuilder.buildPaymentDataRequest(sampleConfig(), "1.00", "USD", "US")
+        val root = Json.parseToJsonElement(json).jsonObject
+        val params = root["allowedPaymentMethods"]!!.jsonArray[0].jsonObject["parameters"]!!.jsonObject
+
+        root["emailRequired"]!!.jsonPrimitive.content shouldBe "true"
+        params["billingAddressRequired"]!!.jsonPrimitive.content shouldBe "true"
+        params["billingAddressParameters"]!!.jsonObject["format"]!!.jsonPrimitive.content shouldBe "MIN"
+        params["billingAddressParameters"]!!.jsonObject["phoneNumberRequired"]!!.jsonPrimitive.content shouldBe "true"
+    }
+
+    @Test fun `a transfer asks for no payer contacts`() {
+        val json = GooglePayRequestBuilder.buildPaymentDataRequest(sampleConfig(), "1.00", "USD", "US", payerContacts = false)
+        val root = Json.parseToJsonElement(json).jsonObject
+        val params = root["allowedPaymentMethods"]!!.jsonArray[0].jsonObject["parameters"]!!.jsonObject
+
+        root["emailRequired"] shouldBe null
+        params["billingAddressRequired"]!!.jsonPrimitive.content shouldBe "false"
+        params["billingAddressParameters"] shouldBe null
+    }
+
+    @Test fun `the readiness check and the button ask for no payer data`() {
+        val ready = Json.parseToJsonElement(GooglePayRequestBuilder.buildIsReadyToPayRequest(sampleConfig())).jsonObject
+        val button = Json.parseToJsonElement(GooglePayRequestBuilder.buildButtonPaymentMethods(sampleConfig())).jsonArray
+
+        ready["emailRequired"] shouldBe null
+        listOf(ready["allowedPaymentMethods"]!!.jsonArray, button).forEach { methods ->
+            val params = methods[0].jsonObject["parameters"]!!.jsonObject
+            params["billingAddressRequired"]!!.jsonPrimitive.content shouldBe "false"
+            params["billingAddressParameters"] shouldBe null
+        }
     }
 
     @Test fun `buildIsReadyToPayRequest has minimal shape without transactionInfo or merchantInfo`() {

@@ -20,6 +20,7 @@ sdk-core ◄── sdk-payment ◄── sdk-payment-scanner          (iOS: Rada
 | `sdk-bridge/` | the SDK as a JSON contract for Flutter / React Native; `PayrdrSdkBridge.xcframework` | `sdk-bridge/AGENTS.md` |
 | `plugins/` | `payrdr_sdk` (Flutter), `@payrdr/react-native-sdk` (TurboModule) | `plugins/AGENTS.md` |
 | `samples/` | demo stores on Android, iOS, Flutter, React Native | `samples/AGENTS.md` |
+| `qa/` | native QA apps (Android, iOS) that open the checkout with any configuration; the contract and the fixtures both apps test against | `qa/AGENTS.md` |
 | `build-logic/convention/` | convention plugins `payrdr.kmp.library`, `payrdr.kmp.compose.android` | below |
 | `scripts/build-bridge.sh` | builds what the plugins consume (`build/maven`, the XCFramework, the scanner's Swift sources) | |
 

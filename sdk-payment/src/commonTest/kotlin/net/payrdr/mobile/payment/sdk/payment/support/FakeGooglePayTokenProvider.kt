@@ -17,8 +17,9 @@ internal class FakeGooglePayTokenProvider(
         amountMinorUnits: Long,
         currencyCode: String,
         countryCode: String,
+        payerContacts: Boolean,
     ): GooglePayTokenResult {
-        calls += Request(config, amountMinorUnits, currencyCode, countryCode)
+        calls += Request(config, amountMinorUnits, currencyCode, countryCode, payerContacts)
         return nextResult
     }
 
@@ -27,5 +28,6 @@ internal class FakeGooglePayTokenProvider(
         val amountMinorUnits: Long,
         val currencyCode: String,
         val countryCode: String,
+        val payerContacts: Boolean,
     )
 }

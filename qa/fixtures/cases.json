@@ -1,0 +1,2136 @@
+[
+  {
+    "name": "empty_object",
+    "kind": "config",
+    "input": {},
+    "expect": {
+      "document": {
+        "version": 1,
+        "profile": null,
+        "order": {
+          "source": "register",
+          "type": "payment",
+          "amount": 10000,
+          "currency": "EUR",
+          "clientId": null,
+          "mdOrder": null,
+          "sessionId": null,
+          "features": [],
+          "extra": {}
+        },
+        "sdk": {
+          "locale": null,
+          "theme": "system",
+          "showResultScreen": false,
+          "scanner": false,
+          "keyProviderUrl": null,
+          "sslPinning": {
+            "enabled": false,
+            "pins": []
+          },
+          "googlePay": {
+            "enabled": false,
+            "billingAddressRequired": false,
+            "merchantId": null,
+            "merchantFullName": null,
+            "gateway": null,
+            "gatewayMerchantId": null,
+            "countryCode": null,
+            "environment": null,
+            "allowedCardNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "allowedAuthMethods": [
+              "PAN_ONLY",
+              "CRYPTOGRAM_3DS"
+            ]
+          },
+          "applePay": {
+            "enabled": false,
+            "merchantId": "merchant.net.payrdr.samples.test",
+            "supportedNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "merchantCapabilities": [
+              "CREDIT",
+              "DEBIT",
+              "THREE_D_SECURE"
+            ],
+            "countryCode": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "two_fields",
+    "kind": "config",
+    "input": {
+      "order": {
+        "amount": 500
+      },
+      "sdk": {
+        "theme": "debug"
+      }
+    },
+    "expect": {
+      "document": {
+        "version": 1,
+        "profile": null,
+        "order": {
+          "source": "register",
+          "type": "payment",
+          "amount": 500,
+          "currency": "EUR",
+          "clientId": null,
+          "mdOrder": null,
+          "sessionId": null,
+          "features": [],
+          "extra": {}
+        },
+        "sdk": {
+          "locale": null,
+          "theme": "debug",
+          "showResultScreen": false,
+          "scanner": false,
+          "keyProviderUrl": null,
+          "sslPinning": {
+            "enabled": false,
+            "pins": []
+          },
+          "googlePay": {
+            "enabled": false,
+            "billingAddressRequired": false,
+            "merchantId": null,
+            "merchantFullName": null,
+            "gateway": null,
+            "gatewayMerchantId": null,
+            "countryCode": null,
+            "environment": null,
+            "allowedCardNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "allowedAuthMethods": [
+              "PAN_ONLY",
+              "CRYPTOGRAM_3DS"
+            ]
+          },
+          "applePay": {
+            "enabled": false,
+            "merchantId": "merchant.net.payrdr.samples.test",
+            "supportedNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "merchantCapabilities": [
+              "CREDIT",
+              "DEBIT",
+              "THREE_D_SECURE"
+            ],
+            "countryCode": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "full_document",
+    "kind": "config",
+    "input": {
+      "version": 1,
+      "profile": "sandbox",
+      "order": {
+        "source": "mdOrder",
+        "type": "aft",
+        "amount": 25050,
+        "currency": "USD",
+        "clientId": "client-42",
+        "mdOrder": "11111111-2222-3333-4444-555555555555",
+        "sessionId": "session-1",
+        "features": [
+          "VERIFY",
+          "FORCE_CREATE_BINDING",
+          "VERIFY"
+        ],
+        "extra": {
+          "description": "qa run",
+          "jsonParams": {
+            "k": "v"
+          }
+        }
+      },
+      "sdk": {
+        "locale": "ru",
+        "theme": "contrast",
+        "showResultScreen": true,
+        "scanner": true,
+        "keyProviderUrl": "https://dev.bpcbt.com/keys",
+        "sslPinning": {
+          "enabled": true,
+          "pins": [
+            {
+              "host": "dev.bpcbt.com",
+              "pin": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+            }
+          ]
+        },
+        "googlePay": {
+          "enabled": true,
+          "billingAddressRequired": true,
+          "merchantId": "gp-merchant-1",
+          "merchantFullName": "QA Store",
+          "gateway": "payrdr",
+          "gatewayMerchantId": "gw-merchant-1",
+          "countryCode": "CY",
+          "environment": "production",
+          "allowedCardNetworks": [
+            "JCB",
+            "AMEX",
+            "JCB"
+          ],
+          "allowedAuthMethods": [
+            "PAN_ONLY"
+          ]
+        },
+        "applePay": {
+          "enabled": true,
+          "merchantId": "merchant.example.qa",
+          "supportedNetworks": [
+            "JCB",
+            "AMEX",
+            "DISCOVER"
+          ],
+          "merchantCapabilities": [
+            "THREE_D_SECURE",
+            "DEBIT",
+            "DEBIT"
+          ],
+          "countryCode": "CY"
+        }
+      }
+    },
+    "expect": {
+      "document": {
+        "version": 1,
+        "profile": "sandbox",
+        "order": {
+          "source": "mdOrder",
+          "type": "aft",
+          "amount": 25050,
+          "currency": "USD",
+          "clientId": "client-42",
+          "mdOrder": "11111111-2222-3333-4444-555555555555",
+          "sessionId": "session-1",
+          "features": [
+            "VERIFY",
+            "FORCE_CREATE_BINDING"
+          ],
+          "extra": {
+            "description": "qa run",
+            "jsonParams": {
+              "k": "v"
+            }
+          }
+        },
+        "sdk": {
+          "locale": "ru",
+          "theme": "contrast",
+          "showResultScreen": true,
+          "scanner": true,
+          "keyProviderUrl": "https://dev.bpcbt.com/keys",
+          "sslPinning": {
+            "enabled": true,
+            "pins": [
+              {
+                "host": "dev.bpcbt.com",
+                "pin": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+              }
+            ]
+          },
+          "googlePay": {
+            "enabled": true,
+            "billingAddressRequired": true,
+            "merchantId": "gp-merchant-1",
+            "merchantFullName": "QA Store",
+            "gateway": "payrdr",
+            "gatewayMerchantId": "gw-merchant-1",
+            "countryCode": "CY",
+            "environment": "production",
+            "allowedCardNetworks": [
+              "AMEX",
+              "JCB"
+            ],
+            "allowedAuthMethods": [
+              "PAN_ONLY"
+            ]
+          },
+          "applePay": {
+            "enabled": true,
+            "merchantId": "merchant.example.qa",
+            "supportedNetworks": [
+              "AMEX",
+              "DISCOVER",
+              "JCB"
+            ],
+            "merchantCapabilities": [
+              "DEBIT",
+              "THREE_D_SECURE"
+            ],
+            "countryCode": "CY"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "unknown_fields_ignored",
+    "kind": "config",
+    "input": {
+      "rootExtra": 1,
+      "order": {
+        "orderExtra": "x",
+        "amount": 700
+      },
+      "sdk": {
+        "sdkExtra": true,
+        "theme": "dark"
+      }
+    },
+    "expect": {
+      "document": {
+        "version": 1,
+        "profile": null,
+        "order": {
+          "source": "register",
+          "type": "payment",
+          "amount": 700,
+          "currency": "EUR",
+          "clientId": null,
+          "mdOrder": null,
+          "sessionId": null,
+          "features": [],
+          "extra": {}
+        },
+        "sdk": {
+          "locale": null,
+          "theme": "dark",
+          "showResultScreen": false,
+          "scanner": false,
+          "keyProviderUrl": null,
+          "sslPinning": {
+            "enabled": false,
+            "pins": []
+          },
+          "googlePay": {
+            "enabled": false,
+            "billingAddressRequired": false,
+            "merchantId": null,
+            "merchantFullName": null,
+            "gateway": null,
+            "gatewayMerchantId": null,
+            "countryCode": null,
+            "environment": null,
+            "allowedCardNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "allowedAuthMethods": [
+              "PAN_ONLY",
+              "CRYPTOGRAM_3DS"
+            ]
+          },
+          "applePay": {
+            "enabled": false,
+            "merchantId": "merchant.net.payrdr.samples.test",
+            "supportedNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "merchantCapabilities": [
+              "CREDIT",
+              "DEBIT",
+              "THREE_D_SECURE"
+            ],
+            "countryCode": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "amount_zero",
+    "kind": "config",
+    "input": {
+      "order": {
+        "amount": 0
+      }
+    },
+    "expect": {
+      "document": {
+        "version": 1,
+        "profile": null,
+        "order": {
+          "source": "register",
+          "type": "payment",
+          "amount": 0,
+          "currency": "EUR",
+          "clientId": null,
+          "mdOrder": null,
+          "sessionId": null,
+          "features": [],
+          "extra": {}
+        },
+        "sdk": {
+          "locale": null,
+          "theme": "system",
+          "showResultScreen": false,
+          "scanner": false,
+          "keyProviderUrl": null,
+          "sslPinning": {
+            "enabled": false,
+            "pins": []
+          },
+          "googlePay": {
+            "enabled": false,
+            "billingAddressRequired": false,
+            "merchantId": null,
+            "merchantFullName": null,
+            "gateway": null,
+            "gatewayMerchantId": null,
+            "countryCode": null,
+            "environment": null,
+            "allowedCardNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "allowedAuthMethods": [
+              "PAN_ONLY",
+              "CRYPTOGRAM_3DS"
+            ]
+          },
+          "applePay": {
+            "enabled": false,
+            "merchantId": "merchant.net.payrdr.samples.test",
+            "supportedNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "merchantCapabilities": [
+              "CREDIT",
+              "DEBIT",
+              "THREE_D_SECURE"
+            ],
+            "countryCode": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "blank_client_id_is_null",
+    "kind": "config",
+    "input": {
+      "order": {
+        "clientId": "  "
+      }
+    },
+    "expect": {
+      "document": {
+        "version": 1,
+        "profile": null,
+        "order": {
+          "source": "register",
+          "type": "payment",
+          "amount": 10000,
+          "currency": "EUR",
+          "clientId": null,
+          "mdOrder": null,
+          "sessionId": null,
+          "features": [],
+          "extra": {}
+        },
+        "sdk": {
+          "locale": null,
+          "theme": "system",
+          "showResultScreen": false,
+          "scanner": false,
+          "keyProviderUrl": null,
+          "sslPinning": {
+            "enabled": false,
+            "pins": []
+          },
+          "googlePay": {
+            "enabled": false,
+            "billingAddressRequired": false,
+            "merchantId": null,
+            "merchantFullName": null,
+            "gateway": null,
+            "gatewayMerchantId": null,
+            "countryCode": null,
+            "environment": null,
+            "allowedCardNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "allowedAuthMethods": [
+              "PAN_ONLY",
+              "CRYPTOGRAM_3DS"
+            ]
+          },
+          "applePay": {
+            "enabled": false,
+            "merchantId": "merchant.net.payrdr.samples.test",
+            "supportedNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "merchantCapabilities": [
+              "CREDIT",
+              "DEBIT",
+              "THREE_D_SECURE"
+            ],
+            "countryCode": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "extra_nested_value",
+    "kind": "config",
+    "input": {
+      "order": {
+        "extra": {
+          "jsonParams": {
+            "a": 1
+          },
+          "language": "en"
+        }
+      }
+    },
+    "expect": {
+      "document": {
+        "version": 1,
+        "profile": null,
+        "order": {
+          "source": "register",
+          "type": "payment",
+          "amount": 10000,
+          "currency": "EUR",
+          "clientId": null,
+          "mdOrder": null,
+          "sessionId": null,
+          "features": [],
+          "extra": {
+            "jsonParams": {
+              "a": 1
+            },
+            "language": "en"
+          }
+        },
+        "sdk": {
+          "locale": null,
+          "theme": "system",
+          "showResultScreen": false,
+          "scanner": false,
+          "keyProviderUrl": null,
+          "sslPinning": {
+            "enabled": false,
+            "pins": []
+          },
+          "googlePay": {
+            "enabled": false,
+            "billingAddressRequired": false,
+            "merchantId": null,
+            "merchantFullName": null,
+            "gateway": null,
+            "gatewayMerchantId": null,
+            "countryCode": null,
+            "environment": null,
+            "allowedCardNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "allowedAuthMethods": [
+              "PAN_ONLY",
+              "CRYPTOGRAM_3DS"
+            ]
+          },
+          "applePay": {
+            "enabled": false,
+            "merchantId": "merchant.net.payrdr.samples.test",
+            "supportedNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "merchantCapabilities": [
+              "CREDIT",
+              "DEBIT",
+              "THREE_D_SECURE"
+            ],
+            "countryCode": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "version_2",
+    "kind": "config",
+    "input": {
+      "version": 2
+    },
+    "expect": {
+      "errorField": "version"
+    }
+  },
+  {
+    "name": "profile_name_invalid",
+    "kind": "config",
+    "input": {
+      "profile": "My Stand"
+    },
+    "expect": {
+      "errorField": "profile"
+    }
+  },
+  {
+    "name": "source_unknown",
+    "kind": "config",
+    "input": {
+      "order": {
+        "source": "bogus"
+      }
+    },
+    "expect": {
+      "errorField": "order.source"
+    }
+  },
+  {
+    "name": "type_unknown",
+    "kind": "config",
+    "input": {
+      "order": {
+        "type": "refund"
+      }
+    },
+    "expect": {
+      "errorField": "order.type"
+    }
+  },
+  {
+    "name": "amount_negative",
+    "kind": "config",
+    "input": {
+      "order": {
+        "amount": -1
+      }
+    },
+    "expect": {
+      "errorField": "order.amount"
+    }
+  },
+  {
+    "name": "amount_fraction",
+    "kind": "config",
+    "input": {
+      "order": {
+        "amount": 100.5
+      }
+    },
+    "expect": {
+      "errorField": "order.amount"
+    }
+  },
+  {
+    "name": "amount_string",
+    "kind": "config",
+    "input": {
+      "order": {
+        "amount": "100"
+      }
+    },
+    "expect": {
+      "errorField": "order.amount"
+    }
+  },
+  {
+    "name": "amount_too_large",
+    "kind": "config",
+    "input": {
+      "order": {
+        "amount": 10000000000000
+      }
+    },
+    "expect": {
+      "errorField": "order.amount"
+    }
+  },
+  {
+    "name": "currency_unknown",
+    "kind": "config",
+    "input": {
+      "order": {
+        "currency": "XXX"
+      }
+    },
+    "expect": {
+      "errorField": "order.currency"
+    }
+  },
+  {
+    "name": "features_not_array",
+    "kind": "config",
+    "input": {
+      "order": {
+        "features": "VERIFY"
+      }
+    },
+    "expect": {
+      "errorField": "order.features"
+    }
+  },
+  {
+    "name": "feature_with_comma",
+    "kind": "config",
+    "input": {
+      "order": {
+        "features": [
+          "VERIFY,FORCE_CREATE_BINDING"
+        ]
+      }
+    },
+    "expect": {
+      "errorField": "order.features"
+    }
+  },
+  {
+    "name": "extra_not_object",
+    "kind": "config",
+    "input": {
+      "order": {
+        "extra": []
+      }
+    },
+    "expect": {
+      "errorField": "order.extra"
+    }
+  },
+  {
+    "name": "extra_password",
+    "kind": "config",
+    "input": {
+      "order": {
+        "extra": {
+          "password": "x"
+        }
+      }
+    },
+    "expect": {
+      "errorField": "order.extra"
+    }
+  },
+  {
+    "name": "extra_username_any_case",
+    "kind": "config",
+    "input": {
+      "order": {
+        "extra": {
+          "UserName": "x"
+        }
+      }
+    },
+    "expect": {
+      "errorField": "order.extra"
+    }
+  },
+  {
+    "name": "extra_token",
+    "kind": "config",
+    "input": {
+      "order": {
+        "extra": {
+          "token": "x"
+        }
+      }
+    },
+    "expect": {
+      "errorField": "order.extra"
+    }
+  },
+  {
+    "name": "locale_unknown",
+    "kind": "config",
+    "input": {
+      "sdk": {
+        "locale": "xx"
+      }
+    },
+    "expect": {
+      "errorField": "sdk.locale"
+    }
+  },
+  {
+    "name": "theme_unknown",
+    "kind": "config",
+    "input": {
+      "sdk": {
+        "theme": "neon"
+      }
+    },
+    "expect": {
+      "errorField": "sdk.theme"
+    }
+  },
+  {
+    "name": "key_provider_not_url",
+    "kind": "config",
+    "input": {
+      "sdk": {
+        "keyProviderUrl": "not-a-url"
+      }
+    },
+    "expect": {
+      "errorField": "sdk.keyProviderUrl"
+    }
+  },
+  {
+    "name": "pin_bad_base64",
+    "kind": "config",
+    "input": {
+      "sdk": {
+        "sslPinning": {
+          "pins": [
+            {
+              "host": "dev.bpcbt.com",
+              "pin": "%%%not-base64%%%"
+            }
+          ]
+        }
+      }
+    },
+    "expect": {
+      "errorField": "sdk.sslPinning.pins"
+    }
+  },
+  {
+    "name": "pin_wrong_length",
+    "kind": "config",
+    "input": {
+      "sdk": {
+        "sslPinning": {
+          "pins": [
+            {
+              "host": "dev.bpcbt.com",
+              "pin": "AAAA"
+            }
+          ]
+        }
+      }
+    },
+    "expect": {
+      "errorField": "sdk.sslPinning.pins"
+    }
+  },
+  {
+    "name": "pin_host_with_equals",
+    "kind": "config",
+    "input": {
+      "sdk": {
+        "sslPinning": {
+          "pins": [
+            {
+              "host": "dev=bpcbt.com",
+              "pin": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+            }
+          ]
+        }
+      }
+    },
+    "expect": {
+      "errorField": "sdk.sslPinning.pins"
+    }
+  },
+  {
+    "name": "pin_host_url",
+    "kind": "config",
+    "input": {
+      "sdk": {
+        "sslPinning": {
+          "enabled": true,
+          "pins": [
+            {
+              "host": "https://dev.bpcbt.com",
+              "pin": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+            }
+          ]
+        }
+      }
+    },
+    "expect": {
+      "errorField": "sdk.sslPinning.pins"
+    }
+  },
+  {
+    "name": "pin_host_with_port",
+    "kind": "config",
+    "input": {
+      "sdk": {
+        "sslPinning": {
+          "enabled": true,
+          "pins": [
+            {
+              "host": "dev.bpcbt.com:443",
+              "pin": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+            }
+          ]
+        }
+      }
+    },
+    "expect": {
+      "errorField": "sdk.sslPinning.pins"
+    }
+  },
+  {
+    "name": "pin_host_dot",
+    "kind": "config",
+    "input": {
+      "sdk": {
+        "sslPinning": {
+          "enabled": true,
+          "pins": [
+            {
+              "host": ".",
+              "pin": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+            }
+          ]
+        }
+      }
+    },
+    "expect": {
+      "errorField": "sdk.sslPinning.pins"
+    }
+  },
+  {
+    "name": "pin_host_with_path",
+    "kind": "config",
+    "input": {
+      "sdk": {
+        "sslPinning": {
+          "enabled": false,
+          "pins": [
+            {
+              "host": "dev.bpcbt.com/x",
+              "pin": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+            }
+          ]
+        }
+      }
+    },
+    "expect": {
+      "errorField": "sdk.sslPinning.pins"
+    }
+  },
+  {
+    "name": "pin_host_inner_wildcard",
+    "kind": "config",
+    "input": {
+      "sdk": {
+        "sslPinning": {
+          "enabled": true,
+          "pins": [
+            {
+              "host": "dev.*.bpcbt.com",
+              "pin": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+            }
+          ]
+        }
+      }
+    },
+    "expect": {
+      "errorField": "sdk.sslPinning.pins"
+    }
+  },
+  {
+    "name": "pin_host_wildcard_one_label",
+    "kind": "config",
+    "input": {
+      "sdk": {
+        "sslPinning": {
+          "enabled": true,
+          "pins": [
+            {
+              "host": "*.bpcbt.com",
+              "pin": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+            }
+          ]
+        }
+      }
+    },
+    "expect": {
+      "document": {
+        "version": 1,
+        "profile": null,
+        "order": {
+          "source": "register",
+          "type": "payment",
+          "amount": 10000,
+          "currency": "EUR",
+          "clientId": null,
+          "mdOrder": null,
+          "sessionId": null,
+          "features": [],
+          "extra": {}
+        },
+        "sdk": {
+          "locale": null,
+          "theme": "system",
+          "showResultScreen": false,
+          "scanner": false,
+          "keyProviderUrl": null,
+          "sslPinning": {
+            "enabled": true,
+            "pins": [
+              {
+                "host": "*.bpcbt.com",
+                "pin": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+              }
+            ]
+          },
+          "googlePay": {
+            "enabled": false,
+            "billingAddressRequired": false,
+            "merchantId": null,
+            "merchantFullName": null,
+            "gateway": null,
+            "gatewayMerchantId": null,
+            "countryCode": null,
+            "environment": null,
+            "allowedCardNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "allowedAuthMethods": [
+              "PAN_ONLY",
+              "CRYPTOGRAM_3DS"
+            ]
+          },
+          "applePay": {
+            "enabled": false,
+            "merchantId": "merchant.net.payrdr.samples.test",
+            "supportedNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "merchantCapabilities": [
+              "CREDIT",
+              "DEBIT",
+              "THREE_D_SECURE"
+            ],
+            "countryCode": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "pin_host_too_long",
+    "kind": "config",
+    "input": {
+      "sdk": {
+        "sslPinning": {
+          "enabled": true,
+          "pins": [
+            {
+              "host": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.dddddddddddddddddddddddddddddddddddddddddddddddddddd.bpcbt.com",
+              "pin": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+            }
+          ]
+        }
+      }
+    },
+    "expect": {
+      "errorField": "sdk.sslPinning.pins"
+    }
+  },
+  {
+    "name": "pin_host_longest",
+    "kind": "config",
+    "input": {
+      "sdk": {
+        "sslPinning": {
+          "enabled": true,
+          "pins": [
+            {
+              "host": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.ddddddddddddddddddddddddddddddddddddddddddddddddddd.bpcbt.com",
+              "pin": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+            }
+          ]
+        }
+      }
+    },
+    "expect": {
+      "document": {
+        "version": 1,
+        "profile": null,
+        "order": {
+          "source": "register",
+          "type": "payment",
+          "amount": 10000,
+          "currency": "EUR",
+          "clientId": null,
+          "mdOrder": null,
+          "sessionId": null,
+          "features": [],
+          "extra": {}
+        },
+        "sdk": {
+          "locale": null,
+          "theme": "system",
+          "showResultScreen": false,
+          "scanner": false,
+          "keyProviderUrl": null,
+          "sslPinning": {
+            "enabled": true,
+            "pins": [
+              {
+                "host": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.ddddddddddddddddddddddddddddddddddddddddddddddddddd.bpcbt.com",
+                "pin": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+              }
+            ]
+          },
+          "googlePay": {
+            "enabled": false,
+            "billingAddressRequired": false,
+            "merchantId": null,
+            "merchantFullName": null,
+            "gateway": null,
+            "gatewayMerchantId": null,
+            "countryCode": null,
+            "environment": null,
+            "allowedCardNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "allowedAuthMethods": [
+              "PAN_ONLY",
+              "CRYPTOGRAM_3DS"
+            ]
+          },
+          "applePay": {
+            "enabled": false,
+            "merchantId": "merchant.net.payrdr.samples.test",
+            "supportedNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "merchantCapabilities": [
+              "CREDIT",
+              "DEBIT",
+              "THREE_D_SECURE"
+            ],
+            "countryCode": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "pin_host_wildcard_any_depth",
+    "kind": "config",
+    "input": {
+      "sdk": {
+        "sslPinning": {
+          "enabled": true,
+          "pins": [
+            {
+              "host": "**.bpcbt.com",
+              "pin": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+            }
+          ]
+        }
+      }
+    },
+    "expect": {
+      "document": {
+        "version": 1,
+        "profile": null,
+        "order": {
+          "source": "register",
+          "type": "payment",
+          "amount": 10000,
+          "currency": "EUR",
+          "clientId": null,
+          "mdOrder": null,
+          "sessionId": null,
+          "features": [],
+          "extra": {}
+        },
+        "sdk": {
+          "locale": null,
+          "theme": "system",
+          "showResultScreen": false,
+          "scanner": false,
+          "keyProviderUrl": null,
+          "sslPinning": {
+            "enabled": true,
+            "pins": [
+              {
+                "host": "**.bpcbt.com",
+                "pin": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+              }
+            ]
+          },
+          "googlePay": {
+            "enabled": false,
+            "billingAddressRequired": false,
+            "merchantId": null,
+            "merchantFullName": null,
+            "gateway": null,
+            "gatewayMerchantId": null,
+            "countryCode": null,
+            "environment": null,
+            "allowedCardNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "allowedAuthMethods": [
+              "PAN_ONLY",
+              "CRYPTOGRAM_3DS"
+            ]
+          },
+          "applePay": {
+            "enabled": false,
+            "merchantId": "merchant.net.payrdr.samples.test",
+            "supportedNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "merchantCapabilities": [
+              "CREDIT",
+              "DEBIT",
+              "THREE_D_SECURE"
+            ],
+            "countryCode": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "gpay_environment_unknown",
+    "kind": "config",
+    "input": {
+      "sdk": {
+        "googlePay": {
+          "environment": "staging"
+        }
+      }
+    },
+    "expect": {
+      "errorField": "sdk.googlePay.environment"
+    }
+  },
+  {
+    "name": "gpay_network_unknown",
+    "kind": "config",
+    "input": {
+      "sdk": {
+        "googlePay": {
+          "allowedCardNetworks": [
+            "VISA",
+            "DINERS"
+          ]
+        }
+      }
+    },
+    "expect": {
+      "errorField": "sdk.googlePay.allowedCardNetworks"
+    }
+  },
+  {
+    "name": "apay_capability_unknown",
+    "kind": "config",
+    "input": {
+      "sdk": {
+        "applePay": {
+          "merchantCapabilities": [
+            "CREDIT",
+            "MAGIC"
+          ]
+        }
+      }
+    },
+    "expect": {
+      "errorField": "sdk.applePay.merchantCapabilities"
+    }
+  },
+  {
+    "name": "apay_merchant_blank",
+    "kind": "config",
+    "input": {
+      "sdk": {
+        "applePay": {
+          "merchantId": "  "
+        }
+      }
+    },
+    "expect": {
+      "errorField": "sdk.applePay.merchantId"
+    }
+  },
+  {
+    "name": "not_json",
+    "kind": "config",
+    "inputText": "{",
+    "expect": {
+      "errorField": "$"
+    }
+  },
+  {
+    "name": "array_root",
+    "kind": "config",
+    "input": [],
+    "expect": {
+      "errorField": "$"
+    }
+  },
+  {
+    "name": "depth_32",
+    "kind": "config",
+    "inputText": "{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}",
+    "expect": {
+      "document": {
+        "version": 1,
+        "profile": null,
+        "order": {
+          "source": "register",
+          "type": "payment",
+          "amount": 10000,
+          "currency": "EUR",
+          "clientId": null,
+          "mdOrder": null,
+          "sessionId": null,
+          "features": [],
+          "extra": {}
+        },
+        "sdk": {
+          "locale": null,
+          "theme": "system",
+          "showResultScreen": false,
+          "scanner": false,
+          "keyProviderUrl": null,
+          "sslPinning": {
+            "enabled": false,
+            "pins": []
+          },
+          "googlePay": {
+            "enabled": false,
+            "billingAddressRequired": false,
+            "merchantId": null,
+            "merchantFullName": null,
+            "gateway": null,
+            "gatewayMerchantId": null,
+            "countryCode": null,
+            "environment": null,
+            "allowedCardNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "allowedAuthMethods": [
+              "PAN_ONLY",
+              "CRYPTOGRAM_3DS"
+            ]
+          },
+          "applePay": {
+            "enabled": false,
+            "merchantId": "merchant.net.payrdr.samples.test",
+            "supportedNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "merchantCapabilities": [
+              "CREDIT",
+              "DEBIT",
+              "THREE_D_SECURE"
+            ],
+            "countryCode": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "depth_33",
+    "kind": "config",
+    "inputText": "{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}",
+    "expect": {
+      "errorField": "$"
+    }
+  },
+  {
+    "name": "not_json_empty_text",
+    "kind": "config",
+    "inputText": "",
+    "expect": {
+      "errorField": "$"
+    }
+  },
+  {
+    "name": "not_json_amount_leading_zero",
+    "kind": "config",
+    "inputText": "{\"order\":{\"amount\":01}}",
+    "expect": {
+      "errorField": "$"
+    }
+  },
+  {
+    "name": "not_json_amount_plus_sign",
+    "kind": "config",
+    "inputText": "{\"order\":{\"amount\":+1}}",
+    "expect": {
+      "errorField": "$"
+    }
+  },
+  {
+    "name": "not_json_amount_trailing_dot",
+    "kind": "config",
+    "inputText": "{\"order\":{\"amount\":1.}}",
+    "expect": {
+      "errorField": "$"
+    }
+  },
+  {
+    "name": "not_json_amount_leading_dot",
+    "kind": "config",
+    "inputText": "{\"order\":{\"amount\":.5}}",
+    "expect": {
+      "errorField": "$"
+    }
+  },
+  {
+    "name": "not_json_amount_nan",
+    "kind": "config",
+    "inputText": "{\"order\":{\"amount\":NaN}}",
+    "expect": {
+      "errorField": "$"
+    }
+  },
+  {
+    "name": "not_json_amount_arabic_indic_digits",
+    "kind": "config",
+    "inputText": "{\"order\":{\"amount\":\u0661\u0660\u0660}}",
+    "expect": {
+      "errorField": "$"
+    }
+  },
+  {
+    "name": "not_json_bare_word_in_extra",
+    "kind": "config",
+    "inputText": "{\"order\":{\"extra\":{\"a\":abc}}}",
+    "expect": {
+      "errorField": "$"
+    }
+  },
+  {
+    "name": "not_json_misspelt_literal",
+    "kind": "config",
+    "inputText": "{\"sdk\":{\"scanner\":tru}}",
+    "expect": {
+      "errorField": "$"
+    }
+  },
+  {
+    "name": "not_json_raw_tab_in_string",
+    "kind": "config",
+    "inputText": "{\"order\":{\"clientId\":\"a\tb\"}}",
+    "expect": {
+      "errorField": "$"
+    }
+  },
+  {
+    "name": "not_json_lone_high_surrogate_escape",
+    "kind": "config",
+    "inputText": "{\"order\":{\"extra\":{\"a\":\"\\ud800\"}}}",
+    "expect": {
+      "errorField": "$"
+    }
+  },
+  {
+    "name": "not_json_lone_low_surrogate_escape",
+    "kind": "config",
+    "inputText": "{\"order\":{\"extra\":{\"a\":\"\\udc00\"}}}",
+    "expect": {
+      "errorField": "$"
+    }
+  },
+  {
+    "name": "not_json_unknown_escape",
+    "kind": "config",
+    "inputText": "{\"order\":{\"clientId\":\"\\x41\"}}",
+    "expect": {
+      "errorField": "$"
+    }
+  },
+  {
+    "name": "not_json_trailing_comma",
+    "kind": "config",
+    "inputText": "{\"order\":{\"amount\":5,}}",
+    "expect": {
+      "errorField": "$"
+    }
+  },
+  {
+    "name": "not_json_text_after_the_value",
+    "kind": "config",
+    "inputText": "{\"order\":{\"amount\":5}} x",
+    "expect": {
+      "errorField": "$"
+    }
+  },
+  {
+    "name": "not_json_leading_byte_order_mark",
+    "kind": "config",
+    "inputText": "\ufeff{}",
+    "expect": {
+      "errorField": "$"
+    }
+  },
+  {
+    "name": "not_json_leading_no_break_space",
+    "kind": "config",
+    "inputText": "\u00a0{}",
+    "expect": {
+      "errorField": "$"
+    }
+  },
+  {
+    "name": "profile_not_json_raw_tab_in_url",
+    "kind": "profile",
+    "inputText": "{\"name\":\"sandbox\",\"gatewayUrl\":\"https://dev.bpcbt.com/pay\tment\"}",
+    "expect": {
+      "errorField": "$"
+    }
+  },
+  {
+    "name": "json_white_space_around_tokens",
+    "kind": "config",
+    "inputText": " \t\r\n{ \"order\" : { \"amount\" : 5 } }\r\n",
+    "expect": {
+      "document": {
+        "version": 1,
+        "profile": null,
+        "order": {
+          "source": "register",
+          "type": "payment",
+          "amount": 5,
+          "currency": "EUR",
+          "clientId": null,
+          "mdOrder": null,
+          "sessionId": null,
+          "features": [],
+          "extra": {}
+        },
+        "sdk": {
+          "locale": null,
+          "theme": "system",
+          "showResultScreen": false,
+          "scanner": false,
+          "keyProviderUrl": null,
+          "sslPinning": {
+            "enabled": false,
+            "pins": []
+          },
+          "googlePay": {
+            "enabled": false,
+            "billingAddressRequired": false,
+            "merchantId": null,
+            "merchantFullName": null,
+            "gateway": null,
+            "gatewayMerchantId": null,
+            "countryCode": null,
+            "environment": null,
+            "allowedCardNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "allowedAuthMethods": [
+              "PAN_ONLY",
+              "CRYPTOGRAM_3DS"
+            ]
+          },
+          "applePay": {
+            "enabled": false,
+            "merchantId": "merchant.net.payrdr.samples.test",
+            "supportedNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "merchantCapabilities": [
+              "CREDIT",
+              "DEBIT",
+              "THREE_D_SECURE"
+            ],
+            "countryCode": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "amount_exponent_spelling",
+    "kind": "config",
+    "inputText": "{\"order\":{\"amount\":1E+2}}",
+    "expect": {
+      "document": {
+        "version": 1,
+        "profile": null,
+        "order": {
+          "source": "register",
+          "type": "payment",
+          "amount": 100,
+          "currency": "EUR",
+          "clientId": null,
+          "mdOrder": null,
+          "sessionId": null,
+          "features": [],
+          "extra": {}
+        },
+        "sdk": {
+          "locale": null,
+          "theme": "system",
+          "showResultScreen": false,
+          "scanner": false,
+          "keyProviderUrl": null,
+          "sslPinning": {
+            "enabled": false,
+            "pins": []
+          },
+          "googlePay": {
+            "enabled": false,
+            "billingAddressRequired": false,
+            "merchantId": null,
+            "merchantFullName": null,
+            "gateway": null,
+            "gatewayMerchantId": null,
+            "countryCode": null,
+            "environment": null,
+            "allowedCardNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "allowedAuthMethods": [
+              "PAN_ONLY",
+              "CRYPTOGRAM_3DS"
+            ]
+          },
+          "applePay": {
+            "enabled": false,
+            "merchantId": "merchant.net.payrdr.samples.test",
+            "supportedNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "merchantCapabilities": [
+              "CREDIT",
+              "DEBIT",
+              "THREE_D_SECURE"
+            ],
+            "countryCode": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "amount_zero_fraction_spelling",
+    "kind": "config",
+    "inputText": "{\"order\":{\"amount\":100.0}}",
+    "expect": {
+      "document": {
+        "version": 1,
+        "profile": null,
+        "order": {
+          "source": "register",
+          "type": "payment",
+          "amount": 100,
+          "currency": "EUR",
+          "clientId": null,
+          "mdOrder": null,
+          "sessionId": null,
+          "features": [],
+          "extra": {}
+        },
+        "sdk": {
+          "locale": null,
+          "theme": "system",
+          "showResultScreen": false,
+          "scanner": false,
+          "keyProviderUrl": null,
+          "sslPinning": {
+            "enabled": false,
+            "pins": []
+          },
+          "googlePay": {
+            "enabled": false,
+            "billingAddressRequired": false,
+            "merchantId": null,
+            "merchantFullName": null,
+            "gateway": null,
+            "gatewayMerchantId": null,
+            "countryCode": null,
+            "environment": null,
+            "allowedCardNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "allowedAuthMethods": [
+              "PAN_ONLY",
+              "CRYPTOGRAM_3DS"
+            ]
+          },
+          "applePay": {
+            "enabled": false,
+            "merchantId": "merchant.net.payrdr.samples.test",
+            "supportedNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "merchantCapabilities": [
+              "CREDIT",
+              "DEBIT",
+              "THREE_D_SECURE"
+            ],
+            "countryCode": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "string_escapes",
+    "kind": "config",
+    "inputText": "{\"order\":{\"clientId\":\"\\\"\\\\\\/\\b\\f\\n\\r\\t\\u00e9\\ud83d\\ude00\"}}",
+    "expect": {
+      "document": {
+        "version": 1,
+        "profile": null,
+        "order": {
+          "source": "register",
+          "type": "payment",
+          "amount": 10000,
+          "currency": "EUR",
+          "clientId": "\"\\/\b\f\n\r\t\u00e9\ud83d\ude00",
+          "mdOrder": null,
+          "sessionId": null,
+          "features": [],
+          "extra": {}
+        },
+        "sdk": {
+          "locale": null,
+          "theme": "system",
+          "showResultScreen": false,
+          "scanner": false,
+          "keyProviderUrl": null,
+          "sslPinning": {
+            "enabled": false,
+            "pins": []
+          },
+          "googlePay": {
+            "enabled": false,
+            "billingAddressRequired": false,
+            "merchantId": null,
+            "merchantFullName": null,
+            "gateway": null,
+            "gatewayMerchantId": null,
+            "countryCode": null,
+            "environment": null,
+            "allowedCardNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "allowedAuthMethods": [
+              "PAN_ONLY",
+              "CRYPTOGRAM_3DS"
+            ]
+          },
+          "applePay": {
+            "enabled": false,
+            "merchantId": "merchant.net.payrdr.samples.test",
+            "supportedNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "merchantCapabilities": [
+              "CREDIT",
+              "DEBIT",
+              "THREE_D_SECURE"
+            ],
+            "countryCode": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "raw_delete_and_line_separator_in_string",
+    "kind": "config",
+    "inputText": "{\"order\":{\"clientId\":\"a\u007fb\u2028c\"}}",
+    "expect": {
+      "document": {
+        "version": 1,
+        "profile": null,
+        "order": {
+          "source": "register",
+          "type": "payment",
+          "amount": 10000,
+          "currency": "EUR",
+          "clientId": "a\u007fb\u2028c",
+          "mdOrder": null,
+          "sessionId": null,
+          "features": [],
+          "extra": {}
+        },
+        "sdk": {
+          "locale": null,
+          "theme": "system",
+          "showResultScreen": false,
+          "scanner": false,
+          "keyProviderUrl": null,
+          "sslPinning": {
+            "enabled": false,
+            "pins": []
+          },
+          "googlePay": {
+            "enabled": false,
+            "billingAddressRequired": false,
+            "merchantId": null,
+            "merchantFullName": null,
+            "gateway": null,
+            "gatewayMerchantId": null,
+            "countryCode": null,
+            "environment": null,
+            "allowedCardNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "allowedAuthMethods": [
+              "PAN_ONLY",
+              "CRYPTOGRAM_3DS"
+            ]
+          },
+          "applePay": {
+            "enabled": false,
+            "merchantId": "merchant.net.payrdr.samples.test",
+            "supportedNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "merchantCapabilities": [
+              "CREDIT",
+              "DEBIT",
+              "THREE_D_SECURE"
+            ],
+            "countryCode": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "duplicate_keys_last_value_wins",
+    "kind": "config",
+    "inputText": "{\"order\":{\"amount\":1,\"amount\":7,\"extra\":{\"a\":1,\"b\":2,\"a\":3}}}",
+    "expect": {
+      "document": {
+        "version": 1,
+        "profile": null,
+        "order": {
+          "source": "register",
+          "type": "payment",
+          "amount": 7,
+          "currency": "EUR",
+          "clientId": null,
+          "mdOrder": null,
+          "sessionId": null,
+          "features": [],
+          "extra": {
+            "a": 3,
+            "b": 2
+          }
+        },
+        "sdk": {
+          "locale": null,
+          "theme": "system",
+          "showResultScreen": false,
+          "scanner": false,
+          "keyProviderUrl": null,
+          "sslPinning": {
+            "enabled": false,
+            "pins": []
+          },
+          "googlePay": {
+            "enabled": false,
+            "billingAddressRequired": false,
+            "merchantId": null,
+            "merchantFullName": null,
+            "gateway": null,
+            "gatewayMerchantId": null,
+            "countryCode": null,
+            "environment": null,
+            "allowedCardNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "allowedAuthMethods": [
+              "PAN_ONLY",
+              "CRYPTOGRAM_3DS"
+            ]
+          },
+          "applePay": {
+            "enabled": false,
+            "merchantId": "merchant.net.payrdr.samples.test",
+            "supportedNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "merchantCapabilities": [
+              "CREDIT",
+              "DEBIT",
+              "THREE_D_SECURE"
+            ],
+            "countryCode": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "duplicate_root_key_replaces_the_whole_value",
+    "kind": "config",
+    "inputText": "{\"order\":{\"amount\":1},\"order\":{\"currency\":\"USD\"}}",
+    "expect": {
+      "document": {
+        "version": 1,
+        "profile": null,
+        "order": {
+          "source": "register",
+          "type": "payment",
+          "amount": 10000,
+          "currency": "USD",
+          "clientId": null,
+          "mdOrder": null,
+          "sessionId": null,
+          "features": [],
+          "extra": {}
+        },
+        "sdk": {
+          "locale": null,
+          "theme": "system",
+          "showResultScreen": false,
+          "scanner": false,
+          "keyProviderUrl": null,
+          "sslPinning": {
+            "enabled": false,
+            "pins": []
+          },
+          "googlePay": {
+            "enabled": false,
+            "billingAddressRequired": false,
+            "merchantId": null,
+            "merchantFullName": null,
+            "gateway": null,
+            "gatewayMerchantId": null,
+            "countryCode": null,
+            "environment": null,
+            "allowedCardNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "allowedAuthMethods": [
+              "PAN_ONLY",
+              "CRYPTOGRAM_3DS"
+            ]
+          },
+          "applePay": {
+            "enabled": false,
+            "merchantId": "merchant.net.payrdr.samples.test",
+            "supportedNetworks": [
+              "MASTERCARD",
+              "VISA"
+            ],
+            "merchantCapabilities": [
+              "CREDIT",
+              "DEBIT",
+              "THREE_D_SECURE"
+            ],
+            "countryCode": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "profile_minimal",
+    "kind": "profile",
+    "input": {
+      "name": "sandbox",
+      "gatewayUrl": "https://dev.bpcbt.com/payment"
+    },
+    "expect": {
+      "document": {
+        "version": 1,
+        "name": "sandbox",
+        "gatewayUrl": "https://dev.bpcbt.com/payment",
+        "api": "v1",
+        "login": "",
+        "password": "",
+        "apiKey": ""
+      }
+    }
+  },
+  {
+    "name": "profile_v2",
+    "kind": "profile",
+    "input": {
+      "version": 1,
+      "name": "sandbox-v2",
+      "gatewayUrl": "https://dev.bpcbt.com/payment",
+      "api": "v2",
+      "login": "login-1",
+      "password": "password-1",
+      "apiKey": "key-1"
+    },
+    "expect": {
+      "document": {
+        "version": 1,
+        "name": "sandbox-v2",
+        "gatewayUrl": "https://dev.bpcbt.com/payment",
+        "api": "v2",
+        "login": "login-1",
+        "password": "password-1",
+        "apiKey": "key-1"
+      }
+    }
+  },
+  {
+    "name": "profile_missing_name",
+    "kind": "profile",
+    "input": {
+      "gatewayUrl": "https://dev.bpcbt.com/payment"
+    },
+    "expect": {
+      "errorField": "name"
+    }
+  },
+  {
+    "name": "profile_name_uppercase",
+    "kind": "profile",
+    "input": {
+      "name": "Sandbox",
+      "gatewayUrl": "https://dev.bpcbt.com/payment"
+    },
+    "expect": {
+      "errorField": "name"
+    }
+  },
+  {
+    "name": "profile_name_33_chars",
+    "kind": "profile",
+    "input": {
+      "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "gatewayUrl": "https://dev.bpcbt.com/payment"
+    },
+    "expect": {
+      "errorField": "name"
+    }
+  },
+  {
+    "name": "profile_missing_gateway",
+    "kind": "profile",
+    "input": {
+      "name": "sandbox"
+    },
+    "expect": {
+      "errorField": "gatewayUrl"
+    }
+  },
+  {
+    "name": "profile_gateway_not_url",
+    "kind": "profile",
+    "input": {
+      "name": "sandbox",
+      "gatewayUrl": "not a url"
+    },
+    "expect": {
+      "errorField": "gatewayUrl"
+    }
+  },
+  {
+    "name": "profile_api_unknown",
+    "kind": "profile",
+    "input": {
+      "name": "sandbox",
+      "gatewayUrl": "https://dev.bpcbt.com/payment",
+      "api": "v3"
+    },
+    "expect": {
+      "errorField": "api"
+    }
+  },
+  {
+    "name": "profile_gateway_next_line",
+    "kind": "profile",
+    "input": {
+      "name": "sandbox",
+      "gatewayUrl": "https://dev.bpcbt.com/pay\u0085ment"
+    },
+    "expect": {
+      "errorField": "gatewayUrl"
+    }
+  },
+  {
+    "name": "profile_gateway_no_break_space",
+    "kind": "profile",
+    "input": {
+      "name": "sandbox",
+      "gatewayUrl": "https://dev.bpcbt.com/pay\u00a0ment"
+    },
+    "expect": {
+      "errorField": "gatewayUrl"
+    }
+  },
+  {
+    "name": "profile_gateway_ideographic_space",
+    "kind": "profile",
+    "input": {
+      "name": "sandbox",
+      "gatewayUrl": "https://dev.bpcbt.com/pay\u3000ment"
+    },
+    "expect": {
+      "errorField": "gatewayUrl"
+    }
+  },
+  {
+    "name": "profile_gateway_zero_width_space_is_not_white_space",
+    "kind": "profile",
+    "input": {
+      "name": "sandbox",
+      "gatewayUrl": "https://dev.bpcbt.com/pay\u200bment"
+    },
+    "expect": {
+      "document": {
+        "version": 1,
+        "name": "sandbox",
+        "gatewayUrl": "https://dev.bpcbt.com/pay\u200bment",
+        "api": "v1",
+        "login": "",
+        "password": "",
+        "apiKey": ""
+      }
+    }
+  }
+]

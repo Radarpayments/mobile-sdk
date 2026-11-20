@@ -21,7 +21,9 @@ import net.payrdr.mobile.payment.sdk.payment.gpay.GooglePayEnvironment
  * @property allowedCardNetworks networks accepted by the merchant.
  * @property allowedAuthMethods authorization methods accepted by the merchant.
  * @property countryCode ISO 3166-1 alpha-2 country code.
- * @property billingAddressRequired whether GPay should prompt for billing address.
+ * @property billingAddressRequired whether Google Pay asks the buyer for the full billing address. A payment always
+ *   asks for the email, the phone and the short address (name, country, postal code) the phone comes with: the
+ *   gateway needs the two contacts for a card Google Pay has not tokenized.
  */
 public data class GooglePayConfig(
     val merchantId: String? = null,
